@@ -19,7 +19,9 @@ phases:
       - yarn build
   post_build:
     commands:
-      - echo Build completed
+      - echo Build completed, try to sync s3 bucket now
+      - aws s3 sync --delete build/ "s3://app.blockkeeper.io"
+      - echo Done
 
 artifacts:
   files:
