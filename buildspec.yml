@@ -22,6 +22,7 @@ phases:
       - echo Build completed, try to sync s3 bucket now
       - aws s3 sync --delete build/ "s3://app.blockkeeper.io"
       - echo Start Cloudfront invalidation
+      - aws configure set preview.cloudfront true
       - aws cloudfront create-invalidation --distribution-id E2ML292P0CE01 --paths /*
       - echo Done
 
