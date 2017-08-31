@@ -1,59 +1,82 @@
 import React from 'react'
-import { LinearProgress } from 'material-ui/Progress'
+import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
+import {LinearProgress} from 'material-ui/Progress'
+import LockIcon from 'material-ui-icons/Lock'
+import {Modal} from './Lib'
 import __ from '../util'
 
-export default class Login extends React.Component {
+export default class LoginView extends React.Component {
   constructor (props) {
     super(props)
-    this.state = {
-      user: '',
-      pw: '',
-      ivld: null,
-      spnr: false
-    }
+    this.reset = () => ({err: null, busy: null, user: '', pw: ''})
+    this.reload = () => { this.setState(this.reset()) }
     this.onLogin = this.onLogin.bind(this)
+    this.state = this.reset()
   }
 
-  async onLogin (event) {
-    this.setState({spnr: true})
+  async onLogin () {
+    this.setState({err: null, busy: true})
     try {
       await this.props.initUser(__.toSecret(this.state.user, this.state.pw))
       this.props.history.push('/depot')  // redirect
     } catch (e) {
-      if (e.sts !== 404) throw e
-      this.setState({
-        user: '',
-        pw: '',
-        ivld: 'Invalid user and/or password: Please try again',
-        spnr: false
-      })
+      (e.sts === 404)
+        ? this.setState({
+          ...this.reset(),
+          emsg: 'Invalid user and/or password: Please try again'
+        })
+        : this.setState({...this.reset(), err: e.message})
     }
   }
 
   render () {
-    return (
-      <div>
-        <TextField
-          autoFocus
-          label='Username'
-          value={this.state.user}
-          error={this.state.ivld ? true : false}  // eslint-disable-line
-          helperText={this.state.ivld}
-          onChange={evt => this.setState({user: evt.target.value})}
-         />
-        <br />
-        <TextField
-          label='Password'
-          type='password'
-          value={this.state.pw}
-          onChange={evt => this.setState({pw: evt.target.value})}
-           />
-        <br />
-        <Button onClick={(event) => this.onLogin(event)}>Submit</Button>
-        { this.state.spnr && <LinearProgress /> }
-      </div>
-    )
+    if (this.state.err) {
+      return (
+        <Modal
+          open
+          onClose={this.load}
+          actions={<Button onClick={this.reload}>Reload</Button>}
+        >
+          {this.state.err} - Please try again later.
+        </Modal>
+      )
+    } else {
+      return (
+        <div>
+          <Typography align='left' type='display2'>
+            Blockkeeper
+          </Typography>
+          <Typography align='left' type='subheading'>
+            Please enter your login credentials
+          </Typography>
+          <TextField
+            autoFocus
+            label='Username'
+            value={this.state.user}
+            error={this.state.emsg && true}
+            helperText={this.state.emsg}
+            onChange={evt => this.setState({user: evt.target.value})}
+          />
+          <br />
+          <TextField
+            label='Password'
+            type='password'
+            value={this.state.pw}
+            onChange={evt => this.setState({pw: evt.target.value})}
+          />
+          <br />
+          <Button
+            onClick={(event) => this.onLogin(event)}
+          >
+            <LockIcon />
+            Login
+          </Button>
+          {this.state.busy &&
+            <LinearProgress />}
+        </div>
+      )
+    }
   }
 }

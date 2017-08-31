@@ -7,25 +7,27 @@ import Syncr from './logic/Syncr'
 import Rate from './logic/Rate'
 import User from './logic/User'
 import {theme, pageStyle} from './view/Style'
-import {default as DepotView} from './view/Depot'
-import {default as RgstrView} from './view/Rgstr'
-import {default as LoginView} from './view/Login'
+import DepotView from './view/Depot'
+import AddrView from './view/Addr'
+import TscView from './view/Tsc'
+import RgstrView from './view/Rgstr'
+import LoginView from './view/Login'
 import __ from './util'
 
-const cx = {_jobsRunning: false}
+const cx = {tmp: {}, _jobsRunning: false}
 cx.syncr = new Syncr(cx)
 cx.rate = new Rate(cx)
 cx.user = new User(cx)
 
 cx._initView = (cx => {
   return (cmp) => {
-    if (!cx._jobsRunning) {
-      cx._jobsRunning = true
-      cx.syncr.startJobs()
-    }
-    const d = __.init('view', cmp._reactInternalInstance.getName())
-    d.info('Created')
-    return d
+    // if (!cx._jobsRunning) {
+    //   cx._jobsRunning = true
+    //   cx.syncr.startJobs()
+    // }
+    cmp = __.init('view', cmp._reactInternalInstance.getName())
+    cmp.info('Created')
+    return cmp
   }
 })(cx)
 
@@ -37,7 +39,7 @@ const authenticate = props => {
 const AuthRoute = ({component: Component, ...args}) => (
   <Route {...args} render={props => {
     props.cx = cx
-    return __.stoGetSecret()
+    return __.getSecSto()
       ? (<Component {...props} />)
       : (<Redirect to='/login' />)
   }} />
@@ -48,9 +50,11 @@ const Routes = () => (
     <MuiThemeProvider theme={theme} >
       <BrowserRouter>
         <Switch>
-          <Route path='/login' exact render={authenticate} />} />
-          <Route path='/register' exact component={RgstrView} />} />
+          <Route path='/login' exact render={authenticate} />
+          <Route path='/register' exact component={RgstrView} />
           <AuthRoute path='/depot' exact component={DepotView} />
+          <AuthRoute path='/addr/:addrId' exact component={AddrView} />
+          <AuthRoute path='/tsc/:addrId/:tscId' exact component={TscView} />
           <Redirect to='/depot' />
         </Switch>
       </BrowserRouter>

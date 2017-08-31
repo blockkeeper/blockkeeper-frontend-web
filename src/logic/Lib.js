@@ -4,21 +4,19 @@ class Base {
   constructor (cx, _id, pa, pld) {
     this.cx = cx
     Object.assign(this, __.init('logic', this.constructor.name, _id, pa))
-    this.stoGet = () => __.stoGetJson(this._store)
-    this.stoSet = pld => __.stoSetJson(this._store, pld)
-    this.stoDel = () => __.stoDel(this._store)
-    if (pld) this.stoSet(pld)
+    this.getSto = () => __.getJsonSto(this._store)
+    this.setSto = pld => __.setJsonSto(this._store, pld)
+    this.delSto = () => __.delSto(this._store)
+    if (pld) this.setSto(pld)
     this.load = this.load.bind(this)
     this.apiGet = this.apiGet.bind(this)
     this.apiSet = this.apiSet.bind(this)
   }
 
-  async load (pld, data) {
+  async load (pld) {
     try {
-      pld = pld || this.stoGet() || await this.apiGet()
-      if (this._load) {
-        pld = await this._load(pld, data) || pld
-      }
+      pld = pld || this.getSto() || await this.apiGet()
+      if (this._load) pld = await this._load(pld) || pld
     } catch (e) {
       this.warn('Loading failed')
       throw e
@@ -30,8 +28,8 @@ class Base {
   async apiGet (secret) {
     let pld
     try {
-      pld = await this._apiGet(secret || __.stoGetSecret())
-      this.stoSet(pld)
+      pld = await this._apiGet(secret || __.getSecSto())
+      this.setSto(pld)
     } catch (e) {
       const err = this.err(e.message, {
         e: e,
@@ -44,9 +42,9 @@ class Base {
   }
 
   async apiSet (secret) {
-    const pld = this.stoGet()
+    const pld = this.getSto()
     try {
-      await this._apiSet(secret || __.stoGetSecret(), pld)
+      await this._apiSet(secret || __.getSecSto(), pld)
     } catch (e) {
       const err = this.err(e.message, {
         e: e,

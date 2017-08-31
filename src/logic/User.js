@@ -10,14 +10,18 @@ export default class User extends Base {
     this._load = this._load.bind(this)
     this._apiGet = this._apiGet.bind(this)
     this.init = this.init.bind(this)
+    this.getCoins = this.getCoins.bind(this)
     this.info('Created')
   }
 
-  async _load (pld) {
-    pld.locale === 'de' ? mo.updateLocale(pld.locale, deLoc) : mo.locale('en')
+  async _load (user) {
+    user.locale === 'de' ? mo.updateLocale(user.locale, deLoc) : mo.locale('en')
     // this.info('Locale: %s -> %s', loc, mo().format('LLLL'))
-    // this.info('Currencies: %s, Locale: %s', pld.crrncs.join(', '), pld.locale)
-    if (!this.cx.depot) this.cx.depot = new Depot(this.cx, pld.depots[0])
+    // this.info('Coins: %s, Locale: %s', user.coins.join(', '), user.locale)
+    if (!this.cx.depot) {
+      this.cx.depot = new Depot(this.cx, user.depotId)
+      this.cx.depot.load()
+    }
   }
 
   async _apiGet (secret) {
@@ -33,23 +37,29 @@ export default class User extends Base {
         _id: '0005b739-8462-4959-af94-271cd93f5195',
         created: __.getTme(),
         locale: 'de',
-        crrncs: ['EUR', 'BTC'],   // first is default currency for views
-        depots: ['dc51021a-ea47-4f14-a53c-7969675655b7']
+        coins: ['EUR', 'BTC'],   // first is default currency for views
+        depotId: '0005b739-8462-4959-af94-271cd93f5195',
+        addrIds: [
+          'a2d7077a-a838-4463-8461-71f26e0873b1',
+          'ace20977-b117-43d1-9b60-b527f013e491'
+        ]
       }, 500)
-    } else {                       // mock error / invalid user
+    } else if (secret === 'bar:foo') {    // mock invalid user
+      throw this.err('User not found', {sts: 404})
+    } else {                              // mock error
       throw new Error('Getting user failed')
     }
   }
 
+  async getCoins (curCoin, user) {
+    const coins = (user || await this.load()).coins
+    const coin1 = curCoin || coins[0]
+    const coin2 = (coin1 === coins[1]) ? coins[0] : coins[1]
+    return {coin1, coin2}
+  }
+
   async init (secret) {
-    let pld
-    try {
-      pld = await this.apiGet(secret, true)
-    } catch (e) {
-      // TODO:  distinction between user-not-found and api-unreachable
-      throw this.err('User not found', {sts: 404})
-    }
-    await this.load(pld)
-    __.stoSetSecret(secret)
+    await this.load(await this.apiGet(secret, true))
+    __.setSecSto(secret)
   }
 }

@@ -45,8 +45,8 @@ const getLogger = (ilk, lbl) => {
 }
 
 const toLbl = (mainType, subType, _id, paLbl) => {
-  let lbl = mainType + ':' + subType.slice(0, 6)
-  if (_id) lbl += '_' + _id.slice(0, 6)
+  let lbl = mainType + ':' + subType.slice(0, 15)
+  if (_id) lbl += '_' + _id.slice(0, 15)
   if (paLbl) lbl += '.' + paLbl.replace(mainType + ':', '')
   return lbl
 }
@@ -55,7 +55,7 @@ const init = (mainType, subType, _id, pa) => {
   const d = {
     _id: _id || uuidv4(),
     _type: [mainType.toLowerCase(), subType.toLowerCase()],
-    _tme: mo.utc().format()
+    _t: mo.utc().format()
   }
   d._store = d._type[1] + '_' + d._id
   if (pa != null) d._pa = pa
@@ -74,22 +74,39 @@ const toMoPro = (data, tmoMsec, ...args) => {
   })
 }
 
-// TODO: generate real secrets
+const ppTme = _t => {
+  let tme = mo(_t)
+  return tme.fromNow()
+}
+
+const getStos = (term, convert) => {
+  let stos = []
+  for (let sto of Object.keys(localStorage)) {
+    if (sto.startsWith(term)) stos.push(convert ? convert(sto) : sto)
+  }
+  return stos
+}
+
+const getStoIds = term => {
+  return Array.from(new Set(getStos(term, (sto) => sto.split('_')[1])))
+}
+
+// TODO: generate real secret
 const toSecret = (user, pw) => user + ':' + pw
 
-const stoGet = key => localStorage.getItem(key)
+const getSto = key => localStorage.getItem(key)
 
-const stoSet = (key, pld) => {
+const setSto = (key, pld) => {
   localStorage.setItem(key, pld)
   // localStorage.setItem(`last_${key}`, mo.utc().format())
 }
 
-const stoDel = key => {
+const delSto = key => {
   localStorage.removeItem(key)
   // localStorage.removeItem(`last_${key}`)
 }
 
-const stoGetJson = key => {
+const getJsonSto = key => {
   const warn = getLogger('warn', 'main')
   try {
     return JSON.parse(localStorage.getItem(key))
@@ -98,7 +115,7 @@ const stoGetJson = key => {
   }
 }
 
-const stoSetJson = (key, pld) => {
+const setJsonSto = (key, pld) => {
   const warn = getLogger('warn', 'main')
   try {
     localStorage.setItem(key, JSON.stringify(pld))
@@ -109,17 +126,20 @@ const stoSetJson = (key, pld) => {
 }
 
 export default {
-  stoGet,
-  stoSet,
-  stoDel,
-  stoGetJson,
-  stoSetJson,
-  stoDelJson: stoDel,
-  stoGetSecret: () => stoGet('secret'),
-  stoSetSecret: (secret) => stoSet('secret', secret),
-  stoDelSecret: () => stoDel('secret'),
+  getStos,
+  getStoIds,
+  getSto,
+  setSto,
+  delSto,
+  getJsonSto,
+  setJsonSto,
+  delJsonSto: delSto,
+  getSecSto: () => getSto('secret'),
+  setSecSto: (secret) => setSto('secret', secret),
+  delSecSto: () => delSto('secret'),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
+  ppTme,
   toSecret,
   getLogger,
   toLbl,

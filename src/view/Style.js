@@ -33,6 +33,10 @@ theme.overrides = {
       color: '#FFF',
       padding: '0px 15px 15px 15px'
     }
+    // headline: {
+    //   color: '#FFF',
+    //   padding: '0px 0px 0px 0px'
+    // }
   }
 }
 
@@ -45,14 +49,8 @@ const jumboStyle = {
   background: 'black'
 }
 
-const faultStyle = {
-  background: 'red',
-  padding: '20px'
-}
-
 export {
   theme,
   pageStyle,
-  jumboStyle,
-  faultStyle
+  jumboStyle
 }

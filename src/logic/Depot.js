@@ -1,87 +1,65 @@
 import {Base} from './Lib'
+import Addr from './Addr'
 import __ from '../util'
 
 export default class Depot extends Base {
   constructor (cx, _id) {
     super(cx, _id, cx.user)
-    this._load = this._load.bind(this)
     this._apiGet = this._apiGet.bind(this)
-    this._apiSet = this._apiSet.bind(this)
-    this.stoAddrGet = addrId => __.stoGetJson(`addr_${addrId}`)
-    this.stoAddrSet = addrPld => __.stoSetJson(`addr_${addrPld._id}`, addrPld)
-    this.stoAddrIdsGet = () => __.stoGetJson(`${this._store}_addrIds`)
-    this.stoAddrIdsSet = ids => __.stoSetJson(`${this._store}_addrIds`, ids)
+    this.getBlc = this.getBlc.bind(this)
+    this.loadAddrs = this.loadAddrs.bind(this)
+    this.loadAddrIds = this.loadAddrIds.bind(this)
     this.apiGetAddrs = this.apiGetAddrs.bind(this)
     this.info('Created')
   }
 
-  async _load (pld) {
-    let addrPlds = []
-    const tscs = []
+  async _apiGet () {
+    // dummy because this.load() calls _apiGet(),
+    // but perhaps a real api request in a future version
+    return await {_id: this._id}
+  }
+
+  getBlc (items) {
+    // items can be addrs or tscs
     const blcs = new Map()
-    const addrIds = this.stoAddrIdsGet()
-    // load addrs
-    if (addrIds == null) {
-      addrPlds = await this.apiGetAddrs()
+    for (let item of items) {
+      for (let [coin, rate] of item.rates) {
+        blcs.set(coin, (blcs.get(coin) || 0) + (item.amnt * rate))
+      }
+    }
+    return blcs
+  }
+
+  async loadAddrs (addrIds) {
+    const stoAddrIds = await this.cx.depot.loadAddrIds()
+    if (addrIds) {
+      addrIds.filter(addrId => stoAddrIds.some(_id => addrId === _id))
     } else {
-      const addrIds_ = []
-      for (let addrId of addrIds) {
-        const addrPld = this.stoAddrGet(addrId)
-        if (addrPld) {  // ignore deleted addrs
-          addrPlds.push(addrPld)
-          addrIds_.push(addrId)
-        }
-      }
-      this.stoAddrIdsSet(addrIds_) // ensure consistency
+      addrIds = stoAddrIds
     }
-    const crrncs = (await this.cx.user.load()).crrncs
-    const ratePld = await this.cx.rate.load()
-    for (let addrPld of addrPlds) {
-      // rates are permanently updated by syncr
-      addrPld.rates = new Map()
-      for (let crrnc of crrncs) {
-        let rate = await this.cx.rate.get(addrPld.coin, crrnc, ratePld)
-        addrPld.rates.set(crrnc, rate)
-      }
-      // add tscs
-      for (let tsc of addrPld.tscs) {
-        tsc.coin = addrPld.coin
-        tsc.rates = addrPld.rates
-        tscs.push(tsc)
-      }
-      // calculate blc
-      for (let [crrnc, rate] of addrPld.rates) {
-        blcs.set(crrnc, (blcs.get(crrnc) || 0) + (addrPld.amnt * rate))
+    const addrs = []
+    let tscs = []
+    for (let addrId of addrIds) {
+      try {
+        let addr = await (new Addr(this.cx, addrId)).load()
+        addrs.push(addr)
+        tscs = tscs.concat(addr.tscs)
+      } catch (e) {
+        this.warn('Ignoring %s: Loading failed', addrId, e)
       }
     }
-    return {...pld, ...{addrs: addrPlds, tscs, blcs}}
+    this.info('%s addrs with %s tscs loaded', addrs.length, tscs.length)
+    return {addrs, tscs}
   }
 
-  async _apiGet (secret) {
-    // request parameters:
-    //   secret               -> related user
-    //   type of data = depot -> desired resource type
-    //   _id                  -> desired depot
-    //
-    // response:
-    return await __.toMoPro({
-      _id: this._id,
-      _tme: __.getTme()
-    }, 1000, secret)
-  }
-
-  async _apiSet (secret, pld) {
-    // request parameters:
-    //   see _apiGet()
-    //   pld (payload)
-    //
-    // response:
-    return await __.toMoPro({result: 'ok'}, 1000, secret, pld)
+  async loadAddrIds () {
+    const addrIds = __.getStoIds('addr')
+    return addrIds.length > 0 ? addrIds : await this.apiGetAddrs()
   }
 
   async apiGetAddrs () {
-    const secret = __.stoGetSecret()
-    let addrPlds
+    const secret = __.getSecSto()
+    let addrs
     try {
       // request parameters:
       //   secret               -> related user
@@ -101,10 +79,10 @@ export default class Depot extends Base {
       const tId1 = '19716f78-3a0a-474f-b3ea-7425c0123def'
       const tId2 = '139271e8-90a9-4b03-b64a-9c3a643d39c7'
       const tId3 = '1635375b-85cc-4522-b3b6-e41a4d74d06e'
-      addrPlds = await __.toMoPro([
+      addrs = await __.toMoPro([
         {
           _id: _id0,
-          _tme: __.getTme(),
+          _t: __.getTme(),
           hsh: `hash_${_id0.slice(0, 5)}`,
           name: `name_${_id0.slice(0, 5)}`,
           desc: 'A short description',
@@ -113,23 +91,31 @@ export default class Depot extends Base {
           tscs: [
             {
               _id: tId1,
-              hsh: `hash_${tId1.slice(0, 5)}`,
+              _t: __.getTme(),
+              sndHsh: `sndhash_${tId1.slice(0, 5)}`,
+              rcvHsh: `rcvhash_${tId1.slice(0, 5)}`,
+              amnt: 10,
+              feeAmnt: 0.1,
               name: `name_${tId1.slice(0, 5)}`,
               desc: 'A short description',
-              amnt: 10
+              tags: ['tag_1-1', 'tag_1-2', 'tag_1-3', 'tag_1-4', 'tag_1-5']
             },
             {
               _id: tId2,
-              hsh: `hash_${tId2.slice(0, 5)}`,
+              _t: __.getTme(),
+              sndHsh: `sndhash_${tId2.slice(0, 5)}`,
+              rcvHsh: `rcvhash_${tId2.slice(0, 5)}`,
+              amnt: 10,
+              feeAmnt: 0.1,
               name: `name_${tId2.slice(0, 5)}`,
               desc: 'A short description',
-              amnt: 10
+              tags: ['tag_2-1', 'tag_2-2']
             }
           ]
         },
         {
           _id: _id1,
-          _tme: __.getTme(),
+          _t: __.getTme(),
           hsh: `hash_${_id1.slice(0, 5)}`,
           name: `name_${_id1.slice(0, 5)}`,
           desc: 'A short description',
@@ -138,10 +124,14 @@ export default class Depot extends Base {
           tscs: [
             {
               _id: tId3,
-              hsh: `hash_${tId3.slice(0, 5)}`,
+              _t: __.getTme(),
+              sndHsh: `sndhash_${tId3.slice(0, 5)}`,
+              rcvHsh: `rcvhash_${tId3.slice(0, 5)}`,
+              amnt: 20,
+              feeAmnt: 0.1,
               name: `name_${tId3.slice(0, 5)}`,
               desc: 'A short description',
-              amnt: 20
+              tags: ['tag_3-1', 'tag_3-2']
             }
           ]
         }
@@ -150,12 +140,11 @@ export default class Depot extends Base {
       throw this.err(e.message, {e: e, dmsg: 'Api-Get addrs failed'})
     }
     const addrIds = []
-    for (let addrPld of addrPlds) {
-      this.stoAddrSet(addrPld)
-      addrIds.push(addrPld._id)
+    for (let addr of addrs) {
+      (new Addr(this.cx, addr._id)).setSto(addr)
+      addrIds.push(addr._id)
     }
-    this.stoAddrIdsSet(addrIds)
     this.info('Api-Get addrs finished')
-    return addrPlds
+    return addrIds
   }
 }
