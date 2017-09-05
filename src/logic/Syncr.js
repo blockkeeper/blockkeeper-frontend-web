@@ -3,7 +3,7 @@ import __ from '../util'
 
 export default class Syncr extends Base {
   constructor (cx) {
-    super(cx, '00087bff-ce0b-4efe-92a9-bf150c64667d')
+    super('syncr', cx, '00087bff-ce0b-4efe-92a9-bf150c64667d')
     this.startJobs = this.startJobs.bind(this)
     this.runJobs = this.runJobs.bind(this)
     this.info('Created')

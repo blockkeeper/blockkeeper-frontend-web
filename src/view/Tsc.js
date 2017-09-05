@@ -21,7 +21,7 @@ export default class TscView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this))
+    Object.assign(this, this.cx._initView(this, 'tsc'))
     await this.load()
   }
 

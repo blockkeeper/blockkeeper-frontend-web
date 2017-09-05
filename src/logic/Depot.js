@@ -4,7 +4,7 @@ import __ from '../util'
 
 export default class Depot extends Base {
   constructor (cx, _id) {
-    super(cx, _id, cx.user)
+    super('depot', cx, _id, cx.user)
     this._apiGet = this._apiGet.bind(this)
     this.getBlc = this.getBlc.bind(this)
     this.loadAddrs = this.loadAddrs.bind(this)

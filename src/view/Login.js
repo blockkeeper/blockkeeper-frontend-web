@@ -23,10 +23,7 @@ export default class LoginView extends React.Component {
       this.props.history.push('/depot')  // redirect
     } catch (e) {
       (e.sts === 404)
-        ? this.setState({
-          ...this.reset(),
-          emsg: 'Invalid user and/or password: Please try again'
-        })
+        ? this.setState({...this.reset(), emsg: e.message})
         : this.setState({...this.reset(), err: e.message})
     }
   }
@@ -37,9 +34,9 @@ export default class LoginView extends React.Component {
         <Modal
           open
           onClose={this.load}
-          actions={<Button onClick={this.reload}>Reload</Button>}
+          actions={<Button onClick={this.reload}>Back to login</Button>}
         >
-          {this.state.err} - Please try again later.
+          {this.state.err}
         </Modal>
       )
     } else {

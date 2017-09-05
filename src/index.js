@@ -20,12 +20,13 @@ cx.rate = new Rate(cx)
 cx.user = new User(cx)
 
 cx._initView = (cx => {
-  return (cmp) => {
+  return (cmp, name) => {
     // if (!cx._jobsRunning) {
     //   cx._jobsRunning = true
     //   cx.syncr.startJobs()
     // }
-    cmp = __.init('view', cmp._reactInternalInstance.getName())
+    // cmp = __.init('view', cmp._reactInternalInstance.getName())
+    cmp = __.init('view', name)
     cmp.info('Created')
     return cmp
   }

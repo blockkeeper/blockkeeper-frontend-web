@@ -6,7 +6,7 @@ import __ from '../util'
 
 export default class User extends Base {
   constructor (cx) {
-    super(cx, '0005b739-8462-4959-af94-271cd93f5195')
+    super('user', cx, '0005b739-8462-4959-af94-271cd93f5195')
     this._load = this._load.bind(this)
     this._apiGet = this._apiGet.bind(this)
     this.init = this.init.bind(this)

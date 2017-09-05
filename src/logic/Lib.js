@@ -1,9 +1,9 @@
 import __ from '../util'
 
 class Base {
-  constructor (cx, _id, pa, pld) {
+  constructor (name, cx, _id, pa, pld) {
     this.cx = cx
-    Object.assign(this, __.init('logic', this.constructor.name, _id, pa))
+    Object.assign(this, __.init('logic', name, _id, pa))
     this.getSto = () => __.getJsonSto(this._store)
     this.setSto = pld => __.setJsonSto(this._store, pld)
     this.delSto = () => __.delSto(this._store)

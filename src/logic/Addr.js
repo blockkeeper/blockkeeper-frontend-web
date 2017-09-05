@@ -3,7 +3,7 @@ import __ from '../util'
 
 export default class Addr extends Base {
   constructor (cx, _id) {
-    super(cx, _id, cx.depot)
+    super('addr', cx, _id, cx.depot)
     this._load = this._load.bind(this)
     this._apiGet = this._apiGet.bind(this)
     this.getTsc = this.getTsc.bind(this)

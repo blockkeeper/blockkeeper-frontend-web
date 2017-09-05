@@ -16,7 +16,7 @@ export default class DepotView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this))
+    Object.assign(this, this.cx._initView(this, 'depot'))
     await this.load()
   }
 

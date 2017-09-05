@@ -25,7 +25,7 @@ export default class AddrView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this))
+    Object.assign(this, this.cx._initView(this, 'addr'))
     await this.load()
   }
 
