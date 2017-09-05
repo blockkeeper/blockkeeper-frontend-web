@@ -12,10 +12,10 @@ export default class Addr extends Base {
 
   async _load (addr) {
     const coins = (await this.cx.user.load()).coins
-    const rates = await this.cx.rate.load()
+    const rate = await this.cx.rate.load()
     addr.rates = new Map()
     for (let coin of coins) {
-      addr.rates.set(coin, this.cx.rate.get(addr.coin, coin, rates))
+      addr.rates.set(coin, await this.cx.rate.getRate(addr.coin, coin, rate))
     }
     for (let tsc of addr.tscs) {
       tsc.addrId = addr._id

@@ -6,7 +6,8 @@ export default class Rate extends Base {
     super('rate', cx, '00095c08-0c1a-4ed4-b4b0-e0452e86e48b')
     this.delSto()  // we want always fresh rates
     this._apiGet = this._apiGet.bind(this)
-    this.get = this.get.bind(this)
+    this.getRate = this.getRate.bind(this)
+    this.getCoins = this.getCoins.bind(this)
     this.info('Created')
   }
 
@@ -28,20 +29,31 @@ export default class Rate extends Base {
         BTC_ETH: 14.28
       }
     }, 1000, secret)
-    // add 1-to-1 rates
+    // add 1-to-1 rates and coin list
+    const coins = new Set()
     for (let pair of Object.keys(rate.pairs)) {
       const baseCoin = pair.split('_')[0]
       const quoteCoin = pair.split('_')[1]
       rate.pairs[`${baseCoin}_${baseCoin}`] = 1
       rate.pairs[`${quoteCoin}_${quoteCoin}`] = 1
+      coins.add(baseCoin)
+      coins.add(quoteCoin)
     }
-    return rate.pairs
+    rate.coins = Array.from(coins).sort()
+    return rate
   }
 
-  get (baseCoin, quoteCoin, rates) {
+  async getRate (baseCoin, quoteCoin, rate) {
+    rate = rate || await this.load()
     const coip = __.getCoinPair(baseCoin, quoteCoin)
-    const rate = rates[coip]
-    if (rate == null) throw this.err(`No rate for ${coip} available`)
-    return rate
+    if (rate.pairs[coip] == null) {
+      throw this.err(`No rate for ${coip} available`, {rates: rate.pairs})
+    }
+    return rate.pairs[coip]
+  }
+
+  async getCoins (rate) {
+    rate = rate || await this.load()
+    return rate.coins
   }
 }

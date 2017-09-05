@@ -45,7 +45,10 @@ export default class Depot extends Base {
         addrs.push(addr)
         tscs = tscs.concat(addr.tscs)
       } catch (e) {
-        this.warn('Ignoring %s: Loading failed', addrId, e)
+        throw this.err(
+          'Loading one or more addresses failed',
+          {dmsg: `Loading ${addrId} failed`, e, addrIds}
+        )
       }
     }
     this.info('%s addrs with %s tscs loaded', addrs.length, tscs.length)

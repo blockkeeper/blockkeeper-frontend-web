@@ -58,7 +58,7 @@ export default class DepotView extends React.Component {
           onClose={this.load}
           actions={<Button onClick={this.load}>Reload</Button>}
         >
-          {this.state.err} - Please try again later.
+          {this.state.err}
         </Modal>
       )
     } else if (this.state.addrs && this.state.tscs) {
