@@ -1,9 +1,17 @@
 /* global localStorage */
+/* global fetch */
 import uuidv4 from 'uuid/v4'
 import * as mo from 'moment'
 
+const cfg = (key) => {
+  const data = {
+    url: 'https://api.blockkeeper.io/v1'
+  }
+  return key == null ? data : data[key]
+}
+
 class AppError extends Error {
-  constructor (umsg, {e, lbl, dmsg, sts} = {}) {
+  constructor (umsg, {e, lbl, dmsg, sts, ...more} = {}) {
     super(umsg)
     try {
       Error.captureStackTrace(this, this.constructor)
@@ -13,23 +21,27 @@ class AppError extends Error {
     }
     this.name = this.constructor.name
     this.isAppErr = true
-    this.lbl = lbl                                // label
-    this.paErr = e                                // parent error
-    this.message = umsg                           // user message
-    this.dmsg = dmsg                              // developer message
-    this.sts = sts || (e || {}).sts || 0          // status code
+    this.lbl = lbl                              // label
+    this.paErr = e                              // parent error
+    this.message = umsg                         // user message
+    this.dmsg = dmsg                            // developer message
+    this.sts = sts || (e || {}).sts || 0        // status code
+    this.more = Object.keys(more).length > 0 ? more : null   // additional data
   }
 }
 
 const getErr = (...args) => {
   const e = new AppError(...args)
-  console.warn(
-      e.name.toUpperCase() +
-      (e.lbl ? ` [${e.lbl}]:  ` : ':  ') +
-      e.message +
-      (e.dmsg ? ` -> ${e.dmsg}` : '')
-      // + (e.sts ? ` -> ${e.sts}` : '')
-    )
+  let d = [
+    e.name.toUpperCase() +
+    (e.lbl ? ` [${e.lbl}]:  ` : ':  ') +
+    e.message +
+    (e.dmsg ? ` -> ${e.dmsg}` : '')
+  ]
+  if (e.sts) d[0] += ` -> ${e.sts}`
+  if (e.paErr) d.push({parentError: e.paErr})
+  if (e.more) d.push(e.more)
+  console.warn(...d)
   return e
 }
 
@@ -66,6 +78,37 @@ const init = (mainType, subType, _id, pa) => {
   return d
 }
 
+async function rqst (rqstObj) {
+  let e
+  let rsp
+  try {
+    rsp = await fetch(rqstObj)
+  } catch (e) {}
+  rsp = rsp || {}
+  let sts = rsp.status || 600
+  if (sts === 200) {
+    try {
+      return rsp.json()
+    } catch (e) {
+      sts = 601
+    }
+  }
+  let err
+  let umsg
+  try {
+    err = await rsp.json()
+  } catch (e) {
+    err = {}
+  }
+  if (sts === 404) {
+    umsg = `${urlToRsrc(rqstObj.url)} not found`
+  } else {
+    umsg = `Requesting ${urlToRsrc(rqstObj.url)} failed: ` +
+      ((sts >= 400 && sts < 500) ? 'Invalid input' : 'API error')
+  }
+  throw this.err(umsg, {e, sts, err, rqstObj, rqstRsp: rsp})
+}
+
 // mock promise
 const toMoPro = (data, tmoMsec, ...args) => {
   // catch "...args" to satisfy IDE linter only
@@ -77,6 +120,12 @@ const toMoPro = (data, tmoMsec, ...args) => {
 const ppTme = _t => {
   let tme = mo(_t)
   return tme.fromNow()
+}
+
+const urlToRsrc = (url) => {
+  let rsrc = url.split('/')[4] || 'resource'
+  // rsrc = rsrc.charAt(0).toUpperCase() + rsrc.slice(1)
+  return rsrc
 }
 
 const getStos = (term, convert) => {
@@ -126,6 +175,7 @@ const setJsonSto = (key, pld) => {
 }
 
 export default {
+  cfg,
   getStos,
   getStoIds,
   getSto,
@@ -139,6 +189,8 @@ export default {
   delSecSto: () => delSto('secret'),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
+  urlToRsrc,
+  rqst,
   ppTme,
   toSecret,
   getLogger,
