@@ -58,7 +58,7 @@ export default class User extends Base {
     return {coin1, coin2}
   }
 
-  async getName (user) {
+  getName () {
     return __.getSto('user')
   }
 

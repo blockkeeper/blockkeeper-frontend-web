@@ -37,7 +37,6 @@ export default class DepotView extends React.Component {
         blc1: `${coin1} ${blc.get(coin1)}`,
         blc2: `${coin2} ${blc.get(coin2)}`
       })
-      this.info(this.state, tscs, addrs)
     } catch (e) {
       this.setState({err: e.message})
       if (process.env.NODE_ENV === 'development') throw e

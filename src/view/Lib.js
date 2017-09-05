@@ -1,10 +1,12 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
-import Typography from 'material-ui/Typography'
-import IconButton from 'material-ui/IconButton'
 import Button from 'material-ui/Button'
+import IconButton from 'material-ui/IconButton'
+import Typography from 'material-ui/Typography'
+import PersonIcon from 'material-ui-icons/Person'
 import {jumboStyle} from './Style'
 import Dialog, {
   DialogActions,
@@ -14,7 +16,7 @@ import Dialog, {
 } from 'material-ui/Dialog'
 import __ from '../util'
 
-const TopBar = ({title, icon, onClick}) =>
+const TopBar = ({title, icon, onClick, noUser}) =>
   <AppBar position='static'>
     <Toolbar>
       {icon &&
@@ -24,6 +26,8 @@ const TopBar = ({title, icon, onClick}) =>
       <Typography type='headline' color='inherit'>
         {title || ''}
       </Typography>
+      {!noUser &&
+          <Link to={'/user'}><PersonIcon /></Link>}
     </Toolbar>
   </AppBar>
 
