@@ -58,8 +58,13 @@ export default class User extends Base {
     return {coin1, coin2}
   }
 
-  async init (secret) {
+  async getName (user) {
+    return __.getSto('user')
+  }
+
+  async init (user, pw) {
+    const secret = __.toSecret(user, pw)
     await this.load(await this.apiGet(secret, true))
-    __.setSecSto(secret)
+    __.setSecSto(user, secret)
   }
 }

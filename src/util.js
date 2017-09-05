@@ -174,6 +174,11 @@ const setJsonSto = (key, pld) => {
   }
 }
 
+const setSecSto = (user, secret) => {
+  setSto('user', user)
+  setSto('secret', secret)
+}
+
 export default {
   cfg,
   getStos,
@@ -185,10 +190,10 @@ export default {
   setJsonSto,
   delJsonSto: delSto,
   getSecSto: () => getSto('secret'),
-  setSecSto: (secret) => setSto('secret', secret),
   delSecSto: () => delSto('secret'),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
+  setSecSto,
   urlToRsrc,
   rqst,
   ppTme,

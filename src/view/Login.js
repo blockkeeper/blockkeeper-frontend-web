@@ -5,7 +5,7 @@ import TextField from 'material-ui/TextField'
 import {LinearProgress} from 'material-ui/Progress'
 import LockIcon from 'material-ui-icons/Lock'
 import {Modal} from './Lib'
-import __ from '../util'
+// import __ from '../util'
 
 export default class LoginView extends React.Component {
   constructor (props) {
@@ -19,7 +19,7 @@ export default class LoginView extends React.Component {
   async onLogin () {
     this.setState({err: null, busy: true})
     try {
-      await this.props.initUser(__.toSecret(this.state.user, this.state.pw))
+      await this.props.initUser(this.state.user, this.state.pw)
       this.props.history.push('/depot')  // redirect
     } catch (e) {
       (e.sts === 404)
