@@ -9,6 +9,7 @@ export default class User extends Base {
     super('user', cx, '0005b739-8462-4959-af94-271cd93f5195')
     this._load = this._load.bind(this)
     this._apiGet = this._apiGet.bind(this)
+    this._apiSet = this._apiSet.bind(this)
     this.init = this.init.bind(this)
     this.getCoins = this.getCoins.bind(this)
     this.info('Created')
@@ -26,12 +27,9 @@ export default class User extends Base {
   }
 
   async _apiGet (secret) {
-    // request parameters:
-    //   secret              -> related user
-    //   type of data = user -> desired resource type
-    // response:
+    let pld
     if (secret === 'foo:bar') {    // mock successful login
-      return await __.toMoPro({
+      pld = await __.toMoPro({
         // user object has (for all users) always the same uuid
         //   -> secret is sufficient to identify the desired user
         //   -> the user _id is only needed for framework compatibility
@@ -50,6 +48,12 @@ export default class User extends Base {
     } else {                              // mock error
       throw new Error('Getting user failed')
     }
+    return pld
+  }
+
+  async _apiSet (pld, secret) {
+    pld = await __.toMoPro({result: 'ok'}, 1500)
+    return pld
   }
 
   async getCoins (curCoin, user) {
@@ -61,7 +65,7 @@ export default class User extends Base {
 
   async init (user, pw) {
     const secret = __.toSecret(user, pw)
-    await this.load(await this.apiGet(secret, true))
+    await this.load(await this.apiGet(secret))
     __.setSecSto(user, secret)
   }
 }

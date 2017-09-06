@@ -3,6 +3,7 @@ import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
+import LoopIcon from 'material-ui-icons/Loop'
 import {TopBar, Modal, DropDown} from './Lib'
 // import __ from '../util'
 
@@ -14,6 +15,7 @@ export default class UserView extends React.Component {
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
     this.setCoin = this.setCoin.bind(this)
+    this.saveUser = this.saveUser.bind(this)
   }
 
   async componentDidMount () {
@@ -48,7 +50,18 @@ export default class UserView extends React.Component {
 
   setCoin (coinData) {
     this.info('Setting %s to %s', coinData.ilk, coinData.lbl)
-    this.setState({[coinData.ilk]: coinData.key})  // e.g. coin0 = ETH
+    this.setState({[coinData.ilk]: coinData.key, updated: true})
+  }
+
+  async saveUser () {
+    this.setState({busy: true})
+    try {
+      await this.cx.user.save({coins: [this.state.coin0, this.state.coin1]})
+    } catch (e) {
+      this.setState({err: e.message})
+      if (process.env.NODE_ENV === 'development') throw e
+    }
+    this.setState({busy: false, updated: false})
   }
 
   render () {
@@ -101,6 +114,13 @@ export default class UserView extends React.Component {
               action={this.setCoin}
              />
           </div>
+          <p />
+          {(!this.state.updated && !this.state.busy) &&
+            <Button disabled>Save</Button>}
+          {(this.state.updated && !this.state.busy) &&
+            <Button onClick={this.saveUser}>Save</Button>}
+          {this.state.busy &&
+            <Button disabled>Saving... <LoopIcon /></Button>}
         </div>
       )
     } else {
