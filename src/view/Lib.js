@@ -28,7 +28,7 @@ const TopBar = ({title, icon, onClick, noUser}) =>
         {title || ''}
       </Typography>
       {!noUser &&
-      <Link to={'/user'}><PersonIcon /></Link>}
+      <Link to={'/user/edit'}><PersonIcon /></Link>}
     </Toolbar>
   </AppBar>
 
