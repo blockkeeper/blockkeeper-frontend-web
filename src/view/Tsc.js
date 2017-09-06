@@ -34,14 +34,14 @@ export default class TscView extends React.Component {
       const addr = await addrObj.load()
       const tsc = addrObj.getTsc(addr, this.tscId)
       const blc = this.cx.depot.getBlc([tsc])
-      const {coin1, coin2} = await this.cx.user.getCoins(this.state.coin, user)
+      const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
       this.setState({
         err: null,
         tsc: tsc,
+        coin0,
         coin1,
-        coin2,
-        blc1: `${coin1} ${blc.get(coin1)}`,
-        blc2: `${coin2} ${blc.get(coin2)}`
+        blc1: `${coin0} ${blc.get(coin0)}`,
+        blc2: `${coin1} ${blc.get(coin1)}`
       })
     } catch (e) {
       this.setState({err: e.message})
@@ -74,7 +74,7 @@ export default class TscView extends React.Component {
           />
           <Listing
             tsc={this.state.tsc}
-            coin1={this.state.coin1}
+            coin0={this.state.coin0}
           />
           <Link to='#'>
             Detailed transaction
@@ -90,7 +90,7 @@ export default class TscView extends React.Component {
   }
 }
 
-const Listing = ({tsc, coin1}) =>
+const Listing = ({tsc, coin0}) =>
   <Table>
     <TableBody>
       <TableRow>

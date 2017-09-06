@@ -36,16 +36,16 @@ export default class AddrView extends React.Component {
       const user = await this.cx.user.load() // initializes the depot
       const addr = await (new Addr(this.cx, this.addrId)).load()
       const blc = this.cx.depot.getBlc([addr])
-      const {coin1, coin2} = await this.cx.user.getCoins(this.state.coin, user)
+      const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
       this.setState({
         err: null,
         addr: addr,
         tscs: addr.tscs,
+        coin0,
         coin1,
-        coin2,
         blc1: `${addr.coin} ${addr.amnt}`,
-        blc2: `${coin1} ${blc.get(coin1)}`,
-        blc3: `${coin2} ${blc.get(coin2)}`
+        blc2: `${coin0} ${blc.get(coin0)}`,
+        blc3: `${coin1} ${blc.get(coin1)}`
       })
     } catch (e) {
       this.setState({err: e.message})
@@ -98,7 +98,7 @@ export default class AddrView extends React.Component {
             </IconButton>}
           <TscList
             tscs={this.state.tscs}
-            coin1={this.state.coin1}
+            coin0={this.state.coin0}
           />
         </div>
       )
@@ -140,7 +140,7 @@ const AddrList = ({addr}) =>
     </TableBody>
   </Table>
 
-const TscList = ({tscs, coin1}) =>
+const TscList = ({tscs, coin0}) =>
   <Table>
     <TableBody>
       {tscs.map(tsc => {
@@ -163,7 +163,7 @@ const TscList = ({tscs, coin1}) =>
             <TableCell>
               {tsc.coin} {tsc.amnt}
               <br />
-              {coin1} {tsc.amnt * tsc.rates.get(coin1)}
+              {coin0} {tsc.amnt * tsc.rates.get(coin0)}
             </TableCell>
           </TableRow>
         )

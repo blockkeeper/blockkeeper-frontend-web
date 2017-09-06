@@ -7,6 +7,7 @@ import Syncr from './logic/Syncr'
 import Rate from './logic/Rate'
 import User from './logic/User'
 import {theme, pageStyle} from './view/Style'
+import UserView from './view/User'
 import DepotView from './view/Depot'
 import AddrView from './view/Addr'
 import TscView from './view/Tsc'
@@ -53,6 +54,7 @@ const Routes = () => (
         <Switch>
           <Route path='/login' exact render={authenticate} />
           <Route path='/register' exact component={RgstrView} />
+          <AuthRoute path='/user' exact component={UserView} />
           <AuthRoute path='/depot' exact component={DepotView} />
           <AuthRoute path='/addr/:addrId' exact component={AddrView} />
           <AuthRoute path='/tsc/:addrId/:tscId' exact component={TscView} />

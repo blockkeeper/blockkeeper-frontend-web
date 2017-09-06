@@ -53,9 +53,9 @@ export default class User extends Base {
 
   async getCoins (curCoin, user) {
     const coins = (user || await this.load()).coins
-    const coin1 = curCoin || coins[0]
-    const coin2 = (coin1 === coins[1]) ? coins[0] : coins[1]
-    return {coin1, coin2}
+    const coin0 = curCoin || coins[0]
+    const coin1 = (coin0 === coins[1]) ? coins[0] : coins[1]
+    return {coin0, coin1}
   }
 
   getName () {

@@ -27,15 +27,15 @@ export default class DepotView extends React.Component {
       const user = await this.cx.user.load() // initializes the depot
       const {addrs, tscs} = await this.cx.depot.loadAddrs()
       const blc = this.cx.depot.getBlc(addrs)
-      const {coin1, coin2} = await this.cx.user.getCoins(this.state.coin, user)
+      const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
       this.setState({
         err: null,
         addrs: addrs,
         tscs: tscs,
+        coin0,
         coin1,
-        coin2,
-        blc1: `${coin1} ${blc.get(coin1)}`,
-        blc2: `${coin2} ${blc.get(coin2)}`
+        blc1: `${coin0} ${blc.get(coin0)}`,
+        blc2: `${coin1} ${blc.get(coin1)}`
       })
     } catch (e) {
       this.setState({err: e.message})
@@ -79,13 +79,13 @@ export default class DepotView extends React.Component {
             <List
               ilk='addr'
               rows={this.state.addrs}
-              coin1={this.state.coin1}
+              coin0={this.state.coin0}
             />}
           {this.state.tabIx === 1 &&
             <List
               ilk='tsc'
               rows={this.state.tscs}
-              coin1={this.state.coin1}
+              coin0={this.state.coin0}
             />}
         </div>
       )
@@ -97,7 +97,7 @@ export default class DepotView extends React.Component {
   }
 }
 
-const List = ({ilk, rows, coin1}) =>
+const List = ({ilk, rows, coin0}) =>
   // ilk = 'addr' or 'tsc'
   <Table>
     <TableBody>
@@ -116,7 +116,7 @@ const List = ({ilk, rows, coin1}) =>
             <TableCell>
               {row.coin} {row.amnt}
               <br />
-              {coin1} {row.amnt * row.rates.get(coin1)}
+              {coin0} {row.amnt * row.rates.get(coin0)}
             </TableCell>
           </TableRow>
         )
