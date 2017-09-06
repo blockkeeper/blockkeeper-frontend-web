@@ -1,5 +1,6 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
+import Menu, { MenuItem } from 'material-ui/Menu'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
@@ -27,7 +28,7 @@ const TopBar = ({title, icon, onClick, noUser}) =>
         {title || ''}
       </Typography>
       {!noUser &&
-          <Link to={'/user'}><PersonIcon /></Link>}
+      <Link to={'/user'}><PersonIcon /></Link>}
     </Toolbar>
   </AppBar>
 
@@ -69,9 +70,65 @@ const Modal = ({open, onClose, children, title, actions}) => {
   )
 }
 
+class DropDown extends React.Component {
+  // usage:
+  //   <DropDown
+  //     _id=<unique_id>
+  //     data={this.state.<array_with_objs>}
+  //     slctd={this.state.<label_of_selected_item}
+  //     action={this.<action_function>}
+  //   />
+  constructor (props) {
+    super(props)
+    this._id = props._id
+    this.data = props.data
+    this.action = props.action
+    this.state = {open: false, slctd: props.slctd}
+    this.onOpen = evt => {
+      this.setState({open: true, anchorEl: evt.currentTarget})
+    }
+    this.onClose = () => {
+      this.setState({open: false})
+    }
+    this.onActionClose = (slctd) => {
+      this.setState({open: false, slctd: slctd})
+    }
+  }
+
+  render () {
+    return (
+      <div>
+        <Button
+          aria-owns={this.open ? this._id : null}
+          aria-haspopup
+          onClick={this.onOpen}
+        >
+          {this.state.slctd}
+        </Button>
+        <Menu
+          id={this._id}
+          anchorEl={this.state.anchorEl}
+          open={this.state.open}
+          onRequestClose={this.onClose}
+        >
+          {this.data.map(d =>
+            <MenuItem key={d.key} onClick={() => {
+              this.onActionClose(d.lbl)
+              this.action(d)
+            }
+            }>
+              {d.lbl}
+            </MenuItem>)}
+        </Menu>
+      </div>
+    )
+  }
+}
+
 export {
   TopBar,
   SubBar,
   Jumbo,
-  Modal
+  Modal,
+  DropDown
 }
