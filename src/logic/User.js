@@ -15,6 +15,7 @@ export default class User extends Base {
   }
 
   async _load (user) {
+    user.username = __.getSto('user')
     user.locale === 'de' ? mo.updateLocale(user.locale, deLoc) : mo.locale('en')
     // this.info('Locale: %s -> %s', loc, mo().format('LLLL'))
     // this.info('Coins: %s, Locale: %s', user.coins.join(', '), user.locale)
@@ -56,10 +57,6 @@ export default class User extends Base {
     const coin0 = curCoin || coins[0]
     const coin1 = (coin0 === coins[1]) ? coins[0] : coins[1]
     return {coin0, coin1}
-  }
-
-  getName () {
-    return __.getSto('user')
   }
 
   async init (user, pw) {

@@ -35,7 +35,7 @@ export default class UserView extends React.Component {
       }
       this.setState({
         err: null,
-        username: this.cx.user.getName(),
+        username: user.username,
         coin0: user.coins[0],
         coin1: user.coins[1],
         coins
