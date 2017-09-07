@@ -83,9 +83,7 @@ export default class TscView extends React.Component {
         </div>
       )
     } else {
-      return (
-        <LinearProgress />
-      )
+      return <LinearProgress />
     }
   }
 }

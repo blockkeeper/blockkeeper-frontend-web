@@ -90,9 +90,7 @@ export default class DepotView extends React.Component {
         </div>
       )
     } else {
-      return (
-        <LinearProgress />
-      )
+      return <LinearProgress />
     }
   }
 }

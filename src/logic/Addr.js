@@ -32,7 +32,7 @@ export default class Addr extends Base {
     if (this._id === 'simulateError') {
       throw __.err('Address not found', {sts: 404})
     }
-    return await __.toMoPro({
+    const pld = await __.toMoPro({
       _id: this._id,
       _t: __.getTme(),
       hsh: `hash_${this._id.slice(0, 5)}`,
@@ -65,6 +65,7 @@ export default class Addr extends Base {
         }
       ]
     })
+    return pld
   }
 
   getTsc (addr, tscId) {

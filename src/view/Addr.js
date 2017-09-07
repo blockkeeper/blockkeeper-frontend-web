@@ -103,9 +103,7 @@ export default class AddrView extends React.Component {
         </div>
       )
     } else {
-      return (
-        <LinearProgress />
-      )
+      return <LinearProgress />
     }
   }
 }
