@@ -2,6 +2,7 @@
 /* global fetch */
 import uuidv4 from 'uuid/v4'
 import * as mo from 'moment'
+import validator from 'validator'
 
 const cfg = (key) => {
   const data = {
@@ -26,7 +27,10 @@ class AppError extends Error {
     this.message = umsg                         // user message
     this.dmsg = dmsg                            // developer message
     this.sts = sts || (e || {}).sts || 0        // status code
-    this.more = Object.keys(more).length > 0 ? more : null   // additional data
+    const moreKeys = Object.keys(more)          // additional data
+    if (moreKeys.length > 0) {
+      for (let key of moreKeys) this[`_${key}`] = more[key]
+    }
   }
 }
 
@@ -122,6 +126,34 @@ const ppTme = _t => {
   return tme.fromNow()
 }
 
+const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
+  let pat = 'a-zA-Z0-9'
+  let msg = 'Allowed characters: '
+  if (strict) {
+    msg += pat
+  } else {
+    pat += ':,.-_'
+    if (noSpace) {
+      msg += pat
+    } else {
+      pat += ' '
+      msg += `Space and ${pat}`
+    }
+  }
+  if (!validator.matches(val, `^[${pat}]*$`)) return msg
+  min = min || 0
+  if (val.length < min) return `Min length: ${min} characters`
+  max = max || 30
+  if (val.length > max) return `Max length: ${max} characters`
+  return ''
+}
+
+const vldFloat = (val, max) => {
+  return validator.isFloat(val, {min: 0, max: max || 100000000000})
+    ? ''
+    : 'Not a float (e.g. 1.23) or value to small/big'
+}
+
 const urlToRsrc = (url) => {
   let rsrc = url.split('/')[4] || 'resource'
   // rsrc = rsrc.charAt(0).toUpperCase() + rsrc.slice(1)
@@ -205,7 +237,10 @@ export default {
   err: getErr,
   info: getLogger('info', 'main'),
   warn: getLogger('warn', 'main'),
-  uuid: uuidv4
+  uuid: uuidv4,
+  vld: validator,
+  vldAlphNum,
+  vldFloat
 }
 
 /*
