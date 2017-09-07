@@ -8,6 +8,7 @@ import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import PersonIcon from 'material-ui-icons/Person'
+import LoopIcon from 'material-ui-icons/Loop'
 import {jumboStyle} from './Style'
 import Dialog, {
   DialogActions,
@@ -70,6 +71,12 @@ const Modal = ({open, onClose, children, title, actions}) => {
   )
 }
 
+const SaveBtn = ({actv, busy, save}) => {
+  if (busy) return <Button disabled>Saving... <LoopIcon /></Button>
+  if (actv) return <Button onClick={save}>Save</Button>
+  return <Button disabled>Save</Button>
+}
+
 class DropDown extends React.Component {
   // usage:
   //   <DropDown
@@ -130,5 +137,6 @@ export {
   SubBar,
   Jumbo,
   Modal,
+  SaveBtn,
   DropDown
 }

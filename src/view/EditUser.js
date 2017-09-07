@@ -3,11 +3,10 @@ import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
-import LoopIcon from 'material-ui-icons/Loop'
-import {TopBar, Modal, DropDown} from './Lib'
+import {TopBar, Modal, SaveBtn, DropDown} from './Lib'
 // import __ from '../util'
 
-export default class UserView extends React.Component {
+export default class EditUserView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -15,11 +14,11 @@ export default class UserView extends React.Component {
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
     this.setCoin = this.setCoin.bind(this)
-    this.saveUser = this.saveUser.bind(this)
+    this.save = this.save.bind(this)
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'user'))
+    Object.assign(this, this.cx._initView(this, 'editUser'))
     await this.load()
   }
 
@@ -50,10 +49,10 @@ export default class UserView extends React.Component {
 
   setCoin (coinData) {
     this.info('Setting %s to %s', coinData.ilk, coinData.lbl)
-    this.setState({[coinData.ilk]: coinData.key, updated: true})
+    this.setState({[coinData.ilk]: coinData.key, upd: true})
   }
 
-  async saveUser () {
+  async save () {
     this.setState({busy: true})
     try {
       await this.cx.user.save({coins: [this.state.coin0, this.state.coin1]})
@@ -61,7 +60,7 @@ export default class UserView extends React.Component {
       this.setState({err: e.message})
       if (process.env.NODE_ENV === 'development') throw e
     }
-    this.setState({busy: false, updated: false})
+    this.setState({busy: false, upd: false})
   }
 
   render () {
@@ -79,7 +78,7 @@ export default class UserView extends React.Component {
       return (
         <div>
           <TopBar
-            title='User'
+            title='Edit user'
             icon={<ArrowBackIcon />}
             onClick={this.goBack}
             noUser
@@ -115,18 +114,15 @@ export default class UserView extends React.Component {
              />
           </div>
           <p />
-          {(!this.state.updated && !this.state.busy) &&
-            <Button disabled>Save</Button>}
-          {(this.state.updated && !this.state.busy) &&
-            <Button onClick={this.saveUser}>Save</Button>}
-          {this.state.busy &&
-            <Button disabled>Saving... <LoopIcon /></Button>}
+          <SaveBtn
+            actv={this.state.upd}
+            busy={this.state.busy}
+            save={this.save}
+            />
         </div>
       )
     } else {
-      return (
-        <LinearProgress />
-      )
+      return <LinearProgress />
     }
   }
 }
