@@ -7,8 +7,9 @@ import Toolbar from 'material-ui/Toolbar'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
+import {LinearProgress} from 'material-ui/Progress'
 import PersonIcon from 'material-ui-icons/Person'
-import LoopIcon from 'material-ui-icons/Loop'
+import AddIcon from 'material-ui-icons/Add'
 import {jumboStyle} from './Style'
 import Dialog, {
   DialogActions,
@@ -58,23 +59,77 @@ const Jumbo = ({title, subTitle1, subTitle2, icon}) =>
       </Typography>}
   </div>
 
-const Modal = ({open, onClose, children, title, actions}) => {
-  actions = actions || [<Button key={__.uuid()} onClick={onClose}>OK</Button>]
+
+const FloatBtn = ({onClick, key}) => {
+  const style = {
+    margin: 0,
+    top: 'auto',
+    right: 20,
+    bottom: 20,
+    left: 'auto',
+    position: 'fixed'
+  }
   return (
-    <Dialog open={open} onRequestClose={onClose} >
-      <DialogTitle>{title || 'Error'}</DialogTitle>
-      <DialogContent>
-        <DialogContentText>{children}</DialogContentText>
-      </DialogContent>
-      <DialogActions>{actions}</DialogActions>
-    </Dialog>
+    <Button
+      fab
+      color='primary'
+      aria-label='add'
+      style={style}
+      onClick={onClick}
+      key={key || __.uuid()}
+    >
+      <AddIcon />
+    </Button>
   )
 }
 
-const SaveBtn = ({actv, busy, save}) => {
-  if (busy) return <Button disabled>Saving... <LoopIcon /></Button>
-  if (actv) return <Button onClick={save}>Save</Button>
-  return <Button disabled>Save</Button>
+class Modal extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {}
+    this.children = props.children
+    this.open = (props.open == null) ? true : props.open
+    this.onClose = props.onClose
+    this.lbl = props.lbl || 'Error'
+    let acs = props.actions || [{lbl: 'OK', onClick: this.onClose}]
+    if (!props.noCncl && this.lbl !== 'Error') {
+      acs.push({lbl: 'Cancel', onClick: this.onClose})
+    }
+    this.btns = []
+    for (let ac of acs) {
+      this.btns.push(
+        <Button
+          key={ac.key || __.uuid()}
+          onClick={
+            props.withBusy
+              ? async (...args) => {
+                this.setState({busy: true})
+                const d = await ac.onClick(...args)
+                return d
+              }
+              : ac.onClick
+          }
+        >
+          {ac.lbl}
+        </Button>
+      )
+    }
+  }
+
+  render () {
+    return (
+      <Dialog open={this.open} onRequestClose={this.onClose} >
+        <DialogTitle>{this.lbl}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{this.children}</DialogContentText>
+        </DialogContent>
+        {!this.state.busy &&
+          <DialogActions>{this.btns}</DialogActions>}
+        {this.state.busy &&
+          <LinearProgress />}
+      </Dialog>
+    )
+  }
 }
 
 class DropDown extends React.Component {
@@ -137,6 +192,6 @@ export {
   SubBar,
   Jumbo,
   Modal,
-  SaveBtn,
+  FloatBtn,
   DropDown
 }

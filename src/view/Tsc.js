@@ -52,11 +52,7 @@ export default class TscView extends React.Component {
   render () {
     if (this.state.err) {
       return (
-        <Modal
-          open
-          onClose={this.goBack}
-          actions={<Button onClick={this.goBack}>OK</Button>}
-        >
+        <Modal onClose={this.goBack}>
           {this.state.err}
         </Modal>
       )

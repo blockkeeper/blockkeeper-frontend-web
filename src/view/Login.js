@@ -32,9 +32,8 @@ export default class LoginView extends React.Component {
     if (this.state.err) {
       return (
         <Modal
-          open
-          onClose={this.load}
-          actions={<Button onClick={this.reload}>Back to login</Button>}
+          onClose={this.reload}
+          actions={[{lbl: 'Back to login', onClick: this.reload}]}
         >
           {this.state.err}
         </Modal>

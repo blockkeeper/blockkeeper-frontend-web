@@ -3,7 +3,7 @@ import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
-import {TopBar, Modal, SaveBtn, DropDown} from './Lib'
+import {TopBar, Modal, DropDown} from './Lib'
 // import __ from '../util'
 
 export default class EditUserView extends React.Component {
@@ -66,11 +66,7 @@ export default class EditUserView extends React.Component {
   render () {
     if (this.state.err) {
       return (
-        <Modal
-          open
-          onClose={this.goBack}
-          actions={<Button onClick={this.goBack}>OK</Button>}
-        >
+        <Modal onClose={this.goBack}>
           {this.state.err}
         </Modal>
       )
@@ -114,11 +110,12 @@ export default class EditUserView extends React.Component {
              />
           </div>
           <p />
-          <SaveBtn
-            actv={this.state.upd}
-            busy={this.state.busy}
-            save={this.save}
-            />
+          {this.state.busy &&
+            <LinearProgress />}
+          {!this.state.busy &&
+            <Button onClick={this.save} disabled={!this.state.upd}>
+              Save
+            </Button>}
         </div>
       )
     } else {
