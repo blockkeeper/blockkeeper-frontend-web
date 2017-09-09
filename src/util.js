@@ -134,7 +134,7 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
   if (strict) {
     msg += pat
   } else {
-    pat += ':,.-_'
+    pat += ':,._\\-'
     if (noSpace) {
       msg += pat
     } else {
