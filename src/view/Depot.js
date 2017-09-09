@@ -1,10 +1,9 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import Table, {TableBody, TableCell, TableRow} from 'material-ui/Table'
-import Button from 'material-ui/Button'
 import {LinearProgress} from 'material-ui/Progress'
-import {TopBar, SubBar, Jumbo, Modal} from './Lib'
-// import __ from '../util'
+import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal} from './Lib'
+import __ from '../util'
 
 export default class DepotView extends React.Component {
   constructor (props) {
@@ -12,7 +11,8 @@ export default class DepotView extends React.Component {
     this.cx = props.cx
     this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
     this.load = this.load.bind(this)
-    this.onTab = this.onTab.bind(this)
+    this.tab = this.tab.bind(this)
+    this.goAddAddr = () => this.props.history.push('/addr/add')
   }
 
   async componentDidMount () {
@@ -24,7 +24,7 @@ export default class DepotView extends React.Component {
     try {
       // uncomment to test error view:
       //   throw this.err('An error occurred')
-      const user = await this.cx.user.load() // initializes the depot
+      const user = await this.cx.user.load()
       const {addrs, tscs} = await this.cx.depot.loadAddrs()
       const blc = this.cx.depot.getBlc(addrs)
       const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
@@ -35,7 +35,8 @@ export default class DepotView extends React.Component {
         coin0,
         coin1,
         blc1: `${coin0} ${blc.get(coin0)}`,
-        blc2: `${coin1} ${blc.get(coin1)}`
+        blc2: `${coin1} ${blc.get(coin1)}`,
+        snack: __.getSnack()
       })
     } catch (e) {
       this.setState({err: e.message})
@@ -43,7 +44,7 @@ export default class DepotView extends React.Component {
     }
   }
 
-  async onTab (evt, tabIx) {
+  async tab (evt, tabIx) {
     await this.load()
     this.setState({tabIx})
     this.cx.tmp.depotTabIx = tabIx
@@ -53,9 +54,8 @@ export default class DepotView extends React.Component {
     if (this.state.err) {
       return (
         <Modal
-          open
           onClose={this.load}
-          actions={<Button onClick={this.load}>Reload</Button>}
+          actions={[{lbl: 'Reload', onClick: this.load}]}
         >
           {this.state.err}
         </Modal>
@@ -63,6 +63,11 @@ export default class DepotView extends React.Component {
     } else if (this.state.addrs && this.state.tscs) {
       return (
         <div>
+          {this.state.snack &&
+            <Snack
+              msg={this.state.snack}
+              onClose={() => this.setState({snack: null})}
+            />}
           <TopBar
             title='Blockkeeper'
           />
@@ -73,7 +78,7 @@ export default class DepotView extends React.Component {
           <SubBar
             tabs={['Addresses', 'Transactions']}
             ix={this.state.tabIx}
-            onClick={this.onTab}
+            onClick={this.tab}
           />
           {this.state.tabIx === 0 &&
             <List
@@ -87,6 +92,7 @@ export default class DepotView extends React.Component {
               rows={this.state.tscs}
               coin0={this.state.coin0}
             />}
+          <FloatBtn onClick={this.goAddAddr} />
         </div>
       )
     } else {
@@ -96,7 +102,6 @@ export default class DepotView extends React.Component {
 }
 
 const List = ({ilk, rows, coin0}) =>
-  // ilk = 'addr' or 'tsc'
   <Table>
     <TableBody>
       {rows.map(row => {

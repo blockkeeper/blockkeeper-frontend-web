@@ -4,6 +4,7 @@ import Menu, { MenuItem } from 'material-ui/Menu'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
+import Snackbar from 'material-ui/Snackbar'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
@@ -59,7 +60,6 @@ const Jumbo = ({title, subTitle1, subTitle2, icon}) =>
       </Typography>}
   </div>
 
-
 const FloatBtn = ({onClick, key}) => {
   const style = {
     margin: 0,
@@ -83,6 +83,17 @@ const FloatBtn = ({onClick, key}) => {
   )
 }
 
+const Snack = ({msg, onClose}) =>
+  <Snackbar
+    open
+    autoHideDuration={2500}
+    enterTransitionDuration={500}
+    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+    onRequestClose={onClose}
+    SnackbarContentProps={{'aria-describedby': 'message-id'}}
+    message={<span id='message-id'>{msg}</span>}
+  />
+
 class Modal extends React.Component {
   constructor (props) {
     super(props)
@@ -92,7 +103,7 @@ class Modal extends React.Component {
     this.onClose = props.onClose
     this.lbl = props.lbl || 'Error'
     let acs = props.actions || [{lbl: 'OK', onClick: this.onClose}]
-    if (!props.noCncl && this.lbl !== 'Error') {
+    if (!props.noCncl && this.lbl.toLowerCase() !== 'error') {
       acs.push({lbl: 'Cancel', onClick: this.onClose})
     }
     this.btns = []
@@ -191,6 +202,7 @@ export {
   TopBar,
   SubBar,
   Jumbo,
+  Snack,
   Modal,
   FloatBtn,
   DropDown

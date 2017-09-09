@@ -67,5 +67,6 @@ export default class User extends Base {
     const secret = __.toSecret(user, pw)
     await this.load(await this.apiGet(secret))
     __.setSecSto(user, secret)
+    __.getSnack() // cleanup
   }
 }

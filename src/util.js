@@ -6,7 +6,8 @@ import validator from 'validator'
 
 const cfg = (key) => {
   const data = {
-    url: 'https://api.blockkeeper.io/v1'
+    url: 'https://api.blockkeeper.io/v1',
+    maxChar: 30
   }
   return key == null ? data : data[key]
 }
@@ -27,7 +28,8 @@ class AppError extends Error {
     this.message = umsg                         // user message
     this.dmsg = dmsg                            // developer message
     this.sts = sts || (e || {}).sts || 0        // status code
-    const moreKeys = Object.keys(more)          // additional data
+    this.more = more                            // additional data
+    const moreKeys = Object.keys(more)
     if (moreKeys.length > 0) {
       for (let key of moreKeys) this[`_${key}`] = more[key]
     }
@@ -143,15 +145,21 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
   if (!validator.matches(val, `^[${pat}]*$`)) return msg
   min = min || 0
   if (val.length < min) return `Min length: ${min} characters`
-  max = max || 30
+  max = max || cfg('maxChar')
   if (val.length > max) return `Max length: ${max} characters`
   return ''
 }
 
 const vldFloat = (val, max) => {
-  return validator.isFloat(val, {min: 0, max: max || 100000000000})
+  return validator.isFloat(val, {min: 0, max: max || 9999999999})
     ? ''
     : 'Not a float (e.g. 1.23) or value to small/big'
+}
+
+const getSnack = () => {
+  let msg = getSto('snack')
+  delSto('snack')
+  return msg
 }
 
 const urlToRsrc = (url) => {
@@ -225,6 +233,8 @@ export default {
   delSecSto: () => delSto('secret'),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
+  addSnack: (msg) => setSto('snack', msg),
+  getSnack,
   setSecSto,
   urlToRsrc,
   rqst,
