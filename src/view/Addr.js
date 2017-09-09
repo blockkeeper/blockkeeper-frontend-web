@@ -215,7 +215,7 @@ class AddrList extends React.Component {
         descEmsg: __.vldAlphNum(this.state.desc)
       }
       if (this.hshMode) {
-        d.upd = true
+        if (!d.nameEmsg && !d.descEmsg) d.upd = true
       } else {
         if (this.state.name.trim() && !d.nameEmsg && !d.descEmsg) d.upd = true
       }
