@@ -13,6 +13,7 @@ class Base {
     this.load = this.load.bind(this)
     this.apiGet = this.apiGet.bind(this)
     this.apiSet = this.apiSet.bind(this)
+    this.apiDel = this.apiDel.bind(this)
   }
 
   async _save (pld, upd) {
@@ -23,7 +24,7 @@ class Base {
   async save (upd) {
     let pld
     try {
-      pld = this.getSto()
+      pld = this.getSto() || {}
       pld = await this._save(pld, upd) || pld
       await this.apiSet(pld)
     } catch (e) {
@@ -46,6 +47,20 @@ class Base {
     return pld
   }
 
+  async delete (_id) {
+    let pld
+    try {
+      pld = pld || this.getSto() || await this.apiGet()
+      if (this._delete) await this._delete(pld)
+      await this.apiDel(pld)
+    } catch (e) {
+      this.warn('Deleting failed')
+      throw e
+    }
+    this.info('Deleted')
+    return pld
+  }
+
   async apiGet (secret) {
     let pld
     try {
@@ -61,10 +76,10 @@ class Base {
     return pld
   }
 
-  async apiSet (pld, secret) {
+  async apiSet (pld) {
     pld = pld || this.getSto()
     try {
-      await this._apiSet(pld, secret || __.getSecSto())
+      await this._apiSet(pld, __.getSecSto())
       this.setSto(pld)
     } catch (e) {
       throw this.err(e.message, {
@@ -74,6 +89,21 @@ class Base {
     }
     this.info('Api-Set %s finished', this._type[1])
     return pld
+  }
+
+  async apiDel () {
+    const _id = this.getSto()._id
+    try {
+      await this._apiDel(_id, __.getSecSto())
+      this.delSto(_id)
+    } catch (e) {
+      throw this.err(e.message, {
+        e: e,
+        dmsg: `Api-Delete ${this._type[1]} failed`
+      })
+    }
+    this.info('Api-Delete %s finished', this._type[1])
+    return _id
   }
 }
 
