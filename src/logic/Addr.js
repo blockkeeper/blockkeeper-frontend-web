@@ -68,12 +68,22 @@ export default class Addr extends Base {
     return pld
   }
 
+  async _apiSet (pld, secret) {
+    pld = await __.toMoPro({result: 'ok'}, 800)
+    return pld
+  }
+
+  async _apiDel (_id, secret) {
+    await __.toMoPro({result: 'ok'}, 800)
+  }
+
   getTsc (addr, tscId) {
     const tscs = addr.tscs.filter(tsc => tsc._id === tscId)
     if (tscs.length !== 1) {
       throw __.err('Transaction not found', {
-        dmsg: `${tscId} not found in ${addr}`,
-        sts: 404
+        dmsg: `Tsc ${tscId} not found in addr ${addr._id}`,
+        sts: 404,
+        addr
       })
     }
     return tscs[0]
