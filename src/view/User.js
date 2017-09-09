@@ -6,7 +6,7 @@ import ArrowBackIcon from 'material-ui-icons/ArrowBack'
 import {TopBar, Modal, DropDown} from './Lib'
 // import __ from '../util'
 
-export default class EditUserView extends React.Component {
+export default class UserView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
