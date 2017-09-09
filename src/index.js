@@ -10,6 +10,7 @@ import {theme, pageStyle} from './view/Style'
 import EditUserView from './view/EditUser'
 import DepotView from './view/Depot'
 import AddrView from './view/Addr'
+import AddAddrView from './view/AddAddr'
 import TscView from './view/Tsc'
 import RgstrView from './view/Rgstr'
 import LoginView from './view/Login'
@@ -56,6 +57,7 @@ const Routes = () => (
           <Route path='/register' exact component={RgstrView} />
           <AuthRoute path='/user/edit' exact component={EditUserView} />
           <AuthRoute path='/depot' exact component={DepotView} />
+          <AuthRoute path='/addr/add' exact component={AddAddrView} />
           <AuthRoute path='/addr/:addrId' exact component={AddrView} />
           <AuthRoute path='/tsc/:addrId/:tscId' exact component={TscView} />
           <Redirect to='/depot' />

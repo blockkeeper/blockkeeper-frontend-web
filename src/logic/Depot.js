@@ -16,7 +16,8 @@ export default class Depot extends Base {
   async _apiGet () {
     // dummy because this.load() calls _apiGet(),
     // but perhaps a real api request in a future version
-    return await {_id: this._id}
+    const pld = await {_id: this._id}
+    return pld
   }
 
   getBlc (items) {
@@ -28,6 +29,26 @@ export default class Depot extends Base {
       }
     }
     return blcs
+  }
+
+  async saveNewAddr (hshMode, pld) {
+    const addrObj = new Addr(this.cx)
+    const addr = {
+      _id: addrObj._id,
+      _t: __.getTme(),
+      hsh: null,
+      name: (pld.name || '').trim(),
+      desc: (pld.desc || '').trim(),
+      amnt: __.vld.toFloat(String(pld.amnt || '0')),
+      coin: pld.coin,
+      tscs: []
+    }
+    if (hshMode) {
+      addr.hsh = pld.hsh.trim()
+      addr.name = addr.name || addr.hsh.slice(0, __.cfg('maxChar'))
+    }
+    await addrObj.save(addr)
+    return addr
   }
 
   async loadAddrs (addrIds) {
@@ -56,8 +77,9 @@ export default class Depot extends Base {
   }
 
   async loadAddrIds () {
-    const addrIds = __.getStoIds('addr')
-    return addrIds.length > 0 ? addrIds : await this.apiGetAddrs()
+    let addrIds = __.getStoIds('addr')
+    addrIds = (addrIds.length > 0) ? addrIds : await this.apiGetAddrs()
+    return addrIds
   }
 
   async apiGetAddrs () {
