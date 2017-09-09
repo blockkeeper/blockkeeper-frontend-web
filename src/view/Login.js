@@ -12,11 +12,11 @@ export default class LoginView extends React.Component {
     super(props)
     this.reset = () => ({err: null, busy: null, user: '', pw: ''})
     this.reload = () => { this.setState(this.reset()) }
-    this.onLogin = this.onLogin.bind(this)
+    this.login = this.login.bind(this)
     this.state = this.reset()
   }
 
-  async onLogin () {
+  async login () {
     this.setState({err: null, busy: true})
     try {
       await this.props.initUser(this.state.user, this.state.pw)
@@ -64,7 +64,7 @@ export default class LoginView extends React.Component {
           />
           <br />
           <Button
-            onClick={(event) => this.onLogin(event)}
+            onClick={(event) => this.login(event)}
           >
             <LockIcon />
             Login
