@@ -134,12 +134,12 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
   if (strict) {
     msg += pat
   } else {
-    pat += ':,._\\-'
+    pat += ':,.\\-_'
     if (noSpace) {
-      msg += pat
+      msg += pat.replace('\\', '')
     } else {
       pat += ' '
-      msg += `Space and ${pat}`
+      msg += `Space and ${pat.replace('\\', '')}`
     }
   }
   if (!validator.matches(val, `^[${pat}]*$`)) return msg
