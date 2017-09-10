@@ -101,7 +101,7 @@ export default class UserView extends React.Component {
             onClick: () => this.logout(true)
           }]}
         >
-          {"Clear browser's local storage and logout?"}
+          {"Clear browser's local app storage and logout?"}
         </Modal>
       )
     } else if (this.state.delAcc) {
@@ -174,17 +174,14 @@ export default class UserView extends React.Component {
           }
           <p />
           <Typography align='left' type='headline'>
-            Logout
+            Danger zone
           </Typography>
           <Button onClick={() => this.logout(false)}>
             Logout
           </Button>
-          <p />
-          <Typography align='left' type='headline'>
-            Danger zone
-          </Typography>
+          <br />
           <Button onClick={() => this.setState({logout: true})}>
-            Clear LocalStorage and Logout
+            Logout and clear LocalStorage
           </Button>
           <br />
           <Button onClick={() => this.setState({delAcc: true})}>
