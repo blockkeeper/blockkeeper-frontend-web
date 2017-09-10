@@ -7,7 +7,9 @@ import __ from '../util'
 export default class User extends Base {
   constructor (cx) {
     super('user', cx, '0005b739-8462-4959-af94-271cd93f5195')
+    this.isLoggedIn = () => Boolean(__.getSecSto())
     this._load = this._load.bind(this)
+    this._save = this._save.bind(this)
     this._apiGet = this._apiGet.bind(this)
     this._apiSet = this._apiSet.bind(this)
     this.init = this.init.bind(this)
@@ -22,26 +24,28 @@ export default class User extends Base {
     // this.info('Coins: %s, Locale: %s', user.coins.join(', '), user.locale)
     if (!this.cx.depot) {
       this.cx.depot = new Depot(this.cx, user.depotId)
-      this.cx.depot.load()
+      await this.cx.depot.load()
     }
+  }
+
+  async _save (pld, upd) {
+    Object.assign(upd, {
+      _t: __.getTme(),
+      locale: 'de',
+      coins: ['EUR', 'BTC']
+    })
+    return upd
   }
 
   async _apiGet (secret) {
     let pld
     if (secret === 'foo:bar') {    // mock successful login
       pld = await __.toMoPro({
-        // user object has (for all users) always the same uuid
-        //   -> secret is sufficient to identify the desired user
-        //   -> the user _id is only needed for framework compatibility
         _id: '0005b739-8462-4959-af94-271cd93f5195',
-        created: __.getTme(),
+        _t: __.getTme(),
         locale: 'de',
-        coins: ['EUR', 'BTC'],   // first is default currency for views
-        depotId: '0005b739-8462-4959-af94-271cd93f5195',
-        addrIds: [
-          'a2d7077a-a838-4463-8461-71f26e0873b1',
-          'ace20977-b117-43d1-9b60-b527f013e491'
-        ]
+        coins: ['EUR', 'BTC'],
+        depotId: '0005b739-8462-4959-af94-271cd93f5195'
       }, 500)
     } else if (secret === 'bar:foo') {    // mock invalid user
       throw this.err('User not found', {sts: 404})

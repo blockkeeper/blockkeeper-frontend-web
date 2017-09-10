@@ -36,14 +36,18 @@ cx._initView = (cx => {
 
 const authenticate = props => {
   props.cx = cx
-  props.initUser = cx.user.init
   return (<LoginView {...props} />)
+}
+
+const register = props => {
+  props.cx = cx
+  return (<RgstrView {...props} />)
 }
 
 const AuthRoute = ({component: Component, ...args}) => (
   <Route {...args} render={props => {
     props.cx = cx
-    return __.getSecSto()
+    return cx.user.isLoggedIn()
       ? (<Component {...props} />)
       : (<Redirect to='/login' />)
   }} />
@@ -55,7 +59,7 @@ const Routes = () => (
       <BrowserRouter>
         <Switch>
           <Route path='/login' exact render={authenticate} />
-          <Route path='/register' exact component={RgstrView} />
+          <Route path='/rgstr' exact render={register} />
           <AuthRoute path='/user/edit' exact component={UserView} />
           <AuthRoute path='/depot' exact component={DepotView} />
           <AuthRoute path='/addr/add' exact component={AddAddrView} />

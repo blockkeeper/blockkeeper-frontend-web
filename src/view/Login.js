@@ -1,10 +1,11 @@
 import React from 'react'
-import Typography from 'material-ui/Typography'
+import {Link} from 'react-router-dom'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import {LinearProgress} from 'material-ui/Progress'
+import ArrowBackIcon from 'material-ui-icons/ArrowBack'
 import LockIcon from 'material-ui-icons/Lock'
-import {Modal} from './Lib'
+import {TopBar, Modal} from './Lib'
 import __ from '../util'
 
 export default class LoginView extends React.Component {
@@ -28,7 +29,7 @@ export default class LoginView extends React.Component {
   async login () {
     this.setState({err: null, busy: true})
     try {
-      await this.props.initUser(this.state.user, this.state.pw)
+      await this.cx.user.init(this.state.user, this.state.pw)
       this.props.history.push('/depot')  // redirect
     } catch (e) {
       (e.sts === 404)
@@ -50,12 +51,13 @@ export default class LoginView extends React.Component {
     } else {
       return (
         <div>
-          <Typography align='left' type='display2'>
-            Blockkeeper
-          </Typography>
-          <Typography align='left' type='subheading'>
-            Please enter your login credentials
-          </Typography>
+          <TopBar
+            title='Login'
+            icon={<ArrowBackIcon />}
+            onClick={this.goBack}
+            noUser
+          />
+          <p />
           <TextField
             autoFocus
             label='Username'
@@ -78,6 +80,7 @@ export default class LoginView extends React.Component {
             <LockIcon />
             Login
           </Button>
+          <Link to='/rgstr'>Sign up</Link>
           {this.state.busy &&
             <LinearProgress />}
         </div>

@@ -70,7 +70,7 @@ export default class UserView extends React.Component {
     }
   }
 
-  logout (clear) {
+  logout () {
     __.clearSto()
     this.props.history.push('/login')
   }
