@@ -9,7 +9,7 @@ export default class DepotView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
+    this.state = {addrs: [], tabIx: this.cx.tmp.depotTabIx || 0}
     this.load = this.load.bind(this)
     this.tab = this.tab.bind(this)
     this.goAddAddr = () => this.props.history.push('/addr/add')
@@ -58,6 +58,19 @@ export default class DepotView extends React.Component {
           actions={[{lbl: 'Reload', onClick: this.load}]}
         >
           {this.state.err}
+        </Modal>
+      )
+    } else if (this.state.addrs.length < 1) {
+      return (
+        <Modal
+          onClose={this.load}
+          lbl='Welcome'
+          noCncl
+          actions={[]}
+        >
+          <Link to={`/user/edit`}>Edit your settings</Link>
+          <br />
+          <Link to={`/addr/add`}>Add your first address</Link>
         </Modal>
       )
     } else if (this.state.addrs && this.state.tscs) {
