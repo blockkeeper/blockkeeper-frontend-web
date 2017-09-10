@@ -58,7 +58,7 @@ export default class TscView extends React.Component {
         {name, desc, tags: tags.trim().split(' ')},
         this.addr
       )
-      __.addSnack('Transaction successfully updated')
+      __.addSnack('Transaction updated')
       this.addr = addr
       this.setState({tsc, snack: __.getSnack()})
     } catch (e) {

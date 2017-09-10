@@ -57,7 +57,7 @@ export default class AddAddrView extends React.Component {
         !this.state.noHshMode,
         this.state
       )
-      __.addSnack('Address successfully added')
+      __.addSnack('Address added')
       this.props.history.replace(`/addr/${addr._id}`)
     } catch (e) {
       this.setState({err: e.message, busy: false})

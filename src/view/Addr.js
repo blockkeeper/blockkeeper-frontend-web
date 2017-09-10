@@ -62,7 +62,7 @@ export default class AddrView extends React.Component {
   async save (name, desc) {
     try {
       const addr = await this.addrObj.save({name, desc})
-      __.addSnack('Address successfully updated')
+      __.addSnack('Address updated')
       this.setState({addr, snack: __.getSnack()})
     } catch (e) {
       this.setState({err: e.message, show: false})
@@ -70,10 +70,10 @@ export default class AddrView extends React.Component {
     }
   }
 
-  async delete (name, desc) {
+  async delete () {
     try {
       await this.addrObj.delete()
-      __.addSnack('Address successfully deleted')
+      __.addSnack('Address deleted')
     } catch (e) {
       this.setState({err: e.message, show: false})
       if (process.env.NODE_ENV === 'development') throw e
