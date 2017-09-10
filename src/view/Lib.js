@@ -135,7 +135,8 @@ class Modal extends React.Component {
           <DialogContentText>{this.children}</DialogContentText>
         </DialogContent>
         {!this.state.busy &&
-          <DialogActions>{this.btns}</DialogActions>}
+          this.btns &&
+            <DialogActions>{this.btns}</DialogActions>}
         {this.state.busy &&
           <LinearProgress />}
       </Dialog>
