@@ -51,8 +51,13 @@ export default class User extends Base {
     return pld
   }
 
-  async _apiSet (pld, secret) {
-    pld = await __.toMoPro({result: 'ok'}, 1500)
+  async _apiSet (user, secret) {
+    user = await __.toMoPro({result: 'ok'}, 1500)
+    return user
+  }
+
+  async _apiDel (user, secret) {
+    const pld = await __.toMoPro({result: 'ok'}, 1500)
     return pld
   }
 

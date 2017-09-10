@@ -4,7 +4,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
 import {TopBar, Modal, DropDown} from './Lib'
-// import __ from '../util'
+import __ from '../util'
 
 export default class UserView extends React.Component {
   constructor (props) {
@@ -15,10 +15,12 @@ export default class UserView extends React.Component {
     this.load = this.load.bind(this)
     this.setCoin = this.setCoin.bind(this)
     this.save = this.save.bind(this)
+    this.logout = this.logout.bind(this)
+    this.delete = this.delete.bind(this)
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'editUser'))
+    Object.assign(this, this.cx._initView(this, 'user'))
     await this.load()
   }
 
@@ -47,11 +49,6 @@ export default class UserView extends React.Component {
     }
   }
 
-  setCoin (coinData) {
-    this.info('Setting %s to %s', coinData.ilk, coinData.lbl)
-    this.setState({[coinData.ilk]: coinData.key, upd: true})
-  }
-
   async save () {
     this.setState({busy: true})
     try {
@@ -63,11 +60,62 @@ export default class UserView extends React.Component {
     this.setState({busy: false, upd: false})
   }
 
+  async delete () {
+    try {
+      await this.cx.user.delete()
+      this.logout(true)
+    } catch (e) {
+      this.setState({err: e.message, show: false})
+      if (process.env.NODE_ENV === 'development') throw e
+    }
+  }
+
+  logout (clear) {
+    if (clear) {
+      __.clearSto()
+    } else {
+      __.delSecSto()
+    }
+    this.props.history.push('/login')
+  }
+
+  setCoin (coinData) {
+    this.info('Setting %s to %s', coinData.ilk, coinData.lbl)
+    this.setState({[coinData.ilk]: coinData.key, upd: true})
+  }
+
   render () {
     if (this.state.err) {
       return (
         <Modal onClose={this.goBack}>
           {this.state.err}
+        </Modal>
+      )
+    } else if (this.state.logout) {
+      return (
+        <Modal
+          onClose={() => this.setState({logout: null})}
+          lbl='Logout'
+          actions={[{
+            lbl: 'Logout and clear?',
+            onClick: () => this.logout(true)
+          }]}
+        >
+          {"Clear browser's local storage and logout?"}
+        </Modal>
+      )
+    } else if (this.state.delAcc) {
+      return (
+        <Modal
+          withBusy
+          onClose={() => this.setState({delAcc: null})}
+          lbl='Delete account'
+          actions={[{
+            lbl: 'Delete',
+            onClick: () => this.delete()
+          }]}
+        >
+          {'Delete account and related data?'}
         </Modal>
       )
     } else if (this.state.username) {
@@ -93,8 +141,8 @@ export default class UserView extends React.Component {
           }
           <div>
             <Typography align='left' type='body1'>
-            Primary coin
-          </Typography>
+              Primary coin
+            </Typography>
             <DropDown
               _id='coin0DropDown'
               data={this.state.coins.coin0}
@@ -124,6 +172,24 @@ export default class UserView extends React.Component {
               </Button>
             </div>
           }
+          <p />
+          <Typography align='left' type='headline'>
+            Logout
+          </Typography>
+          <Button onClick={() => this.logout(false)}>
+            Logout
+          </Button>
+          <p />
+          <Typography align='left' type='headline'>
+            Danger zone
+          </Typography>
+          <Button onClick={() => this.setState({logout: true})}>
+            Clear LocalStorage and Logout
+          </Button>
+          <br />
+          <Button onClick={() => this.setState({delAcc: true})}>
+            Delete account
+          </Button>
         </div>
       )
     } else {

@@ -220,6 +220,11 @@ const setSecSto = (user, secret) => {
   setSto('secret', secret)
 }
 
+const delSecSto = () => {
+  delSto('user')
+  delSto('secret')
+}
+
 export default {
   cfg,
   getStos,
@@ -230,13 +235,14 @@ export default {
   getJsonSto,
   setJsonSto,
   delJsonSto: delSto,
+  clearSto: () => localStorage.clear(),
+  setSecSto,
+  delSecSto,
   getSecSto: () => getSto('secret'),
-  delSecSto: () => delSto('secret'),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
   addSnack: (msg) => setSto('snack', msg),
   getSnack,
-  setSecSto,
   urlToRsrc,
   rqst,
   ppTme,
