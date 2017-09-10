@@ -6,7 +6,7 @@ import TextField from 'material-ui/TextField'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
 import LinkIcon from 'material-ui-icons/Link'
-import {TopBar, Jumbo, Modal} from './Lib'
+import {TopBar, Jumbo, Snack, Modal} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -77,6 +77,11 @@ export default class TscView extends React.Component {
     } else if (this.state.tsc) {
       return (
         <div>
+          {this.state.snack &&
+            <Snack
+              msg={this.state.snack}
+              onClose={() => this.setState({snack: null})}
+            />}
           <TopBar
             title='Transaction'
             icon={<ArrowBackIcon />}
