@@ -5,15 +5,24 @@ import TextField from 'material-ui/TextField'
 import {LinearProgress} from 'material-ui/Progress'
 import LockIcon from 'material-ui-icons/Lock'
 import {Modal} from './Lib'
-// import __ from '../util'
+import __ from '../util'
 
 export default class LoginView extends React.Component {
   constructor (props) {
     super(props)
+    this.cx = props.cx
     this.reset = () => ({err: null, busy: null, user: '', pw: ''})
     this.reload = () => { this.setState(this.reset()) }
     this.login = this.login.bind(this)
     this.state = this.reset()
+  }
+
+  componentWillMount () {
+    if (__.getSecSto()) this.props.history.replace('/depot')
+  }
+
+  async componentDidMount () {
+    Object.assign(this, this.cx._initView(this, 'login'))
   }
 
   async login () {

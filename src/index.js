@@ -35,6 +35,7 @@ cx._initView = (cx => {
 })(cx)
 
 const authenticate = props => {
+  props.cx = cx
   props.initUser = cx.user.init
   return (<LoginView {...props} />)
 }
