@@ -74,21 +74,23 @@ export default class UserView extends React.Component {
       return (
         <div>
           <TopBar
-            title='Edit user'
+            title='Settings'
             icon={<ArrowBackIcon />}
             onClick={this.goBack}
             noUser
           />
           <p />
-          <div>
-            <Typography align='left' type='body1'>
-              Username
-            </Typography>
-            <Typography align='left' type='body1'>
-              {this.state.username}
-            </Typography>
-          </div>
-          <p />
+          {
+          // <div>
+          //   <Typography align='left' type='body1'>
+          //     Username
+          //   </Typography>
+          //   <Typography align='left' type='body1'>
+          //     {this.state.username}
+          //   </Typography>
+          // </div>
+          // <p />
+          }
           <div>
             <Typography align='left' type='body1'>
             Primary coin
@@ -113,9 +115,15 @@ export default class UserView extends React.Component {
           {this.state.busy &&
             <LinearProgress />}
           {!this.state.busy &&
-            <Button onClick={this.save} disabled={!this.state.upd}>
-              Save
-            </Button>}
+            <div>
+              <Button onClick={this.save} disabled={!this.state.upd}>
+                Save
+              </Button>
+              <Button onClick={this.goBack}>
+                Cancel
+              </Button>
+            </div>
+          }
         </div>
       )
     } else {

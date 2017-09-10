@@ -181,9 +181,14 @@ export default class AddAddrView extends React.Component {
           </div>
           <p />
           {!this.state.busy &&
-          <Button onClick={this.save} disabled={!this.state.upd}>
-            Save
-          </Button>}
+            <div>
+              <Button onClick={this.save} disabled={!this.state.upd}>
+                Save
+              </Button>
+              <Button onClick={this.goBack}>
+                Cancel
+              </Button>
+            </div>}
           {this.state.busy &&
             <LinearProgress />}
         </div>
