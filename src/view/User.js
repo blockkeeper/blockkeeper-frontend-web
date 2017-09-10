@@ -63,7 +63,7 @@ export default class UserView extends React.Component {
   async delete () {
     try {
       await this.cx.user.delete()
-      this.logout(true)
+      this.logout()
     } catch (e) {
       this.setState({err: e.message, show: false})
       if (process.env.NODE_ENV === 'development') throw e
@@ -71,11 +71,7 @@ export default class UserView extends React.Component {
   }
 
   logout (clear) {
-    if (clear) {
-      __.clearSto()
-    } else {
-      __.delSecSto()
-    }
+    __.clearSto()
     this.props.history.push('/login')
   }
 
@@ -98,7 +94,7 @@ export default class UserView extends React.Component {
           lbl='Logout'
           actions={[{
             lbl: 'Logout and clear?',
-            onClick: () => this.logout(true)
+            onClick: () => this.logout()
           }]}
         >
           {"Clear browser's local app storage and logout?"}
@@ -176,12 +172,8 @@ export default class UserView extends React.Component {
           <Typography align='left' type='headline'>
             Danger zone
           </Typography>
-          <Button onClick={() => this.logout(false)}>
-            Logout
-          </Button>
-          <br />
           <Button onClick={() => this.setState({logout: true})}>
-            Logout and clear LocalStorage
+            Logout (and clear LocalStorage)
           </Button>
           <br />
           <Button onClick={() => this.setState({delAcc: true})}>
