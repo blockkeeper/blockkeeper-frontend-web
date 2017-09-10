@@ -9,7 +9,9 @@ const cfg = (key) => {
     apiUrl: 'https://api.blockkeeper.io/v1',
     homeUrl: 'https://blockkeeper.io',
     maxLow: 30,
-    maxHigh: 500
+    maxHigh: 500,
+    minPw: (process.env.NODE_ENV === 'development') ? 0 : 3,  // TODO
+    maxPw: 30
   }
   return key == null ? data : data[key]
 }
@@ -154,13 +156,11 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
 
 const vldPw = (pw) => {
   let pat = 'a-zA-Z0-9:,.\\-_'
-  let min = (process.env.NODE_ENV === 'development') ? 0 : 8
-  let max = 30
   if (!validator.matches(pw, `^[${pat}]*$`)) {
     return `Allowed characters: ${pat.replace('\\', '')}`
   }
-  if (pw.length < min) return `Min length: ${min} characters`
-  if (pw.length > max) return `Max length: ${max} characters`
+  if (pw.length < cfg('minPw')) return `Min length: ${cfg('minPw')} characters`
+  if (pw.length > cfg('maxPw')) return `Max length: ${cfg('maxPw')} characters`
   return ''
 }
 
