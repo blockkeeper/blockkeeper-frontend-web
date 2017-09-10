@@ -7,6 +7,7 @@ export default class Addr extends Base {
     this._load = this._load.bind(this)
     this._apiGet = this._apiGet.bind(this)
     this.getTsc = this.getTsc.bind(this)
+    this.saveTsc = this.saveTsc.bind(this)
     this.info('Created')
   }
 
@@ -21,9 +22,6 @@ export default class Addr extends Base {
       tsc.addrId = addr._id
       tsc.coin = addr.coin
       tsc.rates = addr.rates
-      const tags = []
-      for (let tag of tsc.tags) tags.push('#' + tag)
-      tsc.tags = tags
     }
     return addr
   }
@@ -77,7 +75,8 @@ export default class Addr extends Base {
     await __.toMoPro({result: 'ok'}, 800)
   }
 
-  getTsc (addr, tscId) {
+  async getTsc (tscId, addr) {
+    addr = addr || await this.load()
     const tscs = addr.tscs.filter(tsc => tsc._id === tscId)
     if (tscs.length !== 1) {
       throw __.err('Transaction not found', {
@@ -87,5 +86,28 @@ export default class Addr extends Base {
       })
     }
     return tscs[0]
+  }
+
+  async saveTsc (tscId, upd, addr) {
+    addr = addr || await this.load()
+    let newTsc
+    const tscs = []
+    for (let tsc of addr.tscs) {
+      if (tsc._id === tscId) {
+        Object.assign(tsc, upd)
+        newTsc = tsc
+      }
+      tscs.push(tsc)
+    }
+    if (!newTsc) {
+      throw __.err('Transaction not found', {
+        dmsg: `Tsc ${tscId} not found in addr ${addr._id}`,
+        sts: 404,
+        addr
+      })
+    }
+    addr.tscs = tscs
+    await this.save(addr)
+    return {addr, tsc: newTsc}
   }
 }
