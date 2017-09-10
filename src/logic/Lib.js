@@ -47,7 +47,7 @@ class Base {
     return pld
   }
 
-  async delete (_id) {
+  async delete () {
     let pld
     try {
       pld = pld || this.getSto() || await this.apiGet()
@@ -91,11 +91,11 @@ class Base {
     return pld
   }
 
-  async apiDel () {
-    const _id = this.getSto()._id
+  async apiDel (pld) {
+    pld = this.getSto()
     try {
-      await this._apiDel(_id, __.getSecSto())
-      this.delSto(_id)
+      await this._apiDel(pld, __.getSecSto())
+      this.delSto(pld._id)
     } catch (e) {
       throw this.err(e.message, {
         e: e,
@@ -103,7 +103,7 @@ class Base {
       })
     }
     this.info('Api-Delete %s finished', this._type[1])
-    return _id
+    return pld
   }
 }
 
