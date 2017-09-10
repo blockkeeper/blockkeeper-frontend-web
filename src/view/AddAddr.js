@@ -10,7 +10,7 @@ import ArrowBackIcon from 'material-ui-icons/ArrowBack'
 import {TopBar, Modal} from './Lib'
 import __ from '../util'
 
-export default class AddAddr extends React.Component {
+export default class AddAddrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -70,7 +70,7 @@ export default class AddAddr extends React.Component {
       let d = {
         upd: false,
         nameEmsg: __.vldAlphNum(this.state.name),
-        descEmsg: __.vldAlphNum(this.state.desc)
+        descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')})
       }
       if (this.state.noHshMode) {
         d.amntEmsg = __.vldFloat(this.state.amnt)

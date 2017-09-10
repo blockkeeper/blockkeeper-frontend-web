@@ -128,8 +128,8 @@ class TscList extends React.Component {
       let d = {
         upd: false,
         nameEmsg: __.vldAlphNum(this.state.name),
-        descEmsg: __.vldAlphNum(this.state.desc),
-        tagsEmsg: __.vldAlphNum(this.state.tags)
+        descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')}),
+        tagsEmsg: __.vldAlphNum(this.state.tags, {max: __.cfg('maxHigh')})
       }
       if (!d.nameEmsg && !d.descEmsg && !d.tagsEmsg) d.upd = true
       this.setState(d)

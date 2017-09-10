@@ -212,7 +212,7 @@ class AddrList extends React.Component {
       let d = {
         upd: false,
         nameEmsg: __.vldAlphNum(this.state.name),
-        descEmsg: __.vldAlphNum(this.state.desc)
+        descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')})
       }
       if (this.hshMode) {
         if (!d.nameEmsg && !d.descEmsg) d.upd = true

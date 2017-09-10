@@ -7,7 +7,8 @@ import validator from 'validator'
 const cfg = (key) => {
   const data = {
     url: 'https://api.blockkeeper.io/v1',
-    maxChar: 30
+    maxLow: 30,
+    maxHigh: 500
   }
   return key == null ? data : data[key]
 }
@@ -145,7 +146,7 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
   if (!validator.matches(val, `^[${pat}]*$`)) return msg
   min = min || 0
   if (val.length < min) return `Min length: ${min} characters`
-  max = max || cfg('maxChar')
+  max = max || cfg('maxLow')
   if (val.length > max) return `Max length: ${max} characters`
   return ''
 }
