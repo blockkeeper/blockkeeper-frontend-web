@@ -9,7 +9,7 @@ export default class DepotView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.state = {addrs: [], tabIx: this.cx.tmp.depotTabIx || 0}
+    this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
     this.load = this.load.bind(this)
     this.tab = this.tab.bind(this)
     this.goAddAddr = () => this.props.history.push('/addr/add')
@@ -60,7 +60,7 @@ export default class DepotView extends React.Component {
           {this.state.err}
         </Modal>
       )
-    } else if (this.state.addrs.length < 1) {
+    } else if (this.state.addrs && this.state.addrs.length < 1) {
       return (
         <Modal
           onClose={this.load}
