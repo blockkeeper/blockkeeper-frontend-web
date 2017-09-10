@@ -6,7 +6,8 @@ import validator from 'validator'
 
 const cfg = (key) => {
   const data = {
-    url: 'https://api.blockkeeper.io/v1',
+    apiUrl: 'https://api.blockkeeper.io/v1',
+    homeUrl: 'https://blockkeeper.io',
     maxLow: 30,
     maxHigh: 500
   }
@@ -151,6 +152,18 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
   return ''
 }
 
+const vldPw = (pw) => {
+  let pat = 'a-zA-Z0-9:,.\\-_'
+  let min = (process.env.NODE_ENV === 'development') ? 0 : 8
+  let max = 30
+  if (!validator.matches(pw, `^[${pat}]*$`)) {
+    return `Allowed characters: ${pat.replace('\\', '')}`
+  }
+  if (pw.length < min) return `Min length: ${min} characters`
+  if (pw.length > max) return `Max length: ${max} characters`
+  return ''
+}
+
 const vldFloat = (val, max) => {
   return validator.isFloat(val, {min: 0, max: max || 9999999999})
     ? ''
@@ -257,7 +270,8 @@ export default {
   uuid: uuidv4,
   vld: validator,
   vldAlphNum,
-  vldFloat
+  vldFloat,
+  vldPw
 }
 
 /*
