@@ -12,24 +12,20 @@ export default class LoginView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.reset = () => ({err: null, busy: null, user: '', pw: ''})
-    this.reload = () => { this.setState(this.reset()) }
+    this.reset = () => ({err: null, busy: null, username: '', pw: ''})
+    this.reload = () => this.setState(this.reset())
     this.login = this.login.bind(this)
     this.state = this.reset()
   }
 
-  componentWillMount () {
-    if (__.getSecSto()) this.props.history.replace('/depot')
-  }
-
-  async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'login'))
+  componentDidMount () {
+    Object.assign(this, __.initView(this, 'login'))
   }
 
   async login () {
     this.setState({err: null, busy: true})
     try {
-      await this.cx.user.init(this.state.user, this.state.pw)
+      await this.cx.core.login(this.state.username, this.state.pw)
       this.props.history.push('/depot')  // redirect
     } catch (e) {
       (e.sts === 404)
@@ -61,10 +57,10 @@ export default class LoginView extends React.Component {
           <TextField
             autoFocus
             label='Username'
-            value={this.state.user}
-            error={this.state.emsg && true}
+            value={this.state.username}
+            error={Boolean(this.state.emsg)}
             helperText={this.state.emsg}
-            onChange={evt => this.setState({user: evt.target.value})}
+            onChange={evt => this.setState({username: evt.target.value})}
           />
           <br />
           <TextField

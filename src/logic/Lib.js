@@ -1,32 +1,40 @@
 import __ from '../util'
 
 class Base {
-  constructor (name, cx, _id, pa, pld) {
+  constructor (name, cx, _id, pa) {
     this.cx = cx
     Object.assign(this, __.init('logic', name, _id, pa))
     this.getSto = () => __.getJsonSto(this._store)
     this.setSto = pld => __.setJsonSto(this._store, pld)
     this.delSto = () => __.delSto(this._store)
-    if (pld) this.setSto(pld)
+  }
+}
+
+class ApiBase extends Base {
+  constructor (name, cx, _id, pa) {
+    super(name, cx, _id, pa)
     this._save = this._save.bind(this)
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
     this.apiGet = this.apiGet.bind(this)
     this.apiSet = this.apiSet.bind(this)
     this.apiDel = this.apiDel.bind(this)
+    this.encrypt = this.cx.core.encrypt
+    this.decrypt = this.cx.core.decrypt
   }
 
-  async _save (pld, upd) {
+  async _save (pld, upd, data) {
     Object.assign(pld, upd || {})
     return pld
   }
 
-  async save (upd) {
+  async save (upd, data) {
+    data = data || {}
     let pld
     try {
       pld = this.getSto() || {}
-      pld = await this._save(pld, upd) || pld
-      await this.apiSet(pld)
+      pld = await this._save(pld, upd, data) || pld
+      await this.apiSet(pld, data)
     } catch (e) {
       this.warn('Saving failed')
       throw e
@@ -35,10 +43,11 @@ class Base {
     return pld
   }
 
-  async load (pld) {
+  async load (pld, data) {
+    data = data || {}
     try {
-      pld = pld || this.getSto() || await this.apiGet()
-      if (this._load) pld = await this._load(pld) || pld
+      pld = pld || this.getSto() || await this.apiGet(data)
+      if (this._load) pld = await this._load(pld, data) || pld
     } catch (e) {
       this.warn('Loading failed')
       throw e
@@ -47,24 +56,24 @@ class Base {
     return pld
   }
 
-  async delete () {
-    let pld
+  async delete (data) {
+    data = data || {}
     try {
-      pld = pld || this.getSto() || await this.apiGet()
-      if (this._delete) await this._delete(pld)
-      await this.apiDel(pld)
+      const pld = this.getSto()
+      if (this._delete) await this._delete(pld, data)
+      await this.apiDel(pld, data)
     } catch (e) {
       this.warn('Deleting failed')
       throw e
     }
     this.info('Deleted')
-    return pld
   }
 
-  async apiGet (secret) {
+  async apiGet (data) {
+    data = data || {}
     let pld
     try {
-      pld = await this._apiGet(secret || __.getSecSto())
+      pld = await this._apiGet(data)
       this.setSto(pld)
     } catch (e) {
       throw this.err(e.message, {
@@ -76,10 +85,11 @@ class Base {
     return pld
   }
 
-  async apiSet (pld) {
+  async apiSet (pld, data) {
+    data = data || {}
     pld = pld || this.getSto()
     try {
-      await this._apiSet(pld, __.getSecSto())
+      pld = await this._apiSet(pld, data) || pld
       this.setSto(pld)
     } catch (e) {
       throw this.err(e.message, {
@@ -91,10 +101,11 @@ class Base {
     return pld
   }
 
-  async apiDel (pld) {
-    pld = this.getSto()
+  async apiDel (data) {
+    data = data || {}
+    const pld = this.getSto()
     try {
-      await this._apiDel(pld, __.getSecSto())
+      await this._apiDel(pld, data)
       this.delSto(pld._id)
     } catch (e) {
       throw this.err(e.message, {
@@ -108,5 +119,6 @@ class Base {
 }
 
 export {
-  Base
+  Base,
+  ApiBase
 }

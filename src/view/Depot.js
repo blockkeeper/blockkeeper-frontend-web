@@ -16,7 +16,7 @@ export default class DepotView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'depot'))
+    Object.assign(this, __.initView(this, 'depot'))
     await this.load()
   }
 
@@ -24,10 +24,14 @@ export default class DepotView extends React.Component {
     try {
       // uncomment to test error view:
       //   throw this.err('An error occurred')
-      const user = await this.cx.user.load()
-      const {addrs, tscs} = await this.cx.depot.loadAddrs()
+      const [
+        {addrs, tscs},
+        {coin0, coin1}
+      ] = await Promise.all([
+        this.cx.depot.loadAddrs(),
+        this.cx.user.getCoins(this.state.coin)
+      ])
       const blc = this.cx.depot.getBlc(addrs)
-      const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
       this.setState({
         err: null,
         addrs: addrs,
@@ -105,7 +109,8 @@ export default class DepotView extends React.Component {
               rows={this.state.tscs}
               coin0={this.state.coin0}
             />}
-          <FloatBtn onClick={this.goAddAddr} />
+          {this.state.tabIx === 0 &&
+            <FloatBtn onClick={this.goAddAddr} />}
         </div>
       )
     } else {

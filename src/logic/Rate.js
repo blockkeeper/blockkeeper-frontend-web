@@ -1,7 +1,7 @@
-import {Base} from './Lib'
+import {ApiBase} from './Lib'
 import __ from '../util'
 
-export default class Rate extends Base {
+export default class Rate extends ApiBase {
   constructor (cx) {
     super('rate', cx, '00095c08-0c1a-4ed4-b4b0-e0452e86e48b')
     this.delSto()  // we want always fresh rates
@@ -11,13 +11,7 @@ export default class Rate extends Base {
     this.info('Created')
   }
 
-  async _apiGet (secret) {
-    // request parameters:
-    //   secret               -> does user exists? (we don't want to be a
-    //                           proxy for other services)
-    //   type of data = rates -> desired resource type
-    //
-    // response:
+  async _apiGet () {
     const rate = await __.toMoPro({
       _t: __.getTme(),
       pairs: {
@@ -28,7 +22,7 @@ export default class Rate extends Base {
         ETH_BTC: 0.071,
         BTC_ETH: 14.28
       }
-    }, 1000, secret)
+    }, 750)
     // add 1-to-1 rates and coin list
     const coins = new Set()
     for (let pair of Object.keys(rate.pairs)) {

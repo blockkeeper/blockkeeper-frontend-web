@@ -11,7 +11,7 @@ export default class RgstrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.state = {user: '', pw: '', rpw: ''}
+    this.state = {username: '', pw: '', rpw: ''}
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')
     this.save = this.save.bind(this)
@@ -20,25 +20,19 @@ export default class RgstrView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'rgstr'))
-    this.load()
-  }
-
-  async load () {
-    if (this.cx.user.isLoggedIn()) this.setState({loggedIn: true})
+    Object.assign(this, __.initView(this, 'rgstr'))
+    if (this.cx.core.isActive()) this.setState({loggedIn: true})
   }
 
   logout () {
-    __.clearSto()
+    this.cx.core.clear()
     this.setState({loggedIn: null})
   }
 
   async save () {
     this.setState({busy: true})
     try {
-      await this.cx.user.save({user: this.state.user, pw: this.state.pw})
-      this.logout()  // clear local storage
-      await this.cx.user.init(this.state.user, this.state.pw)
+      await this.cx.core.register(this.state.username, this.state.pw)
       this.props.history.replace(`/depot`)
     } catch (e) {
       this.setState({err: e.message, busy: false})
@@ -48,7 +42,7 @@ export default class RgstrView extends React.Component {
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
-      let d = {upd: false, userEmsg: __.vldAlphNum(this.state.user)}
+      let d = {upd: false, usernameEmsg: __.vldAlphNum(this.state.username)}
       if (this.state.pw) {
         this.setState({pw_: true})
         d.pwEmsg = __.vldPw(this.state.pw)
@@ -60,8 +54,8 @@ export default class RgstrView extends React.Component {
           ? d.rpwEmsg = ''
           : d.rpwEmsg = 'Password does not match'
       }
-      if (this.state.user && this.state.pw && this.state.rpw &&
-          !d.userEmsg && !d.pwEmsg && !d.rpwEmsg) {
+      if (this.state.username && this.state.pw && this.state.rpw &&
+          !d.usernameEmsg && !d.pwEmsg && !d.rpwEmsg) {
         d.upd = true
       }
       this.setState(d)
@@ -104,10 +98,10 @@ export default class RgstrView extends React.Component {
           <TextField
             autoFocus
             label='Username *'
-            value={this.state.user}
-            error={Boolean(this.state.userEmsg)}
-            helperText={this.state.userEmsg}
-            onChange={evt => this.set('user', evt.target.value)}
+            value={this.state.username}
+            error={Boolean(this.state.usernameEmsg)}
+            helperText={this.state.usernameEmsg}
+            onChange={evt => this.set('username', evt.target.value)}
           />
           <p />
           <TextField

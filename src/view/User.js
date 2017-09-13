@@ -20,7 +20,7 @@ export default class UserView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'user'))
+    Object.assign(this, __.initView(this, 'user'))
     await this.load()
   }
 
@@ -28,11 +28,15 @@ export default class UserView extends React.Component {
     try {
       // uncomment to test error view:
       //   throw this.err('An error occurred')
-      const [user, rate] = await Promise.all(
-        [this.cx.user.load(), this.cx.rate.load()]
-      )
+      const [
+        user,
+        rateCoins
+      ] = await Promise.all([
+        this.cx.user.load(),
+        this.cx.rate.getCoins()
+      ])
       const coins = {coin0: [], coin1: []}
-      for (let coin of await this.cx.rate.getCoins(rate)) {
+      for (let coin of rateCoins) {
         coins.coin0.push({lbl: coin, key: coin, ilk: 'coin0'})
         coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
       }
@@ -71,7 +75,7 @@ export default class UserView extends React.Component {
   }
 
   logout () {
-    __.clearSto()
+    this.cx.core.clear()
     this.props.history.push('/login')
   }
 

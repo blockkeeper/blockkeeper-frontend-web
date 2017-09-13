@@ -3,10 +3,8 @@ import ReactDOM from 'react-dom'
 import registerServiceWorker from './registerServiceWorker'
 import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import Syncr from './logic/Syncr'
-import Rate from './logic/Rate'
-import User from './logic/User'
 import {theme, pageStyle} from './view/Style'
+import Core from './logic/Core'
 import UserView from './view/User'
 import DepotView from './view/Depot'
 import AddrView from './view/Addr'
@@ -14,29 +12,16 @@ import AddAddrView from './view/AddAddr'
 import TscView from './view/Tsc'
 import RgstrView from './view/Rgstr'
 import LoginView from './view/Login'
-import __ from './util'
+// import __ from './util'
 
-const cx = {tmp: {}, _jobsRunning: false}
-cx.syncr = new Syncr(cx)
-cx.rate = new Rate(cx)
-cx.user = new User(cx)
+const cx = {}
+cx.core = new Core(cx)
 
-cx._initView = (cx => {
-  return (cmp, name) => {
-    // if (!cx._jobsRunning) {
-    //   cx._jobsRunning = true
-    //   cx.syncr.startJobs()
-    // }
-    // cmp = __.init('view', cmp._reactInternalInstance.getName())
-    cmp = __.init('view', name)
-    cmp.info('Created')
-    return cmp
-  }
-})(cx)
-
-const authenticate = props => {
+const login = props => {
   props.cx = cx
-  return (<LoginView {...props} />)
+  return cx.core.init()
+    ? (<Redirect to='/depot' />)
+    : (<LoginView {...props} />)
 }
 
 const register = props => {
@@ -47,7 +32,7 @@ const register = props => {
 const AuthRoute = ({component: Component, ...args}) => (
   <Route {...args} render={props => {
     props.cx = cx
-    return cx.user.isLoggedIn()
+    return cx.core.init()
       ? (<Component {...props} />)
       : (<Redirect to='/login' />)
   }} />
@@ -58,7 +43,7 @@ const Routes = () => (
     <MuiThemeProvider theme={theme} >
       <BrowserRouter>
         <Switch>
-          <Route path='/login' exact render={authenticate} />
+          <Route path='/login' exact render={login} />
           <Route path='/rgstr' exact render={register} />
           <AuthRoute path='/user/edit' exact component={UserView} />
           <AuthRoute path='/depot' exact component={DepotView} />

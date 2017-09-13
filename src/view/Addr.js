@@ -30,7 +30,7 @@ export default class AddrView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'addr'))
+    Object.assign(this, __.initView(this, 'addr'))
     await this.load()
   }
 
@@ -38,10 +38,14 @@ export default class AddrView extends React.Component {
     try {
       // uncomment to test error view:
       //   throw this.err('An error occurred')
-      const user = await this.cx.user.load()
-      const addr = await this.addrObj.load()
+      const [
+        addr,
+        {coin0, coin1}
+      ] = await Promise.all([
+        await this.addrObj.load(),
+        this.cx.user.getCoins(this.state.coin)
+      ])
       const blc = this.cx.depot.getBlc([addr])
-      const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
       this.setState({
         err: null,
         addr: addr,

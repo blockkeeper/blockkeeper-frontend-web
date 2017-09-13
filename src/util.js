@@ -38,7 +38,7 @@ const getErr = (...args) => {
     (e.dmsg ? ` -> ${e.dmsg}` : '')
   ]
   if (e.sts) d[0] += ` -> ${e.sts}`
-  if (e.paErr) d.push({parentError: e.paErr})
+  if (e.paErr) d.push({paErr: e.paErr})
   if (e.more) d.push(e.more)
   console.warn(...d)
   return e
@@ -57,7 +57,7 @@ const getLogger = (ilk, lbl) => {
 
 const toLbl = (mainType, subType, _id, paLbl) => {
   let lbl = mainType + ':' + subType.slice(0, 15)
-  if (_id) lbl += '_' + _id.slice(0, 15)
+  if (_id) lbl += '_' + _id.slice(0, 5)
   if (paLbl) lbl += '.' + paLbl.replace(mainType + ':', '')
   return lbl
 }
@@ -75,6 +75,12 @@ const init = (mainType, subType, _id, pa) => {
   d.warn = getLogger('warn', d._lbl)
   d.err = (umsg, kwargs = {}) => getErr(umsg, {...kwargs, lbl: d._lbl})
   return d
+}
+
+const initView = (cmp, name) => {
+  cmp = init('view', name)
+  cmp.info('Created')
+  return cmp
 }
 
 async function rqst (rqstObj) {
@@ -183,9 +189,6 @@ const getStoIds = term => {
   return Array.from(new Set(getStos(term, (sto) => sto.split('_')[1])))
 }
 
-// TODO: generate real secret
-const toSecret = (user, pw) => user + ':' + pw
-
 const getSto = key => localStorage.getItem(key)
 
 const setSto = (key, pld) => {
@@ -217,16 +220,6 @@ const setJsonSto = (key, pld) => {
   }
 }
 
-const setSecSto = (user, secret) => {
-  setSto('user', user)
-  setSto('secret', secret)
-}
-
-const delSecSto = () => {
-  delSto('user')
-  delSto('secret')
-}
-
 export default {
   cfg,
   getStos,
@@ -238,20 +231,17 @@ export default {
   setJsonSto,
   delJsonSto: delSto,
   clearSto: () => localStorage.clear(),
-  setSecSto,
-  delSecSto,
-  getSecSto: () => getSto('secret'),
-  getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
-  getTme: () => mo.utc().format(),
   addSnack: (msg) => setSto('snack', msg),
+  getTme: () => mo.utc().format(),
+  getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getSnack,
   urlToRsrc,
   rqst,
   ppTme,
-  toSecret,
   getLogger,
   toLbl,
   init,
+  initView,
   toMoPro,
   err: getErr,
   info: getLogger('info', 'main'),

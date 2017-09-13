@@ -30,7 +30,7 @@ export default class AddAddrView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'addAddr'))
+    Object.assign(this, __.initView(this, 'addAddr'))
     await this.load()
   }
 
@@ -38,7 +38,6 @@ export default class AddAddrView extends React.Component {
     try {
       // uncomment to test error view:
       //   throw this.err('An error occurred')
-      await this.cx.user.load() // initializes the depot
       this.coins = await this.cx.rate.getCoins()
       this.setState({
         err: null,

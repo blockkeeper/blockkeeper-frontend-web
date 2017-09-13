@@ -24,7 +24,7 @@ export default class TscView extends React.Component {
   }
 
   async componentDidMount () {
-    Object.assign(this, this.cx._initView(this, 'tsc'))
+    Object.assign(this, __.initView(this, 'tsc'))
     await this.load()
   }
 
@@ -32,11 +32,16 @@ export default class TscView extends React.Component {
     try {
       // uncomment to test error view:
       //   throw this.err('An error occurred')
-      const user = await this.cx.user.load()
-      this.addr = await this.addrObj.load()
+      const [
+        addr,
+        {coin0, coin1}
+      ] = await Promise.all([
+        await this.addrObj.load(),
+        this.cx.user.getCoins(this.state.coin)
+      ])
+      this.addr = addr
       const tsc = await this.addrObj.getTsc(this.tscId, this.addr)
       const blc = this.cx.depot.getBlc([tsc])
-      const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
       this.setState({
         err: null,
         tsc: tsc,
