@@ -1,8 +1,8 @@
 /* global localStorage */
-/* global fetch */
 import uuidv4 from 'uuid/v4'
 import * as mo from 'moment'
 import validator from 'validator'
+import axios from 'axios'
 import cfg from './cfg'
 
 class AppError extends Error {
@@ -14,17 +14,37 @@ class AppError extends Error {
       // firefox is bitchy
       // console.warn('Capturing error stacktrace failed')
     }
+    sts = sts || 0
+    const paSts = (e || {}).sts || 0
+    const paErr = e
     this.name = this.constructor.name
     this.isAppErr = true
     this.lbl = lbl                              // label
-    this.paErr = e                              // parent error
+    this.paErr = paErr                          // parent error
     this.message = umsg                         // user message
     this.dmsg = dmsg                            // developer message
-    this.sts = sts || (e || {}).sts || 0        // status code
+    this.sts = sts || paSts                     // status code
     this.more = more                            // additional data
     const moreKeys = Object.keys(more)
     if (moreKeys.length > 0) {
       for (let key of moreKeys) this[`_${key}`] = more[key]
+    }
+    if (sts >= 900) {
+      this.dmsg = this.dmsg ? `${this.dmsg}. ` : '' +
+                  'Clearing environment cause of fatal error'
+      this.message = `A fatal error occured: ${this.message}. ` +
+                     'Environment cleared. Please login again'
+      clearSto()
+    } else {
+      if (paSts >= 900) {
+        this.dmsg = this.dmsg ? `${this.dmsg}. ` : '' +
+                    'Parent error status is equal/greater 900 (fatal ' +
+                    'error): Overwriting user message and status. ' +
+                    `Original user message: "${this.message}". ` +
+                    `Original status: "${this.sts}"`
+        this.message = paErr.message
+        this.sts = paSts
+      }
     }
   }
 }
@@ -83,35 +103,44 @@ const initView = (cmp, name) => {
   return cmp
 }
 
-async function rqst (rqstObj) {
+async function rqst (rqstObj, lbl) {
+  lbl = lbl || 'resource'
+  if (!rqstObj.timeout) rqstObj.timeout = cfg('tmo')
+  if (!rqstObj.method) rqstObj.method = (rqstObj.data == null) ? 'get' : 'put'
   let e
-  let rsp
+  let errs = []
+  let rsp = {}
+  let dmsg
   try {
-    rsp = await fetch(rqstObj)
-  } catch (e) {}
-  rsp = rsp || {}
-  let sts = rsp.status || 600
-  if (sts === 200) {
-    try {
-      return rsp.json()
-    } catch (e) {
-      sts = 601
-    }
-  }
-  let err
-  let umsg
-  try {
-    err = await rsp.json()
+    rsp = await axios(rqstObj)
+    return rsp.data
   } catch (e) {
-    err = {}
+    if (e.message) {
+      errs.push(e.message)
+      dmsg = e.message
+    }
+    if (e.response) {
+      rsp = e.response
+      errs.push(rsp)
+      if ((rsp.data || {}).errorMessage) dmsg += `: ${rsp.data.errorMessage}`
+    } else {
+      rsp = {}
+    }
+    if (e.request) errs.push(e.request)
   }
+  let umsg
+  let sts = rsp.status || 600
   if (sts === 404) {
-    umsg = `${urlToRsrc(rqstObj.url)} not found`
+    umsg = lbl.charAt(0).toUpperCase() + lbl.slice(1) + ' not found'
   } else {
-    umsg = `Requesting ${urlToRsrc(rqstObj.url)} failed: ` +
+    umsg = `Requesting ${lbl} failed: ` +
       ((sts >= 400 && sts < 500) ? 'Invalid input' : 'API error')
   }
-  throw this.err(umsg, {e, sts, err, rqstObj, rqstRsp: rsp})
+  throw getErr(umsg, {e, dmsg, sts, errs, rsp, rqst: rqstObj})
+}
+
+const getRndInt = size => {
+  return Math.floor((Math.random() * size) + 1)
 }
 
 // mock promise
@@ -171,12 +200,6 @@ const getSnack = () => {
   return msg
 }
 
-const urlToRsrc = (url) => {
-  let rsrc = url.split('/')[4] || 'resource'
-  // rsrc = rsrc.charAt(0).toUpperCase() + rsrc.slice(1)
-  return rsrc
-}
-
 const getStos = (term, convert) => {
   let stos = []
   for (let sto of Object.keys(localStorage)) {
@@ -200,6 +223,8 @@ const delSto = key => {
   localStorage.removeItem(key)
   // localStorage.removeItem(`last_${key}`)
 }
+
+const clearSto = () => localStorage.clear()
 
 const getJsonSto = key => {
   const warn = getLogger('warn', 'main')
@@ -230,12 +255,11 @@ export default {
   getJsonSto,
   setJsonSto,
   delJsonSto: delSto,
-  clearSto: () => localStorage.clear(),
+  clearSto,
   addSnack: (msg) => setSto('snack', msg),
   getTme: () => mo.utc().format(),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getSnack,
-  urlToRsrc,
   rqst,
   ppTme,
   getLogger,
@@ -250,7 +274,8 @@ export default {
   vld: validator,
   vldAlphNum,
   vldFloat,
-  vldPw
+  vldPw,
+  getRndInt
 }
 
 /*
