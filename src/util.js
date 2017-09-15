@@ -143,7 +143,7 @@ const getRndInt = size => {
   return Math.floor((Math.random() * size) + 1)
 }
 
-// mock promise
+// mock promise (only for development/testing)
 const toMoPro = (data, tmoMsec, ...args) => {
   // catch "...args" to satisfy IDE linter only
   return new Promise((resolve, reject) => {
@@ -208,24 +208,6 @@ const getStos = (term, convert) => {
   return stos
 }
 
-const getStoIds = term => {
-  return Array.from(new Set(getStos(term, (sto) => sto.split('_')[1])))
-}
-
-const getSto = key => localStorage.getItem(key)
-
-const setSto = (key, pld) => {
-  localStorage.setItem(key, pld)
-  // localStorage.setItem(`last_${key}`, mo.utc().format())
-}
-
-const delSto = key => {
-  localStorage.removeItem(key)
-  // localStorage.removeItem(`last_${key}`)
-}
-
-const clearSto = () => localStorage.clear()
-
 const getJsonSto = key => {
   const warn = getLogger('warn', 'main')
   try {
@@ -244,6 +226,15 @@ const setJsonSto = (key, pld) => {
     warn('Saving "%s" to storage failed:', key, e)
   }
 }
+
+const getStoIds = term => {
+  return Array.from(new Set(getStos(term, (sto) => sto.split('_')[1])))
+}
+
+const getSto = key => localStorage.getItem(key)
+const setSto = (key, pld) => localStorage.setItem(key, pld)
+const delSto = key => localStorage.removeItem(key)
+const clearSto = () => localStorage.clear()
 
 export default {
   cfg,
