@@ -21,26 +21,25 @@ export default class User extends ApiBase {
   }
 
   async _apiGet () {
-    let pld = await __.toMoPro({
-      data: this.encrypt({
-        _id: '2a6c50ca-b8b2-4c52-838a-071f98a01fae',
-        _t: __.getTme(),
-        username: 'foo',
-        locale: 'de',
-        coins: ['EUR', 'BTC'],
-        depotId: 'd9ac209e-2813-4d98-bfd6-1ab02ab32dba'
-      })
-    }, 750)
-    return this.decrypt(pld.data)
-  }
-
-  async _apiSet (user) {
-    await __.toMoPro({}, 750)
+    const userHsh = this.cx.core.get('userHsh')
+    const pld = await __.rqst({url: `${__.cfg('apiUrl')}/login/${userHsh}`})
+    const user = this.decrypt(pld.data)
     return user
   }
 
+  async _apiSet (user) {
+    await __.rqst({
+      url: `${__.cfg('apiUrl')}/user/${user._id}`,
+      data: {_id: user._id, data: this.encrypt(user)}
+    })
+  }
+
   async _apiDel (user) {
-    await __.toMoPro({}, 750)
+    await __.rqst({
+      method: 'delete',
+      url: `${__.cfg('apiUrl')}/user/${user._id}`,
+      data: {_id: user._id, userhash: this.cx.core.get('userHsh')}
+    })
   }
 
   async getCoins (curCoin, user) {
