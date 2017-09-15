@@ -6,6 +6,8 @@ export default class Addr extends ApiBase {
     super('addr', cx, _id, cx.depot)
     this._load = this._load.bind(this)
     this._apiGet = this._apiGet.bind(this)
+    this._apiSet = this._apiSet.bind(this)
+    this._apiDel = this._apiDel.bind(this)
     this.getTsc = this.getTsc.bind(this)
     this.saveTsc = this.saveTsc.bind(this)
     this.info('Created')
@@ -26,54 +28,33 @@ export default class Addr extends ApiBase {
     return addr
   }
 
-  async _apiGet (secret) {
-    // mock
-    const addr = {
-      _id: this._id,
-      _t: __.getTme(),
-      hsh: `hash_${this._id.slice(0, 5)}`,
-      name: `name_${this._id.slice(0, 5)}`,
-      desc: 'A short description',
-      coin: 'ETH',
-      amnt: 20
-    }
-    const tsc0 = {
-      _id: `t1${this._id.slice(0, 5)}`,
-      _t: __.getTme(),
-      sndHsh: `sndhash_t1${this._id.slice(0, 5)}`,
-      rcvHsh: `rcvhash_t1${this._id.slice(0, 5)}`,
-      amnt: 10,
-      feeAmnt: 0.1,
-      name: `name_t1${this._id.slice(0, 5)}`,
-      desc: 'A short description',
-      tags: ['tag_1-1', 'tag_1-2', 'tag_1-3', 'tag_1-4', 'tag_1-5']
-    }
-    const tsc1 = {
-      _id: `t2${this._id.slice(0, 5)}`,
-      _t: __.getTme(),
-      sndHsh: `sndhash_t2${this._id.slice(0, 5)}`,
-      rcvHsh: `rcvhash_t2${this._id.slice(0, 5)}`,
-      amnt: 10,
-      feeAmnt: 0.1,
-      name: `name_t2${this._id.slice(0, 5)}`,
-      desc: 'A short description',
-      tags: ['tag_2-1', 'tag_2-2']
-    }
-    let pld = {
-      data: this.encrypt(addr),
-      tscs: [this.encrypt(tsc0), this.encrypt(tsc1)]
-    }
-    //
-    pld = await __.toMoPro(pld, 750)
-    return __.decrypt(pld)
+  async _apiGet () {
+    const pld = await __.rqst({
+      url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}/${this._id}`
+    })
+    const addr = this.decrypt(pld.data)
+    addr.tscs = []
+    for (let tscPld of pld.tscs) addr.tscs.push(this.decrypt(tscPld))
+    return addr
   }
 
   async _apiSet (addr) {
-    await __.toMoPro({}, 750)
+    const tscs = addr.tscs || []
+    let encTscs = []
+    for (let tsc of tscs) encTscs.push(this.encrypt(tsc))
+    delete addr.tscs  // pld needs separated addr and tscs
+    await __.rqst({
+      url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}/${addr._id}`,
+      data: {_id: addr._id, data: this.encrypt(addr), tscs: tscs}
+    })
+    addr.tscs = tscs  // remerge addr and tscs
   }
 
   async _apiDel (addr) {
-    await __.toMoPro({}, 750)
+    await __.rqst({
+      method: 'delete',
+      url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}/${addr._id}`
+    })
   }
 
   async getTsc (tscId, addr) {
