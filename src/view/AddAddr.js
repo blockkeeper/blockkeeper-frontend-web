@@ -4,10 +4,13 @@ import TextField from 'material-ui/TextField'
 import {FormControlLabel} from 'material-ui/Form'
 import Switch from 'material-ui/Switch'
 import Radio from 'material-ui/Radio'
+import {LibraryAdd, Clear} from 'material-ui-icons'
+import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import ArrowBackIcon from 'material-ui-icons/ArrowBack'
+import {themeBgStyle, actionBtnStyle, paperStyle} from './Style'
 import {TopBar, Modal} from './Lib'
+import Grid from 'material-ui/Grid'
 import __ from '../util'
 
 export default class AddAddrView extends React.Component {
@@ -96,100 +99,127 @@ export default class AddAddrView extends React.Component {
       )
     } else if (this.state.coin) {
       return (
-        <div>
+        <div style={themeBgStyle}>
+          {this.state.busy &&
+          <LinearProgress />}
           <TopBar
-            title='Add address'
-            icon={<ArrowBackIcon />}
+            title='BK'
+            midTitle='Address'
+            icon={<Clear />}
             onClick={this.goBack}
             noUser
           />
-          <p />
-          <Typography align='left' type='body1'>
-            Address
-          </Typography>
-          {!this.state.noHshMode &&
-            <div>
-              <TextField
-                autoFocus
-                label='Public key *'
-                value={this.state.hsh}
-                error={Boolean(this.state.hshEmsg)}
-                helperText={this.state.hshEmsg}
-                onChange={evt => this.set('hsh', evt.target.value)}
-              />
-              {this.state.coin}
-            </div>}
-          {this.state.noHshMode &&
-            <div>
-              <TextField
-                label='Amount *'
-                value={this.state.amnt}
-                error={Boolean(this.state.amntEmsg)}
-                helperText={this.state.amntEmsg}
-                onChange={evt => this.set('amnt', evt.target.value)}
-              />
-              {this.state.coin}
-            </div>}
-          <FormControlLabel
-            control={
-              <Switch
-                checked={this.state.noHshMode}
-                onChange={(evt, checked) => this.set('noHshMode', checked)}
-              />
-            }
-            label='Manage manually (no public key)'
-          />
-          <p />
-          <div>
-            {this.coins.map(coin =>
-              <FormControlLabel
-                key={coin}
-                label={coin}
-                control={
-                  <Radio
-                    checked={this.state.coin === coin}
-                    onChange={() => this.set('coin', coin)}
-                    value={coin}
-                    name={coin}
-                    aria-label={coin}
+          <Paper square style={paperStyle}>
+            <Grid container spacing={16} justify='center' >
+              <Grid item xs={12}>
+                <Typography type='title'>
+                  Address details
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {!this.state.noHshMode &&
+                <div>
+                  <TextField
+                    autoFocus
+                    required
+                    fullWidth
+                    label='Public key'
+                    margin='normal'
+                    value={this.state.hsh}
+                    error={Boolean(this.state.hshEmsg)}
+                    helperText={this.state.hshEmsg}
+                    onChange={evt => this.set('hsh', evt.target.value)}
                   />
-                }
-              />
-            )}
-          </div>
-          <p />
-          <Typography align='left' type='body1'>
-            Additional details
-          </Typography>
-          <div>
-            <TextField
-              label={this.state.noHshMode ? 'Name *' : 'Name'}
-              value={this.state.name}
-              error={Boolean(this.state.nameEmsg)}
-              helperText={this.state.nameEmsg}
-              onChange={evt => this.set('name', evt.target.value)}
-              />
-            <br />
-            <TextField
-              label='Notes'
-              value={this.state.desc}
-              error={Boolean(this.state.descEmsg)}
-              helperText={this.state.descEmsg}
-              onChange={evt => this.set('desc', evt.target.value)}
-              />
-          </div>
-          <p />
-          {!this.state.busy &&
-            <div>
-              <Button onClick={this.save} disabled={!this.state.upd}>
-                Save
-              </Button>
-              <Button onClick={this.goBack}>
-                Cancel
-              </Button>
-            </div>}
-          {this.state.busy &&
-            <LinearProgress />}
+                </div>}
+                {this.state.noHshMode &&
+                <div>
+                  <TextField
+                    required
+                    fullWidth
+                    label='Amount'
+                    margin='normal'
+                    value={this.state.amnt}
+                    error={Boolean(this.state.amntEmsg)}
+                    helperText={this.state.amntEmsg}
+                    onChange={evt => this.set('amnt', evt.target.value)}
+                      />
+                  {this.state.coin}
+                </div>}
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={this.state.noHshMode}
+                      onChange={(evt, checked) => this.set('noHshMode', checked)}
+                    />
+                  }
+                  label='Manage manually (no public key)'
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                {this.coins.map(coin =>
+                  <FormControlLabel
+                    key={coin}
+                    label={coin}
+                    control={
+                      <Radio
+                        checked={this.state.coin === coin}
+                        onChange={() => this.set('coin', coin)}
+                        value={coin}
+                        name={coin}
+                        aria-label={coin}
+                        />
+                      }
+                    />
+                  )}
+              </Grid>
+              <Grid item xs={12}>
+                <Typography type='title'>
+                  Personal details
+                </Typography>
+                <div>
+                  <TextField
+                    fullWidth
+                    label={this.state.noHshMode ? 'Name *' : 'Name'}
+                    margin='normal'
+                    value={this.state.name}
+                    error={Boolean(this.state.nameEmsg)}
+                    helperText={this.state.nameEmsg}
+                    onChange={evt => this.set('name', evt.target.value)}
+                    />
+                  <TextField
+                    fullWidth
+                    label='Notes'
+                    margin='normal'
+                    value={this.state.desc}
+                    error={Boolean(this.state.descEmsg)}
+                    helperText={this.state.descEmsg}
+                    onChange={evt => this.set('desc', evt.target.value)}
+                    />
+                </div>
+                <p />
+                {!this.state.busy &&
+                  <div style={{textAlign: 'center'}}>
+                    <Button
+                      raised
+                      style={actionBtnStyle}
+                      onClick={this.goBack}
+                    >
+                      <Clear />
+                      Cancel
+                    </Button>
+                    <Button
+                      raised
+                      style={actionBtnStyle}
+                      onClick={this.save}
+                      disabled={!this.state.upd}
+                    >
+                      <LibraryAdd />
+                      Add address
+                    </Button>
+                  </div>}
+              </Grid>
+            </Grid>
+          </Paper>
         </div>
       )
     } else {

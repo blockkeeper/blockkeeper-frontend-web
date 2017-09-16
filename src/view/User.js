@@ -2,8 +2,10 @@ import React from 'react'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import ArrowBackIcon from 'material-ui-icons/ArrowBack'
+import Close from 'material-ui-icons/Close'
 import {TopBar, Modal, DropDown} from './Lib'
+import {themeBgStyle, paperStyle} from './Style'
+import Paper from 'material-ui/Paper'
 import __ from '../util'
 
 export default class UserView extends React.Component {
@@ -120,69 +122,71 @@ export default class UserView extends React.Component {
       )
     } else if (this.state.username) {
       return (
-        <div>
+        <div style={themeBgStyle}>
           <TopBar
-            title='Settings'
-            icon={<ArrowBackIcon />}
+            title='BK'
+            midTitle='User'
+            icon={<Close />}
             onClick={this.goBack}
             noUser
           />
-          <p />
-          {
-          // <div>
-          //   <Typography align='left' type='body1'>
-          //     Username
-          //   </Typography>
-          //   <Typography align='left' type='body1'>
-          //     {this.state.username}
-          //   </Typography>
-          // </div>
-          // <p />
-          }
-          <div>
-            <Typography align='left' type='body1'>
-              Primary coin
-            </Typography>
-            <DropDown
-              _id='coin0DropDown'
-              data={this.state.coins.coin0}
-              slctd={this.state.coin0}
-              action={this.setCoin}
-             />
-            <Typography align='left' type='body1'>
-              Secondary coin
-            </Typography>
-            <DropDown
-              _id='coin1DropDown'
-              data={this.state.coins.coin1}
-              slctd={this.state.coin1}
-              action={this.setCoin}
-             />
-          </div>
-          <p />
-          {this.state.busy &&
-            <LinearProgress />}
-          {!this.state.busy &&
+          <Paper square style={paperStyle}>
+            {
+            // <div>
+            //   <Typography align='left' type='body1'>
+            //     Username
+            //   </Typography>
+            //   <Typography align='left' type='body1'>
+            //     {this.state.username}
+            //   </Typography>
+            // </div>
+            // <p />
+            }
             <div>
-              <Button onClick={this.save} disabled={!this.state.upd}>
-                Save
-              </Button>
-              <Button onClick={this.goBack}>
-                Cancel
-              </Button>
+              <Typography align='left' type='body1'>
+                Primary coin
+              </Typography>
+              <DropDown
+                _id='coin0DropDown'
+                data={this.state.coins.coin0}
+                slctd={this.state.coin0}
+                action={this.setCoin}
+               />
+              <Typography align='left' type='body1'>
+                Secondary coin
+              </Typography>
+              <DropDown
+                _id='coin1DropDown'
+                data={this.state.coins.coin1}
+                slctd={this.state.coin1}
+                action={this.setCoin}
+               />
             </div>
-          }
-          <p />
-          <Typography align='left' type='headline'>
-            Danger zone
-          </Typography>
-          <Button onClick={() => this.setState({logout: true})}>
-            Logout (and clear LocalStorage)
-          </Button>
-          <br />
-          <Button onClick={() => this.setState({delAcc: true})}>
-            Delete account
-          </Button>
+            <p />
+            {this.state.busy &&
+              <LinearProgress />}
+            {!this.state.busy &&
+              <div>
+                <Button onClick={this.save} disabled={!this.state.upd}>
+                  Save
+                </Button>
+                <Button onClick={this.goBack}>
+                  Cancel
+                </Button>
+              </div>
+            }
+            <p />
+            <Typography align='left' type='headline'>
+              Danger zone
+            </Typography>
+            <Button onClick={() => this.setState({logout: true})}>
+              Logout (and clear LocalStorage)
+            </Button>
+            <br />
+            <Button onClick={() => this.setState({delAcc: true})}>
+              Delete account
+            </Button>
+          </Paper>
         </div>
       )
     } else {

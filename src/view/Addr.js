@@ -10,7 +10,11 @@ import ArrowBackIcon from 'material-ui-icons/ArrowBack'
 import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown'
 import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp'
 import AccountBalanceIcon from 'material-ui-icons/AccountBalance'
-import {TopBar, Jumbo, Snack, Modal} from './Lib'
+import Paper from 'material-ui/Paper'
+import ModeEdit from 'material-ui-icons/ModeEdit'
+import {TopBar, Snack, Modal} from './Lib'
+import {themeBgStyle, paperStyle} from './Style'
+import Divider from 'material-ui/Divider'
 import Addr from '../logic/Addr'
 
 import __ from '../util'
@@ -99,39 +103,53 @@ export default class AddrView extends React.Component {
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
+      console.log(this.state)
       return (
-        <div>
+        <div style={themeBgStyle}>
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
             />}
           <TopBar
-            title='Address'
-            icon={<ArrowBackIcon />}
+            midTitle='Address'
+            iconLeft={<ArrowBackIcon />}
+            icon={<ModeEdit />}
+            onClickLeft={this.goBack}
             onClick={this.goBack}
+            noUser
           />
-          <Jumbo
-            icon={<AccountBalanceIcon />}
-            title={this.state.blc1}
-            subTitle1={this.state.blc2}
-            subTitle2={this.state.blc3}
-          />
-          {!this.state.show &&
-            <IconButton onClick={this.show}>
-              <ArrowDropDownIcon />
-            </IconButton>}
-          {this.state.show &&
+          <Paper square style={paperStyle}>
+            <AccountBalanceIcon />
+            <Typography type='headline' color='inherit'>
+              {this.state.addr.name}
+            </Typography>
+            <Typography type='headline' color='inherit'>
+              {this.state.blc1}
+            </Typography>
+            <Typography type='headline' color='inherit'>
+              {this.state.blc2}
+            </Typography>
+            <Typography type='headline' color='inherit'>
+              {this.state.blc3}
+            </Typography>
+            <Divider />
+            {!this.state.show &&
+              <IconButton onClick={this.show}>
+                <ArrowDropDownIcon />
+              </IconButton>}
+            {this.state.show &&
             <div>
               <AddrList
                 addr={this.state.addr}
                 save={this.save}
                 delete={this.delete}
-              />
+                  />
               <IconButton onClick={this.show}>
                 <ArrowDropUpIcon />
               </IconButton>
             </div>}
+          </Paper>
           {this.state.tscs.length > 0 &&
             <TscList
               tscs={this.state.tscs}
@@ -187,6 +205,7 @@ class AddrList extends React.Component {
   constructor (props) {
     super(props)
     this.addrId = props.addr._id
+    this.addrHsh = props.addr.hsh
     this.hshMode = Boolean(props.addr.hsh)
     this.state = {
       name: props.addr.name,
@@ -242,6 +261,16 @@ class AddrList extends React.Component {
     } else {
       return (
         <div>
+          <Divider />
+          <Typography type='headline' color='inherit'>
+          QRCODE
+          {this.state.addrHsh}
+          </Typography>
+          <Divider />
+          <Typography type='headline' color='inherit'>
+          my notes
+          {this.state.desc}
+          </Typography>
           <Table>
             <TableBody>
               <TableRow>

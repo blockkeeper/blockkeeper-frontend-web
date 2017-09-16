@@ -2,6 +2,8 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import Table, {TableBody, TableCell, TableRow} from 'material-ui/Table'
 import {LinearProgress} from 'material-ui/Progress'
+import Paper from 'material-ui/Paper'
+import {themeBgStyle} from './Style'
 import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal} from './Lib'
 import __ from '../util'
 
@@ -79,14 +81,14 @@ export default class DepotView extends React.Component {
       )
     } else if (this.state.addrs && this.state.tscs) {
       return (
-        <div>
+        <div style={themeBgStyle}>
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
             />}
           <TopBar
-            title='Blockkeeper'
+            title='BK'
           />
           <Jumbo
             title={this.state.blc1}
@@ -96,21 +98,27 @@ export default class DepotView extends React.Component {
             tabs={['Addresses', 'Transactions']}
             ix={this.state.tabIx}
             onClick={this.tab}
+            color='primary'
           />
-          {this.state.tabIx === 0 &&
-            <List
-              ilk='addr'
-              rows={this.state.addrs}
-              coin0={this.state.coin0}
-            />}
-          {this.state.tabIx === 1 &&
-            <List
-              ilk='tsc'
-              rows={this.state.tscs}
-              coin0={this.state.coin0}
-            />}
-          {this.state.tabIx === 0 &&
-            <FloatBtn onClick={this.goAddAddr} />}
+
+          <Paper square>
+            {this.state.tabIx === 0 &&
+              <List
+                ilk='addr'
+                rows={this.state.addrs}
+                coin0={this.state.coin0}
+
+              />}
+            {this.state.tabIx === 1 &&
+              <List
+                ilk='tsc'
+                rows={this.state.tscs}
+                coin0={this.state.coin0}
+              />}
+            {this.state.tabIx === 0 &&
+              <FloatBtn onClick={this.goAddAddr} />}
+          </Paper>
+
         </div>
       )
     } else {
@@ -134,7 +142,7 @@ const List = ({ilk, rows, coin0}) =>
               <br />
               {row.hsh}
             </TableCell>
-            <TableCell>
+            <TableCell numeric>
               {row.coin} {row.amnt}
               <br />
               {coin0} {row.amnt * row.rates.get(coin0)}

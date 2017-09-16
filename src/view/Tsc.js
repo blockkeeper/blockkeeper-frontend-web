@@ -6,7 +6,9 @@ import TextField from 'material-ui/TextField'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
 import LinkIcon from 'material-ui-icons/Link'
+import ModeEdit from 'material-ui-icons/ModeEdit'
 import {TopBar, Jumbo, Snack, Modal} from './Lib'
+import {themeBgStyle} from './Style'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -81,16 +83,19 @@ export default class TscView extends React.Component {
       )
     } else if (this.state.tsc) {
       return (
-        <div>
+        <div style={themeBgStyle}>
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
             />}
           <TopBar
-            title='Transaction'
-            icon={<ArrowBackIcon />}
-            onClick={this.goBack}
+            midTitle='Transaction'
+            iconLeft={<ArrowBackIcon />}
+            icon={<ModeEdit />}
+            onClickLeft={this.goBack}
+            onClick={() => this.setState({edit: true})}
+            noUser
           />
           <Jumbo
             title={this.state.blc1}

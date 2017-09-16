@@ -1,48 +1,46 @@
 import { createMuiTheme } from 'material-ui/styles'
-import {purple, teal, red} from 'material-ui/colors'
+import {purple, teal, red, common} from 'material-ui/colors'
 
+const styleGuide = {
+  primary: '#9A40FF',
+  secondary: '#0DAC96',
+  error: '#D50073',
+  backgroundLight: '#F4F2F5',
+  backgroundDark: 'linear-gradient(to bottom right,#210045, #9A40FF)',
+  text: '#210045',
+  textSecondary: '#907FA2',
+  spacertop: '100px'
+}
 // https://material-ui-1dab0.firebaseapp.com/customization/themes
 const theme = createMuiTheme({
+  // https://github.com/callemall/material-ui/blob/v1-beta/src/styles/createPalette.js
   palette: {
     primary: {
       ...purple,
-      '500': '#9A40FF'
+      '500': styleGuide.primary
     },
     secondary: {
       ...teal,
-      '500': '#0DAC96'
+      '500': styleGuide.secondary
     },
     error: {
       ...red,
-      '500': '#D50073'
+      'A400': styleGuide.error,
+      '500': styleGuide.error
     },
     background: {
-      default: 'linear-gradient(to bottom right,#210045, #9A40FF)',
-      paper: '#F4F2F5',
-      appBar: '#D50073',
-      contentFrame: '#210045'
+      default: styleGuide.backgroundDark,
+      paper: common.white,
+      appBar: common.transparent
     },
     text: {
-      primary: 'rgba(0, 0, 0, 0.87)',
-      secondary: '#F4F2F5'
+      primary: styleGuide.text,
+      secondary: common.white
     }
   },
+  // https://github.com/callemall/material-ui/blob/v1-beta/src/styles/createTypography.js
   typography: {
-    fontFamily: 'Lato, sans-serif'
-  }
-
-})
-
-theme.overrides = {
-  MuiPalette: {
-    background: {
-      default: 'linear-gradient(to bottom right,#210045, #9A40FF)',
-      paper: '#F4F2F5',
-      appBar: '#D50073',
-      contentFrame: '#210045'
-    }
-  },
-  MuiTypography: {
+    fontFamily: 'Lato, sans-serif',
     display3: {
       fontSize: 48,
       lineHeight: 1,
@@ -57,7 +55,7 @@ theme.overrides = {
       lineHeight: 1.5
     },
     headline: {
-      fontSize: 26,
+      fontSize: 24,
       lineHeight: 1.5
     },
     title: {
@@ -81,19 +79,77 @@ theme.overrides = {
       lineHeight: 1.5
     }
   }
+})
+
+theme.overrides = {
+
 }
 
 const pageStyle = {
-//  maxWidth: '500px',
-//  margin: 'auto',
+  // height: '100vh',
+  // background: theme.palette.background.default
+}
+
+const themeBgStyle = {
+  // height: '100vh',
+  background: theme.palette.background.default
+}
+
+const homeStyle = {
+  paddingTop: styleGuide.spacertop,
+  textAlign: 'center'
+}
+
+const loginStyle = {
+  paddingTop: styleGuide.spacertop,
+  textAlign: 'center'
+}
+
+const actionBtnStyle = {
+  backgroundColor: styleGuide.error,
+  color: common.white,
+  width: '40%',
+  margin: theme.spacing.unit
 }
 
 const jumboStyle = {
-  background: 'black'
+  minHeight: '25vh',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: common.white
+}
+
+const tabStyle = {
+  backgroundColor: 'white',
+  color: 'black'
+}
+
+const floatBtnStyle = {
+  margin: 0,
+  top: 'auto',
+  right: 20,
+  bottom: 20,
+  left: 'auto',
+  position: 'fixed',
+  color: common.white,
+  backgroundColor: styleGuide.error
+}
+
+const paperStyle = {
+  // margin: theme.spacing.unit * 3,
+  padding: theme.spacing.unit * 3
 }
 
 export {
   theme,
   pageStyle,
-  jumboStyle
+  themeBgStyle,
+  loginStyle,
+  actionBtnStyle,
+  tabStyle,
+  homeStyle,
+  jumboStyle,
+  floatBtnStyle,
+  paperStyle
 }

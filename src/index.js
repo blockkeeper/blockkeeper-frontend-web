@@ -8,6 +8,7 @@ import Core from './logic/Core'
 import UserView from './view/User'
 import DepotView from './view/Depot'
 import AddrView from './view/Addr'
+import HomeView from './view/Home'
 import AddAddrView from './view/AddAddr'
 import TscView from './view/Tsc'
 import RgstrView from './view/Rgstr'
@@ -43,6 +44,7 @@ const Routes = () => (
     <MuiThemeProvider theme={theme} >
       <BrowserRouter>
         <Switch>
+          <Route path='/' exact component={HomeView} />
           <Route path='/login' exact render={login} />
           <Route path='/rgstr' exact render={register} />
           <AuthRoute path='/user/edit' exact component={UserView} />

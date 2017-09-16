@@ -1,11 +1,14 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
 import Button from 'material-ui/Button'
+import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
+import Paper from 'material-ui/Paper'
+import {Lock, Clear} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
-import ArrowBackIcon from 'material-ui-icons/ArrowBack'
-import {TopBar, Modal} from './Lib'
+import {Modal} from './Lib'
 import __ from '../util'
+import {themeBgStyle, paperStyle, loginStyle, actionBtnStyle} from './Style'
+const rootStyle = {...themeBgStyle, height: '100vh'}
 
 export default class RgstrView extends React.Component {
   constructor (props) {
@@ -87,53 +90,72 @@ export default class RgstrView extends React.Component {
       )
     } else {
       return (
-        <div>
-          <TopBar
-            title='Sign up'
-            icon={<ArrowBackIcon />}
-            onClick={this.goBack}
-            noUser
-          />
-          <p />
-          <TextField
-            autoFocus
-            label='Username *'
-            value={this.state.username}
-            error={Boolean(this.state.usernameEmsg)}
-            helperText={this.state.usernameEmsg}
-            onChange={evt => this.set('username', evt.target.value)}
-          />
-          <p />
-          <TextField
-            label='Password *'
-            type='password'
-            value={this.state.pw}
-            error={Boolean(this.state.pwEmsg)}
-            helperText={this.state.pwEmsg}
-            onChange={evt => this.set('pw', evt.target.value)}
-          />
-          <p />
-          <TextField
-            label='Retype password *'
-            type='password'
-            value={this.state.rpw}
-            error={Boolean(this.state.rpwEmsg)}
-            helperText={this.state.rpwEmsg}
-            onChange={evt => this.set('rpw', evt.target.value)}
-          />
-          <p />
-          {!this.state.busy &&
-            <div>
-              <Button onClick={this.save} disabled={!this.state.upd}>
-                Sign up
-              </Button>
-              <Button onClick={this.goBack}>
-                Cancel
-              </Button>
-              <Link to='/login'>Login</Link>
-            </div>}
+        <div style={rootStyle}>
           {this.state.busy &&
-            <LinearProgress />}
+          <LinearProgress />}
+          <div style={loginStyle}>
+            <Typography align='center' type='display3'>
+              Blockkeeper
+            </Typography>
+            <Typography align='center' type='display1' gutterBottom>
+              Please choose your account details
+            </Typography>
+            <Paper square style={paperStyle} elevation={24}>
+              <TextField
+                autoFocus
+                fullWidth
+                required
+                label='Username'
+                margin='normal'
+                value={this.state.username}
+                error={Boolean(this.state.usernameEmsg)}
+                helperText={this.state.usernameEmsg}
+                onChange={evt => this.set('username', evt.target.value)}
+              />
+              <TextField
+                fullWidth
+                required
+                label='Password'
+                type='password'
+                margin='normal'
+                value={this.state.pw}
+                error={Boolean(this.state.pwEmsg)}
+                helperText={this.state.pwEmsg}
+                onChange={evt => this.set('pw', evt.target.value)}
+              />
+              <TextField
+                fullWidth
+                required
+                label='Retype password'
+                type='password'
+                margin='normal'
+                value={this.state.rpw}
+                error={Boolean(this.state.rpwEmsg)}
+                helperText={this.state.rpwEmsg}
+                onChange={evt => this.set('rpw', evt.target.value)}
+              />
+              {!this.state.busy &&
+                <div>
+                  <Button
+                    raised
+                    style={actionBtnStyle}
+                    onClick={this.goBack}
+                  >
+                    <Clear />
+                    Cancel
+                  </Button>
+                  <Button
+                    raised
+                    style={actionBtnStyle}
+                    onClick={this.save}
+                    disabled={!this.state.upd}
+                  >
+                    <Lock />
+                    Sign up
+                  </Button>
+                </div>}
+            </Paper>
+          </div>
         </div>
       )
     }

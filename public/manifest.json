@@ -1,15 +1,25 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Blockkeeper",
+  "name": "Blockkeeper - Your secure blockchain book keeping app",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+        "src": "android-chrome-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+    },
+    {
+        "src": "android-chrome-256x256.png",
+        "sizes": "256x256",
+        "type": "image/png"
     }
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#9A40FF",
+  "background_color": "#F4F2F5"
 }

@@ -4,6 +4,7 @@ import Menu, { MenuItem } from 'material-ui/Menu'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
+import {Lock} from 'material-ui-icons'
 import Snackbar from 'material-ui/Snackbar'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
@@ -11,7 +12,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import PersonIcon from 'material-ui-icons/Person'
 import AddIcon from 'material-ui-icons/Add'
-import {jumboStyle} from './Style'
+import {jumboStyle, tabStyle, floatBtnStyle} from './Style'
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -20,24 +21,42 @@ import Dialog, {
 } from 'material-ui/Dialog'
 import __ from '../util'
 
-const TopBar = ({title, icon, onClick, noUser}) =>
-  <AppBar position='static'>
-    <Toolbar>
+const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, noUser}) =>
+  <AppBar position='static' color={color || 'default'} elevation={0}>
+    <Toolbar style={{minHeight: '50px'}}>
+      {iconLeft &&
+      <IconButton aria-label='Menu' onClick={onClickLeft} color='contrast'>
+        {iconLeft}
+      </IconButton>}
+      {!iconLeft &&
+        <Typography type='headline' color='inherit'>
+          {title || ''}
+        </Typography>}
+      <Typography type='headline' color='inherit' style={{flex: 1, textAlign: 'center'}}>
+        {midTitle || ''}
+      </Typography>
       {icon &&
-        <IconButton color='contrast' aria-label='Menu' onClick={onClick}>
+        <IconButton aria-label='Menu' onClick={onClick} color='contrast'>
           {icon}
         </IconButton>}
-      <Typography type='headline' color='inherit'>
-        {title || ''}
-      </Typography>
       {!noUser &&
-      <Link to={'/user/edit'}><PersonIcon /></Link>}
+      <Link to={'/user/edit'}>
+        <IconButton aria-label='Menu' color='contrast'>
+          <PersonIcon />
+        </IconButton>
+      </Link>}
     </Toolbar>
   </AppBar>
 
 const SubBar = ({tabs, ix, onClick}) =>
   <AppBar position='static'>
-    <Tabs index={ix} onChange={onClick} centered>
+    <Tabs
+      centered
+      value={ix}
+      onChange={onClick}
+      indicatorColor='primary'
+      style={tabStyle}
+    >
       {tabs.map(lbl => <Tab key={__.uuid()} label={lbl} />)}
     </Tabs>
   </AppBar>
@@ -48,12 +67,14 @@ const Jumbo = ({title, subTitle1, subTitle2, icon}) =>
       <Typography align='center' type='display1'>
         {icon}
       </Typography>}
-    <Typography align='center' type='display3'>
-      {title || 'Loading'}
-    </Typography>
-    <Typography align='center' type='display1'>
-      {subTitle1 || 'data...'}
-    </Typography>
+    <div>
+      <Typography align='center' type='display3' style={{fontWeight: '100'}}>
+        {title || 'Loading'}
+      </Typography>
+      <Typography align='center' type='subheading' color='inherit'>
+        {subTitle1 || 'data...'}
+      </Typography>
+    </div>
     {subTitle2 &&
       <Typography align='center' type='display1'>
         {subTitle2 || ''}
@@ -61,20 +82,11 @@ const Jumbo = ({title, subTitle1, subTitle2, icon}) =>
   </div>
 
 const FloatBtn = ({onClick, key}) => {
-  const style = {
-    margin: 0,
-    top: 'auto',
-    right: 20,
-    bottom: 20,
-    left: 'auto',
-    position: 'fixed'
-  }
   return (
     <Button
       fab
-      color='primary'
       aria-label='add'
-      style={style}
+      style={floatBtnStyle}
       onClick={onClick}
       key={key || __.uuid()}
     >
