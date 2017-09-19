@@ -21,10 +21,21 @@ export default class User extends ApiBase {
   }
 
   async _apiGet () {
-    const userHsh = this.cx.core.get('userHsh')
+    /* const userHsh = this.cx.core.get('userHsh')
     const pld = await __.rqst({url: `${__.cfg('apiUrl')}/login/${userHsh}`})
     const user = this.decrypt(pld.data)
-    return user
+    return user */
+    let pld = await __.toMoPro({
+      data: this.encrypt({
+        _id: '2a6c50ca-b8b2-4c52-838a-071f98a01fae',
+        _t: __.getTme(),
+        username: 'foo',
+        locale: 'de',
+        coins: ['EUR', 'BTC'],
+        depotId: 'd9ac209e-2813-4d98-bfd6-1ab02ab32dba'
+      })
+    }, 750)
+    return this.decrypt(pld.data)
   }
 
   async _apiSet (user) {
