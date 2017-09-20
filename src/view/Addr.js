@@ -121,7 +121,6 @@ export default class AddrView extends React.Component {
           />
           <Paper square style={paperStyle}>
             <CrnIcon coin={this.state.coin} />
-
             <Typography type='headline' color='inherit'>
               {this.state.addr.name}
             </Typography>

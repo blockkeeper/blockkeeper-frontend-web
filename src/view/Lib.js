@@ -5,7 +5,8 @@ import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
 import {Lock} from 'material-ui-icons'
-import * as Icon from 'react-cryptocoins'
+import * as CryptoIcons from 'react-cryptocoins'
+import getSymbolFromCurrency from 'currency-symbol-map'
 import Snackbar from 'material-ui/Snackbar'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
@@ -21,10 +22,10 @@ import Dialog, {
   DialogTitle
 } from 'material-ui/Dialog'
 import __ from '../util'
-
 const ucfirst = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
+
 const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, noUser}) =>
   <AppBar position='static' color={color || 'default'} elevation={0}>
     <Toolbar style={{minHeight: '50px'}}>
@@ -168,8 +169,16 @@ class CrnIcon extends React.Component {
   }
 
   render () {
-    const IconType = Icon[this.coin]
-    return <IconType color='red' size={this.size} />
+    if (CryptoIcons[this.coin]) {
+      const IconType = CryptoIcons[this.coin]
+      return <IconType color='red' size={this.size} />
+    } else {
+      return (
+        <div>
+          {getSymbolFromCurrency(this.coin.toUpperCase())}
+        </div>
+      )
+    }
   }
 }
 
