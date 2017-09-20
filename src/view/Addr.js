@@ -12,7 +12,7 @@ import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp'
 import AccountBalanceIcon from 'material-ui-icons/AccountBalance'
 import Paper from 'material-ui/Paper'
 import ModeEdit from 'material-ui-icons/ModeEdit'
-import {TopBar, Snack, Modal} from './Lib'
+import {TopBar, Snack, Modal, CrnIcon} from './Lib'
 import {themeBgStyle, paperStyle} from './Style'
 import Divider from 'material-ui/Divider'
 import Addr from '../logic/Addr'
@@ -54,6 +54,7 @@ export default class AddrView extends React.Component {
         err: null,
         addr: addr,
         tscs: addr.tscs,
+        coin: addr.coin,
         coin0,
         coin1,
         blc1: `${addr.coin} ${addr.amnt}`,
@@ -103,7 +104,6 @@ export default class AddrView extends React.Component {
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
-      console.log(this.state)
       return (
         <div style={themeBgStyle}>
           {this.state.snack &&
@@ -120,7 +120,8 @@ export default class AddrView extends React.Component {
             noUser
           />
           <Paper square style={paperStyle}>
-            <AccountBalanceIcon />
+            <CrnIcon coin={this.state.coin} />
+
             <Typography type='headline' color='inherit'>
               {this.state.addr.name}
             </Typography>

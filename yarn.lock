@@ -1369,8 +1369,8 @@ circular-json@^0.3.1:
   resolved "https://registry.yarnpkg.com/circular-json/-/circular-json-0.3.3.tgz#815c99ea84f6809529d2f45791bdf82711352d66"
 
 clap@^1.0.9:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/clap/-/clap-1.2.2.tgz#683f6f93a320794d129386d74b2a1d2d66fede7e"
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/clap/-/clap-1.2.3.tgz#4f36745b32008492557f46412d66d50cb99bce51"
   dependencies:
     chalk "^1.1.3"
 
@@ -5276,7 +5276,7 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
 
 react-cryptocoins@yeahoffline/react-cryptocoins:
   version "1.0.2"
-  resolved "https://codeload.github.com/yeahoffline/react-cryptocoins/tar.gz/7d00fedf3a0185c7b6bc4fec1ac0c44edb0fa32a"
+  resolved "https://codeload.github.com/yeahoffline/react-cryptocoins/tar.gz/c0d9f7f4ac708eed011c6119596fae898de8315b"
 
 react-dev-utils@^3.1.0:
   version "3.1.1"

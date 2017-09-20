@@ -5,6 +5,7 @@ import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
 import {Lock} from 'material-ui-icons'
+import * as Icon from 'react-cryptocoins'
 import Snackbar from 'material-ui/Snackbar'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
@@ -21,6 +22,9 @@ import Dialog, {
 } from 'material-ui/Dialog'
 import __ from '../util'
 
+const ucfirst = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
 const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, noUser}) =>
   <AppBar position='static' color={color || 'default'} elevation={0}>
     <Toolbar style={{minHeight: '50px'}}>
@@ -156,6 +160,19 @@ class Modal extends React.Component {
   }
 }
 
+class CrnIcon extends React.Component {
+  constructor (props) {
+    super(props)
+    this.coin = ucfirst(props.coin.toLowerCase())
+    this.size = props.size || '48'
+  }
+
+  render () {
+    const IconType = Icon[this.coin]
+    return <IconType color='red' size={this.size} />
+  }
+}
+
 class DropDown extends React.Component {
   // usage:
   //   <DropDown
@@ -215,6 +232,7 @@ export {
   TopBar,
   SubBar,
   Jumbo,
+  CrnIcon,
   Snack,
   Modal,
   FloatBtn,
