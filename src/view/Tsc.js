@@ -99,7 +99,7 @@ export default class TscView extends React.Component {
           />
           <Jumbo
             title={this.state.blc1}
-            subTitle1={this.state.blc2}
+            subTitle={this.state.blc2}
           />
           <TscList
             tsc={this.state.tsc}

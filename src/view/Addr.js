@@ -7,13 +7,13 @@ import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
+import Launch from 'material-ui-icons/Launch'
 import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown'
 import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp'
-import AccountBalanceIcon from 'material-ui-icons/AccountBalance'
 import Paper from 'material-ui/Paper'
 import ModeEdit from 'material-ui-icons/ModeEdit'
 import {TopBar, Snack, Modal, CrnIcon} from './Lib'
-import {themeBgStyle, paperStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, actionBtnStyle} from './Style'
 import Divider from 'material-ui/Divider'
 import Addr from '../logic/Addr'
 
@@ -25,12 +25,14 @@ export default class AddrView extends React.Component {
     this.cx = props.cx
     this.addrId = props.match.params.addrId
     this.addrObj = new Addr(this.cx, this.addrId)
-    this.state = {show: false}
+    this.state = {show: false, toggleCoins: false, edit: false}
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
     this.save = this.save.bind(this)
     this.delete = this.delete.bind(this)
+    this.toggleCoins = this.toggleCoins.bind(this)
     this.show = this.show.bind(this)
+    this.edit = this.edit.bind(this)
   }
 
   async componentDidMount () {
@@ -57,9 +59,9 @@ export default class AddrView extends React.Component {
         coin: addr.coin,
         coin0,
         coin1,
-        blc1: `${addr.coin} ${addr.amnt}`,
-        blc2: `${coin0} ${blc.get(coin0)}`,
-        blc3: `${coin1} ${blc.get(coin1)}`,
+        blc1: `${addr.amnt}`,
+        blc2: `${blc.get(coin0)}`,
+        blc3: `${blc.get(coin1)}`,
         snack: __.getSnack()
       })
     } catch (e) {
@@ -91,9 +93,15 @@ export default class AddrView extends React.Component {
   }
 
   show () {
-    this.info(this.state)
     this.setState({show: !this.state.show, edit: false})
-    this.info(this.state)
+  }
+
+  edit (edit) {
+    this.setState({edit: !edit})
+  }
+
+  toggleCoins () {
+    this.setState({toggleCoins: !this.state.toggleCoins})
   }
 
   render () {
@@ -113,55 +121,60 @@ export default class AddrView extends React.Component {
             />}
           <TopBar
             midTitle='Address'
-            iconLeft={<ArrowBackIcon />}
             icon={<ModeEdit />}
+            iconLeft={<ArrowBackIcon />}
+            onClick={this.edit}
             onClickLeft={this.goBack}
-            onClick={this.goBack}
             noUser
           />
-          <Paper square style={paperStyle}>
-            <CrnIcon coin={this.state.coin} />
-            <Typography type='headline' color='inherit'>
+          <Paper square style={{textAlign: 'center', ...paperStyle}}>
+            <CrnIcon coin={this.state.coin} size={100} />
+            <Typography type='title' color='default' style={{paddingTop: '24px'}}>
               {this.state.addr.name}
+              <Launch color='grey' />
             </Typography>
-            <Typography type='headline' color='inherit'>
-              {this.state.blc1}
+            <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: '24px'}} gutterBottom>
+              {this.state.blc1}&nbsp;
+              <CrnIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />
             </Typography>
-            <Typography type='headline' color='inherit'>
-              {this.state.blc2}
-            </Typography>
-            <Typography type='headline' color='inherit'>
-              {this.state.blc3}
-            </Typography>
-            <Divider />
+            {!this.state.toggleCoins &&
+              <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
+                {this.state.blc2}&nbsp;
+                <CrnIcon coin={this.state.coin0} color={theme.palette.primary['500']} alt />
+              </Typography>}
+            {this.state.toggleCoins &&
+              <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
+                {this.state.blc3}&nbsp;
+                <CrnIcon coin={this.state.coin1} color={theme.palette.primary['500']} alt />
+              </Typography>}
+            <AddrList
+              addr={this.state.addr}
+              save={this.save}
+              delete={this.delete}
+              edit={this.state.edit}
+            />
             {!this.state.show &&
               <IconButton onClick={this.show}>
                 <ArrowDropDownIcon />
               </IconButton>}
             {this.state.show &&
-            <div>
-              <AddrList
-                addr={this.state.addr}
-                save={this.save}
-                delete={this.delete}
-                  />
               <IconButton onClick={this.show}>
                 <ArrowDropUpIcon />
               </IconButton>
-            </div>}
+            }
+            {this.state.tscs.length > 0 &&
+              <TscList
+                tscs={this.state.tscs}
+                coin0={this.state.coin0}
+              />}
+            {this.state.tscs.length <= 0 &&
+              <Typography align='left' type='body1'>
+                {this.state.addr.hsh &&
+                  'No transactions'}
+                {!this.state.addr.hsh &&
+                  'No transactions (manually added address)'}
+              </Typography>}
           </Paper>
-          {this.state.tscs.length > 0 &&
-            <TscList
-              tscs={this.state.tscs}
-              coin0={this.state.coin0}
-            />}
-          {this.state.tscs.length <= 0 &&
-            <Typography align='left' type='body1'>
-              {this.state.addr.hsh &&
-                'No transactions'}
-              {!this.state.addr.hsh &&
-                'No transactions (manually added address)'}
-            </Typography>}
         </div>
       )
     } else {
@@ -209,7 +222,8 @@ class AddrList extends React.Component {
     this.hshMode = Boolean(props.addr.hsh)
     this.state = {
       name: props.addr.name,
-      desc: props.addr.desc
+      desc: props.addr.desc,
+      edit: props.edit
     }
     this.saveAddr = props.save
     this.deleteAddr = props.delete
@@ -261,27 +275,26 @@ class AddrList extends React.Component {
     } else {
       return (
         <div>
-          <Divider />
-          <Typography type='headline' color='inherit'>
-          QRCODE
-          {this.state.addrHsh}
-          </Typography>
-          <Divider />
-          <Typography type='headline' color='inherit'>
-          my notes
-          {this.state.desc}
-          </Typography>
+          {this.state.addrHsh &&
+            <div>
+              <Typography type='headline' color='inherit'>
+              QRCODE
+              {this.state.addrHsh}
+              </Typography>
+              <Divider />
+            </div>
+          }
           <Table>
             <TableBody>
               <TableRow>
                 <TableCell>
                   Name
                 </TableCell>
-                <TableCell>
+                <TableCell numeric>
                   {this.state.edit &&
                   <TextField
                     autoFocus
-                    label={this.hshMode ? 'Name' : 'Name *'}
+                    fullWidth
                     value={this.state.name}
                     error={Boolean(this.state.nameEmsg)}
                     helperText={this.state.nameEmsg}
@@ -295,10 +308,10 @@ class AddrList extends React.Component {
                 <TableCell>
                   Notes
                 </TableCell>
-                <TableCell>
+                <TableCell numeric>
                   {this.state.edit &&
                     <TextField
-                      label='Notes'
+                      fullWidth
                       value={this.state.desc}
                       error={Boolean(this.state.descEmsg)}
                       helperText={this.state.descEmsg}
@@ -312,10 +325,18 @@ class AddrList extends React.Component {
           </Table>
           {!this.state.edit &&
             <div>
-              <Button onClick={() => this.setState({edit: true})}>
+              <Button
+                raised
+                style={actionBtnStyle}
+                onClick={() => this.setState({edit: true})}
+              >
                 Edit
               </Button>
-              <Button onClick={() => this.setState({ask: true})}>
+              <Button
+                raised
+                style={actionBtnStyle}
+                onClick={() => this.setState({ask: true})}
+              >
                 Delete
               </Button>
             </div>}

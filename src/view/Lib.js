@@ -4,7 +4,6 @@ import Menu, { MenuItem } from 'material-ui/Menu'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
-import {Lock} from 'material-ui-icons'
 import * as CryptoIcons from 'react-cryptocoins'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import Snackbar from 'material-ui/Snackbar'
@@ -24,6 +23,12 @@ import Dialog, {
 import __ from '../util'
 const ucfirst = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
+}
+const CryptoColors = {
+  'BTC': '#FF9900',
+  'LTC': '#b8b8b8',
+  'ETH': '#3C3C3D',
+  'DASH': '#1c75bc'
 }
 
 const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, noUser}) =>
@@ -66,24 +71,22 @@ const SubBar = ({tabs, ix, onClick}) =>
     </Tabs>
   </AppBar>
 
-const Jumbo = ({title, subTitle1, subTitle2, icon}) =>
+const Jumbo = ({title, subTitle, coin0, coin1}) =>
   <div style={jumboStyle}>
-    {icon &&
-      <Typography align='center' type='display1'>
-        {icon}
-      </Typography>}
     <div>
-      <Typography align='center' type='display3' style={{fontWeight: '100'}}>
-        {title || 'Loading'}
+      <Typography align='center' type='display3' color='inherit' style={{fontWeight: '100'}}>
+        {title || 'Loading'}&nbsp;
+        {coin0 &&
+          <CrnIcon coin={coin0} size={35} color={'white'} alt />
+        }
       </Typography>
-      <Typography align='center' type='subheading' color='inherit'>
-        {subTitle1 || 'data...'}
+      <Typography align='center' type='headline' color='inherit'>
+        {subTitle || 'data...'}&nbsp;
+        {coin1 &&
+          <CrnIcon coin={coin1} color={'white'} alt />
+        }
       </Typography>
     </div>
-    {subTitle2 &&
-      <Typography align='center' type='display1'>
-        {subTitle2 || ''}
-      </Typography>}
   </div>
 
 const FloatBtn = ({onClick, key}) => {
@@ -164,19 +167,24 @@ class Modal extends React.Component {
 class CrnIcon extends React.Component {
   constructor (props) {
     super(props)
-    this.coin = ucfirst(props.coin.toLowerCase())
-    this.size = props.size || '48'
+    this.alt = props.alt || false
+    this.coin = props.coin
+    this.size = props.size || '18'
+    this.color = props.color || CryptoColors[this.coin.toUpperCase()] || '#000'
   }
 
   render () {
-    if (CryptoIcons[this.coin]) {
-      const IconType = CryptoIcons[this.coin]
-      return <IconType color='red' size={this.size} />
+    const coin = this.alt ? (ucfirst(this.coin.toLowerCase()) + 'Alt') : ucfirst(this.coin.toLowerCase())
+    if (CryptoIcons[coin]) {
+      const IconType = CryptoIcons[coin]
+      return (
+        <IconType color={this.color} size={this.size} />
+      )
     } else {
       return (
-        <div>
+        <span>
           {getSymbolFromCurrency(this.coin.toUpperCase())}
-        </div>
+        </span>
       )
     }
   }

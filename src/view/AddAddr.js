@@ -9,7 +9,7 @@ import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import {themeBgStyle, actionBtnStyle, paperStyle} from './Style'
-import {TopBar, Modal} from './Lib'
+import {TopBar, Modal, CrnIcon} from './Lib'
 import Grid from 'material-ui/Grid'
 import __ from '../util'
 
@@ -111,9 +111,15 @@ export default class AddAddrView extends React.Component {
           />
           <Paper square style={paperStyle}>
             <Grid container spacing={16} justify='center' >
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <Typography type='title'>
                   Address details
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Typography type='title'>
+                  <CrnIcon coin={this.state.coin} />&nbsp;
+                  {this.state.coin}
                 </Typography>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -198,25 +204,25 @@ export default class AddAddrView extends React.Component {
                 </div>
                 <p />
                 {!this.state.busy &&
-                  <div style={{textAlign: 'center'}}>
-                    <Button
-                      raised
-                      style={actionBtnStyle}
-                      onClick={this.goBack}
+                <div style={{textAlign: 'center'}}>
+                  <Button
+                    raised
+                    style={actionBtnStyle}
+                    onClick={this.goBack}
                     >
-                      <Clear />
+                    <Clear />
                       Cancel
                     </Button>
-                    <Button
-                      raised
-                      style={actionBtnStyle}
-                      onClick={this.save}
-                      disabled={!this.state.upd}
+                  <Button
+                    raised
+                    style={actionBtnStyle}
+                    onClick={this.save}
+                    disabled={!this.state.upd}
                     >
-                      <LibraryAdd />
+                    <LibraryAdd />
                       Add address
                     </Button>
-                  </div>}
+                </div>}
               </Grid>
             </Grid>
           </Paper>

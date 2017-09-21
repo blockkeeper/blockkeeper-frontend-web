@@ -4,7 +4,7 @@ import Table, {TableBody, TableCell, TableRow} from 'material-ui/Table'
 import {LinearProgress} from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
 import {themeBgStyle} from './Style'
-import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal} from './Lib'
+import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal, CrnIcon} from './Lib'
 import __ from '../util'
 
 export default class DepotView extends React.Component {
@@ -40,8 +40,8 @@ export default class DepotView extends React.Component {
         tscs: tscs,
         coin0,
         coin1,
-        blc1: `${coin0} ${blc.get(coin0)}`,
-        blc2: `${coin1} ${blc.get(coin1)}`,
+        blc1: `${blc.get(coin0)}`,
+        blc2: `${blc.get(coin1)}`,
         snack: __.getSnack()
       })
     } catch (e) {
@@ -92,7 +92,9 @@ export default class DepotView extends React.Component {
           />
           <Jumbo
             title={this.state.blc1}
-            subTitle1={this.state.blc2}
+            subTitle={this.state.blc2}
+            coin0={this.state.coin0}
+            coin1={this.state.coin1}
            />
           <SubBar
             tabs={['Addresses', 'Transactions']}
@@ -135,7 +137,7 @@ const List = ({ilk, rows, coin0}) =>
         return (
           <TableRow key={row._id}>
             <TableCell>
-              {row.icon || `${row.coin}-Icon`}
+              <CrnIcon coin={row.coin} />
             </TableCell>
             <TableCell>
               <Link to={`/${urlPath}/${row._id}`}>{row.name}</Link>
