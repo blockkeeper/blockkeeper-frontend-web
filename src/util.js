@@ -103,16 +103,16 @@ const initView = (cmp, name) => {
   return cmp
 }
 
-async function rqst (rqstObj, lbl) {
+async function rqst (req, lbl) {
   lbl = lbl || 'resource'
-  if (!rqstObj.timeout) rqstObj.timeout = cfg('tmo')
-  if (!rqstObj.method) rqstObj.method = (rqstObj.data == null) ? 'get' : 'put'
+  if (!req.timeout) req.timeout = cfg('tmoMsec')
+  if (!req.method) req.method = (req.data == null) ? 'get' : 'put'
   let e
   let errs = []
   let rsp = {}
   let dmsg
   try {
-    rsp = await axios(rqstObj)
+    rsp = await axios(req)
     return rsp.data
   } catch (e) {
     if (e.message) {
@@ -131,16 +131,26 @@ async function rqst (rqstObj, lbl) {
   let umsg
   let sts = rsp.status || 600
   if (sts === 404) {
-    umsg = lbl.charAt(0).toUpperCase() + lbl.slice(1) + ' not found'
+    umsg = cap(lbl) + ' not found'
   } else {
     umsg = `Requesting ${lbl} failed: ` +
       ((sts >= 400 && sts < 500) ? 'Invalid input' : 'API error')
   }
-  throw getErr(umsg, {e, dmsg, sts, errs, rsp, rqst: rqstObj})
+  throw getErr(umsg, {e, dmsg, sts, errs, rsp, req})
 }
 
-const getRndInt = size => {
-  return Math.floor((Math.random() * size) + 1)
+const rndPop = lst => {
+  if (lst.length < 1) return
+  const ix = Math.floor((Math.random() * lst.length) + 1) - 1
+  return lst.splice(ix, 1)[0]
+}
+
+const shuffle = (lst) => {
+  for (var i = lst.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1))
+    ;[lst[i], lst[j]] = [lst[j], lst[i]]
+  }
+  return lst
 }
 
 // mock promise (only for development/testing)
@@ -150,6 +160,22 @@ const toMoPro = (data, tmoMsec, ...args) => {
     setTimeout(() => resolve(data), tmoMsec)
   })
 }
+
+const struc = (lst, {toBeg, max, byTme}) => {
+  if (byTme) {
+    lst.sort((a, b) => (new Date(a._t)) - (new Date(b._t)))
+  } else {
+    lst.sort()
+  }
+  if (toBeg) {
+    const ix = lst.indexOf(toBeg)
+    if (ix !== undefined) lst.unshift(lst.splice(ix, 1)[0])
+  }
+  lst = lst.slice(0, (max || cfg('lstMax')))
+  return lst
+}
+
+const cap = (val) => val.charAt(0).toUpperCase() + val.slice(1)
 
 const ppTme = _t => {
   let tme = mo(_t)
@@ -200,6 +226,10 @@ const getSnack = () => {
   return msg
 }
 
+const isOutdated = (tme, sec) => {
+  return (mo.utc().diff(tme, 'seconds') > (sec || cfg('outdSec')))
+}
+
 const getStos = (term, convert) => {
   let stos = []
   for (let sto of Object.keys(localStorage)) {
@@ -247,11 +277,16 @@ export default {
   setJsonSto,
   delJsonSto: delSto,
   clearSto,
-  addSnack: (msg) => setSto('snack', msg),
-  getTme: () => mo.utc().format(),
+  addSnack: msg => setSto('snack', msg),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
+  getTme: () => mo.utc().format(),
+  isOutdated,
   getSnack,
+  cap,
+  struc,
   rqst,
+  rndPop,
+  shuffle,
   ppTme,
   getLogger,
   toLbl,
@@ -266,60 +301,5 @@ export default {
   vldAlphNum,
   vldFloat,
   vldPw,
-  getRndInt
+  isArray: val => Object.prototype.toString.call(val) === '[object Array]'
 }
-
-/*
-// doesn't work reliable :(
-const addTabWatcher = () => {
-  const info = getLogger('info', 'main')
-  info('Registering browser tab watcher')
-
-  const update = idle => {
-    let title = document.title.replace(' [Idle]', '')
-    if (idle) {
-      localStorage.setItem('active', false)
-      document.title = title + ' [Idle]'
-    } else {
-      localStorage.setItem('active', true)
-      document.title = title
-    }
-  }
-
-  // window.onfocus = () => {
-  //   info('Browser tab is active')
-  //   update(false)
-  // }
-  // window.onblur = function () {
-  //   info('Browser tab is idle')
-  //   update(true)
-  // }
-
-  let key, prop
-  if (typeof document.hidden !== undefined) {
-    key = 'visibilitychange'
-    prop = 'hidden'
-  } else if (typeof document.mozHidden !== 'undefined') {
-    key = 'mozvisibilitychange'
-    prop = 'mozHidden'
-  } else if (typeof document.msHidden !== 'undefined') {
-    key = 'msvisibilitychange'
-    prop = 'msHidden'
-  } else if (typeof document.webkitHidden !== 'undefined') {
-    key = 'webkitvisibilitychange'
-    prop = 'webkitHidden'
-  }
-  document.addEventListener(
-    key,
-    () => {
-      if (document[prop]) {
-        info('Browser tab is idle')
-        update()
-      } else {
-        info('Browser tab is active')
-        update(false)
-      }
-    }
-  )
-}
-*/
