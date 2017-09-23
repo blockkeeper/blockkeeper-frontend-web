@@ -13,7 +13,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import PersonIcon from 'material-ui-icons/Person'
 import AddIcon from 'material-ui-icons/Add'
-import {jumboStyle, tabStyle, floatBtnStyle} from './Style'
+import {theme, jumboStyle, tabStyle, floatBtnStyle} from './Style'
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -170,7 +170,7 @@ class CrnIcon extends React.Component {
     this.alt = props.alt || false
     this.coin = props.coin
     this.size = props.size || '18'
-    this.color = props.color || CryptoColors[this.coin.toUpperCase()] || '#000'
+    this.color = theme.palette.text[props.color] || props.color || CryptoColors[this.coin.toUpperCase()]
   }
 
   render () {

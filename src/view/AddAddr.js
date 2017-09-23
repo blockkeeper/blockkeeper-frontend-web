@@ -140,6 +140,7 @@ export default class AddAddrView extends React.Component {
                 {this.state.noHshMode &&
                 <div>
                   <TextField
+                    autoFocus
                     required
                     fullWidth
                     label='Amount'
@@ -149,7 +150,6 @@ export default class AddAddrView extends React.Component {
                     helperText={this.state.amntEmsg}
                     onChange={evt => this.set('amnt', evt.target.value)}
                       />
-                  {this.state.coin}
                 </div>}
                 <FormControlLabel
                   control={

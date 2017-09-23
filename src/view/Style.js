@@ -31,7 +31,8 @@ const theme = createMuiTheme({
     background: {
       default: styleGuide.backgroundDark,
       paper: common.white,
-      appBar: common.transparent
+      appBar: common.transparent,
+      light: styleGuide.backgroundLight
     },
     text: {
       primary: styleGuide.text,
