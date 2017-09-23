@@ -12,7 +12,7 @@ import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown'
 import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp'
 import Paper from 'material-ui/Paper'
 import ModeEdit from 'material-ui-icons/ModeEdit'
-import {TopBar, Snack, Modal, CrnIcon} from './Lib'
+import {TopBar, Snack, Modal, CoinIcon} from './Lib'
 import {theme, themeBgStyle, paperStyle, actionBtnStyle} from './Style'
 import Divider from 'material-ui/Divider'
 import Addr from '../logic/Addr'
@@ -131,24 +131,24 @@ export default class AddrView extends React.Component {
             <Button onClick={() => this.addrObj.updateBySrv()}>
               Update
             </Button>
-            <CrnIcon coin={this.state.coin} size={100} />
+            <CoinIcon coin={this.state.coin} size={100} />
             <Typography type='title' color='default' style={{paddingTop: '24px'}}>
               {this.state.addr.name}
               <Launch color='grey' />
             </Typography>
             <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: '24px'}} gutterBottom>
               {this.state.blc1}&nbsp;
-              <CrnIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />
+              <CoinIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />
             </Typography>
             {!this.state.toggleCoins &&
               <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
                 {this.state.blc2}&nbsp;
-                <CrnIcon coin={this.state.coin0} color={theme.palette.primary['500']} alt />
+                <CoinIcon coin={this.state.coin0} color={theme.palette.primary['500']} alt />
               </Typography>}
             {this.state.toggleCoins &&
               <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
                 {this.state.blc3}&nbsp;
-                <CrnIcon coin={this.state.coin1} color={theme.palette.primary['500']} alt />
+                <CoinIcon coin={this.state.coin1} color={theme.palette.primary['500']} alt />
               </Typography>}
             <AddrList
               addr={this.state.addr}

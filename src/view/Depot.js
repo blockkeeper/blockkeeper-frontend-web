@@ -5,7 +5,7 @@ import Table, {TableHead, TableBody, TableCell, TableRow} from 'material-ui/Tabl
 import {LinearProgress} from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
 import {theme, themeBgStyle} from './Style'
-import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal, CrnIcon} from './Lib'
+import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal, CoinIcon} from './Lib'
 import __ from '../util'
 
 export default class DepotView extends React.Component {
@@ -139,7 +139,7 @@ const PaperGrid = ({ilk, rows, coin0}) => {
               <TableBody>
                 <TableRow key={row._id}>
                   <TableCell compact width={'40px'} style={{maxWidth: 0}}>
-                    <CrnIcon coin={row.coin} size={40} />
+                    <CoinIcon coin={row.coin} size={40} />
                   </TableCell>
                   <TableCell style={{maxWidth: 0}}>
                     <Link to={`/${urlPath}/${row._id}`} style={{textDecoration: 'none'}}>
@@ -153,10 +153,10 @@ const PaperGrid = ({ilk, rows, coin0}) => {
                   </TableCell>
                   <TableCell compact numeric width={'30%'} style={{maxWidth: 0}}>
                     <Typography type='headline' style={{color: theme.palette.primary['500']}}>
-                      {row.amnt}&nbsp;<CrnIcon coin={row.coin} color={theme.palette.primary['500']} alt />
+                      {row.amnt}&nbsp;<CoinIcon coin={row.coin} color={theme.palette.primary['500']} alt />
                     </Typography>
                     <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                      {row.amnt * row.rates.get(coin0)}&nbsp;<CrnIcon coin={coin0} size={14} color={theme.palette.text.secondary} alt />
+                      {row.amnt * row.rates.get(coin0)}&nbsp;<CoinIcon coin={coin0} size={14} color={theme.palette.text.secondary} alt />
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -185,7 +185,7 @@ const List = ({ilk, rows, coin0}) =>
           return (
             <TableRow key={row._id}>
               <TableCell compact>
-                <CrnIcon coin={row.coin} />
+                <CoinIcon coin={row.coin} />
               </TableCell>
               <TableCell compact>
                 <Link to={`/${urlPath}/${row._id}`}>{row.name}</Link>
@@ -194,10 +194,10 @@ const List = ({ilk, rows, coin0}) =>
               </TableCell>
               <TableCell compact numeric>
                 <Typography type='headline' color='primary'>
-                  {row.amnt}&nbsp;<CrnIcon coin={row.coin} color='primary' alt />
+                  {row.amnt}&nbsp;<CoinIcon coin={row.coin} color='primary' alt />
                 </Typography>
                 <Typography type='body2'>
-                  {row.amnt * row.rates.get(coin0)}&nbsp;<CrnIcon coin={coin0} size={14} color='primary' alt />
+                  {row.amnt * row.rates.get(coin0)}&nbsp;<CoinIcon coin={coin0} size={14} color='primary' alt />
                 </Typography>
 
               </TableCell>

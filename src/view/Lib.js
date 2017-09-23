@@ -21,9 +21,7 @@ import Dialog, {
   DialogTitle
 } from 'material-ui/Dialog'
 import __ from '../util'
-const ucfirst = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1)
-}
+
 const CryptoColors = {
   'BTC': '#FF9900',
   'LTC': '#b8b8b8',
@@ -77,13 +75,13 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
       <Typography align='center' type='display3' color='inherit' style={{fontWeight: '100'}}>
         {title || 'Loading'}&nbsp;
         {coin0 &&
-          <CrnIcon coin={coin0} size={35} color={'white'} alt />
+          <CoinIcon coin={coin0} size={35} color={'white'} alt />
         }
       </Typography>
       <Typography align='center' type='headline' color='inherit'>
         {subTitle || 'data...'}&nbsp;
         {coin1 &&
-          <CrnIcon coin={coin1} color={'white'} alt />
+          <CoinIcon coin={coin1} color={'white'} alt />
         }
       </Typography>
     </div>
@@ -164,30 +162,16 @@ class Modal extends React.Component {
   }
 }
 
-class CrnIcon extends React.Component {
-  constructor (props) {
-    super(props)
-    this.alt = props.alt || false
-    this.coin = props.coin
-    this.size = props.size || '18'
-    this.color = theme.palette.text[props.color] || props.color || CryptoColors[this.coin.toUpperCase()]
+const CoinIcon = ({coin, alt, color, size}) => {
+  coin = alt
+    ? (__.cap(coin.toLowerCase()) + 'Alt')
+    : __.cap(coin.toLowerCase())
+  color = theme.palette.text[color] || color || CryptoColors[coin.toUpperCase()]
+  if (CryptoIcons[coin]) {
+    const IconType = CryptoIcons[coin]
+    return <IconType color={color} size={size || '18'} />
   }
-
-  render () {
-    const coin = this.alt ? (ucfirst(this.coin.toLowerCase()) + 'Alt') : ucfirst(this.coin.toLowerCase())
-    if (CryptoIcons[coin]) {
-      const IconType = CryptoIcons[coin]
-      return (
-        <IconType color={this.color} size={this.size} />
-      )
-    } else {
-      return (
-        <span>
-          {getSymbolFromCurrency(this.coin.toUpperCase())}
-        </span>
-      )
-    }
-  }
+  return <span>{getSymbolFromCurrency(coin.toUpperCase())}</span>
 }
 
 class DropDown extends React.Component {
@@ -249,7 +233,7 @@ export {
   TopBar,
   SubBar,
   Jumbo,
-  CrnIcon,
+  CoinIcon,
   Snack,
   Modal,
   FloatBtn,

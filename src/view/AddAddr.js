@@ -9,7 +9,7 @@ import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import {themeBgStyle, actionBtnStyle, paperStyle} from './Style'
-import {TopBar, Modal, CrnIcon} from './Lib'
+import {TopBar, Modal, CoinIcon} from './Lib'
 import Grid from 'material-ui/Grid'
 import __ from '../util'
 
@@ -118,7 +118,7 @@ export default class AddAddrView extends React.Component {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Typography type='title'>
-                  <CrnIcon coin={this.state.coin} />&nbsp;
+                  <CoinIcon coin={this.state.coin} />&nbsp;
                   {this.state.coin}
                 </Typography>
               </Grid>
