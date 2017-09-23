@@ -2,15 +2,59 @@ import __ from '../util'
 
 class Base {
   constructor (name, cx, _id, pa) {
-    this.cx = cx
+    if (cx) this.cx = cx
     Object.assign(this, __.init('logic', name, _id, pa))
+  }
+}
+
+class SrvBase extends Base {
+  constructor (name, pa) {
+    super(name, undefined, undefined, pa)
+    this.get = this.get.bind(this)
+    this.run = this.run.bind(this)
+  }
+
+  get (ilk) {
+    const srvs = []
+    for (let srv of this.srvs) {
+      if (!this.whiteSrvs || this.whiteSrvs.includes(srv)) {
+        // e.g. ilk = addr => this.bckexAddr, ilk = tscs => this.bckexTscs
+        srvs.push(this[`${srv}${__.cap(ilk)}`])
+      }
+    }
+    return srvs
+  }
+
+  async run (ilk, data, emsg) {
+    const srvs = this.get(ilk)
+    const errs = []
+    try {
+      let pld
+      while (!pld && srvs.length > 0) {
+        let srvFunc = __.rndPop(srvs)
+        pld = await srvFunc(data)
+        return pld
+      }
+    } catch (e) {
+      errs.push(e)
+    }
+    throw __.err(
+      emsg,
+      {dmsg: `Running ${errs.length} srvs failed`, sts: 610, errs, data}
+    )
+  }
+}
+
+class StoBase extends Base {
+  constructor (name, cx, _id, pa) {
+    super(name, cx, _id, pa)
     this.getSto = () => __.getJsonSto(this._store)
     this.setSto = pld => __.setJsonSto(this._store, pld)
     this.delSto = () => __.delSto(this._store)
   }
 }
 
-class ApiBase extends Base {
+class ApiBase extends StoBase {
   constructor (name, cx, _id, pa) {
     super(name, cx, _id, pa)
     this._save = this._save.bind(this)
@@ -120,5 +164,7 @@ class ApiBase extends Base {
 
 export {
   Base,
+  SrvBase,
+  StoBase,
   ApiBase
 }
