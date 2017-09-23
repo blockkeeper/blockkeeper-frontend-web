@@ -51,7 +51,7 @@ export default class AddrView extends React.Component {
         await this.addrObj.load(),
         this.cx.user.getCoins(this.state.coin)
       ])
-      const blc = this.cx.depot.getBlc([addr])
+      const blc = this.cx.depot.getAddrBlc([addr])
       this.setState({
         err: null,
         addr: addr,
@@ -128,6 +128,9 @@ export default class AddrView extends React.Component {
             noUser
           />
           <Paper square style={{textAlign: 'center', ...paperStyle}}>
+            <Button onClick={() => this.addrObj.updateBySrv()}>
+              Update
+            </Button>
             <CrnIcon coin={this.state.coin} size={100} />
             <Typography type='title' color='default' style={{paddingTop: '24px'}}>
               {this.state.addr.name}
@@ -164,6 +167,7 @@ export default class AddrView extends React.Component {
             }
             {this.state.tscs.length > 0 &&
               <TscList
+                addr={this.state.addr}
                 tscs={this.state.tscs}
                 coin0={this.state.coin0}
               />}
@@ -183,7 +187,7 @@ export default class AddrView extends React.Component {
   }
 }
 
-const TscList = ({tscs, coin0}) =>
+const TscList = ({addr, tscs, coin0}) =>
   <Table>
     <TableBody>
       {tscs.map(tsc => {
@@ -197,16 +201,16 @@ const TscList = ({tscs, coin0}) =>
             <TableCell>
               {__.ppTme(tsc._t)}
               <br />
-              <Link to={`/tsc/${tsc.addrId}/${tsc._id}`}>{tsc.name}</Link>
+              <Link to={`/tsc/${addr._id}/${tsc._id}`}>{tsc.name}</Link>
               <br />
               {desc}
               <br />
               {tags}
             </TableCell>
             <TableCell>
-              {tsc.coin} {tsc.amnt}
+              {addr.coin} {tsc.amnt}
               <br />
-              {coin0} {tsc.amnt * tsc.rates.get(coin0)}
+              {coin0} {tsc.amnt * addr.rates.get(coin0)}
             </TableCell>
           </TableRow>
         )

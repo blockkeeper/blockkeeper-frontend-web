@@ -34,11 +34,11 @@ export default class DepotView extends React.Component {
         this.cx.depot.loadAddrs(),
         this.cx.user.getCoins(this.state.coin)
       ])
-      const blc = this.cx.depot.getBlc(addrs)
+      const blc = this.cx.depot.getAddrBlc(addrs)
       this.setState({
         err: null,
-        addrs: addrs,
-        tscs: tscs,
+        addrs,
+        tscs,
         coin0,
         coin1,
         blc1: `${blc.get(coin0)}`,

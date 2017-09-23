@@ -43,10 +43,10 @@ export default class TscView extends React.Component {
       ])
       this.addr = addr
       const tsc = await this.addrObj.getTsc(this.tscId, this.addr)
-      const blc = this.cx.depot.getBlc([tsc])
+      const blc = this.cx.depot.getTscBlc([tsc], this.addr)
       this.setState({
         err: null,
-        tsc: tsc,
+        tsc,
         coin0,
         coin1,
         blc1: `${coin0} ${blc.get(coin0)}`,
@@ -60,11 +60,10 @@ export default class TscView extends React.Component {
 
   async save (name, desc, tags) {
     try {
-      const {addr, tsc} = await this.addrObj.saveTsc(
-        this.state.tsc._id,
-        {name, desc, tags: tags.trim().split(' ')},
-        this.addr
-      )
+      const tsc = this.state.tsc
+      Object.assign(tsc, {name, desc, tags: tags.trim().split(' ')})
+      const addr = await this.addrObj.updateTscs([tsc], this.addr)
+      await this.addrObj.save(addr)
       __.addSnack('Transaction updated')
       this.addr = addr
       this.setState({tsc, snack: __.getSnack()})
@@ -102,6 +101,7 @@ export default class TscView extends React.Component {
             subTitle={this.state.blc2}
           />
           <TscList
+            addr={this.addr}
             tsc={this.state.tsc}
             save={this.save}
           />
@@ -120,6 +120,7 @@ export default class TscView extends React.Component {
 class TscList extends React.Component {
   constructor (props) {
     super(props)
+    this.addr = props.addr
     this.tsc = props.tsc
     this.state = {
       name: props.tsc.name,
@@ -152,7 +153,9 @@ class TscList extends React.Component {
   }
 
   getTags () {
-    return this.state.tags.trim().split(' ').map(tag => '#' + tag).join(' ')
+    if (this.state.tags) {
+      return this.state.tags.trim().split(' ').map(tag => '#' + tag).join(' ')
+    }
   }
 
   render () {
@@ -180,22 +183,6 @@ class TscList extends React.Component {
             </TableRow>
             <TableRow>
               <TableCell>
-                Sender address
-              </TableCell>
-              <TableCell>
-                {this.tsc.sndHsh}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Receipient address
-              </TableCell>
-              <TableCell>
-                {this.tsc.rcvHsh}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
                 Amount
               </TableCell>
               <TableCell>
@@ -207,7 +194,7 @@ class TscList extends React.Component {
                 Fee
               </TableCell>
               <TableCell>
-                {this.tsc.feeAmnt}
+                {this.tsc.fee}
               </TableCell>
             </TableRow>
             <TableRow>
@@ -242,6 +229,38 @@ class TscList extends React.Component {
                   />}
                 {!this.state.edit &&
                   this.state.desc}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                Sender address
+              </TableCell>
+              <TableCell>
+                {this.tsc.inAddrs.join('<br />')}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                Receipient address
+              </TableCell>
+              <TableCell>
+                {this.tsc.outAddrs.join('<br />')}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                Related address
+              </TableCell>
+              <TableCell>
+                {this.addr.hsh}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                Transaction ID
+              </TableCell>
+              <TableCell>
+                {this.tsc._id}
               </TableCell>
             </TableRow>
           </TableBody>

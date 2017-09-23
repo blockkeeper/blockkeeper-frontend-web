@@ -5,19 +5,29 @@ import __ from '../util'
 export default class Depot extends ApiBase {
   constructor (cx, _id) {
     super('depot', cx, _id, cx.user)
-    this.getBlc = this.getBlc.bind(this)
+    this.getAddrBlc = this.getAddrBlc.bind(this)
+    this.getTscBlc = this.getTscBlc.bind(this)
     this.loadAddrs = this.loadAddrs.bind(this)
     this.loadAddrIds = this.loadAddrIds.bind(this)
     this.apiGetAddrs = this.apiGetAddrs.bind(this)
     this.info('Created')
   }
 
-  getBlc (items) {
-    // items can be addrs or tscs
+  getAddrBlc (addrs) {
     const blcs = new Map()
-    for (let item of items) {
-      for (let [coin, rate] of item.rates) {
-        blcs.set(coin, (blcs.get(coin) || 0) + (item.amnt * rate))
+    for (let addr of addrs) {
+      for (let [coin, rate] of addr.rates) {
+        blcs.set(coin, (blcs.get(coin) || 0) + (addr.amnt * rate))
+      }
+    }
+    return blcs
+  }
+
+  getTscBlc (tscs, addr) {
+    const blcs = new Map()
+    for (let tsc of tscs) {
+      for (let [coin, rate] of addr.rates) {
+        blcs.set(coin, (blcs.get(coin) || 0) + (tsc.amnt * rate))
       }
     }
     return blcs
@@ -56,6 +66,7 @@ export default class Depot extends ApiBase {
       try {
         let addr = await (new Addr(this.cx, addrId)).load()
         addrs.push(addr)
+        for (let tsc of addr.tscs) tsc.rates = addr.rates
         tscs = tscs.concat(addr.tscs)
       } catch (e) {
         throw this.err(

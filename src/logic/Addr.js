@@ -25,12 +25,6 @@ export default class Addr extends ApiBase {
     for (let coin of coins) {
       addr.rates.set(coin, await this.cx.rate.getRate(addr.coin, coin, rate))
     }
-    for (let tsc of addr.tscs) {
-      tsc.addrId = addr._id
-      tsc.addrHsh = addr.hsh
-      tsc.coin = addr.coin
-      tsc.rates = addr.rates
-    }
     return addr
   }
 
