@@ -31,11 +31,13 @@ const theme = createMuiTheme({
     background: {
       default: styleGuide.backgroundDark,
       paper: common.white,
-      appBar: common.transparent
+      appBar: common.transparent,
+      light: styleGuide.backgroundLight
     },
     text: {
       primary: styleGuide.text,
-      secondary: common.white
+      // secondary: common.white
+      secondary: styleGuide.textSecondary
     }
   },
   // https://github.com/callemall/material-ui/blob/v1-beta/src/styles/createTypography.js
@@ -97,7 +99,8 @@ const themeBgStyle = {
 
 const homeStyle = {
   paddingTop: styleGuide.spacertop,
-  textAlign: 'center'
+  textAlign: 'center',
+  color: common.white
 }
 
 const loginStyle = {

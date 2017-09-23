@@ -4,8 +4,8 @@ import Menu, { MenuItem } from 'material-ui/Menu'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
 import Toolbar from 'material-ui/Toolbar'
-import {Lock} from 'material-ui-icons'
-import * as Icon from 'react-cryptocoins'
+import * as CryptoIcons from 'react-cryptocoins'
+import getSymbolFromCurrency from 'currency-symbol-map'
 import Snackbar from 'material-ui/Snackbar'
 import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
@@ -13,7 +13,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import PersonIcon from 'material-ui-icons/Person'
 import AddIcon from 'material-ui-icons/Add'
-import {jumboStyle, tabStyle, floatBtnStyle} from './Style'
+import {theme, jumboStyle, tabStyle, floatBtnStyle} from './Style'
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -21,10 +21,16 @@ import Dialog, {
   DialogTitle
 } from 'material-ui/Dialog'
 import __ from '../util'
-
 const ucfirst = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
+const CryptoColors = {
+  'BTC': '#FF9900',
+  'LTC': '#b8b8b8',
+  'ETH': '#3C3C3D',
+  'DASH': '#1c75bc'
+}
+
 const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, noUser}) =>
   <AppBar position='static' color={color || 'default'} elevation={0}>
     <Toolbar style={{minHeight: '50px'}}>
@@ -65,24 +71,22 @@ const SubBar = ({tabs, ix, onClick}) =>
     </Tabs>
   </AppBar>
 
-const Jumbo = ({title, subTitle1, subTitle2, icon}) =>
+const Jumbo = ({title, subTitle, coin0, coin1}) =>
   <div style={jumboStyle}>
-    {icon &&
-      <Typography align='center' type='display1'>
-        {icon}
-      </Typography>}
     <div>
-      <Typography align='center' type='display3' style={{fontWeight: '100'}}>
-        {title || 'Loading'}
+      <Typography align='center' type='display3' color='inherit' style={{fontWeight: '100'}}>
+        {title || 'Loading'}&nbsp;
+        {coin0 &&
+          <CrnIcon coin={coin0} size={35} color={'white'} alt />
+        }
       </Typography>
-      <Typography align='center' type='subheading' color='inherit'>
-        {subTitle1 || 'data...'}
+      <Typography align='center' type='headline' color='inherit'>
+        {subTitle || 'data...'}&nbsp;
+        {coin1 &&
+          <CrnIcon coin={coin1} color={'white'} alt />
+        }
       </Typography>
     </div>
-    {subTitle2 &&
-      <Typography align='center' type='display1'>
-        {subTitle2 || ''}
-      </Typography>}
   </div>
 
 const FloatBtn = ({onClick, key}) => {
@@ -163,13 +167,26 @@ class Modal extends React.Component {
 class CrnIcon extends React.Component {
   constructor (props) {
     super(props)
-    this.coin = ucfirst(props.coin.toLowerCase())
-    this.size = props.size || '48'
+    this.alt = props.alt || false
+    this.coin = props.coin
+    this.size = props.size || '18'
+    this.color = theme.palette.text[props.color] || props.color || CryptoColors[this.coin.toUpperCase()]
   }
 
   render () {
-    const IconType = Icon[this.coin]
-    return <IconType color='red' size={this.size} />
+    const coin = this.alt ? (ucfirst(this.coin.toLowerCase()) + 'Alt') : ucfirst(this.coin.toLowerCase())
+    if (CryptoIcons[coin]) {
+      const IconType = CryptoIcons[coin]
+      return (
+        <IconType color={this.color} size={this.size} />
+      )
+    } else {
+      return (
+        <span>
+          {getSymbolFromCurrency(this.coin.toUpperCase())}
+        </span>
+      )
+    }
   }
 }
 

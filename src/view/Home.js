@@ -17,10 +17,10 @@ export default class HomeView extends React.Component {
     return (
       <div style={rootStyle}>
         <div style={homeStyle}>
-          <Typography type='display3'>
+          <Typography type='display3' color={'inherit'}>
             Blockkeeper
           </Typography>
-          <Typography type='display1' gutterBottom>
+          <Typography type='display1' color={'inherit'} gutterBottom>
             Your secure blockchain book keeping app
           </Typography>
 
