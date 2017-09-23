@@ -1,10 +1,10 @@
-import {Base} from './Lib'
+import {StoBase} from './Lib'
 import User from './User'
 import Depot from './Depot'
 import Rate from './Rate'
 import __ from '../util'
 
-export default class Core extends Base {
+export default class Core extends StoBase {
   constructor (cx) {
     super('core', cx, '000a1e26-ab63-445a-97ec-7ff61d942ef8')
     this._store = 'core'
