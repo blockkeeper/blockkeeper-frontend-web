@@ -94,10 +94,10 @@ export default class RgstrView extends React.Component {
           {this.state.busy &&
           <LinearProgress />}
           <div style={loginStyle}>
-            <Typography align='center' type='display3'>
+            <Typography align='center' type='display3' color='inherit'>
               Blockkeeper
             </Typography>
-            <Typography align='center' type='display1' gutterBottom>
+            <Typography align='center' type='display1' color='inherit' gutterBottom>
               Please choose your account details
             </Typography>
             <Paper square style={paperStyle} elevation={24}>

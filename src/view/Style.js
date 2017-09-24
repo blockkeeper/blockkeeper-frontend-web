@@ -103,10 +103,7 @@ const homeStyle = {
   color: common.white
 }
 
-const loginStyle = {
-  paddingTop: styleGuide.spacertop,
-  textAlign: 'center'
-}
+const loginStyle = homeStyle
 
 const actionBtnStyle = {
   backgroundColor: styleGuide.error,

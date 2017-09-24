@@ -4154,9 +4154,9 @@ material-ui-icons@^1.0.0-beta.10:
   dependencies:
     recompose "^0.24.0"
 
-material-ui@^1.0.0-beta.10:
-  version "1.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-1.0.0-beta.11.tgz#f05c475e0e9a1818f1414c5878e4da110b4e9ef4"
+material-ui@^1.0.0-beta.12:
+  version "1.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/material-ui/-/material-ui-1.0.0-beta.12.tgz#41fe1c317df9835cc690d60102026214c8a8494e"
   dependencies:
     babel-runtime "^6.26.0"
     brcast "^3.0.1"
@@ -4172,10 +4172,10 @@ material-ui@^1.0.0-beta.10:
     react-event-listener "^0.5.0"
     react-jss "^7.1.0"
     react-popper "^0.7.2"
-    react-scrollbar-size "^2.0.0"
+    react-scrollbar-size "^2.0.1"
     react-transition-group "^2.2.0"
     recompose "^0.24.0"
-    scroll "^2.0.0"
+    scroll "^2.0.1"
     warning "^3.0.0"
 
 math-expression-evaluator@^1.2.14:
@@ -5215,6 +5215,16 @@ q@^1.1.2:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.0.tgz#dd01bac9d06d30e6f219aecb8253ee9ebdc308f1"
 
+qr.js@0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/qr.js/-/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
+
+qrcode-react@^0.1.14:
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/qrcode-react/-/qrcode-react-0.1.14.tgz#c7afcd267e8b8dbd1a2bacc084700382b66bc48d"
+  dependencies:
+    qr.js "0.0.0"
+
 qs@6.5.0:
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.0.tgz#8d04954d364def3efc55b5a0793e1e2c8b1e6e49"
@@ -5419,7 +5429,7 @@ react-scripts@1.0.11:
   optionalDependencies:
     fsevents "1.1.2"
 
-react-scrollbar-size@^2.0.0:
+react-scrollbar-size@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/react-scrollbar-size/-/react-scrollbar-size-2.0.1.tgz#fc13631d27efc93d7a1f40383b375dc449ebfac4"
   dependencies:
@@ -5805,7 +5815,7 @@ schema-utils@^0.3.0:
   dependencies:
     ajv "^5.0.0"
 
-scroll@^2.0.0:
+scroll@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/scroll/-/scroll-2.0.1.tgz#b4c7d27e8bcf3ae8a58a042f27268ae3f55f9ccd"
   dependencies:

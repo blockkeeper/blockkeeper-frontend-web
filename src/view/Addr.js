@@ -11,7 +11,8 @@ import Launch from 'material-ui-icons/Launch'
 import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown'
 import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp'
 import Paper from 'material-ui/Paper'
-import ModeEdit from 'material-ui-icons/ModeEdit'
+import QRCode from 'qrcode-react'
+import Autorenew from 'material-ui-icons/Autorenew'
 import {TopBar, Snack, Modal, CoinIcon} from './Lib'
 import {theme, themeBgStyle, paperStyle, actionBtnStyle} from './Style'
 import Divider from 'material-ui/Divider'
@@ -32,7 +33,6 @@ export default class AddrView extends React.Component {
     this.delete = this.delete.bind(this)
     this.toggleCoins = this.toggleCoins.bind(this)
     this.show = this.show.bind(this)
-    this.edit = this.edit.bind(this)
   }
 
   async componentDidMount () {
@@ -121,22 +121,19 @@ export default class AddrView extends React.Component {
             />}
           <TopBar
             midTitle='Address'
-            icon={<ModeEdit />}
+            icon={<Autorenew />}
             iconLeft={<ArrowBackIcon />}
-            onClick={this.edit}
+            onClick={() => this.addrObj.updateBySrv()}
             onClickLeft={this.goBack}
             noUser
           />
           <Paper square style={{textAlign: 'center', ...paperStyle}}>
-            <Button onClick={() => this.addrObj.updateBySrv()}>
-              Update
-            </Button>
             <CoinIcon coin={this.state.coin} size={100} />
-            <Typography type='title' color='default' style={{paddingTop: '24px'}}>
+            <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
               {this.state.addr.name}
               <Launch color='grey' />
             </Typography>
-            <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: '24px'}} gutterBottom>
+            <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: theme.spacing.unit * 2}}>
               {this.state.blc1}&nbsp;
               <CoinIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />
             </Typography>
@@ -150,20 +147,22 @@ export default class AddrView extends React.Component {
                 {this.state.blc3}&nbsp;
                 <CoinIcon coin={this.state.coin1} color={theme.palette.primary['500']} alt />
               </Typography>}
-            <AddrList
-              addr={this.state.addr}
-              save={this.save}
-              delete={this.delete}
-              edit={this.state.edit}
-            />
+            <Divider light />
             {!this.state.show &&
               <IconButton onClick={this.show}>
-                <ArrowDropDownIcon />
+                <ArrowDropDownIcon style={{height: '50px', width: '50px'}} />
               </IconButton>}
             {this.state.show &&
-              <IconButton onClick={this.show}>
-                <ArrowDropUpIcon />
-              </IconButton>
+              <div>
+                <AddrList
+                  addr={this.state.addr}
+                  save={this.save}
+                  delete={this.delete}
+                />
+                <IconButton onClick={this.show}>
+                  <ArrowDropUpIcon style={{height: '50px', width: '50px'}} />
+                </IconButton>
+              </div>
             }
             {this.state.tscs.length > 0 &&
               <TscList
@@ -227,7 +226,7 @@ class AddrList extends React.Component {
     this.state = {
       name: props.addr.name,
       desc: props.addr.desc,
-      edit: props.edit
+      coin: props.addr.coin
     }
     this.saveAddr = props.save
     this.deleteAddr = props.delete
@@ -279,17 +278,43 @@ class AddrList extends React.Component {
     } else {
       return (
         <div>
-          {this.state.addrHsh &&
+          {this.addrHsh &&
             <div>
-              <Typography type='headline' color='inherit'>
-              QRCODE
-              {this.state.addrHsh}
-              </Typography>
-              <Divider />
+              <div style={{padding: theme.spacing.unit * 2}}>
+                <QRCode value={this.addrHsh} />
+                <Typography style={{fontSize: '13px'}}>
+                  {this.addrHsh}
+                </Typography>
+              </div>
+              <Divider light />
             </div>
           }
           <Table>
             <TableBody>
+              <TableRow>
+                <TableCell>
+                  No. Transactions
+                </TableCell>
+                <TableCell numeric>
+                  70
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  Total Received
+                </TableCell>
+                <TableCell numeric>
+                  653.4563 <CoinIcon coin={this.state.coin} size={12} alt />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  Total Send
+                </TableCell>
+                <TableCell numeric>
+                  3.6746 <CoinIcon coin={this.state.coin} size={12} alt />
+                </TableCell>
+              </TableRow>
               <TableRow>
                 <TableCell>
                   Name

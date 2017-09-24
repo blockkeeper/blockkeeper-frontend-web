@@ -134,16 +134,16 @@ const PaperGrid = ({ilk, rows, coin0}) => {
       {rows.map(row => {
         const urlPath = ilk === 'addr' ? 'addr' : `tsc/${row.addrId}`
         return (
-          <Paper style={{margin: theme.spacing.unit * 2, padding: theme.spacing.unit * 2}}>
-            <Table key={row._id}>
+          <Paper style={{margin: theme.spacing.unit * 2, padding: theme.spacing.unit * 2}} key={row._id}>
+            <Table>
               <TableBody>
-                <TableRow key={row._id}>
+                <TableRow>
                   <TableCell compact width={'40px'} style={{maxWidth: 0}}>
                     <CoinIcon coin={row.coin} size={40} />
                   </TableCell>
                   <TableCell style={{maxWidth: 0}}>
                     <Link to={`/${urlPath}/${row._id}`} style={{textDecoration: 'none'}}>
-                      <Typography type='headline' color='primary'>
+                      <Typography type='headline'>
                         {row.name}
                       </Typography>
                     </Link>
