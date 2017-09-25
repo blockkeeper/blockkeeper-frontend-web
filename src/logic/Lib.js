@@ -10,10 +10,23 @@ class Base {
 class SrvBase extends Base {
   constructor (name, pa) {
     super(name, undefined, undefined, pa)
-    this.get = this.get.bind(this)
     this.run = this.run.bind(this)
   }
 
+  async run (data) {
+    const srv = this.srvs[0]
+    let pld
+    try {
+      pld = await this[srv](data)
+    } catch (e) {
+      throw __.err(`Service ${srv} failed`, {e, data})
+    }
+    return pld
+  }
+
+  /*
+  // support multiple services: untested!
+  //
   get (ilk) {
     const srvs = []
     for (let srv of this.srvs) {
@@ -24,7 +37,7 @@ class SrvBase extends Base {
     }
     return srvs
   }
-
+  //
   async run (ilk, data, emsg) {
     const srvs = this.get(ilk)
     const errs = []
@@ -43,6 +56,7 @@ class SrvBase extends Base {
       {dmsg: `Running ${errs.length} srvs failed`, sts: 610, errs, data}
     )
   }
+  */
 }
 
 class StoBase extends Base {

@@ -2,6 +2,7 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import Typography from 'material-ui/Typography'
 import Table, {TableHead, TableBody, TableCell, TableRow} from 'material-ui/Table'
+import {Autorenew} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
 import {theme, themeBgStyle} from './Style'
@@ -93,7 +94,9 @@ export default class DepotView extends React.Component {
               onClose={() => this.setState({snack: null})}
             />}
           <TopBar
-            title='BK'
+            midTitle='Blockkeeper'
+            iconLeft={<Autorenew />}
+            onClickLeft={() => this.cx.depot.updateAddrs()}
           />
           <Jumbo
             title={this.state.blc1}

@@ -3,14 +3,11 @@ import {SrvBase} from '../Lib'
 import __ from '../../util'
 
 export default class Btc extends SrvBase {
-  constructor (pa, whiteSrvs) {
+  constructor (pa) {
     super('btc', pa)
-    this.whiteSrvs = whiteSrvs
-    this.srvs = ['bckinfo']   // ['bckinfo', 'bckex']
-    this.bckinfoAddr = this.bckinfoAddr.bind(this)
+    this.srvs = ['bckinfo']
+    this.bckinfo = this.bckinfo.bind(this)
     this.bckinfoTscs = this.bckinfoTscs.bind(this)
-    // this.bckexAddr = this.bckexAddr.bind(this)
-    // this.bckexTscs = this.bckexTscs.bind(this)
     this.info('Created')
   }
 
@@ -18,21 +15,34 @@ export default class Btc extends SrvBase {
   // https://blockchain.info/api/blockchain_api
   // --------------------------------------------------------------------------
 
-  async bckinfoAddr (addr) {
+  async bckinfo (addrs) {
+    const updAddrs = new Map()
+    for (let addr of addrs) updAddrs.set(addr.hsh, {_id: addr._id})
     const req = {
-      // https://blockchain.info/rawaddr/... doesn't support cors
       url: 'https://blockchain.info/de/multiaddr',
-      params: {cors: true, active: addr.hsh}
+      params: {cors: true, active: Array.from(updAddrs.keys()).join('|')}
     }
     const pld = await __.rqst(req, 'bckinfo-addr-tscs')
-    const tscs = []
-    for (let tsc of pld.txs) {
+    for (let addr of pld.addresses) {
+      let addrHsh = addr.address
+      let updAddr = updAddrs.get(addrHsh)
+      if (!updAddr) continue  // should not happen, but to be sure...
+      updAddr.amnt = __.toFloat(addr.final_balance) * 0.00000001
+      updAddr.tscs = this.bckinfoTscs(pld.txs, addrHsh)
+    }
+    return Array.from(updAddrs.values())
+  }
+
+  bckinfoTscs (txs, addrHsh) {
+    // private method used by bckinfoAddr
+    let tscs = []
+    for (let tsc of txs) {
       let mode
       let amnt = 0
       let inAddrs = new Set()
       for (let inp of tsc.inputs) {
         inAddrs.add(inp.prev_out.addr)
-        if (inp.prev_out.addr === addr.hsh) {
+        if (inp.prev_out.addr === addrHsh) {
           mode = 'snd'
           amnt = __.toFloat(inp.prev_out.value)
         }
@@ -40,7 +50,7 @@ export default class Btc extends SrvBase {
       let outAddrs = new Set()
       for (let outp of tsc.out) {
         outAddrs.add(outp.addr)
-        if (outp.addr === addr.hsh) {
+        if (outp.addr === addrHsh) {
           if (mode === 'snd') {
             amnt -= __.toFloat(outp.value)  // change value
           } else {
@@ -49,7 +59,7 @@ export default class Btc extends SrvBase {
           }
         }
       }
-      if (mode) {
+      if (mode) {  // else: tsc doesn't belong to this addr
         tscs.push({
           _t: mo.unix(tsc.time).format(),
           hsh: tsc.hash,
@@ -61,18 +71,9 @@ export default class Btc extends SrvBase {
           // inAddrs: __.struc(Array.from(inAddrs), {toBeg: addr.hsh}),
           // outAddrs: __.struc(Array.from(outAddrs), {toBeg: addr.hsh})
         })
-      } else {
-        this.warn('Getting tsc mode failed: Ignoring this tsc', tsc)
       }
     }
-    return {
-      amnt: __.toFloat(pld.addresses[0].final_balance) * 0.00000001,
-      tscs
-    }
-  }
-
-  async bckinfoTscs (addr) {
-    // handled by bckinfoAddr()
+    return tscs
   }
 
   // --------------------------------------------------------------------------

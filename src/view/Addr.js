@@ -6,14 +6,14 @@ import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {ArrowBack, ArrowDropDown, ArrowDropUp, Autorenew, Launch, ModeEdit, Delete} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
 import {TopBar, Snack, Modal, CoinIcon} from './Lib'
 import {theme, themeBgStyle, paperStyle, actionBtnStyle} from './Style'
+import {ArrowBack, ArrowDropDown, ArrowDropUp,
+       Launch, ModeEdit, Delete} from 'material-ui-icons'
 import Addr from '../logic/Addr'
-
 import __ from '../util'
 
 export default class AddrView extends React.Component {
@@ -117,11 +117,8 @@ export default class AddrView extends React.Component {
             />}
           <TopBar
             midTitle='Address'
-            icon={<Autorenew />}
             iconLeft={<ArrowBack />}
-            onClick={() => this.addrObj.update()}
             onClickLeft={this.goBack}
-            noUser
           />
           <Paper square style={{...paperStyle, textAlign: 'center', paddingBottom: 0}} elevation={0}>
             <CoinIcon coin={this.state.coin} size={100} />

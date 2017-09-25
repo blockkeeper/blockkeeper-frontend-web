@@ -1,6 +1,5 @@
 import {ApiBase} from './Lib'
 import __ from '../util'
-import BtcSrv from './srv/Btc'
 
 export default class Addr extends ApiBase {
   constructor (cx, _id) {
@@ -13,8 +12,6 @@ export default class Addr extends ApiBase {
     this.getTsc = this.getTsc.bind(this)
     this.toAddr = this.toAddr.bind(this)
     this.toTsc = this.toTsc.bind(this)
-    this.update = this.update.bind(this)
-    this.srvs = {btc: BtcSrv}
     this.info('Created')
   }
 
@@ -75,24 +72,6 @@ export default class Addr extends ApiBase {
     return tscs[0]
   }
 
-  async update (addr) {
-    // update addr (and tscs) by block-explorer service
-    addr = addr || await this.load()
-    if (!__.cfg('isDev') && !__.isOutdated(addr._t)) {
-      this.info('Skipping update: Addr is current')
-      return
-    }
-    const srv = new this.srvs[addr.coin.toLowerCase()](this)
-    let [updAddr, updTscs] = await Promise.all([
-      srv.run('addr', addr, 'Getting address failed'),
-      srv.run('tscs', addr, 'Getting transactions failed')
-    ])
-    updTscs = updAddr.tscs || updTscs // srv-run-tscs could be a dummy
-    addr = this.toAddr({amnt: updAddr.amnt, tscs: updTscs}, addr)
-    await this.save(addr)
-    this.info(`Update addr ${addr._id} and ${addr.tscs.length} tscs finished`)
-  }
-
   toAddr (upd, cur) {
     cur = cur || {}
     upd = upd || {}
@@ -129,7 +108,7 @@ export default class Addr extends ApiBase {
   }
 
   toTsc (coin, upd, cur) {
-    // private method, called by toAddr
+    // private method, called by toAddr()
     cur = cur || {}
     upd = upd || {}
     const hsh = upd.hsh || cur.hsh
