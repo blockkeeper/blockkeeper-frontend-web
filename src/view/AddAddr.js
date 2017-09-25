@@ -79,7 +79,7 @@ export default class AddAddrView extends React.Component {
   handleQRScan (data) {
     if (data !== null) {
       this.setState({
-        hsh: data
+        hsh: data.replace(/\w*:/, '') // remove URI format
       })
     }
   }
