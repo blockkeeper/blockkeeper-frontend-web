@@ -1,10 +1,7 @@
 import React from 'react'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
-import {FormControlLabel, FormControl} from 'material-ui/Form'
-import Input, { InputLabel } from 'material-ui/Input'
-import Select from 'material-ui/Select'
-import { MenuItem } from 'material-ui/Menu'
+import {FormControlLabel} from 'material-ui/Form'
 import Switch from 'material-ui/Switch'
 import Radio from 'material-ui/Radio'
 import {LibraryAdd, Clear} from 'material-ui-icons'
@@ -130,13 +127,18 @@ export default class AddAddrView extends React.Component {
                 <Typography type='title'>
                   QR Code
                 </Typography>
-                <QrReader
-                  facingMode={this.state.facingMode}
-                  delay={this.state.delay}
-                  style={{height: '100%', width: '100%', maxHeight: '400px', marginTop: theme.spacing.unit * 2, background: theme.palette.background.light}}
-                  onError={(err) => console.log(err)}
-                  onScan={this.handleQRScan}
-                />
+                <div onClick={() => this.setState({ facingMode: this.state.facingMode === 'front' ? 'rear' : 'front' })}>
+                  <QrReader
+                    facingMode={this.state.facingMode}
+                    delay={this.state.delay}
+                    style={{height: '100%', width: '100%', maxHeight: '400px', marginTop: theme.spacing.unit * 2, background: theme.palette.background.light}}
+                    onError={(err) => console.log(err)}
+                    onScan={this.handleQRScan}
+                  />
+                  <Typography type='caption' align='center'>
+                    {__.cap(this.state.facingMode)} camera
+                  </Typography>
+                </div>
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -203,20 +205,6 @@ export default class AddAddrView extends React.Component {
                     }
                   label='Manage manually (no public key)'
                   />
-
-                <br />
-
-                <FormControl>
-                  <InputLabel htmlFor='cam-select'>Camera</InputLabel>
-                  <Select
-                    value={this.state.facingMode}
-                    onChange={e => this.setState({ facingMode: e.target.value })}
-                    input={<Input id='cam-select' />}
-                  >
-                    <MenuItem value='front'>Front</MenuItem>
-                    <MenuItem value='rear'>Rear</MenuItem>
-                  </Select>
-                </FormControl>
 
               </Grid>
 
