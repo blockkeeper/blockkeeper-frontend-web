@@ -3875,6 +3875,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+"jsqr@git+https://github.com/JodusNodus/jsQR.git":
+  version "0.2.2"
+  resolved "git+https://github.com/JodusNodus/jsQR.git#5ba1acefa1cbb9b2bc92b49f503f2674e2ec212b"
+
 jss-camel-case@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/jss-camel-case/-/jss-camel-case-5.0.0.tgz#886c1fe56a8a11577454d6a8b4133caa6c1f53a0"
@@ -5363,6 +5367,14 @@ react-popper@^0.7.2:
     popper.js "^1.10.8"
     prop-types "^15.5.10"
 
+react-qr-reader@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-qr-reader/-/react-qr-reader-1.2.1.tgz#17adeb40ed5db234ed4051a518988fd5d5908dbd"
+  dependencies:
+    jsqr "https://github.com/JodusNodus/jsQR.git"
+    prop-types "^15.5.8"
+    webrtc-adapter "^2.0.8"
+
 react-router-dom@^4.1.2:
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-4.2.2.tgz#c8a81df3adc58bba8a76782e946cbd4eae649b8d"
@@ -5820,6 +5832,10 @@ scroll@^2.0.1:
   resolved "https://registry.yarnpkg.com/scroll/-/scroll-2.0.1.tgz#b4c7d27e8bcf3ae8a58a042f27268ae3f55f9ccd"
   dependencies:
     rafl "~1.2.1"
+
+sdp@^1.0.0:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/sdp/-/sdp-1.5.4.tgz#8e038f6ddb14bd765ae1f4b5216e12094511e0d0"
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -6718,6 +6734,12 @@ webpack@3.5.1:
     watchpack "^1.4.0"
     webpack-sources "^1.0.1"
     yargs "^8.0.2"
+
+webrtc-adapter@^2.0.8:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-2.1.0.tgz#612b5bc6ce8e73c9d0660038a21f9255a867bf3e"
+  dependencies:
+    sdp "^1.0.0"
 
 websocket-driver@>=0.5.1:
   version "0.7.0"

@@ -1,16 +1,20 @@
 import React from 'react'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
-import {FormControlLabel} from 'material-ui/Form'
+import {FormControlLabel, FormControl, FormHelperText} from 'material-ui/Form'
+import Input, { InputLabel } from 'material-ui/Input'
+import Select from 'material-ui/Select'
+import { MenuItem } from 'material-ui/Menu'
 import Switch from 'material-ui/Switch'
 import Radio from 'material-ui/Radio'
 import {LibraryAdd, Clear} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {themeBgStyle, actionBtnStyle, paperStyle} from './Style'
+import {theme, themeBgStyle, actionBtnStyle, paperStyle} from './Style'
 import {TopBar, Modal, CoinIcon} from './Lib'
 import Grid from 'material-ui/Grid'
+import QrReader from 'react-qr-reader'
 import __ from '../util'
 
 export default class AddAddrView extends React.Component {
@@ -18,6 +22,8 @@ export default class AddAddrView extends React.Component {
     super(props)
     this.cx = props.cx
     this.state = {
+      delay: 999,
+      facingMode: 'front',
       noHshMode: false,
       coin: 'BTC',
       amnt: '0.00',
@@ -30,6 +36,7 @@ export default class AddAddrView extends React.Component {
     this.load = this.load.bind(this)
     this.save = this.save.bind(this)
     this.set = this.set.bind(this)
+    this.handleQRScan = this.handleQRScan.bind(this)
   }
 
   async componentDidMount () {
@@ -64,6 +71,14 @@ export default class AddAddrView extends React.Component {
     } catch (e) {
       this.setState({err: e.message, busy: false})
       if (process.env.NODE_ENV === 'development') throw e
+    }
+  }
+
+  handleQRScan (data) {
+    if (data !== null) {
+      this.setState({
+        hsh: data
+      })
     }
   }
 
@@ -113,16 +128,23 @@ export default class AddAddrView extends React.Component {
             <Grid container spacing={16} justify='center' >
               <Grid item xs={12} sm={6}>
                 <Typography type='title'>
-                  Address details
+                  QR Code
                 </Typography>
+                <QrReader
+                  delay={this.state.delay}
+                  style={{height: '100%', width: '100%', paddingTop: theme.spacing.unit * 2}}
+                  onError={(err) => console.log(err)}
+                  onScan={this.handleQRScan}
+                />
               </Grid>
+
               <Grid item xs={12} sm={6}>
                 <Typography type='title'>
                   <CoinIcon coin={this.state.coin} />&nbsp;
-                  {this.state.coin}
+                  {this.state.coin}&nbsp;
+                  Details
                 </Typography>
-              </Grid>
-              <Grid item xs={12} sm={6}>
+
                 {!this.state.noHshMode &&
                 <div>
                   <TextField
@@ -137,6 +159,7 @@ export default class AddAddrView extends React.Component {
                     onChange={evt => this.set('hsh', evt.target.value)}
                   />
                 </div>}
+
                 {this.state.noHshMode &&
                 <div>
                   <TextField
@@ -151,17 +174,7 @@ export default class AddAddrView extends React.Component {
                     onChange={evt => this.set('amnt', evt.target.value)}
                       />
                 </div>}
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={this.state.noHshMode}
-                      onChange={(evt, checked) => this.set('noHshMode', checked)}
-                    />
-                  }
-                  label='Manage manually (no public key)'
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
+
                 {this.coins.map(coin =>
                   <FormControlLabel
                     key={coin}
@@ -177,51 +190,76 @@ export default class AddAddrView extends React.Component {
                       }
                     />
                   )}
+
+                <br />
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={this.state.noHshMode}
+                      onChange={(evt, checked) => this.set('noHshMode', checked)}
+                      />
+                    }
+                  label='Manage manually (no public key)'
+                  />
+
+                <br />
+
+                <FormControl>
+                  <InputLabel htmlFor='cam-select'>Camera</InputLabel>
+                  <Select
+                    value={this.state.facingMode}
+                    onChange={e => this.setState({ facingMode: e.target.value })}
+                    input={<Input id='cam-select' />}
+                  >
+                    <MenuItem value='front'>Front</MenuItem>
+                    <MenuItem value='rear'>Rear</MenuItem>
+                  </Select>
+                </FormControl>
+
               </Grid>
+
               <Grid item xs={12}>
-                <Typography type='title'>
-                  Personal details
-                </Typography>
-                <div>
-                  <TextField
-                    fullWidth
-                    label={this.state.noHshMode ? 'Name *' : 'Name'}
-                    margin='normal'
-                    value={this.state.name}
-                    error={Boolean(this.state.nameEmsg)}
-                    helperText={this.state.nameEmsg}
-                    onChange={evt => this.set('name', evt.target.value)}
+                <TextField
+                  fullWidth
+                  label={this.state.noHshMode ? 'Name *' : 'Name'}
+                  margin='normal'
+                  value={this.state.name}
+                  error={Boolean(this.state.nameEmsg)}
+                  helperText={this.state.nameEmsg}
+                  onChange={evt => this.set('name', evt.target.value)}
                     />
-                  <TextField
-                    fullWidth
-                    label='Notes'
-                    margin='normal'
-                    value={this.state.desc}
-                    error={Boolean(this.state.descEmsg)}
-                    helperText={this.state.descEmsg}
-                    onChange={evt => this.set('desc', evt.target.value)}
+                <TextField
+                  fullWidth
+                  label='Notes'
+                  margin='normal'
+                  value={this.state.desc}
+                  error={Boolean(this.state.descEmsg)}
+                  helperText={this.state.descEmsg}
+                  onChange={evt => this.set('desc', evt.target.value)}
                     />
-                </div>
-                <p />
+              </Grid>
+
+              <Grid item xs={12}>
                 {!this.state.busy &&
                 <div style={{textAlign: 'center'}}>
                   <Button
                     raised
                     style={actionBtnStyle}
                     onClick={this.goBack}
-                    >
+                  >
                     <Clear />
-                      Cancel
-                    </Button>
+                    Cancel
+                  </Button>
                   <Button
                     raised
                     style={actionBtnStyle}
                     onClick={this.save}
                     disabled={!this.state.upd}
-                    >
+                  >
                     <LibraryAdd />
-                      Add address
-                    </Button>
+                    Add address
+                  </Button>
                 </div>}
               </Grid>
             </Grid>

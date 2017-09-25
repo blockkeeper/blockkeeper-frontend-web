@@ -12,6 +12,7 @@
     "react": "^15.6.1",
     "react-cryptocoins": "yeahoffline/react-cryptocoins",
     "react-dom": "^15.6.1",
+    "react-qr-reader": "^1.2.1",
     "react-router-dom": "^4.1.2",
     "react-scripts": "1.0.11",
     "uuid": "^3.1.0",
