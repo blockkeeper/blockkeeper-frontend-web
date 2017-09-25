@@ -131,6 +131,7 @@ export default class AddAddrView extends React.Component {
                   QR Code
                 </Typography>
                 <QrReader
+                  facingMode={this.state.facingMode}
                   delay={this.state.delay}
                   style={{height: '100%', width: '100%', marginTop: theme.spacing.unit * 2, background: theme.palette.background.light}}
                   onError={(err) => console.log(err)}
