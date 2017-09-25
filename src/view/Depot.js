@@ -1,12 +1,9 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import Typography from 'material-ui/Typography'
-import Table, {TableHead, TableBody, TableCell, TableRow} from 'material-ui/Table'
 import {Autorenew} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
-import Paper from 'material-ui/Paper'
-import {theme, themeBgStyle} from './Style'
-import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal, CoinIcon} from './Lib'
+import {themeBgStyle} from './Style'
+import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal, TscListAddresses, PaperGrid} from './Lib'
 import __ from '../util'
 
 export default class DepotView extends React.Component {
@@ -115,9 +112,10 @@ export default class DepotView extends React.Component {
               coin0={this.state.coin0}
             />}
           {this.state.tabIx === 1 &&
-            <TscList
+            <TscListAddresses
               addrTscs={this.state.addrTscs}
               coin0={this.state.coin0}
+              addrIcon
             />}
           {this.state.tabIx === 0 &&
           <FloatBtn onClick={this.goAddAddr} />}
@@ -129,84 +127,3 @@ export default class DepotView extends React.Component {
     }
   }
 }
-
-const PaperGrid = ({addrs, coin0}) => {
-  return (
-    <Paper square style={{background: theme.palette.background.light, padding: theme.spacing.unit}} elevation={0}>
-      {addrs.map(addr => {
-        return (
-          <Paper style={{margin: theme.spacing.unit * 2, padding: theme.spacing.unit * 2}} key={addr._id}>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell compact width={'40px'} style={{maxWidth: 0}}>
-                    <CoinIcon coin={addr.coin} size={40} />
-                  </TableCell>
-                  <TableCell style={{maxWidth: 0}}>
-                    <Link to={`/addr/${addr._id}`} style={{textDecoration: 'none'}}>
-                      <Typography type='headline'>
-                        {addr.name}
-                      </Typography>
-                    </Link>
-                    <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                      {addr.hsh}
-                    </Typography>
-                  </TableCell>
-                  <TableCell compact numeric width={'30%'} style={{maxWidth: 0}}>
-                    <Typography type='headline' style={{color: theme.palette.primary['500']}}>
-                      {addr.amnt}&nbsp;<CoinIcon coin={addr.coin} color={theme.palette.primary['500']} alt />
-                    </Typography>
-                    <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                      {addr.amnt * addr.rates[coin0]}&nbsp;<CoinIcon coin={coin0} size={14} color={theme.palette.text.secondary} alt />
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </Paper>
-        )
-      })}
-    </Paper>
-  )
-}
-
-const TscList = ({addrTscs, coin0}) =>
-  <Paper square style={{overflow: 'auto'}}>
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell compact>Type</TableCell>
-          <TableCell compact>Name</TableCell>
-          <TableCell compact numeric>Holdings</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {addrTscs.map(addrTsc => {
-          const addr = addrTsc[0]
-          const tsc = addrTsc[1]
-          return (
-            <TableRow key={tsc._id}>
-              <TableCell compact>
-                <CoinIcon coin={addr.coin} />
-              </TableCell>
-              <TableCell compact>
-                <Link to={`/tsc/${addr._id}/${tsc._id}`}>{tsc.name}</Link>
-                <br />
-                {tsc.hsh}
-              </TableCell>
-              <TableCell compact numeric>
-                <Typography type='headline' color='primary'>
-                  {tsc.amnt}&nbsp;
-                  <CoinIcon coin={addr.coin} color='primary' alt />
-                </Typography>
-                <Typography type='body2'>
-                  {tsc.amnt * addr.rates[coin0]}&nbsp;
-                  <CoinIcon coin={coin0} size={14} color='primary' alt />
-                </Typography>
-              </TableCell>
-            </TableRow>
-          )
-        })}
-      </TableBody>
-    </Table>
-  </Paper>
