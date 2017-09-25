@@ -312,7 +312,7 @@ class AddrList extends React.Component {
                   Total Received
                 </TableCell>
                 <TableCell numeric>
-                  653.4563 <CoinIcon coin={this.state.coin} size={12} alt />
+                  653.4563 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -320,7 +320,7 @@ class AddrList extends React.Component {
                   Total Send
                 </TableCell>
                 <TableCell numeric>
-                  3.6746 <CoinIcon coin={this.state.coin} size={12} alt />
+                  3.6746 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
                 </TableCell>
               </TableRow>
               <TableRow>

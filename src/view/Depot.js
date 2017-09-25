@@ -105,7 +105,6 @@ export default class DepotView extends React.Component {
             tabs={['Addresses', 'Transactions']}
             ix={this.state.tabIx}
             onClick={this.tab}
-            color='primary'
           />
           {this.state.tabIx === 0 &&
             <PaperGrid

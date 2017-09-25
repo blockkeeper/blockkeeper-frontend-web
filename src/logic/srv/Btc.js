@@ -9,8 +9,8 @@ export default class Btc extends SrvBase {
     this.srvs = ['bckinfo']   // ['bckinfo', 'bckex']
     this.bckinfoAddr = this.bckinfoAddr.bind(this)
     this.bckinfoTscs = this.bckinfoTscs.bind(this)
-    this.bckexAddr = this.bckexAddr.bind(this)
-    this.bckexTscs = this.bckexTscs.bind(this)
+    // this.bckexAddr = this.bckexAddr.bind(this)
+    // this.bckexTscs = this.bckexTscs.bind(this)
     this.info('Created')
   }
 
