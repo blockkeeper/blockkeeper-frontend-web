@@ -133,7 +133,7 @@ export default class AddAddrView extends React.Component {
                 <QrReader
                   facingMode={this.state.facingMode}
                   delay={this.state.delay}
-                  style={{height: '100%', width: '100%', marginTop: theme.spacing.unit * 2, background: theme.palette.background.light}}
+                  style={{height: '100%', width: '100%', maxHeight: '400px', marginTop: theme.spacing.unit * 2, background: theme.palette.background.light}}
                   onError={(err) => console.log(err)}
                   onScan={this.handleQRScan}
                 />
