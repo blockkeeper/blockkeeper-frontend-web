@@ -68,8 +68,12 @@ const getLogger = (ilk, lbl) => {
   const func = ilk === 'warn' ? console.warn : console.log
   ilk = ilk.toUpperCase()
   return (...args) => {
-    if (typeof args[0] === 'string') {
-      args[0] = ilk + (lbl ? ` [${lbl}]:  ` : ':  ') + args[0]
+    if (ilk === 'DEBUG') {
+      args.unshift('===== DEBUG =====')
+    } else {
+      if (typeof args[0] === 'string') {
+        args[0] = ilk + (lbl ? ` [${lbl}]:  ` : ':  ') + args[0]
+      }
     }
     func.apply(console, args)
   }
@@ -93,6 +97,7 @@ const init = (mainType, subType, _id, pa) => {
   d._lbl = toLbl(d._type[0], d._type[1], d._id, (pa || {})._lbl)
   d.info = getLogger('info', d._lbl)
   d.warn = getLogger('warn', d._lbl)
+  d.debug = getLogger('debug')
   d.err = (umsg, kwargs = {}) => getErr(umsg, {...kwargs, lbl: d._lbl})
   return d
 }
@@ -139,6 +144,20 @@ async function rqst (req, lbl) {
   throw getErr(umsg, {e, dmsg, sts, errs, rsp, req})
 }
 
+const toUrl = req => {
+  const params = []
+  const qParams = req.params || {}
+  for (let p of Object.keys(qParams)) params.push(`${p}=${qParams[p]}`)
+  if (params.length < 1) return req.url
+  return `${req.url}?${params.join('&')}`
+}
+
+const toSrvUrl = (ilk, coin) => {
+  return {
+    tscBTC: hsh => `https://blockchain.info/tx/${hsh}`
+  }[`${ilk}${coin.toUpperCase()}`]
+}
+
 const rndPop = lst => {
   if (lst.length < 1) return
   const ix = Math.floor((Math.random() * lst.length) + 1) - 1
@@ -162,8 +181,9 @@ const toMoPro = (data, tmoMsec, ...args) => {
 }
 
 const struc = (lst, {toBeg, max, byTme}) => {
+  lst = isArray(lst) ? lst : Array.from(lst.values()) // lst can be array or map
   if (byTme) {
-    lst.sort((a, b) => (new Date(a._t)) - (new Date(b._t)))
+    lst.sort((a, b) => (new Date(b._t)) - (new Date(a._t)))
   } else {
     lst.sort()
   }
@@ -174,6 +194,8 @@ const struc = (lst, {toBeg, max, byTme}) => {
   lst = lst.slice(0, (max || cfg('lstMax')))
   return lst
 }
+
+const isArray = val => Object.prototype.toString.call(val) === '[object Array]'
 
 const cap = (val) => val.charAt(0).toUpperCase() + val.slice(1)
 
@@ -218,6 +240,11 @@ const vldFloat = (val, max) => {
   return validator.isFloat(val, {min: 0, max: max || 9999999999})
     ? ''
     : 'Not a float (e.g. 1.23) or value to small/big'
+}
+
+const toFloat = val => {
+  val = validator.toFloat(String(val))
+  return Math.round(val * cfg('prec')) / cfg('prec')
 }
 
 const getSnack = () => {
@@ -280,11 +307,13 @@ export default {
   addSnack: msg => setSto('snack', msg),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
+  shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
   isOutdated,
   getSnack,
   cap,
   struc,
   rqst,
+  toUrl,
   rndPop,
   shuffle,
   ppTme,
@@ -292,6 +321,7 @@ export default {
   toLbl,
   init,
   initView,
+  toSrvUrl,
   toMoPro,
   err: getErr,
   info: getLogger('info', 'main'),
@@ -301,5 +331,6 @@ export default {
   vldAlphNum,
   vldFloat,
   vldPw,
-  isArray: val => Object.prototype.toString.call(val) === '[object Array]'
+  toFloat,
+  isArray
 }
