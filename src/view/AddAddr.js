@@ -1,7 +1,7 @@
 import React from 'react'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
-import {FormControlLabel, FormControl, FormHelperText} from 'material-ui/Form'
+import {FormControlLabel, FormControl} from 'material-ui/Form'
 import Input, { InputLabel } from 'material-ui/Input'
 import Select from 'material-ui/Select'
 import { MenuItem } from 'material-ui/Menu'
@@ -132,7 +132,7 @@ export default class AddAddrView extends React.Component {
                 </Typography>
                 <QrReader
                   delay={this.state.delay}
-                  style={{height: '100%', width: '100%', paddingTop: theme.spacing.unit * 2}}
+                  style={{height: '100%', width: '100%', marginTop: theme.spacing.unit * 2, background: theme.palette.background.light}}
                   onError={(err) => console.log(err)}
                   onScan={this.handleQRScan}
                 />
