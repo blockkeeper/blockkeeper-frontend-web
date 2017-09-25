@@ -6,16 +6,12 @@ import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import ArrowBackIcon from 'material-ui-icons/ArrowBack'
-import Launch from 'material-ui-icons/Launch'
-import ArrowDropDownIcon from 'material-ui-icons/ArrowDropDown'
-import ArrowDropUpIcon from 'material-ui-icons/ArrowDropUp'
+import {ArrowBack, ArrowDropDown, ArrowDropUp, Autorenew, Launch, ModeEdit, Delete} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
+import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
-import Autorenew from 'material-ui-icons/Autorenew'
 import {TopBar, Snack, Modal, CoinIcon} from './Lib'
 import {theme, themeBgStyle, paperStyle, actionBtnStyle} from './Style'
-import Divider from 'material-ui/Divider'
 import Addr from '../logic/Addr'
 
 import __ from '../util'
@@ -122,12 +118,12 @@ export default class AddrView extends React.Component {
           <TopBar
             midTitle='Address'
             icon={<Autorenew />}
-            iconLeft={<ArrowBackIcon />}
+            iconLeft={<ArrowBack />}
             onClick={() => this.addrObj.updateBySrv()}
             onClickLeft={this.goBack}
             noUser
           />
-          <Paper square style={{textAlign: 'center', ...paperStyle}}>
+          <Paper square style={{...paperStyle, textAlign: 'center', paddingBottom: 0}} elevation={0}>
             <CoinIcon coin={this.state.coin} size={100} />
             <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
               {this.state.addr.name}
@@ -147,10 +143,9 @@ export default class AddrView extends React.Component {
                 {this.state.blc3}&nbsp;
                 <CoinIcon coin={this.state.coin1} color={theme.palette.primary['500']} alt />
               </Typography>}
-            <Divider light />
             {!this.state.show &&
               <IconButton onClick={this.show}>
-                <ArrowDropDownIcon style={{height: '50px', width: '50px'}} />
+                <ArrowDropDown style={{height: '50px', width: '50px'}} />
               </IconButton>}
             {this.state.show &&
               <div>
@@ -160,10 +155,12 @@ export default class AddrView extends React.Component {
                   delete={this.delete}
                 />
                 <IconButton onClick={this.show}>
-                  <ArrowDropUpIcon style={{height: '50px', width: '50px'}} />
+                  <ArrowDropUp style={{height: '50px', width: '50px'}} />
                 </IconButton>
               </div>
             }
+          </Paper>
+          <Paper square style={{...paperStyle}} elevation={10}>
             {this.state.tscs.length > 0 &&
               <TscList
                 addr={this.state.addr}
@@ -171,7 +168,7 @@ export default class AddrView extends React.Component {
                 coin0={this.state.coin0}
               />}
             {this.state.tscs.length <= 0 &&
-              <Typography align='left' type='body1'>
+              <Typography align='center' type='body1'>
                 {this.state.addr.hsh &&
                   'No transactions'}
                 {!this.state.addr.hsh &&
@@ -186,36 +183,48 @@ export default class AddrView extends React.Component {
   }
 }
 
-const TscList = ({addr, tscs, coin0}) =>
-  <Table>
-    <TableBody>
-      {tscs.map(tsc => {
-        const mx = 40
-        let tags = tsc.tags.join(' ')
-        if (tags.length > mx) tags = tags.slice(0, mx) + '...'
-        let desc = tsc.desc
-        if (desc.length > mx) desc = desc.slice(0, mx) + '...'
-        return (
-          <TableRow key={tsc._id}>
-            <TableCell>
-              {__.ppTme(tsc._t)}
-              <br />
-              <Link to={`/tsc/${addr._id}/${tsc._id}`}>{tsc.name}</Link>
-              <br />
-              {desc}
-              <br />
-              {tags}
-            </TableCell>
-            <TableCell>
-              {addr.coin} {tsc.amnt}
-              <br />
-              {coin0} {tsc.amnt * addr.rates.get(coin0)}
-            </TableCell>
-          </TableRow>
-        )
-      })}
-    </TableBody>
-  </Table>
+const TscList = ({addr, tscs, coin0}) => {
+  return (
+    <Table>
+      <TableBody>
+        {tscs.map(tsc => {
+          const mx = 40
+          let modeColor = tsc.mode === 'snd' ? theme.palette.error['500'] : theme.palette.secondary['500']
+          let modeSign = tsc.mode === 'snd' ? '-' : '+'
+          let tags = tsc.tags.join(' ')
+          if (tags.length > mx) tags = tags.slice(0, mx) + '...'
+          let desc = tsc.desc
+          if (desc.length > mx) desc = desc.slice(0, mx) + '...'
+          return (
+            <TableRow key={tsc._id}>
+              <TableCell width={'70%'} style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit}}>
+                <Typography type='body2' style={{color: theme.palette.text.secondary}}>
+                  {__.ppTme(tsc._t)}
+                </Typography>
+                <Link to={`/tsc/${addr._id}/${tsc._id}`} style={{textDecoration: 'none'}}>
+                  <Typography type='headline'>
+                    {tsc.name}
+                  </Typography>
+                </Link>
+                <Typography type='body2' style={{color: theme.palette.text.secondary}}>
+                  {desc} {tags}
+                </Typography>
+              </TableCell>
+              <TableCell numeric style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit}}>
+                <Typography type='headline' style={{color: modeColor}}>
+                  {modeSign} {tsc.amnt} <CoinIcon coin={addr.coin} alt color={modeColor} />
+                </Typography>
+                <Typography type='body2' style={{color: theme.palette.text.secondary}} gutterBottom>
+                  {modeSign} {tsc.amnt * addr.rates.get(coin0)} <CoinIcon coin={coin0} alt />
+                </Typography>
+              </TableCell>
+            </TableRow>
+          )
+        })}
+      </TableBody>
+    </Table>
+  )
+}
 
 class AddrList extends React.Component {
   constructor (props) {
@@ -226,7 +235,8 @@ class AddrList extends React.Component {
     this.state = {
       name: props.addr.name,
       desc: props.addr.desc,
-      coin: props.addr.coin
+      coin: props.addr.coin,
+      tscsCount: props.addr.tscs.length
     }
     this.saveAddr = props.save
     this.deleteAddr = props.delete
@@ -279,15 +289,13 @@ class AddrList extends React.Component {
       return (
         <div>
           {this.addrHsh &&
-            <div>
-              <div style={{padding: theme.spacing.unit * 2}}>
-                <QRCode value={this.addrHsh} />
-                <Typography style={{fontSize: '13px'}}>
-                  {this.addrHsh}
-                </Typography>
-              </div>
-              <Divider light />
-            </div>
+          <div style={{padding: theme.spacing.unit * 2}}>
+            <Divider light style={{marginBottom: theme.spacing.unit * 2}} />
+            <QRCode value={this.addrHsh} />
+            <Typography style={{fontSize: '13px'}}>
+              {this.addrHsh}
+            </Typography>
+          </div>
           }
           <Table>
             <TableBody>
@@ -296,7 +304,7 @@ class AddrList extends React.Component {
                   No. Transactions
                 </TableCell>
                 <TableCell numeric>
-                  70
+                  {this.state.tscsCount}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -359,6 +367,7 @@ class AddrList extends React.Component {
                 style={actionBtnStyle}
                 onClick={() => this.setState({edit: true})}
               >
+                <ModeEdit />
                 Edit
               </Button>
               <Button
@@ -366,6 +375,7 @@ class AddrList extends React.Component {
                 style={actionBtnStyle}
                 onClick={() => this.setState({ask: true})}
               >
+                <Delete />
                 Delete
               </Button>
             </div>}
