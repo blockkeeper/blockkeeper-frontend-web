@@ -119,7 +119,7 @@ export default class AddrView extends React.Component {
             midTitle='Address'
             icon={<Autorenew />}
             iconLeft={<ArrowBack />}
-            onClick={() => this.addrObj.updateBySrv()}
+            onClick={() => this.addrObj.update()}
             onClickLeft={this.goBack}
             noUser
           />
@@ -215,7 +215,7 @@ const TscList = ({addr, tscs, coin0}) => {
                   {modeSign} {tsc.amnt} <CoinIcon coin={addr.coin} alt color={modeColor} />
                 </Typography>
                 <Typography type='body2' style={{color: theme.palette.text.secondary}} gutterBottom>
-                  {modeSign} {tsc.amnt * addr.rates.get(coin0)} <CoinIcon coin={coin0} alt />
+                  {modeSign} {tsc.amnt * addr.rates[coin0]} <CoinIcon coin={coin0} alt />
                 </Typography>
               </TableCell>
             </TableRow>

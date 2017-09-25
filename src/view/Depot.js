@@ -28,17 +28,21 @@ export default class DepotView extends React.Component {
       // uncomment to test error view:
       //   throw this.err('An error occurred')
       const [
-        {addrs, tscs},
+        addrs,
         {coin0, coin1}
       ] = await Promise.all([
         this.cx.depot.loadAddrs(),
         this.cx.user.getCoins(this.state.coin)
       ])
       const blc = this.cx.depot.getAddrBlc(addrs)
+      const addrTscs = []
+      for (let addr of addrs) {
+        for (let tsc of addr.tscs) addrTscs.push([addr, tsc])
+      }
       this.setState({
         err: null,
         addrs,
-        tscs,
+        addrTscs,
         coin0,
         coin1,
         blc1: `${blc.get(coin0)}`,
@@ -46,8 +50,8 @@ export default class DepotView extends React.Component {
         snack: __.getSnack()
       })
     } catch (e) {
+      if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
-      if (process.env.NODE_ENV === 'development') throw e
     }
   }
 
@@ -80,7 +84,7 @@ export default class DepotView extends React.Component {
           <Link to={`/addr/add`}>Add your first address</Link>
         </Modal>
       )
-    } else if (this.state.addrs && this.state.tscs) {
+    } else if (this.state.addrs) {
       return (
         <div style={themeBgStyle}>
           {this.state.snack &&
@@ -103,20 +107,16 @@ export default class DepotView extends React.Component {
             onClick={this.tab}
             color='primary'
           />
-
           {this.state.tabIx === 0 &&
-          <PaperGrid
-            ilk='addr'
-            rows={this.state.addrs}
-            coin0={this.state.coin0}
-
-              />}
+            <PaperGrid
+              addrs={this.state.addrs}
+              coin0={this.state.coin0}
+            />}
           {this.state.tabIx === 1 &&
-          <List
-            ilk='tsc'
-            rows={this.state.tscs}
-            coin0={this.state.coin0}
-              />}
+            <TscList
+              addrTscs={this.state.addrTscs}
+              coin0={this.state.coin0}
+            />}
           {this.state.tabIx === 0 &&
           <FloatBtn onClick={this.goAddAddr} />}
 
@@ -128,35 +128,34 @@ export default class DepotView extends React.Component {
   }
 }
 
-const PaperGrid = ({ilk, rows, coin0}) => {
+const PaperGrid = ({addrs, coin0}) => {
   return (
     <Paper square style={{background: theme.palette.background.light, padding: theme.spacing.unit}} elevation={0}>
-      {rows.map(row => {
-        const urlPath = ilk === 'addr' ? 'addr' : `tsc/${row.addrId}`
+      {addrs.map(addr => {
         return (
-          <Paper style={{margin: theme.spacing.unit * 2, padding: theme.spacing.unit * 2}} key={row._id}>
+          <Paper style={{margin: theme.spacing.unit * 2, padding: theme.spacing.unit * 2}} key={addr._id}>
             <Table>
               <TableBody>
                 <TableRow>
                   <TableCell compact width={'40px'} style={{maxWidth: 0}}>
-                    <CoinIcon coin={row.coin} size={40} />
+                    <CoinIcon coin={addr.coin} size={40} />
                   </TableCell>
                   <TableCell style={{maxWidth: 0}}>
-                    <Link to={`/${urlPath}/${row._id}`} style={{textDecoration: 'none'}}>
+                    <Link to={`/addr/${addr._id}`} style={{textDecoration: 'none'}}>
                       <Typography type='headline'>
-                        {row.name}
+                        {addr.name}
                       </Typography>
                     </Link>
                     <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                      {row.hsh}
+                      {addr.hsh}
                     </Typography>
                   </TableCell>
                   <TableCell compact numeric width={'30%'} style={{maxWidth: 0}}>
                     <Typography type='headline' style={{color: theme.palette.primary['500']}}>
-                      {row.amnt}&nbsp;<CoinIcon coin={row.coin} color={theme.palette.primary['500']} alt />
+                      {addr.amnt}&nbsp;<CoinIcon coin={addr.coin} color={theme.palette.primary['500']} alt />
                     </Typography>
                     <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                      {row.amnt * row.rates.get(coin0)}&nbsp;<CoinIcon coin={coin0} size={14} color={theme.palette.text.secondary} alt />
+                      {addr.amnt * addr.rates[coin0]}&nbsp;<CoinIcon coin={coin0} size={14} color={theme.palette.text.secondary} alt />
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -169,7 +168,7 @@ const PaperGrid = ({ilk, rows, coin0}) => {
   )
 }
 
-const List = ({ilk, rows, coin0}) =>
+const TscList = ({addrTscs, coin0}) =>
   <Paper square style={{overflow: 'auto'}}>
     <Table>
       <TableHead>
@@ -180,26 +179,28 @@ const List = ({ilk, rows, coin0}) =>
         </TableRow>
       </TableHead>
       <TableBody>
-        {rows.map(row => {
-          const urlPath = ilk === 'addr' ? 'addr' : `tsc/${row.addrId}`
+        {addrTscs.map(addrTsc => {
+          const addr = addrTsc[0]
+          const tsc = addrTsc[1]
           return (
-            <TableRow key={row._id}>
+            <TableRow key={tsc._id}>
               <TableCell compact>
-                <CoinIcon coin={row.coin} />
+                <CoinIcon coin={addr.coin} />
               </TableCell>
               <TableCell compact>
-                <Link to={`/${urlPath}/${row._id}`}>{row.name}</Link>
+                <Link to={`/tsc/${addr._id}/${tsc._id}`}>{tsc.name}</Link>
                 <br />
-                {row.hsh}
+                {tsc.hsh}
               </TableCell>
               <TableCell compact numeric>
                 <Typography type='headline' color='primary'>
-                  {row.amnt}&nbsp;<CoinIcon coin={row.coin} color='primary' alt />
+                  {tsc.amnt}&nbsp;
+                  <CoinIcon coin={addr.coin} color='primary' alt />
                 </Typography>
                 <Typography type='body2'>
-                  {row.amnt * row.rates.get(coin0)}&nbsp;<CoinIcon coin={coin0} size={14} color='primary' alt />
+                  {tsc.amnt * addr.rates[coin0]}&nbsp;
+                  <CoinIcon coin={coin0} size={14} color='primary' alt />
                 </Typography>
-
               </TableCell>
             </TableRow>
           )

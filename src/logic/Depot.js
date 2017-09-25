@@ -8,7 +8,6 @@ export default class Depot extends ApiBase {
     this.getAddrBlc = this.getAddrBlc.bind(this)
     this.getTscBlc = this.getTscBlc.bind(this)
     this.loadAddrs = this.loadAddrs.bind(this)
-    this.loadAddrIds = this.loadAddrIds.bind(this)
     this.apiGetAddrs = this.apiGetAddrs.bind(this)
     this.info('Created')
   }
@@ -16,7 +15,8 @@ export default class Depot extends ApiBase {
   getAddrBlc (addrs) {
     const blcs = new Map()
     for (let addr of addrs) {
-      for (let [coin, rate] of addr.rates) {
+      for (let coin of Object.keys(addr.rates)) {
+        let rate = addr.rates[coin]
         blcs.set(coin, (blcs.get(coin) || 0) + (addr.amnt * rate))
       }
     }
@@ -26,48 +26,34 @@ export default class Depot extends ApiBase {
   getTscBlc (tscs, addr) {
     const blcs = new Map()
     for (let tsc of tscs) {
-      for (let [coin, rate] of addr.rates) {
+      for (let coin of Object.keys(addr.rates)) {
+        let rate = addr.rates[coin]
         blcs.set(coin, (blcs.get(coin) || 0) + (tsc.amnt * rate))
       }
     }
     return blcs
   }
 
-  async saveNewAddr (hshMode, pld) {
-    const addrObj = new Addr(this.cx)
-    const addr = {
-      _id: addrObj._id,
-      _t: __.getTme(),
-      hsh: null,
-      name: (pld.name || '').trim(),
-      desc: (pld.desc || '').trim(),
-      amnt: __.vld.toFloat(String(pld.amnt || '0')),
-      coin: pld.coin,
-      tscs: []
-    }
-    if (hshMode) {
-      addr.hsh = pld.hsh.trim()
-      addr.name = addr.name || addr.hsh.slice(0, __.cfg('maxLow'))
-    }
-    await addrObj.save(addr)
-    return addr
-  }
-
   async loadAddrs (addrIds) {
-    const stoAddrIds = await this.loadAddrIds()
+    let stoAddrIds = __.getStoIds('addr')
+    try {
+      stoAddrIds = (stoAddrIds.length > 0)
+        ? stoAddrIds
+        : await this.apiGetAddrs()
+    } catch (e) {
+      if (e.sts !== 404) throw e
+      stoAddrIds = []
+    }
     if (addrIds) {
       addrIds.filter(addrId => stoAddrIds.some(_id => addrId === _id))
     } else {
       addrIds = stoAddrIds
     }
     const addrs = []
-    let tscs = []
     for (let addrId of addrIds) {
       try {
         let addr = await (new Addr(this.cx, addrId)).load()
         addrs.push(addr)
-        for (let tsc of addr.tscs) tsc.rates = addr.rates
-        tscs = tscs.concat(addr.tscs)
       } catch (e) {
         throw this.err(
           'Loading addresses failed',
@@ -75,19 +61,8 @@ export default class Depot extends ApiBase {
         )
       }
     }
-    this.info('%s addrs with %s tscs loaded', addrs.length, tscs.length)
-    return {addrs, tscs}
-  }
-
-  async loadAddrIds () {
-    let addrIds = __.getStoIds('addr')
-    try {
-      addrIds = (addrIds.length > 0) ? addrIds : await this.apiGetAddrs()
-    } catch (e) {
-      if (e.sts !== 404) throw e
-      addrIds = []
-    }
-    return addrIds
+    this.info('%s addrs loaded', addrs.length)
+    return __.struc(addrs, {byTme: true})
   }
 
   async apiGetAddrs () {

@@ -8,9 +8,10 @@ import {LibraryAdd, Clear} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
+import Grid from 'material-ui/Grid'
 import {themeBgStyle, actionBtnStyle, paperStyle} from './Style'
 import {TopBar, Modal, CoinIcon} from './Lib'
-import Grid from 'material-ui/Grid'
+import Addr from '../logic/Addr'
 import __ from '../util'
 
 export default class AddAddrView extends React.Component {
@@ -47,23 +48,27 @@ export default class AddAddrView extends React.Component {
         coin: 'BTC'
       })
     } catch (e) {
+      if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
-      if (process.env.NODE_ENV === 'development') throw e
     }
   }
 
   async save () {
     this.setState({busy: true})
+    const addrObj = new Addr(this.cx)
     try {
-      const addr = await this.cx.depot.saveNewAddr(
-        !this.state.noHshMode,
-        this.state
-      )
+      const addr = await addrObj.save({
+        hsh: this.state.hsh,
+        amnt: this.state.amnt,
+        coin: this.state.coin,
+        desc: this.state.desc,
+        name: this.state.name
+      })
       __.addSnack('Address added')
       this.props.history.replace(`/addr/${addr._id}`)
     } catch (e) {
+      if (__.cfg('isDev')) throw e
       this.setState({err: e.message, busy: false})
-      if (process.env.NODE_ENV === 'development') throw e
     }
   }
 

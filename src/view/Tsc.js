@@ -1,13 +1,11 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
 import Table, {TableBody, TableCell, TableRow} from 'material-ui/Table'
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
-import LinkIcon from 'material-ui-icons/Link'
 import ModeEdit from 'material-ui-icons/ModeEdit'
-import {TopBar, Jumbo, Snack, Modal} from './Lib'
+import {TopBar, Jumbo, Snack, ExtLink, Modal} from './Lib'
 import {themeBgStyle} from './Style'
 import Addr from '../logic/Addr'
 import __ from '../util'
@@ -32,8 +30,6 @@ export default class TscView extends React.Component {
 
   async load () {
     try {
-      // uncomment to test error view:
-      //   throw this.err('An error occurred')
       const [
         addr,
         {coin0, coin1}
@@ -53,23 +49,24 @@ export default class TscView extends React.Component {
         blc2: `${coin1} ${blc.get(coin1)}`
       })
     } catch (e) {
+      if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
-      if (process.env.NODE_ENV === 'development') throw e
     }
   }
 
   async save (name, desc, tags) {
+    const tsc = this.state.tsc
     try {
-      const tsc = this.state.tsc
-      Object.assign(tsc, {name, desc, tags: tags.trim().split(' ')})
-      const addr = await this.addrObj.updateTscs([tsc], this.addr)
-      await this.addrObj.save(addr)
+      const updTsc = {hsh: tsc.hsh, name, desc, tags: tags.trim().split(' ')}
+      this.addr = await this.addrObj.save({tscs: [updTsc]})
       __.addSnack('Transaction updated')
-      this.addr = addr
-      this.setState({tsc, snack: __.getSnack()})
+      this.setState({
+        tsc: await this.addrObj.getTsc(this.tscId, this.addr),
+        snack: __.getSnack()
+      })
     } catch (e) {
+      if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
-      if (process.env.NODE_ENV === 'development') throw e
     }
   }
 
@@ -105,10 +102,6 @@ export default class TscView extends React.Component {
             tsc={this.state.tsc}
             save={this.save}
           />
-          <Link to='#'>
-            Detailed transaction
-            <LinkIcon />
-          </Link>
         </div>
       )
     } else {
@@ -159,6 +152,7 @@ class TscList extends React.Component {
   }
 
   render () {
+    const tscUrl = __.toSrvUrl('tsc', this.addr.coin)(this.tsc.hsh)
     return (
       <div>
         <Table>
@@ -186,17 +180,20 @@ class TscList extends React.Component {
                 Amount
               </TableCell>
               <TableCell>
-                {this.tsc.amnt}
+                {this.tsc.amntDesc}
+                <ExtLink to={tscUrl} />
               </TableCell>
             </TableRow>
-            <TableRow>
-              <TableCell>
-                Fee
-              </TableCell>
-              <TableCell>
-                {this.tsc.fee}
-              </TableCell>
-            </TableRow>
+            {this.tsc.feeDesc &&
+              <TableRow>
+                <TableCell>
+                  Additional costs (fee)
+                </TableCell>
+                <TableCell>
+                  {this.tsc.feeDesc}
+                  <ExtLink to={tscUrl} />
+                </TableCell>
+              </TableRow>}
             <TableRow>
               <TableCell>
                 Tags
@@ -229,30 +226,6 @@ class TscList extends React.Component {
                   />}
                 {!this.state.edit &&
                   this.state.desc}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Sender address
-              </TableCell>
-              <TableCell>
-                {this.tsc.inAddrs.join('<br />')}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Receipient address
-              </TableCell>
-              <TableCell>
-                {this.tsc.outAddrs.join('<br />')}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Related address
-              </TableCell>
-              <TableCell>
-                {this.addr.hsh}
               </TableCell>
             </TableRow>
             <TableRow>
