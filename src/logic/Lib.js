@@ -57,7 +57,6 @@ class StoBase extends Base {
 class ApiBase extends StoBase {
   constructor (name, cx, _id, pa) {
     super(name, cx, _id, pa)
-    this._save = this._save.bind(this)
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
     this.apiGet = this.apiGet.bind(this)
@@ -67,17 +66,13 @@ class ApiBase extends StoBase {
     this.decrypt = this.cx.core.decrypt
   }
 
-  async _save (pld, upd, data) {
-    Object.assign(pld, upd || {})
-    return pld
-  }
-
   async save (upd, data) {
     data = data || {}
-    let pld
+    let pld = upd
     try {
-      pld = this.getSto() || {}
-      pld = await this._save(pld, upd, data) || pld
+      if (this._save) {
+        pld = await this._save(upd, this.getSto() || {}, data) || upd
+      }
       await this.apiSet(pld, data)
     } catch (e) {
       this.warn('Saving failed')
