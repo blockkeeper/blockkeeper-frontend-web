@@ -163,11 +163,12 @@ class Modal extends React.Component {
 }
 
 const CoinIcon = ({coin, alt, color, size}) => {
-  coin = alt
-    ? (__.cap(coin.toLowerCase()) + 'Alt')
-    : __.cap(coin.toLowerCase())
   color = theme.palette.text[color] || color || CryptoColors[coin.toUpperCase()]
+  coin = __.cap(coin.toLowerCase())
   if (CryptoIcons[coin]) {
+    if (alt) {
+      coin = coin + 'Alt'
+    }
     const IconType = CryptoIcons[coin]
     return <IconType color={color} size={size || '18'} />
   }
