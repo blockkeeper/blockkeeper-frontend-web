@@ -122,7 +122,7 @@ const jumboStyle = {
 
 const tabStyle = {
   backgroundColor: 'white',
-  color: 'black'
+  color: styleGuide.text
 }
 
 const floatBtnStyle = {

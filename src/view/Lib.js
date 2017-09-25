@@ -57,7 +57,7 @@ const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, n
   </AppBar>
 
 const SubBar = ({tabs, ix, onClick}) =>
-  <AppBar position='static'>
+  <AppBar style={{position: 'relative'}}>
     <Tabs
       centered
       value={ix}
