@@ -112,36 +112,32 @@ async function rqst (req, lbl) {
   lbl = lbl || 'resource'
   if (!req.timeout) req.timeout = cfg('tmoMsec')
   if (!req.method) req.method = (req.data == null) ? 'get' : 'put'
-  let e
-  let errs = []
+  let err
   let rsp = {}
   let dmsg
   try {
     rsp = await axios(req)
     return rsp.data
   } catch (e) {
-    if (e.message) {
-      errs.push(e.message)
-      dmsg = e.message
-    }
+    err = e
+    // if (e.request) req = e.request  // don't enable, it misses req.method
+    if (e.message) dmsg = e.message
     if (e.response) {
       rsp = e.response
-      errs.push(rsp)
       if ((rsp.data || {}).errorMessage) dmsg += `: ${rsp.data.errorMessage}`
     } else {
       rsp = {}
     }
-    if (e.request) errs.push(e.request)
   }
   let umsg
   let sts = rsp.status || 600
   if (sts === 404) {
     umsg = cap(lbl) + ' not found'
   } else {
-    umsg = `Requesting ${lbl} failed: ` +
+    umsg = `${req.method.toUpperCase()} ${lbl} failed: ` +
       ((sts >= 400 && sts < 500) ? 'Invalid input' : 'API error')
   }
-  throw getErr(umsg, {e, dmsg, sts, errs, rsp, req})
+  throw getErr(umsg, {err, dmsg, sts, rsp, req})
 }
 
 const toUrl = req => {
@@ -180,12 +176,12 @@ const toMoPro = (data, tmoMsec, ...args) => {
   })
 }
 
-const struc = (lst, {toBeg, max, byTme}) => {
+const struc = (lst, {toBeg, max, byTme, noSort}) => {
   lst = isArray(lst) ? lst : Array.from(lst.values()) // lst can be array or map
   if (byTme) {
     lst.sort((a, b) => (new Date(b._t)) - (new Date(a._t)))
   } else {
-    lst.sort()
+    if (!noSort) lst.sort()
   }
   if (toBeg) {
     const ix = lst.indexOf(toBeg)
@@ -253,7 +249,15 @@ const getSnack = () => {
   return msg
 }
 
-const isOutdated = (tme, sec) => {
+const anyIsOutd = (plds, sec) => {
+  if (cfg('isDev')) return true
+  for (let pld of plds) {
+    if (isOutd(pld._t, sec)) return true
+  }
+  return false
+}
+
+const isOutd = (tme, sec) => {
   return (mo.utc().diff(tme, 'seconds') > (sec || cfg('outdSec')))
 }
 
@@ -308,7 +312,8 @@ export default {
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
   shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
-  isOutdated,
+  isOutd,
+  anyIsOutd,
   getSnack,
   cap,
   struc,
