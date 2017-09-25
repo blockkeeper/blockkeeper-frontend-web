@@ -13,6 +13,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import PersonIcon from 'material-ui-icons/Person'
 import AddIcon from 'material-ui-icons/Add'
+import LinkIcon from 'material-ui-icons/Link'
 import {theme, jumboStyle, tabStyle, floatBtnStyle} from './Style'
 import Dialog, {
   DialogActions,
@@ -111,6 +112,12 @@ const Snack = ({msg, onClose}) =>
     SnackbarContentProps={{'aria-describedby': 'message-id'}}
     message={<span id='message-id'>{msg}</span>}
   />
+
+const ExtLink = ({to, txt}) =>
+  <Link to={to}>
+    {txt && txt}
+    <LinkIcon />
+  </Link>
 
 class Modal extends React.Component {
   constructor (props) {
@@ -237,5 +244,6 @@ export {
   Snack,
   Modal,
   FloatBtn,
-  DropDown
+  DropDown,
+  ExtLink
 }
