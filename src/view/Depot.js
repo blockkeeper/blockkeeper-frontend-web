@@ -1,13 +1,9 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
-import Typography from 'material-ui/Typography'
-import Table, {TableBody, TableCell, TableRow} from 'material-ui/Table'
 import {Autorenew, HourglassFull, Block} from 'material-ui-icons'
-import Paper from 'material-ui/Paper'
 import {LinearProgress} from 'material-ui/Progress'
-import {theme, themeBgStyle} from './Style'
+import {themeBgStyle} from './Style'
 import {TopBar, SubBar, Jumbo, FloatBtn, Snack,
-       Modal, TscListAddresses, CoinIcon} from './Lib'
+       Modal, TscListAddresses, PaperGrid, DepotEmpty} from './Lib'
 import __ from '../util'
 
 export default class DepotView extends React.Component {
@@ -107,7 +103,8 @@ export default class DepotView extends React.Component {
           {this.state.err}
         </Modal>
       )
-    } else if (this.state.addrs && this.state.addrs.length < 1) {
+
+    /* } else if (this.state.addrs && this.state.addrs.length < 1) {
       return (
         <Modal
           onClose={this.load}
@@ -119,7 +116,7 @@ export default class DepotView extends React.Component {
           <br />
           <Link to={`/addr/add`}>Add your first address</Link>
         </Modal>
-      )
+      ) */
     } else if (this.state.addrs) {
       return (
         <div style={themeBgStyle}>
@@ -149,30 +146,42 @@ export default class DepotView extends React.Component {
               iconLeft={<Autorenew />}
               onClickLeft={() => this.updateAddrs()}
             />}
-          <Jumbo
-            title={this.state.blc1}
-            subTitle={this.state.blc2}
-            coin0={this.state.coin0}
-            coin1={this.state.coin1}
-           />
+          {this.state.blc1 !== 'undefined' &&
+            <Jumbo
+              title={this.state.blc1}
+              subTitle={this.state.blc2}
+              coin0={this.state.coin0}
+              coin1={this.state.coin1}
+             />
+          }
+          {this.state.blc1 === 'undefined' &&
+            <Jumbo
+              coin0={this.state.coin0}
+              coin1={this.state.coin1}
+             />
+          }
+
           <SubBar
             tabs={['Addresses', 'Transactions']}
             ix={this.state.tabIx}
             onClick={this.tab}
           />
+          {this.state.addrs.length < 1 &&
+            <DepotEmpty />
+          }
           {this.state.tabIx === 0 &&
             <PaperGrid
               addrs={this.state.addrs}
               addrUpdIds={this.state.addrUpdIds}
               coin0={this.state.coin0}
             />}
-          {this.state.tabIx === 1 &&
+          {this.state.tabIx === 1 && this.state.addrTscs.length > 0 &&
             <TscListAddresses
               addrTscs={this.state.addrTscs}
               coin0={this.state.coin0}
               addrIcon
             />}
-          {this.state.tabIx === 0 &&
+          {(this.state.tabIx === 0 || this.state.addrTscs.length === 0) &&
           <FloatBtn onClick={this.goAddAddr} />}
 
         </div>
@@ -181,49 +190,4 @@ export default class DepotView extends React.Component {
       return <LinearProgress />
     }
   }
-}
-
-const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
-  return (
-    <Paper square style={{background: theme.palette.background.light, padding: theme.spacing.unit}} elevation={0}>
-      {addrs.map(addr => {
-        return (
-          <Paper style={{margin: theme.spacing.unit * 2, padding: theme.spacing.unit * 2}} key={addr._id}>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell compact width={'40px'} style={{maxWidth: 0}}>
-                    <CoinIcon coin={addr.coin} size={40} />
-                  </TableCell>
-                  <TableCell style={{maxWidth: 0}}>
-                    {!addrUpdIds.has(addr._id) &&
-                      <Link to={`/addr/${addr._id}`} style={{textDecoration: 'none'}}>
-                        <Typography type='headline'>
-                          {addr.name}
-                        </Typography>
-                      </Link>}
-                    {addrUpdIds.has(addr._id) &&
-                      <Typography type='body2'>
-                        {addr.name}
-                      </Typography>}
-                    <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                      {addr.hsh}
-                    </Typography>
-                  </TableCell>
-                  <TableCell compact numeric width={'30%'} style={{maxWidth: 0}}>
-                    <Typography type='headline' style={{color: theme.palette.primary['500']}}>
-                      {addr.amnt}&nbsp;<CoinIcon coin={addr.coin} color={theme.palette.primary['500']} alt />
-                    </Typography>
-                    <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                      {addr.amnt * addr.rates[coin0]}&nbsp;<CoinIcon coin={coin0} size={14} color={theme.palette.text.secondary} alt />
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </Paper>
-        )
-      })}
-    </Paper>
-  )
 }

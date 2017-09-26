@@ -3,11 +3,12 @@ import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
 import Paper from 'material-ui/Paper'
+import Grid from 'material-ui/Grid'
 import {LinearProgress} from 'material-ui/Progress'
-import {Lock, PersonAdd} from 'material-ui-icons'
+import {Lock} from 'material-ui-icons'
 import {Modal} from './Lib'
 import __ from '../util'
-import {themeBgStyle, paperStyle, loginStyle, actionBtnStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, loginStyle, actionBtnStyle} from './Style'
 const rootStyle = {...themeBgStyle, height: '100vh'}
 
 export default class LoginView extends React.Component {
@@ -54,49 +55,52 @@ export default class LoginView extends React.Component {
           <LinearProgress />}
           {!this.state.busy &&
           <div style={loginStyle}>
-            <Typography align='center' type='display3' color='inherit'>
-              Blockkeeper
-            </Typography>
-            <Typography align='center' type='display1' color='inherit' gutterBottom>
-              Please enter your login credentials
-            </Typography>
-            <Paper square style={paperStyle} elevation={24}>
-              <TextField
-                autoFocus
-                fullWidth
-                label='Username'
-                margin='normal'
-                value={this.state.username}
-                error={Boolean(this.state.emsg)}
-                helperText={this.state.emsg}
-                onChange={evt => this.setState({username: evt.target.value})}
-                />
-              <TextField
-                fullWidth
-                label='Password'
-                type='password'
-                margin='normal'
-                autoComplete='current-password'
-                value={this.state.pw}
-                onChange={evt => this.setState({pw: evt.target.value})}
-                />
-              <Button
-                raised
-                style={actionBtnStyle}
-                href='/rgstr'
-                >
-                <PersonAdd />
-                  Register
-                </Button>
-              <Button
-                raised
-                style={actionBtnStyle}
-                onClick={(event) => this.login(event)}
-                >
-                <Lock />
-                  Login
-                </Button>
-            </Paper>
+            <Grid container spacing={0} justify='center'>
+              <Grid item xs={12} sm={10}>
+                <Typography type='display3' color='inherit'>
+                  Blockkeeper
+                </Typography>
+                <Typography type='display1' color='inherit' gutterBottom>
+                  Please enter your login credentials
+                </Typography>
+                <Paper square style={paperStyle} elevation={24}>
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    label='Username'
+                    margin='normal'
+                    value={this.state.username}
+                    error={Boolean(this.state.emsg)}
+                    helperText={this.state.emsg}
+                    onChange={evt => this.setState({username: evt.target.value})}
+                    />
+                  <TextField
+                    fullWidth
+                    label='Password'
+                    type='password'
+                    margin='normal'
+                    autoComplete='current-password'
+                    value={this.state.pw}
+                    onChange={evt => this.setState({pw: evt.target.value})}
+                    />
+                  <Button
+                    raised
+                    style={{...actionBtnStyle, width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
+                    onClick={(event) => this.login(event)}
+                    >
+                    <Lock style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
+                      Login
+                  </Button>
+                  <br />
+                  <Button
+                    style={{width: '100%'}}
+                    href='/rgstr'
+                    >
+                      Register
+                  </Button>
+                </Paper>
+              </Grid>
+            </Grid>
           </div>}
         </div>
       )

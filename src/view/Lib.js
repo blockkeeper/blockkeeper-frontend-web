@@ -77,13 +77,13 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
   <div style={jumboStyle}>
     <div>
       <Typography align='center' type='display3' color='inherit' style={{fontWeight: '100'}}>
-        {title || 'Loading'}&nbsp;
+        {title || '0.00'}&nbsp;
         {coin0 &&
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
         }
       </Typography>
       <Typography align='center' type='headline' color='inherit'>
-        {subTitle || 'data...'}&nbsp;
+        {subTitle || '0.00'}&nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
         }
@@ -158,7 +158,7 @@ const TscListAddr = ({addr, tscs, coin0, addrIcon}) => {
 }
 
 const TscListAddresses = ({addrTscs, coin0, addrIcon}) =>
-  <Paper square style={{...paperStyle}} elevation={10}>
+  <Paper square style={{...paperStyle}}>
     <Table>
       <TableBody>
         {addrTscs.map(addrTsc => {
@@ -222,7 +222,7 @@ class Modal extends React.Component {
 
   render () {
     return (
-      <Dialog open={this.open} onRequestClose={this.onClose} >
+      <Dialog open={this.open} onRequestClose={this.onClose} style={{background: theme.palette.background.default}}>
         <DialogTitle>{this.lbl}</DialogTitle>
         <DialogContent>
           <DialogContentText>{this.children}</DialogContentText>
@@ -250,7 +250,21 @@ const CoinIcon = ({coin, alt, color, size}) => {
   return <span>{getSymbolFromCurrency(coin.toUpperCase())}</span>
 }
 
-const PaperGrid = ({addrs, coin0}) => {
+const DepotEmpty = () =>
+  <Paper square style={{background: theme.palette.background.light, padding: theme.spacing.unit, textAlign: 'center', paddingTop: '50px'}} elevation={0}>
+    <Link to={`/addr/add`} style={{textDecoration: 'none'}}>
+      <Typography type='headline' gutterBottom>
+        No addresses found, start by adding your first address
+      </Typography>
+    </Link>
+    <Link to={`/user/edit`} style={{textDecoration: 'none'}}>
+      <Typography type='subheading' style={{color: theme.palette.text.secondary}} gutterBottom>
+        or edit your user settings
+      </Typography>
+    </Link>
+  </Paper>
+
+const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
   return (
     <Paper square style={{background: theme.palette.background.light, padding: theme.spacing.unit}} elevation={0}>
       {addrs.map(addr => {
@@ -263,11 +277,16 @@ const PaperGrid = ({addrs, coin0}) => {
                     <CoinIcon coin={addr.coin} size={40} />
                   </TableCell>
                   <TableCell style={{maxWidth: 0}}>
-                    <Link to={`/addr/${addr._id}`} style={{textDecoration: 'none'}}>
-                      <Typography type='headline'>
+                    {!addrUpdIds.has(addr._id) &&
+                      <Link to={`/addr/${addr._id}`} style={{textDecoration: 'none'}}>
+                        <Typography type='headline'>
+                          {addr.name}
+                        </Typography>
+                      </Link>}
+                    {addrUpdIds.has(addr._id) &&
+                      <Typography type='body2'>
                         {addr.name}
-                      </Typography>
-                    </Link>
+                      </Typography>}
                     <Typography type='body2' style={{color: theme.palette.text.secondary}}>
                       {addr.hsh}
                     </Typography>
@@ -501,6 +520,7 @@ export {
   TscListAddr,
   TscListAddresses,
   TscTable,
+  DepotEmpty,
   PaperGrid,
   SubBar,
   Jumbo,

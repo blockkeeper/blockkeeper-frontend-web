@@ -3,11 +3,12 @@ import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
 import Paper from 'material-ui/Paper'
-import {Lock, Clear} from 'material-ui-icons'
+import Grid from 'material-ui/Grid'
+import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
 import {Modal} from './Lib'
 import __ from '../util'
-import {themeBgStyle, paperStyle, loginStyle, actionBtnStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, loginStyle, actionBtnStyle} from './Style'
 const rootStyle = {...themeBgStyle, height: '100vh'}
 
 export default class RgstrView extends React.Component {
@@ -94,67 +95,70 @@ export default class RgstrView extends React.Component {
           {this.state.busy &&
           <LinearProgress />}
           <div style={loginStyle}>
-            <Typography align='center' type='display3' color='inherit'>
-              Blockkeeper
-            </Typography>
-            <Typography align='center' type='display1' color='inherit' gutterBottom>
-              Please choose your account details
-            </Typography>
-            <Paper square style={paperStyle} elevation={24}>
-              <TextField
-                autoFocus
-                fullWidth
-                required
-                label='Username'
-                margin='normal'
-                value={this.state.username}
-                error={Boolean(this.state.usernameEmsg)}
-                helperText={this.state.usernameEmsg}
-                onChange={evt => this.set('username', evt.target.value)}
-              />
-              <TextField
-                fullWidth
-                required
-                label='Password'
-                type='password'
-                margin='normal'
-                value={this.state.pw}
-                error={Boolean(this.state.pwEmsg)}
-                helperText={this.state.pwEmsg}
-                onChange={evt => this.set('pw', evt.target.value)}
-              />
-              <TextField
-                fullWidth
-                required
-                label='Retype password'
-                type='password'
-                margin='normal'
-                value={this.state.rpw}
-                error={Boolean(this.state.rpwEmsg)}
-                helperText={this.state.rpwEmsg}
-                onChange={evt => this.set('rpw', evt.target.value)}
-              />
-              {!this.state.busy &&
-                <div>
-                  <Button
-                    raised
-                    style={actionBtnStyle}
-                    onClick={this.goBack}
-                  >
-                    <Clear />
-                    Cancel
-                  </Button>
-                  <Button
-                    raised
-                    style={actionBtnStyle}
-                    onClick={this.save}
-                    disabled={!this.state.upd}
-                  >
-                    <Lock />
-                    Sign up
-                  </Button>
-                </div>}
-            </Paper>
+            <Grid container spacing={0} justify='center'>
+              <Grid item xs={12} sm={10}>
+                <Typography type='display3' color='inherit'>
+                  Blockkeeper
+                </Typography>
+                <Typography type='display1' color='inherit' gutterBottom>
+                  Please choose your account details
+                </Typography>
+                <Paper square style={paperStyle} elevation={24}>
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    required
+                    label='Username'
+                    margin='normal'
+                    value={this.state.username}
+                    error={Boolean(this.state.usernameEmsg)}
+                    helperText={this.state.usernameEmsg}
+                    onChange={evt => this.set('username', evt.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    required
+                    label='Password'
+                    type='password'
+                    margin='normal'
+                    value={this.state.pw}
+                    error={Boolean(this.state.pwEmsg)}
+                    helperText={this.state.pwEmsg}
+                    onChange={evt => this.set('pw', evt.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    required
+                    label='Retype password'
+                    type='password'
+                    margin='normal'
+                    value={this.state.rpw}
+                    error={Boolean(this.state.rpwEmsg)}
+                    helperText={this.state.rpwEmsg}
+                    onChange={evt => this.set('rpw', evt.target.value)}
+                  />
+                  {!this.state.busy &&
+                    <div>
+                      <Button
+                        raised
+                        style={{...actionBtnStyle, width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
+                        onClick={this.save}
+                        disabled={!this.state.upd}
+                      >
+                        <PersonAdd style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
+                        Register
+                      </Button>
+                      <br />
+                      <Button
+                        style={{width: '100%'}}
+                        onClick={this.goBack}
+                      >
+                        Cancel
+                      </Button>
+                    </div>}
+                </Paper>
+              </Grid>
+            </Grid>
           </div>
         </div>
       )
