@@ -79,6 +79,9 @@ const theme = createMuiTheme({
     caption: {
       fontSize: 14,
       lineHeight: 1.5
+    },
+    button: {
+      fontSize: 16
     }
   }
 })
@@ -108,8 +111,7 @@ const loginStyle = homeStyle
 const actionBtnStyle = {
   backgroundColor: styleGuide.error,
   color: common.white,
-  width: '40%',
-  margin: theme.spacing.unit
+  width: '40%'
 }
 
 const jumboStyle = {
