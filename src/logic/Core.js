@@ -84,16 +84,7 @@ export default class Core extends StoBase {
     const userHsh = this.toUserHsh(username)
     let pld
     try {
-      // pld = await __.rqst({url: `${__.cfg('apiUrl')}/login/${userHsh}`})
-      pld = await __.toMoPro({
-        data: this.encrypt({
-          _id: '2a6c50ca-b8b2-4c52-838a-071f98a01fae',
-          _t: __.getTme(),
-          locale: 'en',
-          coins: ['EUR', 'BTC'],
-          depotId: 'd9ac209e-2813-4d98-bfd6-1ab02ab32dba'
-        }, this.toSecret(userHsh, pw))
-      }, 750)
+      pld = await __.rqst({url: `${__.cfg('apiUrl')}/login/${userHsh}`})
     } catch (e) {
       let emsg
       let sts
