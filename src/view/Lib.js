@@ -222,7 +222,7 @@ class Modal extends React.Component {
 
   render () {
     return (
-      <Dialog open={this.open} onRequestClose={this.onClose} >
+      <Dialog open={this.open} onRequestClose={this.onClose} style={{background: theme.palette.background.default}}>
         <DialogTitle>{this.lbl}</DialogTitle>
         <DialogContent>
           <DialogContentText>{this.children}</DialogContentText>

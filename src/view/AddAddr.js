@@ -127,7 +127,7 @@ export default class AddAddrView extends React.Component {
             noUser
           />
           <Paper square style={paperStyle}>
-            <Grid container spacing={16} justify='center' >
+            <Grid container spacing={16} justify='center'>
               <Grid item xs={12} sm={6}>
                 <Typography type='title'>
                   QR Code
