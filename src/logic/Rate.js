@@ -4,10 +4,11 @@ import __ from '../util'
 export default class Rate extends ApiBase {
   constructor (cx) {
     super('rate', cx, '00095c08-0c1a-4ed4-b4b0-e0452e86e48b')
-    this.delSto()  // we want always fresh rates at startup
+    this._store = 'rate'
     this._apiGet = this._apiGet.bind(this)
     this.getRate = this.getRate.bind(this)
     this.getCoins = this.getCoins.bind(this)
+    this.delSto()  // we want always fresh rates at startup
     this.info('Created')
   }
 
