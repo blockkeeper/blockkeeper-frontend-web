@@ -176,6 +176,11 @@ const toMoPro = (data, tmoMsec, ...args) => {
   })
 }
 
+async function sleep (tmoMsec, func, ...args) {
+  await new Promise(resolve => setTimeout(resolve, tmoMsec))
+  if (func) return func(...args)
+}
+
 const toChunks = (lst, size) => {
   size = size || cfg('chunkSize')
   const chunks = []
@@ -338,6 +343,7 @@ export default {
   initView,
   toSrvUrl,
   toMoPro,
+  sleep,
   err: getErr,
   info: getLogger('info', 'main'),
   warn: getLogger('warn', 'main'),
