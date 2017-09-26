@@ -177,7 +177,7 @@ const toMoPro = (data, tmoMsec, ...args) => {
 }
 
 const toChunks = (lst, size) => {
-  size = size || cfg('srvChunkSize')
+  size = size || cfg('chunkSize')
   const chunks = []
   let i, j
   for (i = 0, j = lst.length; i < j; i += size) {
