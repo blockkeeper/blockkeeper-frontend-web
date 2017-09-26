@@ -176,6 +176,16 @@ const toMoPro = (data, tmoMsec, ...args) => {
   })
 }
 
+const toChunks = (lst, size) => {
+  size = size || cfg('srvChunkSize')
+  const chunks = []
+  let i, j
+  for (i = 0, j = lst.length; i < j; i += size) {
+    chunks.push(lst.slice(i, i + size))
+  }
+  return chunks
+}
+
 const struc = (lst, {toBeg, max, byTme, noSort}) => {
   lst = isArray(lst) ? lst : Array.from(lst.values()) // lst can be array or map
   if (byTme) {
@@ -337,5 +347,6 @@ export default {
   vldFloat,
   vldPw,
   toFloat,
-  isArray
+  isArray,
+  toChunks
 }

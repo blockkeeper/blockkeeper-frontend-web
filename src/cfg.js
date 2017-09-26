@@ -10,7 +10,8 @@ let data = {
   maxPw: 30,
   tmoMsec: 15000,
   outdSec: 60,
-  prec: 1000000
+  prec: 1000000,
+  srvChunkSize: 3
 }
 
 const cfg = (key) => key == null ? data : data[key]
