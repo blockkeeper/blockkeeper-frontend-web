@@ -2,7 +2,7 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 import Typography from 'material-ui/Typography'
 import Table, {TableHead, TableBody, TableCell, TableRow} from 'material-ui/Table'
-import {Autorenew} from 'material-ui-icons'
+import {Autorenew, HourglassFull, Block} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
 import {theme, themeBgStyle} from './Style'
@@ -13,9 +13,17 @@ export default class DepotView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
+    if (!this.cx.tmp.addrUpdIds) this.cx.tmp.addrUpdIds = new Set()
+    if (!this.cx.tmp.nxAddrUpdCnt) this.cx.tmp.nxAddrUpdCnt = 0
+    this.state = {
+      tabIx: this.cx.tmp.depotTabIx || 0,
+      addrUpdIds: this.cx.tmp.addrUpdIds,
+      upd: (this.cx.tmp.addrUpdIds.size > 0),
+      nxUpdCnt: this.cx.tmp.nxAddrUpdCnt
+    }
     this.load = this.load.bind(this)
     this.tab = this.tab.bind(this)
+    this.updateAddrs = this.updateAddrs.bind(this)
     this.goAddAddr = () => this.props.history.push('/addr/add')
   }
 
@@ -26,8 +34,6 @@ export default class DepotView extends React.Component {
 
   async load () {
     try {
-      // uncomment to test error view:
-      //   throw this.err('An error occurred')
       const [
         addrs,
         {coin0, coin1}
@@ -62,6 +68,35 @@ export default class DepotView extends React.Component {
     this.cx.tmp.depotTabIx = tabIx
   }
 
+  async updateAddrs () {
+    if (this.state.upd || this.state.nxUpdCnt !== 0) return
+    this.info('Addr updates started')
+    this.setState({upd: true})
+    const {addrChunksByCoin, addrsById} = await this.cx.depot.getAddrChunks()
+    for (let [coin, addrChunks] of addrChunksByCoin) {
+      for (let addrChunk of addrChunks) {
+        this.cx.tmp.addrUpdIds.clear()
+        for (let addr of addrChunk) this.cx.tmp.addrUpdIds.add(addr._id)
+        this.setState({addrUpdIds: this.cx.tmp.addrUpdIds})
+        await this.cx.depot.updateAddrs(coin, addrChunk, addrsById)
+      }
+    }
+    this.cx.tmp.addrUpdIds.clear()
+    this.info('Addr updates finished')
+    this.setState({
+      addrUpdIds: this.cx.tmp.addrUpdIds,
+      upd: false,
+      nxUpdCnt: __.cfg('nxAddrUpdCnt')
+    })
+    this.cx.tmp.nxAddrUpdCnt = __.cfg('nxAddrUpdCnt')
+    while (this.cx.tmp.nxAddrUpdCnt > 0) {
+      await __.sleep(__.cfg('nxAddrUpdMsec'))
+      this.cx.tmp.nxAddrUpdCnt -= 1
+      this.debug(this.cx.tmp.nxAddrUpdCnt)
+      this.setState({nxUpdCnt: this.cx.tmp.nxAddrUpdCnt})
+    }
+  }
+
   render () {
     if (this.state.err) {
       return (
@@ -93,11 +128,27 @@ export default class DepotView extends React.Component {
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
             />}
-          <TopBar
-            midTitle='Blockkeeper'
-            iconLeft={<Autorenew />}
-            onClickLeft={() => this.cx.depot.updateAddrs()}
-          />
+          {this.state.upd &&
+            <TopBar
+              midTitle='Blockkeeper'
+              iconLeft={<HourglassFull />}  // TODO: use rotating icon
+              onClickLeft={() => {}}        // TODO: disable button
+            />}
+          {(!this.state.upd && this.state.nxUpdCnt > 0) &&
+            <TopBar
+              midTitle={
+                `${this.state.nxUpdCnt * __.cfg('nxAddrUpdMsec') / 1000}s ` +
+                'until next update'
+              }
+              iconLeft={<Block />}      // TODO: use useful icon
+              onClickLeft={() => {}}    // TODO: disable button
+            />}
+          {(!this.state.upd && this.state.nxUpdCnt <= 0) &&
+            <TopBar
+              midTitle='Blockkeeper'
+              iconLeft={<Autorenew />}
+              onClickLeft={() => this.updateAddrs()}
+            />}
           <Jumbo
             title={this.state.blc1}
             subTitle={this.state.blc2}
@@ -112,6 +163,7 @@ export default class DepotView extends React.Component {
           {this.state.tabIx === 0 &&
             <PaperGrid
               addrs={this.state.addrs}
+              addrUpdIds={this.state.addrUpdIds}
               coin0={this.state.coin0}
             />}
           {this.state.tabIx === 1 &&
@@ -130,7 +182,7 @@ export default class DepotView extends React.Component {
   }
 }
 
-const PaperGrid = ({addrs, coin0}) => {
+const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
   return (
     <Paper square style={{background: theme.palette.background.light, padding: theme.spacing.unit}} elevation={0}>
       {addrs.map(addr => {
@@ -143,11 +195,16 @@ const PaperGrid = ({addrs, coin0}) => {
                     <CoinIcon coin={addr.coin} size={40} />
                   </TableCell>
                   <TableCell style={{maxWidth: 0}}>
-                    <Link to={`/addr/${addr._id}`} style={{textDecoration: 'none'}}>
-                      <Typography type='headline'>
+                    {!addrUpdIds.has(addr._id) &&
+                      <Link to={`/addr/${addr._id}`} style={{textDecoration: 'none'}}>
+                        <Typography type='headline'>
+                          {addr.name}
+                        </Typography>
+                      </Link>}
+                    {addrUpdIds.has(addr._id) &&
+                      <Typography type='body2'>
                         {addr.name}
-                      </Typography>
-                    </Link>
+                      </Typography>}
                     <Typography type='body2' style={{color: theme.palette.text.secondary}}>
                       {addr.hsh}
                     </Typography>

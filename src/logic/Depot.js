@@ -9,6 +9,7 @@ export default class Depot extends ApiBase {
     this.getAddrBlc = this.getAddrBlc.bind(this)
     this.getTscBlc = this.getTscBlc.bind(this)
     this.loadAddrs = this.loadAddrs.bind(this)
+    this.getAddrChunks = this.getAddrChunks.bind(this)
     this.updateAddrs = this.updateAddrs.bind(this)
     this.apiGetAddrs = this.apiGetAddrs.bind(this)
     this.srvs = {btc: BtcSrv}
@@ -68,7 +69,7 @@ export default class Depot extends ApiBase {
     return skipStruc ? addrs : __.struc(addrs, {byTme: true})
   }
 
-  async updateAddrs (addrIds) {
+  async getAddrChunks (addrIds) {
     const addrs = await this.loadAddrs(addrIds, true)
     const addrsByCoin = new Map()
     const addrsById = new Map()
@@ -78,23 +79,29 @@ export default class Depot extends ApiBase {
       addrsByCoin.set(addr.coin, lst)
       addrsById.set(addr._id, addr)
     }
+    const addrChunksByCoin = new Map()
+    for (let [coin, addrs] of addrsByCoin) {
+      addrChunksByCoin.set(coin, __.toChunks(addrs))
+    }
+    return {addrChunksByCoin, addrsById}
+  }
+
+  async updateAddrs (coin, addrs, addrsById) {
     // don't use Promise.all:
     //   - it rejects as soon as _one_ promise fails
     //   - don't overload mobile network connection
-    for (let [coin, addrs] of addrsByCoin) {
-      let srv = new this.srvs[coin.toLowerCase()](this)
-      try {
-        let updAddrs = await srv.run(addrs)
-        for (let updAddr of updAddrs) {
-          let addrObj = new Addr(this.cx, updAddr._id)
-          let addr = addrObj.toAddr(updAddr, addrsById.get(updAddr._id))
-          await addrObj.save(addr)
-        }
-      } catch (e) {
-        this.warn(`Updating ${coin} addrs failed: ${e.message}`)
+    let srv = new this.srvs[coin.toLowerCase()](this)
+    try {
+      let updAddrs = await srv.run(addrs)
+      for (let updAddr of updAddrs) {
+        let addrObj = new Addr(this.cx, updAddr._id)
+        let addr = addrObj.toAddr(updAddr, addrsById.get(updAddr._id))
+        await addrObj.save(addr)
       }
-      this.info(`Update of ${addrs.length} ${coin} addrs finished`)
+    } catch (e) {
+      this.warn(`Updating ${addrs.length} ${coin} addrs failed: ${e.message}`)
     }
+    this.info(`Update of ${addrs.length} ${coin} addrs finished`)
   }
 
   async apiGetAddrs () {
