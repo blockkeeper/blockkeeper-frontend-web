@@ -1,5 +1,4 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
@@ -9,10 +8,10 @@ import {LinearProgress} from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
 import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
-import {TopBar, Snack, Modal, CoinIcon} from './Lib'
+import {TopBar, Snack, Modal, CoinIcon, TscListAddr} from './Lib'
 import {theme, themeBgStyle, paperStyle, actionBtnStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
-       Launch, ModeEdit, Delete} from 'material-ui-icons'
+       Launch, ModeEdit, Delete, Cancel, Save} from 'material-ui-icons'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -159,10 +158,11 @@ export default class AddrView extends React.Component {
           </Paper>
           <Paper square style={{...paperStyle}} elevation={10}>
             {this.state.tscs.length > 0 &&
-              <TscList
+              <TscListAddr
                 addr={this.state.addr}
                 tscs={this.state.tscs}
                 coin0={this.state.coin0}
+                addrIcon={false}
               />}
             {this.state.tscs.length <= 0 &&
               <Typography align='center' type='body1'>
@@ -178,49 +178,6 @@ export default class AddrView extends React.Component {
       return <LinearProgress />
     }
   }
-}
-
-const TscList = ({addr, tscs, coin0}) => {
-  return (
-    <Table>
-      <TableBody>
-        {tscs.map(tsc => {
-          const mx = 40
-          let modeColor = tsc.mode === 'snd' ? theme.palette.error['500'] : theme.palette.secondary['500']
-          let modeSign = tsc.mode === 'snd' ? '-' : '+'
-          let tags = tsc.tags.join(' ')
-          if (tags.length > mx) tags = tags.slice(0, mx) + '...'
-          let desc = tsc.desc
-          if (desc.length > mx) desc = desc.slice(0, mx) + '...'
-          return (
-            <TableRow key={tsc._id}>
-              <TableCell width={'70%'} style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit}}>
-                <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                  {__.ppTme(tsc._t)}
-                </Typography>
-                <Link to={`/tsc/${addr._id}/${tsc._id}`} style={{textDecoration: 'none'}}>
-                  <Typography type='headline'>
-                    {tsc.name}
-                  </Typography>
-                </Link>
-                <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                  {desc} {tags}
-                </Typography>
-              </TableCell>
-              <TableCell numeric style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit}}>
-                <Typography type='headline' style={{color: modeColor}}>
-                  {modeSign} {tsc.amnt} <CoinIcon coin={addr.coin} alt color={modeColor} />
-                </Typography>
-                <Typography type='body2' style={{color: theme.palette.text.secondary}} gutterBottom>
-                  {modeSign} {tsc.amnt * addr.rates[coin0]} <CoinIcon coin={coin0} alt />
-                </Typography>
-              </TableCell>
-            </TableRow>
-          )
-        })}
-      </TableBody>
-    </Table>
-  )
 }
 
 class AddrList extends React.Component {
@@ -378,17 +335,22 @@ class AddrList extends React.Component {
             </div>}
           {this.state.edit &&
             <div>
-              {this.state.busy &&
-                <LinearProgress />}
-              {!this.state.busy &&
-                <div>
-                  <Button onClick={this.save} disabled={!this.state.upd}>
-                    Save
-                  </Button>
-                  <Button onClick={() => this.setState({edit: false})}>
-                    Cancel
-                  </Button>
-                </div>}
+              <Button
+                raised
+                style={actionBtnStyle}
+                onClick={this.save} disabled={!this.state.upd}
+              >
+                <Save />
+                Save
+              </Button>
+              <Button
+                raised
+                style={actionBtnStyle}
+                onClick={() => this.setState({edit: false})}
+              >
+                <Cancel />
+                Cancel
+              </Button>
             </div>}
         </div>
       )

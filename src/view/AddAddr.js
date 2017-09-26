@@ -20,7 +20,7 @@ export default class AddAddrView extends React.Component {
     super(props)
     this.cx = props.cx
     this.state = {
-      delay: 999,
+      delay: 750,
       facingMode: 'front',
       noHshMode: false,
       coin: 'BTC',

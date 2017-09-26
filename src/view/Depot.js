@@ -1,12 +1,13 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 import Typography from 'material-ui/Typography'
-import Table, {TableHead, TableBody, TableCell, TableRow} from 'material-ui/Table'
+import Table, {TableBody, TableCell, TableRow} from 'material-ui/Table'
 import {Autorenew, HourglassFull, Block} from 'material-ui-icons'
-import {LinearProgress} from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
+import {LinearProgress} from 'material-ui/Progress'
 import {theme, themeBgStyle} from './Style'
-import {TopBar, SubBar, Jumbo, FloatBtn, Snack, Modal, CoinIcon} from './Lib'
+import {TopBar, SubBar, Jumbo, FloatBtn, Snack,
+       Modal, TscListAddresses, CoinIcon} from './Lib'
 import __ from '../util'
 
 export default class DepotView extends React.Component {
@@ -92,7 +93,6 @@ export default class DepotView extends React.Component {
     while (this.cx.tmp.nxAddrUpdCnt > 0) {
       await __.sleep(__.cfg('nxAddrUpdMsec'))
       this.cx.tmp.nxAddrUpdCnt -= 1
-      this.debug(this.cx.tmp.nxAddrUpdCnt)
       this.setState({nxUpdCnt: this.cx.tmp.nxAddrUpdCnt})
     }
   }
@@ -167,9 +167,10 @@ export default class DepotView extends React.Component {
               coin0={this.state.coin0}
             />}
           {this.state.tabIx === 1 &&
-            <TscList
+            <TscListAddresses
               addrTscs={this.state.addrTscs}
               coin0={this.state.coin0}
+              addrIcon
             />}
           {this.state.tabIx === 0 &&
           <FloatBtn onClick={this.goAddAddr} />}
@@ -226,44 +227,3 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
     </Paper>
   )
 }
-
-const TscList = ({addrTscs, coin0}) =>
-  <Paper square style={{overflow: 'auto'}}>
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell compact>Type</TableCell>
-          <TableCell compact>Name</TableCell>
-          <TableCell compact numeric>Holdings</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {addrTscs.map(addrTsc => {
-          const addr = addrTsc[0]
-          const tsc = addrTsc[1]
-          return (
-            <TableRow key={tsc._id}>
-              <TableCell compact>
-                <CoinIcon coin={addr.coin} />
-              </TableCell>
-              <TableCell compact>
-                <Link to={`/tsc/${addr._id}/${tsc._id}`}>{tsc.name}</Link>
-                <br />
-                {tsc.hsh}
-              </TableCell>
-              <TableCell compact numeric>
-                <Typography type='headline' color='primary'>
-                  {tsc.amnt}&nbsp;
-                  <CoinIcon coin={addr.coin} color='primary' alt />
-                </Typography>
-                <Typography type='body2'>
-                  {tsc.amnt * addr.rates[coin0]}&nbsp;
-                  <CoinIcon coin={coin0} size={14} color='primary' alt />
-                </Typography>
-              </TableCell>
-            </TableRow>
-          )
-        })}
-      </TableBody>
-    </Table>
-  </Paper>

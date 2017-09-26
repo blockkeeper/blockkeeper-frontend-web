@@ -1,12 +1,11 @@
 import React from 'react'
-import Table, {TableBody, TableCell, TableRow} from 'material-ui/Table'
-import Button from 'material-ui/Button'
-import TextField from 'material-ui/TextField'
 import {LinearProgress} from 'material-ui/Progress'
 import ArrowBackIcon from 'material-ui-icons/ArrowBack'
+import Paper from 'material-ui/Paper'
+import Typography from 'material-ui/Typography'
 import ModeEdit from 'material-ui-icons/ModeEdit'
-import {TopBar, Jumbo, Snack, ExtLink, Modal} from './Lib'
-import {themeBgStyle} from './Style'
+import {TopBar, Snack, Modal, CoinIcon, TscTable} from './Lib'
+import {theme, themeBgStyle, paperStyle} from './Style'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -45,8 +44,8 @@ export default class TscView extends React.Component {
         tsc,
         coin0,
         coin1,
-        blc1: `${coin0} ${blc.get(coin0)}`,
-        blc2: `${coin1} ${blc.get(coin1)}`
+        blc1: `${blc.get(coin0)}`,
+        blc2: `${blc.get(coin1)}`
       })
     } catch (e) {
       if (__.cfg('isDev')) throw e
@@ -78,6 +77,8 @@ export default class TscView extends React.Component {
         </Modal>
       )
     } else if (this.state.tsc) {
+      let modeColor = this.state.mode === 'snd' ? theme.palette.error['500'] : theme.palette.secondary['500']
+      let modeSign = this.state.mode === 'snd' ? '-' : '+'
       return (
         <div style={themeBgStyle}>
           {this.state.snack &&
@@ -93,170 +94,26 @@ export default class TscView extends React.Component {
             onClick={() => this.setState({edit: true})}
             noUser
           />
-          <Jumbo
-            title={this.state.blc1}
-            subTitle={this.state.blc2}
-          />
-          <TscList
-            addr={this.addr}
-            tsc={this.state.tsc}
-            save={this.save}
-          />
+          <Paper square style={{...paperStyle, textAlign: 'center'}}>
+            <Typography type='headline' style={{color: modeColor}}>
+              {modeSign} {this.state.blc1} <CoinIcon coin={this.state.coin0} alt color={modeColor} />
+            </Typography>
+            <Typography type='body2' style={{color: theme.palette.text.secondary}} gutterBottom>
+              {modeSign} {this.state.blc2} <CoinIcon coin={this.state.coin1} color={theme.palette.text.secondary} size={12} alt />
+            </Typography>
+          </Paper>
+
+          <Paper square style={{...paperStyle}} elevation={10}>
+            <TscTable
+              addr={this.addr}
+              tsc={this.state.tsc}
+              save={this.save}
+            />
+          </Paper>
         </div>
       )
     } else {
       return <LinearProgress />
     }
-  }
-}
-
-class TscList extends React.Component {
-  constructor (props) {
-    super(props)
-    this.addr = props.addr
-    this.tsc = props.tsc
-    this.state = {
-      name: props.tsc.name,
-      desc: props.tsc.desc,
-      tags: props.tsc.tags.join(' ')
-    }
-    this.saveAddr = props.save
-    this.save = this.save.bind(this)
-    this.set = this.set.bind(this)
-    this.getTags = this.getTags.bind(this)
-  }
-
-  async save () {
-    this.setState({busy: true})
-    await this.saveAddr(this.state.name, this.state.desc, this.state.tags)
-    this.setState({busy: false, edit: false})
-  }
-
-  set (ilk, val) {
-    this.setState({[ilk]: val}, () => {
-      let d = {
-        upd: false,
-        nameEmsg: __.vldAlphNum(this.state.name),
-        descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')}),
-        tagsEmsg: __.vldAlphNum(this.state.tags, {max: __.cfg('maxHigh')})
-      }
-      if (!d.nameEmsg && !d.descEmsg && !d.tagsEmsg) d.upd = true
-      this.setState(d)
-    })
-  }
-
-  getTags () {
-    if (this.state.tags) {
-      return this.state.tags.trim().split(' ').map(tag => '#' + tag).join(' ')
-    }
-  }
-
-  render () {
-    const tscUrl = __.toSrvUrl('tsc', this.addr.coin)(this.tsc.hsh)
-    return (
-      <div>
-        <Table>
-          <TableBody>
-            <TableRow>
-              <TableCell>
-                Name
-              </TableCell>
-              <TableCell>
-                {this.state.edit &&
-                <TextField
-                  autoFocus
-                  label='Name'
-                  value={this.state.name}
-                  error={Boolean(this.state.nameEmsg)}
-                  helperText={this.state.nameEmsg}
-                  onChange={evt => this.set('name', evt.target.value)}
-                />}
-                {!this.state.edit &&
-                  this.state.name}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Amount
-              </TableCell>
-              <TableCell>
-                {this.tsc.amntDesc}
-                <ExtLink to={tscUrl} />
-              </TableCell>
-            </TableRow>
-            {this.tsc.feeDesc &&
-              <TableRow>
-                <TableCell>
-                  Additional costs (fee)
-                </TableCell>
-                <TableCell>
-                  {this.tsc.feeDesc}
-                  <ExtLink to={tscUrl} />
-                </TableCell>
-              </TableRow>}
-            <TableRow>
-              <TableCell>
-                Tags
-              </TableCell>
-              <TableCell>
-                {this.state.edit &&
-                  <TextField
-                    label='Tags'
-                    value={this.state.tags}
-                    error={Boolean(this.state.tagsEmsg)}
-                    helperText={this.state.tagsEmsg}
-                    onChange={evt => this.set('tags', evt.target.value)}
-                  />}
-                {!this.state.edit &&
-                  this.getTags()}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Notes
-              </TableCell>
-              <TableCell>
-                {this.state.edit &&
-                  <TextField
-                    label='Notes'
-                    value={this.state.desc}
-                    error={Boolean(this.state.descEmsg)}
-                    helperText={this.state.descEmsg}
-                    onChange={evt => this.set('desc', evt.target.value)}
-                  />}
-                {!this.state.edit &&
-                  this.state.desc}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                Transaction ID
-              </TableCell>
-              <TableCell>
-                {this.tsc._id}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-        {!this.state.edit &&
-          <Button onClick={() => this.setState({edit: true})}>
-            Edit
-          </Button>}
-        {this.state.edit &&
-          <div>
-            {this.state.busy &&
-              <LinearProgress />}
-            {!this.state.busy &&
-              <div>
-                <Button onClick={this.save} disabled={!this.state.upd}>
-                  Save
-                </Button>
-                <Button onClick={() => this.setState({edit: false})}>
-                  Cancel
-                </Button>
-              </div>}
-          </div>}
-      </div>
-    )
   }
 }
