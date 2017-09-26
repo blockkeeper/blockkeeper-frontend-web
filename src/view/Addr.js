@@ -156,7 +156,7 @@ export default class AddrView extends React.Component {
               </div>
             }
           </Paper>
-          <Paper square style={{...paperStyle}} elevation={10}>
+          <Paper square style={{...paperStyle}}>
             {this.state.tscs.length > 0 &&
               <TscListAddr
                 addr={this.state.addr}
