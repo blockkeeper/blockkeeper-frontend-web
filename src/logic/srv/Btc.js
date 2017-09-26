@@ -20,7 +20,11 @@ export default class Btc extends SrvBase {
     for (let addr of addrs) updAddrs.set(addr.hsh, {_id: addr._id})
     const req = {
       url: 'https://blockchain.info/de/multiaddr',
-      params: {cors: true, active: Array.from(updAddrs.keys()).join('|')}
+      params: {
+        cors: true,
+        active: Array.from(updAddrs.keys()).join('|'),
+        limit: 100
+      }
     }
     const pld = await __.rqst(req, 'bckinfo-addr-tscs')
     for (let addr of pld.addresses) {
@@ -34,7 +38,7 @@ export default class Btc extends SrvBase {
   }
 
   bckinfoTscs (txs, addrHsh) {
-    // private method used by bckinfoAddr
+    // private method used by bckinfo()
     let tscs = []
     for (let tsc of txs) {
       let mode
