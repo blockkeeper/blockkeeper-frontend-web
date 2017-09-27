@@ -96,7 +96,6 @@ const pageStyle = {
 }
 
 const themeBgStyle = {
-  // height: '100vh',
   background: theme.palette.background.default
 }
 

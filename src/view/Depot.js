@@ -103,20 +103,6 @@ export default class DepotView extends React.Component {
           {this.state.err}
         </Modal>
       )
-
-    /* } else if (this.state.addrs && this.state.addrs.length < 1) {
-      return (
-        <Modal
-          onClose={this.load}
-          lbl='Welcome'
-          noCncl
-          actions={[]}
-        >
-          <Link to={`/user/edit`}>Edit your settings</Link>
-          <br />
-          <Link to={`/addr/add`}>Add your first address</Link>
-        </Modal>
-      ) */
     } else if (this.state.addrs) {
       return (
         <div style={themeBgStyle}>

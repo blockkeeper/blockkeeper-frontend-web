@@ -8,7 +8,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import {Lock} from 'material-ui-icons'
 import {Modal} from './Lib'
 import __ from '../util'
-import {theme, themeBgStyle, paperStyle, loginStyle, actionBtnStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, loginStyle} from './Style'
 const rootStyle = {...themeBgStyle, height: '100vh'}
 
 export default class LoginView extends React.Component {
@@ -20,10 +20,23 @@ export default class LoginView extends React.Component {
     this.reload = () => this.setState(this.reset())
     this.login = this.login.bind(this)
     this.state = this.reset()
+    this.set = this.set.bind(this)
   }
 
   componentDidMount () {
     Object.assign(this, __.initView(this, 'login'))
+  }
+
+  set (ilk, val) {
+    this.setState({[ilk]: val}, () => {
+      let d = {upd: false, usernameEmsg: __.vldAlphNum(this.state.username)}
+      d.pwEmsg = __.vldPw(this.state.pw)
+      if (this.state.username && this.state.pw &&
+          !d.usernameEmsg && !d.pwEmsg) {
+        d.upd = true
+      }
+      this.setState(d)
+    })
   }
 
   async login () {
@@ -70,9 +83,9 @@ export default class LoginView extends React.Component {
                     label='Username'
                     margin='normal'
                     value={this.state.username}
-                    error={Boolean(this.state.emsg)}
-                    helperText={this.state.emsg}
-                    onChange={evt => this.setState({username: evt.target.value})}
+                    error={Boolean(this.state.emsg) || Boolean(this.state.usernameEmsg)}
+                    helperText={this.state.emsg || this.state.usernameEmsg}
+                    onChange={evt => this.set('username', evt.target.value)}
                     />
                   <TextField
                     fullWidth
@@ -81,12 +94,16 @@ export default class LoginView extends React.Component {
                     margin='normal'
                     autoComplete='current-password'
                     value={this.state.pw}
-                    onChange={evt => this.setState({pw: evt.target.value})}
+                    error={Boolean(this.state.pwEmsg)}
+                    helperText={this.state.pwEmsg}
+                    onChange={evt => this.set('pw', evt.target.value)}
                     />
                   <Button
                     raised
-                    style={{...actionBtnStyle, width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
+                    color={'accent'}
+                    style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
                     onClick={(event) => this.login(event)}
+                    disabled={!this.state.upd}
                     >
                     <Lock style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
                       Login

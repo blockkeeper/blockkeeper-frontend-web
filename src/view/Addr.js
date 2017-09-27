@@ -6,12 +6,11 @@ import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
-import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
 import {TopBar, Snack, Modal, CoinIcon, TscListAddr} from './Lib'
-import {theme, themeBgStyle, paperStyle, actionBtnStyle} from './Style'
+import {theme, themeBgStyle, paperStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
-       Launch, ModeEdit, Delete, Cancel, Save} from 'material-ui-icons'
+       Launch, ModeEdit, Delete, Clear, Save} from 'material-ui-icons'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -24,10 +23,12 @@ export default class AddrView extends React.Component {
     this.state = {show: false, toggleCoins: false, edit: false}
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
+    this.edit = this.edit.bind(this)
     this.save = this.save.bind(this)
     this.delete = this.delete.bind(this)
     this.toggleCoins = this.toggleCoins.bind(this)
     this.show = this.show.bind(this)
+    this.close = () => this.setState({ask: null})
   }
 
   async componentDidMount () {
@@ -50,8 +51,12 @@ export default class AddrView extends React.Component {
       this.setState({
         err: null,
         addr: addr,
+        name: addr.name,
+        desc: addr.desc,
         tscs: addr.tscs,
+        tscsCount: addr.tscs.length,
         coin: addr.coin,
+        hshMode: Boolean(addr.hsh),
         coin0,
         coin1,
         blc1: `${addr.amnt}`,
@@ -65,13 +70,14 @@ export default class AddrView extends React.Component {
     }
   }
 
-  async save (name, desc) {
+  async save () {
+    this.setState({edit: false})
     try {
-      const addr = await this.addrObj.save({name, desc})
+      const addr = await this.addrObj.save({name: this.state.name, desc: this.state.desc})
       __.addSnack('Address updated')
       this.setState({addr, snack: __.getSnack()})
     } catch (e) {
-      this.setState({err: e.message, show: false})
+      this.setState({err: e.message})
       if (process.env.NODE_ENV === 'development') throw e
     }
   }
@@ -92,11 +98,27 @@ export default class AddrView extends React.Component {
   }
 
   edit (edit) {
-    this.setState({edit: !edit})
+    this.setState({edit: !this.state.edit, show: true})
   }
 
   toggleCoins () {
     this.setState({toggleCoins: !this.state.toggleCoins})
+  }
+
+  set (ilk, val) {
+    this.setState({[ilk]: val}, () => {
+      let d = {
+        upd: false,
+        nameEmsg: __.vldAlphNum(this.state.name),
+        descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')})
+      }
+      if (this.state.hshMode) {
+        if (!d.nameEmsg && !d.descEmsg) d.upd = true
+      } else {
+        if (this.state.name.trim() && !d.nameEmsg && !d.descEmsg) d.upd = true
+      }
+      this.setState(d)
+    })
   }
 
   render () {
@@ -104,6 +126,17 @@ export default class AddrView extends React.Component {
       return (
         <Modal onClose={this.goBack} >
           {this.state.err}
+        </Modal>
+      )
+    } else if (this.state.ask) {
+      return (
+        <Modal
+          withBusy
+          onClose={this.close}
+          lbl='Delete address'
+          actions={[{lbl: 'Delete', onClick: this.delete}]}
+        >
+          {`Are you sure you want to delete address "${this.state.name}"?`}
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
@@ -114,17 +147,46 @@ export default class AddrView extends React.Component {
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
             />}
+          {this.state.edit &&
+          <TopBar
+            midTitle='Address'
+            iconLeft={<Clear />}
+            onClickLeft={() => this.setState({edit: false})}
+            icon={<Save />}
+            onClick={this.save}
+            noUser
+          />}
+          {!this.state.edit &&
           <TopBar
             midTitle='Address'
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}
-          />
+            icon={<ModeEdit />}
+            onClick={this.edit}
+            noUser
+          />}
           <Paper square style={{...paperStyle, textAlign: 'center', paddingBottom: 0}} elevation={0}>
             <CoinIcon coin={this.state.coin} size={100} />
-            <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
-              {this.state.addr.name}
-              <Launch color='grey' />
-            </Typography>
+            {this.state.edit &&
+              <TextField
+                autoFocus
+                fullWidth
+                value={this.state.name}
+                error={Boolean(this.state.nameEmsg)}
+                helperText={this.state.nameEmsg}
+                onChange={evt => this.set('name', evt.target.value)}
+                inputProps={{
+                  style: {
+                    textAlign: 'center',
+                    fontSize: theme.typography.title.fontSize
+                  }
+                }}
+              />}
+            {!this.state.edit &&
+              <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
+                {this.state.addr.name}
+                <Launch color='grey' />
+              </Typography>}
             <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: theme.spacing.unit * 2}}>
               {this.state.blc1}&nbsp;
               <CoinIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />
@@ -145,11 +207,72 @@ export default class AddrView extends React.Component {
               </IconButton>}
             {this.state.show &&
               <div>
-                <AddrList
-                  addr={this.state.addr}
-                  save={this.save}
-                  delete={this.delete}
-                />
+                {this.state.addr.hsh &&
+                <div style={{padding: theme.spacing.unit * 2}}>
+                  <QRCode value={this.state.addr.hsh} />
+                  <Typography style={{fontSize: '13px'}}>
+                    {this.state.addr.hsh}
+                  </Typography>
+                </div>
+                }
+                {this.state.edit &&
+                <Button
+                  onClick={() => this.setState({ask: true})}
+                >
+                  <Delete style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
+                  Delete Address
+                </Button>}
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>
+                        No. Transactions
+                      </TableCell>
+                      <TableCell numeric>
+                        {this.state.tscsCount}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        Total Received
+                      </TableCell>
+                      <TableCell numeric>
+                        653.4563 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        Total Send
+                      </TableCell>
+                      <TableCell numeric>
+                        3.6746 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        Notes
+                      </TableCell>
+                      <TableCell numeric>
+                        {this.state.edit &&
+                          <TextField
+                            fullWidth
+                            value={this.state.desc}
+                            error={Boolean(this.state.descEmsg)}
+                            helperText={this.state.descEmsg}
+                            onChange={evt => this.set('desc', evt.target.value)}
+                          />}
+                        {!this.state.edit &&
+                          this.state.desc}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>
+                        Tags
+                      </TableCell>
+                      <TableCell numeric />
+                    </TableRow>
+                  </TableBody>
+                </Table>
                 <IconButton onClick={this.show}>
                   <ArrowDropUp style={{height: '50px', width: '50px'}} />
                 </IconButton>
@@ -176,184 +299,6 @@ export default class AddrView extends React.Component {
       )
     } else {
       return <LinearProgress />
-    }
-  }
-}
-
-class AddrList extends React.Component {
-  constructor (props) {
-    super(props)
-    this.addrId = props.addr._id
-    this.addrHsh = props.addr.hsh
-    this.hshMode = Boolean(props.addr.hsh)
-    this.state = {
-      name: props.addr.name,
-      desc: props.addr.desc,
-      coin: props.addr.coin,
-      tscsCount: props.addr.tscs.length
-    }
-    this.saveAddr = props.save
-    this.deleteAddr = props.delete
-    this.close = () => this.setState({ask: null})
-    this.save = this.save.bind(this)
-    this.delete = this.delete.bind(this)
-    this.set = this.set.bind(this)
-  }
-
-  async save () {
-    this.setState({busy: true})
-    await this.saveAddr(this.state.name, this.state.desc)
-    this.setState({busy: false, edit: false})
-  }
-
-  async delete () {
-    this.setState({busy: true})
-    await this.deleteAddr(this.addrId)
-  }
-
-  set (ilk, val) {
-    this.setState({[ilk]: val}, () => {
-      let d = {
-        upd: false,
-        nameEmsg: __.vldAlphNum(this.state.name),
-        descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')})
-      }
-      if (this.hshMode) {
-        if (!d.nameEmsg && !d.descEmsg) d.upd = true
-      } else {
-        if (this.state.name.trim() && !d.nameEmsg && !d.descEmsg) d.upd = true
-      }
-      this.setState(d)
-    })
-  }
-
-  render () {
-    if (this.state.ask) {
-      return (
-        <Modal
-          withBusy
-          onClose={this.close}
-          lbl='Delete'
-          actions={[{lbl: 'Delete', onClick: this.delete}]}
-        >
-          {`Delete address "${this.state.name}"?`}
-        </Modal>
-      )
-    } else {
-      return (
-        <div>
-          {this.addrHsh &&
-          <div style={{padding: theme.spacing.unit * 2}}>
-            <Divider light style={{marginBottom: theme.spacing.unit * 2}} />
-            <QRCode value={this.addrHsh} />
-            <Typography style={{fontSize: '13px'}}>
-              {this.addrHsh}
-            </Typography>
-          </div>
-          }
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  No. Transactions
-                </TableCell>
-                <TableCell numeric>
-                  {this.state.tscsCount}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  Total Received
-                </TableCell>
-                <TableCell numeric>
-                  653.4563 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  Total Send
-                </TableCell>
-                <TableCell numeric>
-                  3.6746 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  Name
-                </TableCell>
-                <TableCell numeric>
-                  {this.state.edit &&
-                  <TextField
-                    autoFocus
-                    fullWidth
-                    value={this.state.name}
-                    error={Boolean(this.state.nameEmsg)}
-                    helperText={this.state.nameEmsg}
-                    onChange={evt => this.set('name', evt.target.value)}
-                  />}
-                  {!this.state.edit &&
-                    this.state.name}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  Notes
-                </TableCell>
-                <TableCell numeric>
-                  {this.state.edit &&
-                    <TextField
-                      fullWidth
-                      value={this.state.desc}
-                      error={Boolean(this.state.descEmsg)}
-                      helperText={this.state.descEmsg}
-                      onChange={evt => this.set('desc', evt.target.value)}
-                    />}
-                  {!this.state.edit &&
-                    this.state.desc}
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          {!this.state.edit &&
-            <div>
-              <Button
-                raised
-                style={actionBtnStyle}
-                onClick={() => this.setState({edit: true})}
-              >
-                <ModeEdit />
-                Edit
-              </Button>
-              <Button
-                raised
-                style={actionBtnStyle}
-                onClick={() => this.setState({ask: true})}
-              >
-                <Delete />
-                Delete
-              </Button>
-            </div>}
-          {this.state.edit &&
-            <div>
-              <Button
-                raised
-                style={actionBtnStyle}
-                onClick={this.save} disabled={!this.state.upd}
-              >
-                <Save />
-                Save
-              </Button>
-              <Button
-                raised
-                style={actionBtnStyle}
-                onClick={() => this.setState({edit: false})}
-              >
-                <Cancel />
-                Cancel
-              </Button>
-            </div>}
-        </div>
-      )
     }
   }
 }

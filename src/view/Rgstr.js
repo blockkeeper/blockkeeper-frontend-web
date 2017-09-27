@@ -8,7 +8,7 @@ import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
 import {Modal} from './Lib'
 import __ from '../util'
-import {theme, themeBgStyle, paperStyle, loginStyle, actionBtnStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, loginStyle} from './Style'
 const rootStyle = {...themeBgStyle, height: '100vh'}
 
 export default class RgstrView extends React.Component {
@@ -141,7 +141,8 @@ export default class RgstrView extends React.Component {
                     <div>
                       <Button
                         raised
-                        style={{...actionBtnStyle, width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
+                        color={'accent'}
+                        style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
                         onClick={this.save}
                         disabled={!this.state.upd}
                       >
