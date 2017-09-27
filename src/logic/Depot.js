@@ -1,6 +1,6 @@
 import {ApiBase} from './Lib'
 import Addr from './Addr'
-import BtcSrv from './srv/Btc'
+import BtcSrv from './srv/bxp/Btc'
 import __ from '../util'
 
 export default class Depot extends ApiBase {
