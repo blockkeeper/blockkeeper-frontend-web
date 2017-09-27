@@ -50,6 +50,7 @@ export default class AddrView extends React.Component {
       const blc = this.cx.depot.getAddrBlc([addr])
       this.setState({
         err: null,
+        upd: false,
         addr: addr,
         name: addr.name,
         desc: addr.desc,
@@ -71,13 +72,16 @@ export default class AddrView extends React.Component {
   }
 
   async save () {
-    this.setState({edit: false})
+    if (this.state.upd === false) {
+      return
+    }
+    this.setState({edit: false, busy: true})
     try {
       const addr = await this.addrObj.save({name: this.state.name, desc: this.state.desc})
       __.addSnack('Address updated')
-      this.setState({addr, snack: __.getSnack()})
+      this.setState({addr, snack: __.getSnack(), busy: false})
     } catch (e) {
-      this.setState({err: e.message})
+      this.setState({err: e.message, busy: false})
       if (process.env.NODE_ENV === 'development') throw e
     }
   }
@@ -165,6 +169,8 @@ export default class AddrView extends React.Component {
             onClick={this.edit}
             noUser
           />}
+          {this.state.busy &&
+          <LinearProgress />}
           <Paper square style={{...paperStyle, textAlign: 'center', paddingBottom: 0}} elevation={0}>
             <CoinIcon coin={this.state.coin} size={100} />
             {this.state.edit &&
@@ -268,7 +274,7 @@ export default class AddrView extends React.Component {
                             onChange={evt => this.set('desc', evt.target.value)}
                           />}
                         {!this.state.edit &&
-                          this.state.desc}
+                          this.state.addr.desc}
                       </TableCell>
                     </TableRow>
                     <TableRow>
