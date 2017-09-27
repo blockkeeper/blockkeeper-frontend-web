@@ -79,7 +79,7 @@ export default class AddrView extends React.Component {
     try {
       const addr = await this.addrObj.save({name: this.state.name, desc: this.state.desc})
       __.addSnack('Address updated')
-      this.setState({addr, snack: __.getSnack(), busy: false})
+      this.setState({addr, snack: __.getSnack(), busy: false, upd: false})
     } catch (e) {
       this.setState({err: e.message, busy: false})
       if (process.env.NODE_ENV === 'development') throw e
@@ -291,7 +291,7 @@ export default class AddrView extends React.Component {
               </div>
             }
           </Paper>
-          <Paper square style={{...paperStyle}}>
+          <Paper square style={{...paperStyle}} elevation={5}>
             {this.state.tscs.length > 0 &&
               <TscListAddr
                 addr={this.state.addr}
