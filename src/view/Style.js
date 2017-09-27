@@ -118,7 +118,8 @@ const jumboStyle = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: common.white
+  color: common.white,
+  overflow: 'hidden'
 }
 
 const tabStyle = {

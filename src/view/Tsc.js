@@ -168,7 +168,7 @@ export default class TscView extends React.Component {
                   <TableCell>
                     Name
                   </TableCell>
-                  <TableCell numeric>
+                  <TableCell numeric style={{maxWidth: 0}}>
                     {this.state.edit &&
                     <TextField
                       autoFocus
@@ -188,7 +188,7 @@ export default class TscView extends React.Component {
                     <TableCell>
                       Additional costs (fee)
                     </TableCell>
-                    <TableCell numeric>
+                    <TableCell numeric style={{maxWidth: 0}}>
                       {this.state.tsc.feeDesc}
                     </TableCell>
                   </TableRow>}
@@ -196,7 +196,7 @@ export default class TscView extends React.Component {
                   <TableCell>
                     Tags
                   </TableCell>
-                  <TableCell numeric>
+                  <TableCell numeric style={{maxWidth: 0}}>
                     {this.state.edit &&
                       <TextField
                         placeholder='Tags'
@@ -214,7 +214,7 @@ export default class TscView extends React.Component {
                   <TableCell>
                     Notes
                   </TableCell>
-                  <TableCell numeric>
+                  <TableCell numeric style={{maxWidth: 0}}>
                     {this.state.edit &&
                       <TextField
                         placeholder='Notes'
@@ -232,7 +232,7 @@ export default class TscView extends React.Component {
                   <TableCell>
                     Amount
                   </TableCell>
-                  <TableCell numeric>
+                  <TableCell numeric style={{maxWidth: 0}}>
                     {this.state.tsc.amntDesc}
                     <ExtLink to={tscUrl} linkIcon />
                   </TableCell>

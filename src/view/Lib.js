@@ -15,7 +15,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import PersonIcon from 'material-ui-icons/Person'
 import AddIcon from 'material-ui-icons/Add'
-import LaunchIcon from 'material-ui-icons/Launch'
+import CloseIcon from 'material-ui-icons/Close'
 import {theme, jumboStyle, tabStyle, floatBtnStyle, paperStyle} from './Style'
 import Dialog, {
   DialogActions,
@@ -115,11 +115,11 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
   return (
     <TableRow key={tsc._id}>
       {addrIcon &&
-        <TableCell width={'10%'}>
+        <TableCell width={'10%'} style={{maxWidth: 0}}>
           <CoinIcon coin={addr.coin} size={40} />
         </TableCell>
       }
-      <TableCell width={'70%'} style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit}}>
+      <TableCell width={'70%'} style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit, maxWidth: 0}}>
         <Typography type='body2' style={{color: theme.palette.text.secondary}}>
           {__.ppTme(tsc._t)}
         </Typography>
@@ -132,7 +132,7 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
           {desc} {tags}
         </Typography>
       </TableCell>
-      <TableCell numeric style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit}}>
+      <TableCell numeric style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit, maxWidth: 0}}>
         <Typography type='headline' style={{color: modeColor}}>
           {modeSign} {tsc.amnt} <CoinIcon coin={addr.coin} color={modeColor} alt />
         </Typography>
@@ -172,12 +172,23 @@ const TscListAddresses = ({addrTscs, coin0, addrIcon}) =>
 const Snack = ({msg, onClose}) =>
   <Snackbar
     open
-    autoHideDuration={2500}
+    autoHideDuration={3500}
     enterTransitionDuration={500}
-    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+    anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
     onRequestClose={onClose}
     SnackbarContentProps={{'aria-describedby': 'message-id'}}
     message={<span id='message-id'>{msg}</span>}
+    action={[
+      <IconButton
+        key='close'
+        aria-label='Close'
+        color='inherit'
+        style={{width: theme.spacing.unit * 4, height: theme.spacing.unit * 4}}
+        onClick={onClose}
+      >
+        <CloseIcon color={'grey'} />
+      </IconButton>
+    ]}
   />
 
 const ExtLink = ({to, txt, style}) =>
