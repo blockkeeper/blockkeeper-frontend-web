@@ -7,7 +7,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import Paper from 'material-ui/Paper'
 import QRCode from 'qrcode-react'
-import {TopBar, Snack, Modal, CoinIcon, TscListAddr} from './Lib'
+import {TopBar, Snack, Modal, CoinIcon, TscListAddr, ExtLink} from './Lib'
 import {theme, themeBgStyle, paperStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, ModeEdit, Delete, Clear, Save} from 'material-ui-icons'
@@ -183,10 +183,16 @@ export default class AddrView extends React.Component {
                 }}
               />}
             {!this.state.edit &&
-              <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
-                {this.state.addr.name}
-                <Launch color='grey' />
-              </Typography>}
+              <ExtLink
+                to='#'
+                style={{textDecoration: 'none'}}
+                txt={
+                  <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
+                    {this.state.addr.name}
+                    <Launch color='grey' />
+                  </Typography>}
+              />
+            }
             <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: theme.spacing.unit * 2}}>
               {this.state.blc1}&nbsp;
               <CoinIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />

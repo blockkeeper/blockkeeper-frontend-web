@@ -181,11 +181,17 @@ const Snack = ({msg, onClose}) =>
     message={<span id='message-id'>{msg}</span>}
   />
 
-const ExtLink = ({to, txt}) =>
-  <Link to={to}>
+const ExtLink = ({to, txt, style, linkIcon}) =>
+  <a
+    href={to}
+    target='_blank'
+    style={style}
+  >
     {txt && txt}
-    <LinkIcon />
-  </Link>
+    {linkIcon &&
+      <LinkIcon />
+    }
+  </a>
 
 class Modal extends React.Component {
   constructor (props) {
@@ -435,7 +441,7 @@ class TscTable extends React.Component {
               </TableCell>
               <TableCell>
                 {this.tsc.amntDesc}
-                <ExtLink to={tscUrl} />
+                <ExtLink to={tscUrl} linkIcon />
               </TableCell>
             </TableRow>
             {this.tsc.feeDesc &&
@@ -445,7 +451,7 @@ class TscTable extends React.Component {
                 </TableCell>
                 <TableCell>
                   {this.tsc.feeDesc}
-                  <ExtLink to={tscUrl} />
+                  <ExtLink to={tscUrl} linkIcon />
                 </TableCell>
               </TableRow>}
             <TableRow>
