@@ -2,6 +2,7 @@ import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
 import {ArrowBack, Clear, Save, ModeEdit, Launch} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
+import Grid from 'material-ui/Grid'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
@@ -162,97 +163,101 @@ export default class TscView extends React.Component {
           </Paper>
 
           <Paper square style={{...paperStyle}} elevation={5}>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell>
-                    Name
-                  </TableCell>
-                  <TableCell numeric style={{maxWidth: 0}}>
-                    {this.state.edit &&
-                    <TextField
-                      autoFocus
-                      fullWidth
-                      placeholder='Name'
-                      value={this.state.name}
-                      error={Boolean(this.state.nameEmsg)}
-                      helperText={this.state.nameEmsg}
-                      onChange={evt => this.set('name', evt.target.value)}
-                    />}
-                    {!this.state.edit &&
-                      this.state.tsc.name}
-                  </TableCell>
-                </TableRow>
-                {this.state.tsc.feeDesc &&
-                  <TableRow>
-                    <TableCell>
-                      Additional costs (fee)
-                    </TableCell>
-                    <TableCell numeric style={{maxWidth: 0}}>
-                      {this.state.tsc.feeDesc}
-                    </TableCell>
-                  </TableRow>}
-                <TableRow>
-                  <TableCell>
-                    Tags
-                  </TableCell>
-                  <TableCell numeric style={{maxWidth: 0}}>
-                    {this.state.edit &&
-                      <TextField
-                        placeholder='Tags'
-                        fullWidth
-                        value={this.state.tagsJoin}
-                        error={Boolean(this.state.tagsEmsg)}
-                        helperText={this.state.tagsEmsg}
-                        onChange={evt => this.set('tagsJoin', evt.target.value)}
-                      />}
-                    {!this.state.edit &&
-                      this.state.tagsJoin}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    Notes
-                  </TableCell>
-                  <TableCell numeric style={{maxWidth: 0}}>
-                    {this.state.edit &&
-                      <TextField
-                        placeholder='Notes'
-                        fullWidth
-                        value={this.state.desc}
-                        error={Boolean(this.state.descEmsg)}
-                        helperText={this.state.descEmsg}
-                        onChange={evt => this.set('desc', evt.target.value)}
-                      />}
-                    {!this.state.edit &&
-                      this.state.tsc.desc}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>
-                    Amount
-                  </TableCell>
-                  <TableCell numeric style={{maxWidth: 0}}>
-                    {this.state.tsc.amntDesc}
-                    <ExtLink to={tscUrl} linkIcon />
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-            <ExtLink
-              to={tscUrl}
-              style={{textDecoration: 'none'}}
-              txt={
-                <Button
-                  raised
-                  color={'contrast'}
-                  style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
-                  >
-                    Detailed transaction
-                    <Launch />
-                </Button>
-              }
-            />
+            <Grid container justify='center'>
+              <Grid item xs={12} sm={10} md={8} lg={6}>
+                <Table>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell width={'10%'}>
+                        Name
+                      </TableCell>
+                      <TableCell numeric style={{maxWidth: 0}}>
+                        {this.state.edit &&
+                        <TextField
+                          autoFocus
+                          fullWidth
+                          placeholder='Name'
+                          value={this.state.name}
+                          error={Boolean(this.state.nameEmsg)}
+                          helperText={this.state.nameEmsg}
+                          onChange={evt => this.set('name', evt.target.value)}
+                        />}
+                        {!this.state.edit &&
+                          this.state.tsc.name}
+                      </TableCell>
+                    </TableRow>
+                    {this.state.tsc.feeDesc &&
+                      <TableRow>
+                        <TableCell width={'10%'}>
+                          Additional costs (fee)
+                        </TableCell>
+                        <TableCell numeric style={{maxWidth: 0}}>
+                          {this.state.tsc.feeDesc}
+                        </TableCell>
+                      </TableRow>}
+                    <TableRow>
+                      <TableCell width={'10%'}>
+                        Tags
+                      </TableCell>
+                      <TableCell numeric style={{maxWidth: 0}}>
+                        {this.state.edit &&
+                          <TextField
+                            placeholder='Tags'
+                            fullWidth
+                            value={this.state.tagsJoin}
+                            error={Boolean(this.state.tagsEmsg)}
+                            helperText={this.state.tagsEmsg}
+                            onChange={evt => this.set('tagsJoin', evt.target.value)}
+                          />}
+                        {!this.state.edit &&
+                          this.state.tagsJoin}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell width={'10%'}>
+                        Notes
+                      </TableCell>
+                      <TableCell numeric style={{maxWidth: 0}}>
+                        {this.state.edit &&
+                          <TextField
+                            placeholder='Notes'
+                            fullWidth
+                            value={this.state.desc}
+                            error={Boolean(this.state.descEmsg)}
+                            helperText={this.state.descEmsg}
+                            onChange={evt => this.set('desc', evt.target.value)}
+                          />}
+                        {!this.state.edit &&
+                          this.state.tsc.desc}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell width={'10%'}>
+                        Amount
+                      </TableCell>
+                      <TableCell numeric style={{maxWidth: 0}}>
+                        {this.state.tsc.amntDesc}
+                        <ExtLink to={tscUrl} linkIcon />
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+                <ExtLink
+                  to={tscUrl}
+                  style={{textDecoration: 'none'}}
+                  txt={
+                    <Button
+                      raised
+                      color={'contrast'}
+                      style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
+                      >
+                        Detailed transaction
+                        <Launch />
+                    </Button>
+                  }
+                />
+              </Grid>
+            </Grid>
           </Paper>
         </div>
       )

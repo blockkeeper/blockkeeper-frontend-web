@@ -5,6 +5,7 @@ import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
+import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
 import QRCode from 'qrcode-react'
 import {TopBar, Snack, Modal, CoinIcon, TscListAddr, ExtLink} from './Lib'
@@ -172,124 +173,128 @@ export default class AddrView extends React.Component {
           {this.state.busy &&
           <LinearProgress />}
           <Paper square style={{...paperStyle, textAlign: 'center', paddingBottom: 0}} elevation={0}>
-            <CoinIcon coin={this.state.coin} size={100} />
-            {this.state.edit &&
-              <TextField
-                autoFocus
-                fullWidth
-                value={this.state.name}
-                error={Boolean(this.state.nameEmsg)}
-                helperText={this.state.nameEmsg}
-                onChange={evt => this.set('name', evt.target.value)}
-                inputProps={{
-                  style: {
-                    textAlign: 'center',
-                    fontSize: theme.typography.title.fontSize
-                  }
-                }}
-              />}
-            {!this.state.edit &&
-              <ExtLink
-                to='#'
-                style={{textDecoration: 'none'}}
-                txt={
-                  <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
-                    {this.state.addr.name}
-                    <Launch color='grey' />
-                  </Typography>}
-              />
-            }
-            <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: theme.spacing.unit * 2}}>
-              {this.state.blc1}&nbsp;
-              <CoinIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />
-            </Typography>
-            {!this.state.toggleCoins &&
-              <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
-                {this.state.blc2}&nbsp;
-                <CoinIcon coin={this.state.coin0} color={theme.palette.primary['500']} alt />
-              </Typography>}
-            {this.state.toggleCoins &&
-              <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
-                {this.state.blc3}&nbsp;
-                <CoinIcon coin={this.state.coin1} color={theme.palette.primary['500']} alt />
-              </Typography>}
-            {!this.state.show &&
-              <IconButton onClick={this.show}>
-                <ArrowDropDown style={{height: '50px', width: '50px'}} />
-              </IconButton>}
-            {this.state.show &&
-              <div>
-                {this.state.addr.hsh &&
-                <div style={{padding: theme.spacing.unit * 2}}>
-                  <QRCode value={this.state.addr.hsh} />
-                  <Typography style={{fontSize: '13px'}}>
-                    {this.state.addr.hsh}
-                  </Typography>
-                </div>
-                }
+            <Grid container justify='center'>
+              <Grid item xs={12} sm={10} md={8} lg={6}>
+                <CoinIcon coin={this.state.coin} size={100} />
                 {this.state.edit &&
-                <Button
-                  onClick={() => this.setState({ask: true})}
-                >
-                  <Delete style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
-                  Delete Address
-                </Button>}
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>
-                        No. Transactions
-                      </TableCell>
-                      <TableCell numeric>
-                        {this.state.tscsCount}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        Total Received
-                      </TableCell>
-                      <TableCell numeric>
-                        653.4563 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        Total Send
-                      </TableCell>
-                      <TableCell numeric>
-                        3.6746 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        Notes
-                      </TableCell>
-                      <TableCell numeric>
-                        {this.state.edit &&
-                          <TextField
-                            fullWidth
-                            value={this.state.desc}
-                            error={Boolean(this.state.descEmsg)}
-                            helperText={this.state.descEmsg}
-                            onChange={evt => this.set('desc', evt.target.value)}
-                          />}
-                        {!this.state.edit &&
-                          this.state.addr.desc}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>
-                        Tags
-                      </TableCell>
-                      <TableCell numeric />
-                    </TableRow>
-                  </TableBody>
-                </Table>
-                <IconButton onClick={this.show}>
-                  <ArrowDropUp style={{height: '50px', width: '50px'}} />
-                </IconButton>
-              </div>
-            }
+                <TextField
+                  autoFocus
+                  fullWidth
+                  value={this.state.name}
+                  error={Boolean(this.state.nameEmsg)}
+                  helperText={this.state.nameEmsg}
+                  onChange={evt => this.set('name', evt.target.value)}
+                  inputProps={{
+                    style: {
+                      textAlign: 'center',
+                      fontSize: theme.typography.title.fontSize
+                    }
+                  }}
+                />}
+                {!this.state.edit &&
+                  <ExtLink
+                    to='#'
+                    style={{textDecoration: 'none'}}
+                    txt={
+                      <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
+                        {this.state.addr.name}
+                        <Launch color='grey' />
+                      </Typography>}
+                  />
+                }
+                <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: theme.spacing.unit * 2}}>
+                  {this.state.blc1}&nbsp;
+                  <CoinIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />
+                </Typography>
+                {!this.state.toggleCoins &&
+                  <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
+                    {this.state.blc2}&nbsp;
+                    <CoinIcon coin={this.state.coin0} color={theme.palette.primary['500']} alt />
+                  </Typography>}
+                {this.state.toggleCoins &&
+                  <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
+                    {this.state.blc3}&nbsp;
+                    <CoinIcon coin={this.state.coin1} color={theme.palette.primary['500']} alt />
+                  </Typography>}
+                {!this.state.show &&
+                  <IconButton onClick={this.show}>
+                    <ArrowDropDown style={{height: '50px', width: '50px'}} />
+                  </IconButton>}
+                {this.state.show &&
+                  <div>
+                    {this.state.addr.hsh &&
+                    <div style={{padding: theme.spacing.unit * 2}}>
+                      <QRCode value={this.state.addr.hsh} />
+                      <Typography style={{fontSize: '13px'}}>
+                        {this.state.addr.hsh}
+                      </Typography>
+                    </div>
+                    }
+                    {this.state.edit &&
+                    <Button
+                      onClick={() => this.setState({ask: true})}
+                    >
+                      <Delete style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
+                      Delete Address
+                    </Button>}
+                    <Table>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell width={'10%'}>
+                            No. Transactions
+                          </TableCell>
+                          <TableCell numeric>
+                            {this.state.tscsCount}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell width={'10%'}>
+                            Total Received
+                          </TableCell>
+                          <TableCell numeric>
+                            653.4563 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell width={'10%'}>
+                            Total Send
+                          </TableCell>
+                          <TableCell numeric>
+                            3.6746 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell width={'10%'}>
+                            Notes
+                          </TableCell>
+                          <TableCell numeric>
+                            {this.state.edit &&
+                              <TextField
+                                fullWidth
+                                value={this.state.desc}
+                                error={Boolean(this.state.descEmsg)}
+                                helperText={this.state.descEmsg}
+                                onChange={evt => this.set('desc', evt.target.value)}
+                              />}
+                            {!this.state.edit &&
+                              this.state.addr.desc}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell width={'10%'}>
+                            Tags
+                          </TableCell>
+                          <TableCell numeric />
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                    <IconButton onClick={this.show}>
+                      <ArrowDropUp style={{height: '50px', width: '50px'}} />
+                    </IconButton>
+                  </div>
+                }
+              </Grid>
+            </Grid>
           </Paper>
           <Paper square style={{...paperStyle}} elevation={5}>
             {this.state.tscs.length > 0 &&
