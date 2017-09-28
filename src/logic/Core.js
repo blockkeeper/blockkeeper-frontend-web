@@ -75,6 +75,8 @@ export default class Core extends StoBase {
       Object.assign(this.cx, {
         depot: new Depot(this.cx, core.depotId)
       })
+      this.cx.depot.setBxpSts('clearRun')
+      this.cx.depot.watchBxp()
     }
     return true
   }

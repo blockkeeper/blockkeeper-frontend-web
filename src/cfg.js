@@ -13,9 +13,8 @@ let data = {
   tmoMsec: 15000,
   outdSec: 60,
   prec: 1000000,
-  chunkSize: isDev ? 2 : 3,  // TODO,
-  nxAddrUpdCnt: 3,   // TODO
-  nxAddrUpdMsec: 3000
+  bxpBlockedSec: 15,
+  chunkSize: 3
 }
 
 const cfg = (key) => key == null ? data : data[key]

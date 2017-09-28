@@ -8,10 +8,11 @@ import {LinearProgress} from 'material-ui/Progress'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
 import QRCode from 'qrcode-react'
-import {TopBar, Snack, Modal, CoinIcon, TscListAddr, ExtLink} from './Lib'
 import {theme, themeBgStyle, paperStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, ModeEdit, Delete, Clear, Save} from 'material-ui-icons'
+import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
+        CoinIcon, TscListAddr, ExtLink} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -37,39 +38,44 @@ export default class AddrView extends React.Component {
     await this.load()
   }
 
+  componentWillUnmount () {
+    unsetBxpTrigger(this)
+  }
+
   async load () {
+    let addr, coin0, coin1
     try {
-      // uncomment to test error view:
-      //   throw this.err('An error occurred')
-      const [
+      ;[
         addr,
         {coin0, coin1}
       ] = await Promise.all([
         await this.addrObj.load(),
         this.cx.user.getCoins(this.state.coin)
       ])
-      const blc = this.cx.depot.getAddrBlc([addr])
-      this.setState({
-        err: null,
-        upd: false,
-        addr: addr,
-        name: addr.name,
-        desc: addr.desc,
-        tscs: addr.tscs,
-        tscsCount: addr.tscs.length,
-        coin: addr.coin,
-        hshMode: Boolean(addr.hsh),
-        coin0,
-        coin1,
-        blc1: `${addr.amnt}`,
-        blc2: `${blc.get(coin0)}`,
-        blc3: `${blc.get(coin1)}`,
-        snack: __.getSnack()
-      })
     } catch (e) {
       this.setState({err: e.message})
       if (process.env.NODE_ENV === 'development') throw e
     }
+    setBxpTrigger(this)
+    const blc = this.cx.depot.getAddrBlc([addr])
+    this.setState({
+      err: null,
+      upd: false,
+      addr: addr,
+      name: addr.name,
+      desc: addr.desc,
+      tscs: addr.tscs,
+      tscsCount: addr.tscs.length,
+      coin: addr.coin,
+      hshMode: Boolean(addr.hsh),
+      coin0,
+      coin1,
+      blc1: `${addr.amnt}`,
+      blc2: `${blc.get(coin0)}`,
+      blc3: `${blc.get(coin1)}`,
+      snack: __.getSnack(),
+      bxpSts: this.cx.depot.getBxpSts()
+    })
   }
 
   async save () {
@@ -312,6 +318,10 @@ export default class AddrView extends React.Component {
                   'No transactions (manually added address)'}
               </Typography>}
           </Paper>
+          <BxpFloatBtn
+            onClick={() => this.cx.depot.bxp([])}
+            bxpSts={this.state.bxpSts}
+          />
         </div>
       )
     } else {

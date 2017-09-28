@@ -7,8 +7,9 @@ import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import TextField from 'material-ui/TextField'
-import {TopBar, Snack, Modal, CoinIcon, ExtLink} from './Lib'
 import {theme, themeBgStyle, paperStyle} from './Style'
+import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
+        CoinIcon, ExtLink} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -32,9 +33,14 @@ export default class TscView extends React.Component {
     await this.load()
   }
 
+  componentWillUnmount () {
+    unsetBxpTrigger(this)
+  }
+
   async load () {
+    let addr, coin0, coin1, tsc
     try {
-      const [
+      ;[
         addr,
         {coin0, coin1}
       ] = await Promise.all([
@@ -42,26 +48,29 @@ export default class TscView extends React.Component {
         this.cx.user.getCoins(this.state.coin)
       ])
       this.addr = addr
-      const tsc = await this.addrObj.getTsc(this.tscId, this.addr)
-      const blc = this.cx.depot.getTscBlc([tsc], this.addr)
-      const tagsJoin = tsc.tags.join(' ')
-      this.setState({
-        err: null,
-        upd: false,
-        tsc,
-        addr,
-        coin0,
-        coin1,
-        name: tsc.name,
-        desc: tsc.desc,
-        tagsJoin,
-        blc1: `${blc.get(coin0)}`,
-        blc2: `${blc.get(coin1)}`
-      })
+      tsc = await this.addrObj.getTsc(this.tscId, this.addr)
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
     }
+    setBxpTrigger(this)
+    const blc = this.cx.depot.getTscBlc([tsc], this.addr)
+    const tagsJoin = tsc.tags.join(' ')
+    this.setState({
+      err: null,
+      upd: false,
+      tsc,
+      addr,
+      coin0,
+      coin1,
+      name: tsc.name,
+      desc: tsc.desc,
+      tagsJoin,
+      blc1: `${blc.get(coin0)}`,
+      blc2: `${blc.get(coin1)}`,
+      snack: __.getSnack(),
+      bxpSts: this.cx.depot.getBxpSts()
+    })
   }
 
   edit () {
@@ -161,7 +170,6 @@ export default class TscView extends React.Component {
               {modeSign} {this.state.blc2} <CoinIcon coin={this.state.coin1} color={theme.palette.text.secondary} size={12} alt />
             </Typography>
           </Paper>
-
           <Paper square style={{...paperStyle}} elevation={5}>
             <Grid container justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
@@ -259,6 +267,10 @@ export default class TscView extends React.Component {
               </Grid>
             </Grid>
           </Paper>
+          <BxpFloatBtn
+            onClick={() => this.cx.depot.bxp([])}
+            bxpSts={this.state.bxpSts}
+          />
         </div>
       )
     } else {

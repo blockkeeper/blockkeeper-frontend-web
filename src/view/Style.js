@@ -132,6 +132,41 @@ const floatBtnStyle = {
   backgroundColor: styleGuide.error
 }
 
+const bxpBlockedStyle = {
+  margin: 0,
+  top: 'auto',
+  left: 20,
+  bottom: 20,
+  right: 'auto',
+  position: 'fixed',
+  opacity: 0.3,
+  color: common.white,
+  backgroundColor: styleGuide.error
+}
+
+const bxpRunStyle = {
+  margin: 0,
+  top: 'auto',
+  left: 20,
+  bottom: 20,
+  right: 'auto',
+  position: 'fixed',
+  opacity: 0.3,
+  color: common.white,
+  backgroundColor: styleGuide.error
+}
+
+const bxpReadyStyle = {
+  margin: 0,
+  top: 'auto',
+  left: 20,
+  bottom: 20,
+  right: 'auto',
+  position: 'fixed',
+  color: common.white,
+  backgroundColor: styleGuide.error
+}
+
 const paperStyle = {
   // margin: theme.spacing.unit * 3,
   padding: theme.spacing.unit * 3
@@ -146,5 +181,8 @@ export {
   homeStyle,
   jumboStyle,
   floatBtnStyle,
+  bxpBlockedStyle,
+  bxpReadyStyle,
+  bxpRunStyle,
   paperStyle
 }

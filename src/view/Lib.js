@@ -16,7 +16,10 @@ import {LinearProgress} from 'material-ui/Progress'
 import PersonIcon from 'material-ui-icons/Person'
 import AddIcon from 'material-ui-icons/Add'
 import CloseIcon from 'material-ui-icons/Close'
-import {theme, jumboStyle, tabStyle, floatBtnStyle, paperStyle} from './Style'
+import {Autorenew, HourglassFull, Block} from 'material-ui-icons'
+import {theme, jumboStyle, tabStyle, floatBtnStyle,
+       bxpBlockedStyle, bxpReadyStyle, bxpRunStyle,
+       paperStyle} from './Style'
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -30,6 +33,23 @@ const CryptoColors = {
   'LTC': '#b8b8b8',
   'ETH': '#3C3C3D',
   'DASH': '#1c75bc'
+}
+
+const setBxpTrigger = view => {
+  view.cx.tmp.bxp = () => setTimeout(() => {
+    view.info('View update triggered by bxp')
+    __.addSnack('Data updated')
+    view.load()
+  }, 1000)
+  view.cx.tmp.bxpSts = (sts) => {
+    view.info(`View's bxp status set to "${sts}"`)
+    view.setState({bxpSts: sts})
+  }
+}
+
+const unsetBxpTrigger = view => {
+  delete view.cx.tmp.bxp
+  delete view.cx.tmp.bxpSts
 }
 
 const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, noUser}) =>
@@ -100,6 +120,34 @@ const FloatBtn = ({onClick, key}) => {
       key={key || __.uuid()}
     >
       <AddIcon />
+    </Button>
+  )
+}
+
+const BxpFloatBtn = ({onClick, bxpSts}) => {
+  let icon, lbl, style
+  if (bxpSts === 'blocked') {
+    lbl = 'Blocked'
+    icon = <Block />
+    style = bxpBlockedStyle
+  } else if (bxpSts === 'run') {
+    lbl = 'Updating'
+    icon = <HourglassFull />
+    style = bxpRunStyle
+  } else {  // ready
+    lbl = 'Update'
+    icon = <Autorenew />
+    style = bxpReadyStyle
+  }
+  return (
+    <Button
+      fab
+      aria-label={lbl}
+      style={style}
+      onClick={onClick}
+      key='bxpFloatBtn'
+    >
+      {icon}
     </Button>
   )
 }
@@ -378,6 +426,8 @@ class DropDown extends React.Component {
 }
 
 export {
+  setBxpTrigger,
+  unsetBxpTrigger,
   TopBar,
   TscListAddr,
   TscListAddresses,
@@ -389,6 +439,7 @@ export {
   Snack,
   Modal,
   FloatBtn,
+  BxpFloatBtn,
   DropDown,
   ExtLink
 }

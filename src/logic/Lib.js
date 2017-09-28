@@ -7,56 +7,23 @@ class Base {
   }
 }
 
-class SrvBase extends Base {
+class BxpBase extends Base {
   constructor (name, pa) {
     super(name, undefined, undefined, pa)
+    this.getChunkSize = () => this.srvs[this.srv].chunkSize
     this.run = this.run.bind(this)
   }
 
-  async run (data) {
-    const srv = this.srvs[0]
-    let pld
-    try {
-      pld = await this[srv](data)
-    } catch (e) {
-      throw __.err(`Service ${srv} failed`, {e, data})
+  async run (chunk, sleep) {
+    if (sleep) {
+      let sec = this.srvs[this.srv].sleepSec
+      this.info(`Gentle polling: Sleeping ${sec}s before next bxp request`)
+      await __.sleep(sec * 1000)
     }
+    const pld = await this[this.srv](chunk)    // e.g. BtcBxp.bckinfo()
+    this.info(`Bxp data for ${chunk.length} objects from ${this.srv} fetched`)
     return pld
   }
-
-  /*
-  // support multiple services: untested!
-  //
-  get (ilk) {
-    const srvs = []
-    for (let srv of this.srvs) {
-      if (!this.whiteSrvs || this.whiteSrvs.includes(srv)) {
-        // e.g. ilk = addr => this.bckexAddr, ilk = tscs => this.bckexTscs
-        srvs.push(this[`${srv}${__.cap(ilk)}`])
-      }
-    }
-    return srvs
-  }
-  //
-  async run (ilk, data, emsg) {
-    const srvs = this.get(ilk)
-    const errs = []
-    try {
-      let pld
-      while (!pld && srvs.length > 0) {
-        let srvFunc = __.rndPop(srvs)
-        pld = await srvFunc(data)
-        return pld
-      }
-    } catch (e) {
-      errs.push(e)
-    }
-    throw __.err(
-      emsg,
-      {dmsg: `Running ${errs.length} srvs failed`, sts: 610, errs, data}
-    )
-  }
-  */
 }
 
 class StoBase extends Base {
@@ -129,10 +96,7 @@ class ApiBase extends StoBase {
       pld = await this._apiGet(data)
       this.setSto(pld)
     } catch (e) {
-      throw this.err(e.message, {
-        e: e,
-        dmsg: `Api-Get ${this._type[1]} failed`
-      })
+      throw this.err(e.message, {e, dmsg: `Api-Get ${this._type[1]} failed`})
     }
     this.info('Api-Get %s finished', this._type[1])
     return pld
@@ -145,10 +109,7 @@ class ApiBase extends StoBase {
       pld = await this._apiSet(pld, data) || pld
       this.setSto(pld)
     } catch (e) {
-      throw this.err(e.message, {
-        e: e,
-        dmsg: `Api-Set ${this._type[1]} failed`
-      })
+      throw this.err(e.message, {e, dmsg: `Api-Set ${this._type[1]} failed`})
     }
     this.info('Api-Set %s finished', this._type[1])
     return pld
@@ -161,10 +122,7 @@ class ApiBase extends StoBase {
       await this._apiDel(pld, data)
       this.delSto(pld._id)
     } catch (e) {
-      throw this.err(e.message, {
-        e: e,
-        dmsg: `Api-Delete ${this._type[1]} failed`
-      })
+      throw this.err(e.message, {e, dmsg: `Api-Delete ${this._type[1]} failed`})
     }
     this.info('Api-Delete %s finished', this._type[1])
     return pld
@@ -173,7 +131,7 @@ class ApiBase extends StoBase {
 
 export {
   Base,
-  SrvBase,
+  BxpBase,
   StoBase,
   ApiBase
 }

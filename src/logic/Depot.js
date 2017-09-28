@@ -1,18 +1,26 @@
+import * as mo from 'moment'
 import {ApiBase} from './Lib'
 import Addr from './Addr'
-import BtcSrv from './srv/bxp/Btc'
+import BtcBxp from './bxp/Btc'
 import __ from '../util'
 
 export default class Depot extends ApiBase {
   constructor (cx, _id) {
     super('depot', cx, _id, cx.user)
+    this.getBxpSto = () => __.getSto('bxp')
+    this.setBxpSto = val => __.setSto('bxp', val)
+    this.delBxpSto = () => __.delSto('bxp')
     this.getAddrBlc = this.getAddrBlc.bind(this)
     this.getTscBlc = this.getTscBlc.bind(this)
     this.loadAddrs = this.loadAddrs.bind(this)
-    this.getAddrChunks = this.getAddrChunks.bind(this)
-    this.updateAddrs = this.updateAddrs.bind(this)
+    this.saveAddrs = this.saveAddrs.bind(this)
     this.apiGetAddrs = this.apiGetAddrs.bind(this)
-    this.srvs = {btc: BtcSrv}
+    this.apiSetAddrs = this.apiSetAddrs.bind(this)
+    this.getBxpSts = this.getBxpSts.bind(this)
+    this.setBxpSts = this.setBxpSts.bind(this)
+    this.watchBxp = this.watchBxp.bind(this)
+    this.bxp = this.bxp.bind(this)
+    this.bxps = {BTC: new BtcBxp(this)}
     this.info('Created')
   }
 
@@ -38,6 +46,105 @@ export default class Depot extends ApiBase {
     return blcs
   }
 
+  getBxpSts () {
+    let bxp = this.getBxpSto()
+    if (!bxp) return 'ready'
+    if (bxp === 'run') return 'run'
+    return 'blocked'
+  }
+
+  setBxpSts (sts) {
+    if (sts === 'clearRun') {
+      if (this.getBxpSts() === 'run') this.delBxpSto()
+      return
+    }
+    if (sts === 'blocked') {
+      const tme = mo.utc().add(__.cfg('bxpBlockedSec'), 'seconds').format()
+      this.setBxpSto(tme)
+      this.info(`Bxp blocked until ${tme}`)
+    } else if (sts === 'ready') {
+      this.delBxpSto()
+      this.info('Bxp ready')
+    } else {  // run
+      this.setBxpSto(sts)
+    }
+    try {  // function can be undefined (race condition)
+      this.cx.tmp.bxpSts(sts)
+    } catch (e) {}
+  }
+
+  watchBxp () {
+    const bxp = this.getBxpSto()
+    if (bxp && bxp !== 'run') {  // bxp is an iso date
+      let lbl = `[watchBxp_${__.uuid().slice(0, 5)}]`
+      let sec = mo.utc().diff(bxp, 'seconds')
+      sec = (sec > 0) ? 0 : (sec * -1)
+      setTimeout(() => {
+        this.setBxpSts('ready')
+        this.info(`${lbl}: Watcher stopped`)
+      }, sec * 1000)
+      this.info(`${lbl}: Bxp is blocked until ${bxp}: Watcher started`)
+    } else {
+      this.info('Bxp is ready: Skipping starting watcher')
+    }
+  }
+
+  async bxp (addrIds) {
+    this.setBxpSts('run')
+    this.info('Bxp started')
+    let addrs
+    try {
+      addrs = await this.loadAddrs(addrIds, true)
+    } catch (e) {
+      this.watchBxp()
+      throw __.err('Bxp failed for all addrs: Loading addrs failed', {e})
+    }
+    const addrsByCoin = new Map()
+    const curAddrs = new Map()
+    for (let addr of addrs) {
+      let lst = addrsByCoin.get(addr.coin) || []
+      lst.push(addr)
+      addrsByCoin.set(addr.coin, lst)
+      curAddrs.set(addr._id, addr)
+    }
+    const addrChunks = new Map()
+    for (let [coin, addrs] of addrsByCoin) {
+      let chunkSize = this.bxps[coin].getChunkSize()
+      addrChunks.set(coin, __.toChunks(addrs, chunkSize))
+    }
+    let updAddrs
+    for (let [coin, chunks] of addrChunks) {
+      let sleep = false
+      for (let addrChunk of chunks) {
+        let addrObj
+        let addrs = []
+        try {
+          updAddrs = await this.bxps[coin].run(addrChunk, sleep)
+          sleep = true
+          for (let updAddr of updAddrs) {
+            addrObj = new Addr(this.cx, updAddr._id)
+            addrs.push(addrObj.toAddr(updAddr, curAddrs.get(updAddr._id)))
+          }
+          await this.saveAddrs(addrs)
+        } catch (e) {
+          this.warn(`Bxp failed for ${updAddrs.length} addrs: ${e.message}`)
+        }
+      }
+    }
+    this.info('Bxp finished')
+    this.setBxpSts('blocked')
+    this.watchBxp()
+    try {  // function can be undefined (race condition)
+      this.cx.tmp.bxp()
+    } catch (e) {}
+  }
+
+  async saveAddrs (addrs) {
+    // addrs must be valid addrs created with Addr.toAddr()
+    addrs = await this.apiSetAddrs(addrs)
+    return addrs
+  }
+
   async loadAddrs (addrIds, skipStruc) {
     let stoAddrIds = __.getStoIds('addr')
     try {
@@ -48,7 +155,7 @@ export default class Depot extends ApiBase {
       if (e.sts !== 404) throw e
       stoAddrIds = []
     }
-    if (addrIds) {
+    if (addrIds && addrIds.length > 0) {
       addrIds.filter(addrId => stoAddrIds.some(_id => addrId === _id))
     } else {
       addrIds = stoAddrIds
@@ -67,41 +174,6 @@ export default class Depot extends ApiBase {
     }
     this.info('%s addrs loaded', addrs.length)
     return skipStruc ? addrs : __.struc(addrs, {byTme: true})
-  }
-
-  async getAddrChunks (addrIds) {
-    const addrs = await this.loadAddrs(addrIds, true)
-    const addrsByCoin = new Map()
-    const addrsById = new Map()
-    for (let addr of addrs) {
-      let lst = addrsByCoin.get(addr.coin) || []
-      lst.push(addr)
-      addrsByCoin.set(addr.coin, lst)
-      addrsById.set(addr._id, addr)
-    }
-    const addrChunksByCoin = new Map()
-    for (let [coin, addrs] of addrsByCoin) {
-      addrChunksByCoin.set(coin, __.toChunks(addrs))
-    }
-    return {addrChunksByCoin, addrsById}
-  }
-
-  async updateAddrs (coin, addrs, addrsById) {
-    // don't use Promise.all:
-    //   - it rejects as soon as _one_ promise fails
-    //   - don't overload mobile network connection
-    let srv = new this.srvs[coin.toLowerCase()](this)
-    try {
-      let updAddrs = await srv.run(addrs)
-      for (let updAddr of updAddrs) {
-        let addrObj = new Addr(this.cx, updAddr._id)
-        let addr = addrObj.toAddr(updAddr, addrsById.get(updAddr._id))
-        await addrObj.save(addr)
-      }
-    } catch (e) {
-      this.warn(`Updating ${addrs.length} ${coin} addrs failed: ${e.message}`)
-    }
-    this.info(`Update of ${addrs.length} ${coin} addrs finished`)
   }
 
   async apiGetAddrs () {
@@ -125,5 +197,33 @@ export default class Depot extends ApiBase {
     }
     this.info('Api-Get addrs finished')
     return addrIds
+  }
+
+  async apiSetAddrs (addrs) {
+    // addrs must be valid addrs created with toAddr()
+    let pld = {addresses: []}
+    for (let addr of addrs) {
+      let tscs = addr.tscs || []
+      let encTscs = []
+      for (let tsc of tscs) encTscs.push(this.encrypt(tsc))
+      delete addr.tscs  // pld needs separated addr and tscs
+      pld.addresses.push({
+        _id: addr._id,
+        data: this.encrypt(addr),
+        tscs: encTscs
+      })
+      addr.tscs = tscs
+    }
+    try {
+      await __.rqst({
+        url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}`,
+        data: pld
+      })
+      for (let addr of addrs) (new Addr(this.cx, addr._id)).setSto(addr)
+    } catch (e) {
+      throw this.err(e.message, {e, dmsg: `Api-Set addrs failed`})
+    }
+    this.info('Api-Set addrs finished', this._type[1])
+    return addrs
   }
 }
