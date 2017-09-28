@@ -4,16 +4,22 @@ import TextField from 'material-ui/TextField'
 import {FormControlLabel} from 'material-ui/Form'
 import Switch from 'material-ui/Switch'
 import Radio from 'material-ui/Radio'
-import {LibraryAdd, Clear} from 'material-ui-icons'
+import {Add, Clear} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
+import Divider from 'material-ui/Divider'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {theme, themeBgStyle, actionBtnStyle, paperStyle} from './Style'
+import {theme, themeBgStyle, paperStyle} from './Style'
 import {TopBar, Modal, CoinIcon} from './Lib'
 import Grid from 'material-ui/Grid'
 import QrReader from 'react-qr-reader'
 import Addr from '../logic/Addr'
 import __ from '../util'
+
+const dividerStyle = {
+  marginTop: theme.spacing.unit * 2,
+  marginBottom: theme.spacing.unit * 4
+}
 
 export default class AddAddrView extends React.Component {
   constructor (props) {
@@ -23,6 +29,7 @@ export default class AddAddrView extends React.Component {
       delay: 750,
       facingMode: 'front',
       noHshMode: false,
+      qrMode: false,
       coin: 'BTC',
       amnt: '0.00',
       hsh: '',
@@ -128,10 +135,63 @@ export default class AddAddrView extends React.Component {
           />
           <Paper square style={paperStyle}>
             <Grid container spacing={16} justify='center'>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={10} md={8} lg={6}>
                 <Typography type='title'>
-                  QR Code
+                  Details
                 </Typography>
+                {!this.state.noHshMode &&
+                  <TextField
+                    autoFocus
+                    required
+                    fullWidth
+                    label={`${this.state.coin} Address (Public Key)`}
+                    margin='normal'
+                    value={this.state.hsh}
+                    error={Boolean(this.state.hshEmsg)}
+                    helperText={this.state.hshEmsg}
+                    onChange={evt => this.set('hsh', evt.target.value)}
+                    />}
+                {this.state.noHshMode &&
+                  <TextField
+                    autoFocus
+                    required
+                    fullWidth
+                    label='Amount'
+                    margin='normal'
+                    value={this.state.amnt}
+                    error={Boolean(this.state.amntEmsg)}
+                    helperText={this.state.amntEmsg}
+                    onChange={evt => this.set('amnt', evt.target.value)}
+                    />}
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={this.state.qrMode}
+                      onChange={(evt, checked) => {
+                        this.set('qrMode', checked)
+                        this.set('noHshMode', false)
+                      }}
+                      />
+                    }
+                  label='Scan QR Code'
+                  />
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={this.state.noHshMode}
+                      onChange={(evt, checked) => {
+                        this.set('noHshMode', checked)
+                        this.set('qrMode', false)
+                      }}
+                      />
+                    }
+                  label='Manage manually (no public key)'
+                  />
+              </Grid>
+            </Grid>
+            {this.state.qrMode &&
+            <Grid container spacing={16} justify='center'>
+              <Grid item xs={12} sm={10} md={8} lg={6} >
                 <div onClick={() => this.setState({ facingMode: this.state.facingMode === 'front' ? 'rear' : 'front' })}>
                   <QrReader
                     facingMode={this.state.facingMode}
@@ -145,44 +205,13 @@ export default class AddAddrView extends React.Component {
                   </Typography>
                 </div>
               </Grid>
-
-              <Grid item xs={12} sm={6}>
+            </Grid>}
+            <Grid container spacing={16} justify='center'>
+              <Grid item xs={12} sm={10} md={8} lg={6}>
+                <Divider style={dividerStyle} light />
                 <Typography type='title'>
-                  <CoinIcon coin={this.state.coin} />&nbsp;
-                  {this.state.coin}&nbsp;
-                  Details
+                  Blockchain / Type
                 </Typography>
-
-                {!this.state.noHshMode &&
-                <div>
-                  <TextField
-                    autoFocus
-                    required
-                    fullWidth
-                    label='Public key'
-                    margin='normal'
-                    value={this.state.hsh}
-                    error={Boolean(this.state.hshEmsg)}
-                    helperText={this.state.hshEmsg}
-                    onChange={evt => this.set('hsh', evt.target.value)}
-                  />
-                </div>}
-
-                {this.state.noHshMode &&
-                <div>
-                  <TextField
-                    autoFocus
-                    required
-                    fullWidth
-                    label='Amount'
-                    margin='normal'
-                    value={this.state.amnt}
-                    error={Boolean(this.state.amntEmsg)}
-                    helperText={this.state.amntEmsg}
-                    onChange={evt => this.set('amnt', evt.target.value)}
-                      />
-                </div>}
-
                 {this.coins.map(coin =>
                   <FormControlLabel
                     key={coin}
@@ -190,30 +219,24 @@ export default class AddAddrView extends React.Component {
                     control={
                       <Radio
                         checked={this.state.coin === coin}
+                        checkedIcon={<CoinIcon coin={coin} />}
+                        icon={<CoinIcon coin={coin} color={'grey'} />}
                         onChange={() => this.set('coin', coin)}
                         value={coin}
                         name={coin}
                         aria-label={coin}
-                        />
-                      }
-                    />
-                  )}
-
-                <br />
-
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={this.state.noHshMode}
-                      onChange={(evt, checked) => this.set('noHshMode', checked)}
                       />
                     }
-                  label='Manage manually (no public key)'
                   />
-
+                )}
               </Grid>
-
-              <Grid item xs={12}>
+            </Grid>
+            <Grid container spacing={16} justify='center'>
+              <Grid item xs={12} sm={10} md={8} lg={6}>
+                <Divider style={dividerStyle} light />
+                <Typography type='title'>
+                  Personal details
+                </Typography>
                 <TextField
                   fullWidth
                   label={this.state.noHshMode ? 'Name *' : 'Name'}
@@ -233,25 +256,19 @@ export default class AddAddrView extends React.Component {
                   onChange={evt => this.set('desc', evt.target.value)}
                     />
               </Grid>
-
-              <Grid item xs={12}>
+            </Grid>
+            <Grid container spacing={16} justify='center'>
+              <Grid item xs={12} sm={10} md={8} lg={6}>
                 {!this.state.busy &&
                 <div style={{textAlign: 'center'}}>
                   <Button
                     raised
-                    style={actionBtnStyle}
-                    onClick={this.goBack}
-                  >
-                    <Clear />
-                    Cancel
-                  </Button>
-                  <Button
-                    raised
-                    style={actionBtnStyle}
+                    color={'accent'}
+                    style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
                     onClick={this.save}
                     disabled={!this.state.upd}
                   >
-                    <LibraryAdd />
+                    <Add />
                     Add address
                   </Button>
                 </div>}

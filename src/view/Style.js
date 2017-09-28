@@ -107,12 +107,6 @@ const homeStyle = {
 
 const loginStyle = homeStyle
 
-const actionBtnStyle = {
-  backgroundColor: styleGuide.error,
-  color: common.white,
-  width: '40%'
-}
-
 const jumboStyle = {
   minHeight: '25vh',
   display: 'flex',
@@ -148,7 +142,6 @@ export {
   pageStyle,
   themeBgStyle,
   loginStyle,
-  actionBtnStyle,
   tabStyle,
   homeStyle,
   jumboStyle,
