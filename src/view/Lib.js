@@ -130,19 +130,22 @@ const FloatBtn = ({onClick, key}) => {
 }
 
 const BxpFloatBtn = ({onClick, bxpSts}) => {
-  let icon, lbl, style
+  let icon, lbl, style, dsbld
   if (bxpSts === 'blocked') {
     lbl = 'Blocked'
     icon = <Block />
     style = bxpBlockedStyle
+    dsbld = true
   } else if (bxpSts === 'run') {
     lbl = 'Updating'
     icon = <HourglassFull />
     style = bxpRunStyle
+    dsbld = true
   } else {  // ready
     lbl = 'Update'
     icon = <Autorenew />
     style = bxpReadyStyle
+    dsbld = false
   }
   return (
     <Button
@@ -151,6 +154,7 @@ const BxpFloatBtn = ({onClick, bxpSts}) => {
       style={style}
       onClick={onClick}
       key='bxpFloatBtn'
+      disabled={dsbld}
     >
       {icon}
     </Button>
