@@ -86,7 +86,6 @@ const theme = createMuiTheme({
 })
 
 theme.overrides = {
-
 }
 
 const pageStyle = {

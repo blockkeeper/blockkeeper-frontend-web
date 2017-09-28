@@ -103,7 +103,13 @@ const init = (mainType, subType, _id, pa) => {
 }
 
 const initView = (cmp, name) => {
-  cmp = init('view', name)
+  Object.assign(cmp, init('view', name))
+  cmp.getSnack = () => {
+    let msg = cmp.cx.tmp.snack
+    delete cmp.cx.tmp.snack
+    return msg
+  }
+  cmp.setSnack = msg => { cmp.cx.tmp.snack = msg }
   cmp.info('Created')
   return cmp
 }
@@ -258,12 +264,6 @@ const toFloat = val => {
   return Math.round(val * cfg('prec')) / cfg('prec')
 }
 
-const getSnack = () => {
-  let msg = getSto('snack')
-  delSto('snack')
-  return msg
-}
-
 const anyIsOutd = (plds, sec) => {
   if (cfg('isDev')) return true
   for (let pld of plds) {
@@ -323,13 +323,11 @@ export default {
   setJsonSto,
   delJsonSto: delSto,
   clearSto,
-  addSnack: msg => setSto('snack', msg),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
   shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
   isOutd,
   anyIsOutd,
-  getSnack,
   cap,
   struc,
   rqst,

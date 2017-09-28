@@ -17,7 +17,7 @@ export default class LoginView extends React.Component {
     super(props)
     this.cx = props.cx
     this.goBack = props.history.goBack
-    this.reset = () => ({err: null, busy: null, username: '', pw: ''})
+    this.reset = () => ({busy: undefined, username: '', pw: ''})
     this.reload = () => this.setState(this.reset())
     this.login = this.login.bind(this)
     this.state = this.reset()
@@ -41,7 +41,7 @@ export default class LoginView extends React.Component {
   }
 
   async login () {
-    this.setState({err: null, busy: true})
+    this.setState({err: undefined, busy: true})
     try {
       await this.cx.core.login(this.state.username, this.state.pw)
       this.props.history.push('/depot')  // redirect

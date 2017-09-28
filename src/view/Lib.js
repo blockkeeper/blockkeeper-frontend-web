@@ -25,7 +25,7 @@ import __ from '../util'
 const setBxpTrigger = view => {
   view.cx.tmp.bxp = () => setTimeout(() => {
     view.info('View update triggered by bxp')
-    __.addSnack('Data updated')
+    view.setSnack('Data updated')
     view.load()
   }, 1000)
   view.cx.tmp.bxpSts = (sts) => {

@@ -51,13 +51,8 @@ export default class AddAddrView extends React.Component {
 
   async load () {
     try {
-      // uncomment to test error view:
-      //   throw this.err('An error occurred')
       this.coins = await this.cx.rate.getCoins()
-      this.setState({
-        err: null,
-        coin: 'BTC'
-      })
+      this.setState({coin: 'BTC'})
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
@@ -208,7 +203,7 @@ export default class AddAddrView extends React.Component {
                       marginTop: theme.spacing.unit * 2,
                       background: theme.palette.background.light
                     }}
-                    onError={(err) => console.log(err)}
+                    onError={err => this.warn(err)}
                     onScan={this.handleQRScan}
                   />
                   <Typography type='caption' align='center'>

@@ -28,8 +28,6 @@ export default class UserView extends React.Component {
 
   async load () {
     try {
-      // uncomment to test error view:
-      //   throw this.err('An error occurred')
       const [
         user,
         rateCoins
@@ -43,7 +41,6 @@ export default class UserView extends React.Component {
         coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
       }
       this.setState({
-        err: null,
         username: user.username,
         coin0: user.coins[0],
         coin1: user.coins[1],

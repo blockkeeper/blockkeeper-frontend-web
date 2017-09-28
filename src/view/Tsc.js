@@ -8,8 +8,8 @@ import Typography from 'material-ui/Typography'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, paperStyle} from './Style'
-import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
-        CoinIcon, ExtLink} from './Lib'
+import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack,
+        Modal, CoinIcon, ExtLink} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -57,7 +57,6 @@ export default class TscView extends React.Component {
     const blc = this.cx.depot.getTscBlc([tsc], this.addr)
     const tagsJoin = tsc.tags.join(' ')
     this.setState({
-      err: null,
       upd: false,
       tsc,
       addr,
@@ -68,7 +67,7 @@ export default class TscView extends React.Component {
       tagsJoin,
       blc1: `${blc.get(coin0)}`,
       blc2: `${blc.get(coin1)}`,
-      snack: __.getSnack(),
+      snack: this.getSnack(),
       bxpSts: this.cx.depot.getBxpSts()
     })
   }
@@ -111,10 +110,10 @@ export default class TscView extends React.Component {
         tags: this.state.tagsJoin.trim().split(' ')
       }
       this.addr = await this.addrObj.save({tscs: [updTsc]})
-      __.addSnack('Transaction updated')
+      this.setSnack('Transaction updated')
       this.setState({
         tsc: await this.addrObj.getTsc(this.tscId, this.addr),
-        snack: __.getSnack(),
+        snack: this.getSnack(),
         edit: false,
         upd: false,
         busy: false

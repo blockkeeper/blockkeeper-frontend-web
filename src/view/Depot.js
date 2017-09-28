@@ -10,11 +10,7 @@ export default class DepotView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    if (!this.cx.tmp.nxAddrUpdCnt) this.cx.tmp.nxAddrUpdCnt = 0
-    this.state = {
-      err: undefined,
-      tabIx: this.cx.tmp.depotTabIx || 0
-    }
+    this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
     this.load = this.load.bind(this)
     this.tab = this.tab.bind(this)
     this.goAddAddr = () => this.props.history.push('/addr/add')
@@ -57,7 +53,7 @@ export default class DepotView extends React.Component {
       coin1,
       blc1: `${blc.get(coin0)}`,
       blc2: `${blc.get(coin1)}`,
-      snack: __.getSnack(),
+      snack: this.getSnack(),
       bxpSts: this.cx.depot.getBxpSts()
     })
   }

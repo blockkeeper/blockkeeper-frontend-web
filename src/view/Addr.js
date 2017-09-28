@@ -59,7 +59,6 @@ export default class AddrView extends React.Component {
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc([addr])
     this.setState({
-      err: null,
       upd: false,
       addr: addr,
       name: addr.name,
@@ -73,7 +72,7 @@ export default class AddrView extends React.Component {
       blc1: `${addr.amnt}`,
       blc2: `${blc.get(coin0)}`,
       blc3: `${blc.get(coin1)}`,
-      snack: __.getSnack(),
+      snack: this.getSnack(),
       bxpSts: this.cx.depot.getBxpSts()
     })
   }
@@ -88,8 +87,8 @@ export default class AddrView extends React.Component {
         name: this.state.name,
         desc: this.state.desc
       })
-      __.addSnack('Address updated')
-      this.setState({addr, snack: __.getSnack(), busy: false, upd: false})
+      this.setSnack('Address updated')
+      this.setState({addr, snack: this.getSnack(), busy: false, upd: false})
     } catch (e) {
       this.setState({err: e.message, busy: false})
       if (process.env.NODE_ENV === 'development') throw e
@@ -99,7 +98,7 @@ export default class AddrView extends React.Component {
   async delete () {
     try {
       await this.addrObj.delete()
-      __.addSnack('Address deleted')
+      this.setSnack('Address deleted')
     } catch (e) {
       this.setState({err: e.message, show: false})
       if (process.env.NODE_ENV === 'development') throw e
@@ -302,7 +301,7 @@ export default class AddrView extends React.Component {
                             Total Received
                           </TableCell>
                           <TableCell numeric>
-                            0.0                      {/* TODO */}
+                            0.0 {/* TODO */}
                             <CoinIcon
                               coin={this.state.coin}
                               size={12}
@@ -316,7 +315,7 @@ export default class AddrView extends React.Component {
                             Total Send
                           </TableCell>
                           <TableCell numeric>
-                            0.0                      {/* TODO */}
+                            0.0 {/* TODO */}
                             <CoinIcon
                               coin={this.state.coin}
                               size={12}
