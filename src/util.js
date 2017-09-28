@@ -218,7 +218,9 @@ const cap = (val) => val.charAt(0).toUpperCase() + val.slice(1)
 
 const ppTme = _t => {
   let tme = mo(_t)
-  return tme.fromNow()
+  return tme.isBefore(mo().subtract(1, 'days').startOf('day'))
+    ? tme.format('L')
+    : tme.fromNow()
 }
 
 const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
