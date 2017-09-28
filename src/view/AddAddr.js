@@ -70,7 +70,7 @@ export default class AddAddrView extends React.Component {
         desc: this.state.desc,
         name: this.state.name
       })
-      __.addSnack('Address added')
+      this.setSnack('Address added')
       this.props.history.replace(`/addr/${addr._id}`)
     } catch (e) {
       if (__.cfg('isDev')) throw e
