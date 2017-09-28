@@ -154,12 +154,6 @@ const toUrl = req => {
   return `${req.url}?${params.join('&')}`
 }
 
-const toSrvUrl = (ilk, coin) => {
-  return {
-    tscBTC: hsh => `https://blockchain.info/tx/${hsh}`
-  }[`${ilk}${coin.toUpperCase()}`]
-}
-
 const rndPop = lst => {
   if (lst.length < 1) return
   const ix = Math.floor((Math.random() * lst.length) + 1) - 1
@@ -315,19 +309,6 @@ const delSto = key => localStorage.removeItem(key)
 const clearSto = () => localStorage.clear()
 
 export default {
-  cfg,
-  getStos,
-  getStoIds,
-  getSto,
-  setSto,
-  delSto,
-  getJsonSto,
-  setJsonSto,
-  delJsonSto: delSto,
-  clearSto,
-  getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
-  getTme: () => mo.utc().format(),
-  shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
   isOutd,
   anyIsOutd,
   cap,
@@ -341,18 +322,36 @@ export default {
   toLbl,
   init,
   initView,
-  toSrvUrl,
   toMoPro,
   sleep,
-  err: getErr,
-  info: getLogger('info', 'main'),
-  warn: getLogger('warn', 'main'),
-  uuid: uuidv4,
-  vld: validator,
   vldAlphNum,
   vldFloat,
   vldPw,
   toFloat,
   isArray,
-  toChunks
+  toChunks,
+  cfg,
+  getStos,
+  getStoIds,
+  getSto,
+  setSto,
+  delSto,
+  clearSto,
+  getJsonSto,
+  setJsonSto,
+  delJsonSto: delSto,
+  uuid: uuidv4,
+  vld: validator,
+  err: getErr,
+  info: getLogger('info', 'main'),
+  warn: getLogger('warn', 'main'),
+  getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
+  getTme: () => mo.utc().format(),
+  shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
+  isFiat: coin => Boolean(cfg('coins').fiat[coin.toUpperCase()]),
+  dec: coin => {
+    coin = coin.toUpperCase()
+    let coins = cfg('coins')
+    return (coins.fiat[coin] || coins.cryp[coin] || coins.dflt).dec
+  }
 }

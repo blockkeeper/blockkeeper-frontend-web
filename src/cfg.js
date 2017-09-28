@@ -13,8 +13,28 @@ let data = {
   tmoMsec: 15000,
   outdSec: 60,
   prec: 1000000,
+  chunkSize: 3,
   bxpBlockedSec: 15,
-  chunkSize: 3
+  coins: {
+    fiat: {
+      EUR: {dec: 2},
+      USD: {dec: 2},
+      CAD: {dec: 2},
+      GBP: {dec: 2},
+      NZD: {dec: 2},
+      MYR: {dec: 2}
+    },
+    cryp: {
+      BTC: {dec: 4},
+      ETH: {dec: 5}
+    },
+    dflt: {dec: 8}
+  },
+  toBxpUrl: (ilk, coin) => {
+    return {
+      tscBTC: hsh => `https://blockchain.info/tx/${hsh}`
+    }[`${ilk}${coin.toUpperCase()}`]
+  }
 }
 
 const cfg = (key) => key == null ? data : data[key]

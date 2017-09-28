@@ -136,7 +136,8 @@ export default class TscView extends React.Component {
         ? theme.palette.error['500']
         : theme.palette.secondary['500']
       let modeSign = this.state.mode === 'snd' ? '-' : '+'
-      const tscUrl = __.toSrvUrl('tsc', this.state.addr.coin)(this.state.tsc.hsh)
+      const tscUrl = __.cfg('toBxpUrl')(
+        'tsc', this.state.addr.coin)(this.state.tsc.hsh)
       return (
         <div style={themeBgStyle}>
           {this.state.snack &&
