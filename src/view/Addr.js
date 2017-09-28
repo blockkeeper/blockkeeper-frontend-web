@@ -84,7 +84,10 @@ export default class AddrView extends React.Component {
     }
     this.setState({edit: false, busy: true})
     try {
-      const addr = await this.addrObj.save({name: this.state.name, desc: this.state.desc})
+      const addr = await this.addrObj.save({
+        name: this.state.name,
+        desc: this.state.desc
+      })
       __.addSnack('Address updated')
       this.setState({addr, snack: __.getSnack(), busy: false, upd: false})
     } catch (e) {
@@ -178,7 +181,11 @@ export default class AddrView extends React.Component {
           />}
           {this.state.busy &&
           <LinearProgress />}
-          <Paper square style={{...paperStyle, textAlign: 'center', paddingBottom: 0}} elevation={0}>
+          <Paper
+            elevation={0}
+            square
+            style={{...paperStyle, textAlign: 'center', paddingBottom: 0}}
+          >
             <Grid container justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
                 <CoinIcon coin={this.state.coin} size={100} />
@@ -202,25 +209,59 @@ export default class AddrView extends React.Component {
                     to='#'
                     style={{textDecoration: 'none'}}
                     txt={
-                      <Typography type='title' color='default' style={{paddingTop: theme.spacing.unit * 2}}>
+                      <Typography
+                        type='title'
+                        color='default'
+                        style={{paddingTop: theme.spacing.unit * 2}}
+                      >
                         {this.state.addr.name}
                         <Launch color='grey' />
                       </Typography>}
                   />
                 }
-                <Typography type='display3' style={{fontWeight: '400', color: theme.palette.primary['500'], paddingTop: theme.spacing.unit * 2}}>
+                <Typography
+                  type='display3'
+                  style={{
+                    fontWeight: '400',
+                    color: theme.palette.primary['500'],
+                    paddingTop: theme.spacing.unit * 2
+                  }}
+                >
                   {this.state.blc1}&nbsp;
-                  <CoinIcon coin={this.state.coin} size={35} color={theme.palette.primary['500']} alt />
+                  <CoinIcon
+                    coin={this.state.coin}
+                    size={35}
+                    color={theme.palette.primary['500']}
+                    alt
+                  />
                 </Typography>
                 {!this.state.toggleCoins &&
-                  <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
+                  <Typography
+                    type='headline'
+                    onClick={this.toggleCoins}
+                    style={{color: theme.palette.primary['500']}}
+                    gutterBottom
+                  >
                     {this.state.blc2}&nbsp;
-                    <CoinIcon coin={this.state.coin0} color={theme.palette.primary['500']} alt />
+                    <CoinIcon
+                      coin={this.state.coin0}
+                      color={theme.palette.primary['500']}
+                      alt
+                    />
                   </Typography>}
                 {this.state.toggleCoins &&
-                  <Typography type='headline' onClick={this.toggleCoins} style={{color: theme.palette.primary['500']}} gutterBottom>
+                  <Typography
+                    type='headline'
+                    onClick={this.toggleCoins}
+                    style={{color: theme.palette.primary['500']}}
+                    gutterBottom
+                  >
                     {this.state.blc3}&nbsp;
-                    <CoinIcon coin={this.state.coin1} color={theme.palette.primary['500']} alt />
+                    <CoinIcon
+                      coin={this.state.coin1}
+                      color={theme.palette.primary['500']}
+                      alt
+                    />
                   </Typography>}
                 {!this.state.show &&
                   <IconButton onClick={this.show}>
@@ -237,12 +278,15 @@ export default class AddrView extends React.Component {
                     </div>
                     }
                     {this.state.edit &&
-                    <Button
-                      onClick={() => this.setState({ask: true})}
-                    >
-                      <Delete style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
-                      Delete Address
-                    </Button>}
+                      <Button onClick={() => this.setState({ask: true})}>
+                        <Delete
+                          style={{
+                            width: theme.spacing.unit * 2,
+                            height: theme.spacing.unit * 2
+                          }}
+                        />
+                        Delete Address
+                      </Button>}
                     <Table>
                       <TableBody>
                         <TableRow>
@@ -258,7 +302,13 @@ export default class AddrView extends React.Component {
                             Total Received
                           </TableCell>
                           <TableCell numeric>
-                            653.4563 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
+                            0.0                      {/* TODO */}
+                            <CoinIcon
+                              coin={this.state.coin}
+                              size={12}
+                              color='primary'
+                              alt
+                            />
                           </TableCell>
                         </TableRow>
                         <TableRow>
@@ -266,7 +316,13 @@ export default class AddrView extends React.Component {
                             Total Send
                           </TableCell>
                           <TableCell numeric>
-                            3.6746 <CoinIcon coin={this.state.coin} size={12} color='primary' alt />
+                            0.0                      {/* TODO */}
+                            <CoinIcon
+                              coin={this.state.coin}
+                              size={12}
+                              color='primary'
+                              alt
+                            />
                           </TableCell>
                         </TableRow>
                         <TableRow>
@@ -280,7 +336,9 @@ export default class AddrView extends React.Component {
                                 value={this.state.desc}
                                 error={Boolean(this.state.descEmsg)}
                                 helperText={this.state.descEmsg}
-                                onChange={evt => this.set('desc', evt.target.value)}
+                                onChange={evt => {
+                                  this.set('desc', evt.target.value)
+                                }}
                               />}
                             {!this.state.edit &&
                               this.state.addr.desc}

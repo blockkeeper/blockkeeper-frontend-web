@@ -92,7 +92,8 @@ export default class TscView extends React.Component {
 
   getTags () {
     if (this.state.tsc.tags) {
-      return this.state.tsc.tags.trim().split(' ').map(tag => '#' + tag).join(' ')
+      return this.state.tsc.tags.trim().split(' ').map(
+        tag => '#' + tag).join(' ')
     }
   }
 
@@ -132,7 +133,9 @@ export default class TscView extends React.Component {
         </Modal>
       )
     } else if (this.state.tsc) {
-      let modeColor = this.state.mode === 'snd' ? theme.palette.error['500'] : theme.palette.secondary['500']
+      let modeColor = this.state.mode === 'snd'
+        ? theme.palette.error['500']
+        : theme.palette.secondary['500']
       let modeSign = this.state.mode === 'snd' ? '-' : '+'
       const tscUrl = __.toSrvUrl('tsc', this.state.addr.coin)(this.state.tsc.hsh)
       return (
@@ -164,10 +167,21 @@ export default class TscView extends React.Component {
           <LinearProgress />}
           <Paper square style={{...paperStyle, textAlign: 'center'}}>
             <Typography type='headline' style={{color: modeColor}}>
-              {modeSign} {this.state.blc1} <CoinIcon coin={this.state.coin0} alt color={modeColor} />
+              {modeSign} {this.state.blc1}
+              <CoinIcon coin={this.state.coin0} alt color={modeColor} />
             </Typography>
-            <Typography type='body2' style={{color: theme.palette.text.secondary}} gutterBottom>
-              {modeSign} {this.state.blc2} <CoinIcon coin={this.state.coin1} color={theme.palette.text.secondary} size={12} alt />
+            <Typography
+              type='body2'
+              style={{color: theme.palette.text.secondary}}
+              gutterBottom
+            >
+              {modeSign} {this.state.blc2}
+              <CoinIcon
+                coin={this.state.coin1}
+                color={theme.palette.text.secondary}
+                size={12}
+                alt
+              />
             </Typography>
           </Paper>
           <Paper square style={{...paperStyle}} elevation={5}>
@@ -215,7 +229,9 @@ export default class TscView extends React.Component {
                             value={this.state.tagsJoin}
                             error={Boolean(this.state.tagsEmsg)}
                             helperText={this.state.tagsEmsg}
-                            onChange={evt => this.set('tagsJoin', evt.target.value)}
+                            onChange={evt => {
+                              this.set('tagsJoin', evt.target.value)
+                            }}
                           />}
                         {!this.state.edit &&
                           this.state.tagsJoin}
@@ -257,10 +273,14 @@ export default class TscView extends React.Component {
                     <Button
                       raised
                       color={'contrast'}
-                      style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
-                      >
-                        Detailed transaction
-                        <Launch />
+                      style={{
+                        width: '100%',
+                        marginTop: theme.spacing.unit * 2,
+                        marginBottom: theme.spacing.unit
+                      }}
+                    >
+                      Detailed transaction
+                      <Launch />
                     </Button>
                   }
                 />

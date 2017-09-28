@@ -9,10 +9,10 @@ import Paper from 'material-ui/Paper'
 import Divider from 'material-ui/Divider'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {theme, themeBgStyle, paperStyle} from './Style'
-import {TopBar, Modal, CoinIcon} from './Lib'
 import Grid from 'material-ui/Grid'
 import QrReader from 'react-qr-reader'
+import {theme, themeBgStyle, paperStyle} from './Style'
+import {TopBar, Modal, CoinIcon} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -192,11 +192,22 @@ export default class AddAddrView extends React.Component {
             {this.state.qrMode &&
             <Grid container spacing={16} justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6} >
-                <div onClick={() => this.setState({ facingMode: this.state.facingMode === 'front' ? 'rear' : 'front' })}>
+                <div onClick={() => this.setState({
+                  facingMode: this.state.facingMode === 'front'
+                    ? 'rear'
+                    : 'front'
+                })}
+                >
                   <QrReader
                     facingMode={this.state.facingMode}
                     delay={this.state.delay}
-                    style={{height: '100%', width: '100%', maxHeight: '400px', marginTop: theme.spacing.unit * 2, background: theme.palette.background.light}}
+                    style={{
+                      height: '100%',
+                      width: '100%',
+                      maxHeight: '400px',
+                      marginTop: theme.spacing.unit * 2,
+                      background: theme.palette.background.light
+                    }}
                     onError={(err) => console.log(err)}
                     onScan={this.handleQRScan}
                   />
@@ -264,7 +275,11 @@ export default class AddAddrView extends React.Component {
                   <Button
                     raised
                     color={'accent'}
-                    style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
+                    style={{
+                      width: '100%',
+                      marginTop: theme.spacing.unit * 2,
+                      marginBottom: theme.spacing.unit
+                    }}
                     onClick={this.save}
                     disabled={!this.state.upd}
                   >

@@ -1,8 +1,9 @@
 import React from 'react'
 import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
-import { CircularProgress } from 'material-ui/Progress'
+import {CircularProgress} from 'material-ui/Progress'
 import {homeStyle, themeBgStyle} from './Style'
+
 const rootStyle = {...themeBgStyle, height: '100vh'}
 
 export default class HomeView extends React.Component {
@@ -12,7 +13,8 @@ export default class HomeView extends React.Component {
     this.state = {}
   }
 
-  // TODO add state (state to true after rates and logged in user data is finished)
+  // TODO add state
+  //  (state to true after rates and logged in user data is finished)
   render () {
     return (
       <div style={rootStyle}>
@@ -23,7 +25,6 @@ export default class HomeView extends React.Component {
           <Typography type='display1' color={'inherit'} gutterBottom>
             Your secure blockchain book keeping app
           </Typography>
-
           <CircularProgress size={25} color='accent' />
           <Button
             raised

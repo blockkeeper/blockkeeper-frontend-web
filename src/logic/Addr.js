@@ -48,7 +48,7 @@ export default class Addr extends ApiBase {
       url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}/${addr._id}`,
       data: {_id: addr._id, data: this.encrypt(addr), tscs: encTscs}
     })
-    addr.tscs = tscs  // remerge addr and tscs
+    addr.tscs = tscs
   }
 
   async _apiDel (addr) {

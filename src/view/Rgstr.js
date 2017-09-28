@@ -6,9 +6,10 @@ import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
+import {theme, themeBgStyle, paperStyle, loginStyle} from './Style'
 import {Modal} from './Lib'
 import __ from '../util'
-import {theme, themeBgStyle, paperStyle, loginStyle} from './Style'
+
 const rootStyle = {...themeBgStyle, height: '100vh'}
 
 export default class RgstrView extends React.Component {
@@ -142,11 +143,20 @@ export default class RgstrView extends React.Component {
                       <Button
                         raised
                         color={'accent'}
-                        style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
+                        style={{
+                          width: '100%',
+                          marginTop: theme.spacing.unit * 2,
+                          marginBottom: theme.spacing.unit
+                        }}
                         onClick={this.save}
                         disabled={!this.state.upd}
                       >
-                        <PersonAdd style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
+                        <PersonAdd
+                          style={{
+                            width: theme.spacing.unit * 2,
+                            height: theme.spacing.unit * 2
+                          }}
+                        />
                         Register
                       </Button>
                       <br />

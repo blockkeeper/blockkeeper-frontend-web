@@ -1,4 +1,4 @@
-import { createMuiTheme } from 'material-ui/styles'
+import {createMuiTheme} from 'material-ui/styles'
 import {purple, teal, red, common} from 'material-ui/colors'
 
 const styleGuide = {
@@ -11,9 +11,8 @@ const styleGuide = {
   textSecondary: '#907FA2',
   spacertop: '100px'
 }
-// https://material-ui-1dab0.firebaseapp.com/customization/themes
+
 const theme = createMuiTheme({
-  // https://github.com/callemall/material-ui/blob/v1-beta/src/styles/createPalette.js
   palette: {
     primary: {
       ...purple,
@@ -40,7 +39,7 @@ const theme = createMuiTheme({
       secondary: styleGuide.textSecondary
     }
   },
-  // https://github.com/callemall/material-ui/blob/v1-beta/src/styles/createTypography.js
+
   typography: {
     fontFamily: 'Lato, sans-serif',
     display3: {
@@ -132,30 +131,6 @@ const floatBtnStyle = {
   backgroundColor: styleGuide.error
 }
 
-const bxpBlockedStyle = {
-  margin: 0,
-  top: 'auto',
-  left: 20,
-  bottom: 20,
-  right: 'auto',
-  position: 'fixed',
-  opacity: 0.3,
-  color: common.white,
-  backgroundColor: styleGuide.error
-}
-
-const bxpRunStyle = {
-  margin: 0,
-  top: 'auto',
-  left: 20,
-  bottom: 20,
-  right: 'auto',
-  position: 'fixed',
-  opacity: 0.3,
-  color: common.white,
-  backgroundColor: styleGuide.error
-}
-
 const bxpReadyStyle = {
   margin: 0,
   top: 'auto',
@@ -165,6 +140,22 @@ const bxpReadyStyle = {
   position: 'fixed',
   color: common.white,
   backgroundColor: styleGuide.error
+}
+
+const bxpRunStyle = {
+  ...bxpReadyStyle,
+  opacity: 0.3
+}
+
+const bxpBlockedStyle = {
+  ...bxpRunStyle
+}
+
+const CryptoColors = {
+  'BTC': '#FF9900',
+  'LTC': '#b8b8b8',
+  'ETH': '#3C3C3D',
+  'DASH': '#1c75bc'
 }
 
 const paperStyle = {
@@ -184,5 +175,6 @@ export {
   bxpBlockedStyle,
   bxpReadyStyle,
   bxpRunStyle,
-  paperStyle
+  paperStyle,
+  CryptoColors
 }

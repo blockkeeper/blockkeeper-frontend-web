@@ -13,27 +13,14 @@ import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import PersonIcon from 'material-ui-icons/Person'
-import AddIcon from 'material-ui-icons/Add'
-import CloseIcon from 'material-ui-icons/Close'
-import {Autorenew, HourglassFull, Block} from 'material-ui-icons'
+import {Add, Close, Autorenew, HourglassFull, Block,
+        Person} from 'material-ui-icons'
+import Dialog, {DialogActions, DialogContent, DialogContentText,
+        DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, tabStyle, floatBtnStyle,
-       bxpBlockedStyle, bxpReadyStyle, bxpRunStyle,
+       bxpBlockedStyle, bxpReadyStyle, bxpRunStyle, CryptoColors,
        paperStyle} from './Style'
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
-} from 'material-ui/Dialog'
 import __ from '../util'
-
-const CryptoColors = {
-  'BTC': '#FF9900',
-  'LTC': '#b8b8b8',
-  'ETH': '#3C3C3D',
-  'DASH': '#1c75bc'
-}
 
 const setBxpTrigger = view => {
   view.cx.tmp.bxp = () => setTimeout(() => {
@@ -52,7 +39,16 @@ const unsetBxpTrigger = view => {
   delete view.cx.tmp.bxpSts
 }
 
-const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, noUser}) =>
+const TopBar = ({
+  title,
+  midTitle,
+  icon,
+  iconLeft,
+  onClickLeft,
+  onClick,
+  color,
+  noUser
+}) =>
   <AppBar position='static' color={color || 'default'} elevation={0}>
     <Toolbar style={{minHeight: '50px'}}>
       {iconLeft &&
@@ -63,7 +59,11 @@ const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, n
         <Typography type='headline' color='inherit'>
           {title || ''}
         </Typography>}
-      <Typography type='headline' color='inherit' style={{flex: 1, textAlign: 'center'}}>
+      <Typography
+        type='headline'
+        color='inherit'
+        style={{flex: 1, textAlign: 'center'}}
+      >
         {midTitle || ''}
       </Typography>
       {icon &&
@@ -73,7 +73,7 @@ const TopBar = ({title, midTitle, icon, iconLeft, color, onClick, onClickLeft, n
       {!noUser &&
       <Link to={'/user/edit'}>
         <IconButton aria-label='Menu' color='contrast'>
-          <PersonIcon />
+          <Person />
         </IconButton>
       </Link>}
     </Toolbar>
@@ -95,7 +95,12 @@ const SubBar = ({tabs, ix, onClick}) =>
 const Jumbo = ({title, subTitle, coin0, coin1}) =>
   <div style={jumboStyle}>
     <div>
-      <Typography align='center' type='display3' color='inherit' style={{fontWeight: '100'}}>
+      <Typography
+        align='center'
+        type='display3'
+        color='inherit'
+        style={{fontWeight: '100'}}
+      >
         {title || '0.00'}&nbsp;
         {coin0 &&
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
@@ -119,7 +124,7 @@ const FloatBtn = ({onClick, key}) => {
       onClick={onClick}
       key={key || __.uuid()}
     >
-      <AddIcon />
+      <Add />
     </Button>
   )
 }
@@ -154,7 +159,9 @@ const BxpFloatBtn = ({onClick, bxpSts}) => {
 
 const tscRow = (addr, tsc, coin0, addrIcon) => {
   const mx = 40
-  let modeColor = tsc.mode === 'snd' ? theme.palette.error['500'] : theme.palette.secondary['500']
+  let modeColor = tsc.mode === 'snd'
+    ? theme.palette.error['500']
+    : theme.palette.secondary['500']
   let modeSign = tsc.mode === 'snd' ? '-' : '+'
   let tags = tsc.tags.join(' ')
   if (tags.length > mx) tags = tags.slice(0, mx) + '...'
@@ -167,11 +174,21 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
           <CoinIcon coin={addr.coin} size={40} />
         </TableCell>
       }
-      <TableCell width={'70%'} style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit, maxWidth: 0}}>
+      <TableCell
+        width={'70%'}
+        style={{
+          paddingTop: theme.spacing.unit,
+          paddingBottom: theme.spacing.unit,
+          maxWidth: 0
+        }}
+      >
         <Typography type='body2' style={{color: theme.palette.text.secondary}}>
           {__.ppTme(tsc._t)}
         </Typography>
-        <Link to={`/tsc/${addr._id}/${tsc._id}`} style={{textDecoration: 'none'}}>
+        <Link
+          to={`/tsc/${addr._id}/${tsc._id}`}
+          style={{textDecoration: 'none'}}
+        >
           <Typography type='headline'>
             {tsc.name}
           </Typography>
@@ -180,12 +197,29 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
           {desc} {tags}
         </Typography>
       </TableCell>
-      <TableCell numeric style={{paddingTop: theme.spacing.unit, paddingBottom: theme.spacing.unit, maxWidth: 0}}>
+      <TableCell
+        numeric
+        style={{
+          paddingTop: theme.spacing.unit,
+          paddingBottom: theme.spacing.unit,
+          maxWidth: 0}}
+        >
         <Typography type='headline' style={{color: modeColor}}>
-          {modeSign} {tsc.amnt} <CoinIcon coin={addr.coin} color={modeColor} alt />
+          {modeSign} {tsc.amnt}
+          <CoinIcon coin={addr.coin} color={modeColor} alt />
         </Typography>
-        <Typography type='body2' style={{color: theme.palette.text.secondary}} gutterBottom>
-          {modeSign} {tsc.amnt * addr.rates[coin0]} <CoinIcon coin={coin0} color={theme.palette.text.secondary} size={12} alt />
+        <Typography
+          type='body2'
+          style={{color: theme.palette.text.secondary}}
+          gutterBottom
+        >
+          {modeSign} {tsc.amnt * addr.rates[coin0]}
+          <CoinIcon
+            coin={coin0}
+            color={theme.palette.text.secondary}
+            size={12}
+            alt
+          />
         </Typography>
       </TableCell>
     </TableRow>
@@ -234,7 +268,7 @@ const Snack = ({msg, onClose}) =>
         style={{width: theme.spacing.unit * 4, height: theme.spacing.unit * 4}}
         onClick={onClose}
       >
-        <CloseIcon color={'grey'} />
+        <Close color={'grey'} />
       </IconButton>
     ]}
   />
@@ -280,10 +314,13 @@ class Modal extends React.Component {
       )
     }
   }
-
   render () {
     return (
-      <Dialog open={this.open} onRequestClose={this.onClose} style={{background: theme.palette.background.default}}>
+      <Dialog
+        open={this.open}
+        onRequestClose={this.onClose}
+        style={{background: theme.palette.background.default}}
+      >
         <DialogTitle>{this.lbl}</DialogTitle>
         <DialogContent>
           <DialogContentText>{this.children}</DialogContentText>
@@ -312,14 +349,27 @@ const CoinIcon = ({coin, alt, color, size}) => {
 }
 
 const DepotEmpty = () =>
-  <Paper square style={{background: theme.palette.background.light, padding: theme.spacing.unit, textAlign: 'center', paddingTop: '50px'}} elevation={0}>
+  <Paper
+    square
+    elevation={0}
+    style={{
+      background: theme.palette.background.light,
+      padding: theme.spacing.unit,
+      textAlign: 'center',
+      paddingTop: '50px'
+    }}
+  >
     <Link to={`/addr/add`} style={{textDecoration: 'none'}}>
       <Typography type='headline' gutterBottom>
         No addresses found, start by adding your first address
       </Typography>
     </Link>
     <Link to={`/user/edit`} style={{textDecoration: 'none'}}>
-      <Typography type='subheading' style={{color: theme.palette.text.secondary}} gutterBottom>
+      <Typography
+        type='subheading'
+        style={{color: theme.palette.text.secondary}}
+        gutterBottom
+      >
         or edit your user settings
       </Typography>
     </Link>
@@ -327,10 +377,23 @@ const DepotEmpty = () =>
 
 const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
   return (
-    <Paper square style={{background: theme.palette.background.light, padding: theme.spacing.unit}} elevation={0}>
+    <Paper
+      square
+      elevation={0}
+      style={{
+        background: theme.palette.background.light,
+        padding: theme.spacing.unit
+      }}
+    >
       {addrs.map(addr => {
         return (
-          <Paper style={{margin: theme.spacing.unit * 2, padding: theme.spacing.unit * 2}} key={addr._id}>
+          <Paper
+            key={addr._id}
+            style={{
+              margin: theme.spacing.unit * 2,
+              padding: theme.spacing.unit * 2
+            }}
+          >
             <Table>
               <TableBody>
                 <TableRow>
@@ -339,7 +402,10 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
                   </TableCell>
                   <TableCell style={{maxWidth: 0}}>
                     {!addrUpdIds.has(addr._id) &&
-                      <Link to={`/addr/${addr._id}`} style={{textDecoration: 'none'}}>
+                      <Link
+                        to={`/addr/${addr._id}`}
+                        style={{textDecoration: 'none'}}
+                      >
                         <Typography type='headline'>
                           {addr.name}
                         </Typography>
@@ -348,16 +414,39 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
                       <Typography type='body2'>
                         {addr.name}
                       </Typography>}
-                    <Typography type='body2' style={{color: theme.palette.text.secondary}}>
+                    <Typography
+                      type='body2'
+                      style={{color: theme.palette.text.secondary}}
+                    >
                       {addr.hsh}
                     </Typography>
                   </TableCell>
-                  <TableCell compact numeric width={'30%'} style={{maxWidth: 0}}>
-                    <Typography type='headline' style={{color: theme.palette.primary['500']}}>
-                      {addr.amnt}&nbsp;<CoinIcon coin={addr.coin} color={theme.palette.primary['500']} alt />
+                  <TableCell
+                    compact numeric width={'30%'}
+                    style={{maxWidth: 0}}
+                  >
+                    <Typography
+                      type='headline'
+                      style={{color: theme.palette.primary['500']}}
+                    >
+                      {addr.amnt}&nbsp;
+                      <CoinIcon
+                        coin={addr.coin}
+                        color={theme.palette.primary['500']}
+                        alt
+                      />
                     </Typography>
-                    <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-                      {addr.amnt * addr.rates[coin0]}&nbsp;<CoinIcon coin={coin0} size={14} color={theme.palette.text.secondary} alt />
+                    <Typography
+                      type='body2'
+                      style={{color: theme.palette.text.secondary}}
+                    >
+                      {addr.amnt * addr.rates[coin0]}&nbsp;
+                      <CoinIcon
+                        coin={coin0}
+                        size={14}
+                        color={theme.palette.text.secondary}
+                        alt
+                      />
                     </Typography>
                   </TableCell>
                 </TableRow>

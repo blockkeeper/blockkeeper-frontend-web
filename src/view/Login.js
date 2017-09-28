@@ -6,9 +6,10 @@ import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
 import {LinearProgress} from 'material-ui/Progress'
 import {Lock} from 'material-ui-icons'
+import {theme, themeBgStyle, paperStyle, loginStyle} from './Style'
 import {Modal} from './Lib'
 import __ from '../util'
-import {theme, themeBgStyle, paperStyle, loginStyle} from './Style'
+
 const rootStyle = {...themeBgStyle, height: '100vh'}
 
 export default class LoginView extends React.Component {
@@ -83,7 +84,10 @@ export default class LoginView extends React.Component {
                     label='Username'
                     margin='normal'
                     value={this.state.username}
-                    error={Boolean(this.state.emsg) || Boolean(this.state.usernameEmsg)}
+                    error={
+                      Boolean(this.state.emsg) ||
+                      Boolean(this.state.usernameEmsg)
+                    }
                     helperText={this.state.emsg || this.state.usernameEmsg}
                     onChange={evt => this.set('username', evt.target.value)}
                     />
@@ -101,19 +105,24 @@ export default class LoginView extends React.Component {
                   <Button
                     raised
                     color={'accent'}
-                    style={{width: '100%', marginTop: theme.spacing.unit * 2, marginBottom: theme.spacing.unit}}
+                    style={{
+                      width: '100%',
+                      marginTop: theme.spacing.unit * 2,
+                      marginBottom: theme.spacing.unit
+                    }}
                     onClick={(event) => this.login(event)}
                     disabled={!this.state.upd}
                     >
-                    <Lock style={{width: theme.spacing.unit * 2, height: theme.spacing.unit * 2}} />
+                    <Lock
+                      style={{
+                        width: theme.spacing.unit * 2,
+                        height: theme.spacing.unit * 2
+                      }} />
                       Login
                   </Button>
                   <br />
-                  <Button
-                    style={{width: '100%'}}
-                    href='/rgstr'
-                    >
-                      Register
+                  <Button style={{width: '100%'}} href='/rgstr'>
+                    Register
                   </Button>
                 </Paper>
               </Grid>
