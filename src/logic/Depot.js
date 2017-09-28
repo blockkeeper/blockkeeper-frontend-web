@@ -94,7 +94,8 @@ export default class Depot extends ApiBase {
     this.info('Bxp started')
     let addrs
     try {
-      addrs = await this.loadAddrs(addrIds, true)
+      addrs = await this.loadAddrs(addrIds, {hshOnly: true, skipStruc: true})
+      this.debug(addrs)
     } catch (e) {
       this.watchBxp()
       throw __.err('Bxp failed for all addrs: Loading addrs failed', {e})
@@ -145,7 +146,7 @@ export default class Depot extends ApiBase {
     return addrs
   }
 
-  async loadAddrs (addrIds, skipStruc) {
+  async loadAddrs (addrIds, {hshOnly, skipStruc} = {}) {
     let stoAddrIds = __.getStoIds('addr')
     try {
       stoAddrIds = (stoAddrIds.length > 0)
@@ -164,7 +165,7 @@ export default class Depot extends ApiBase {
     for (let addrId of addrIds) {
       try {
         let addr = await (new Addr(this.cx, addrId)).load()
-        addrs.push(addr)
+        if (!hshOnly || addr.hsh) addrs.push(addr)
       } catch (e) {
         throw this.err(
           'Loading addresses failed',

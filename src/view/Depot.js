@@ -120,10 +120,11 @@ export default class DepotView extends React.Component {
               coin0={this.state.coin0}
               addrIcon
             />}
-          <BxpFloatBtn
-            onClick={() => this.cx.depot.bxp([])}
-            bxpSts={this.state.bxpSts}
-          />
+          {this.state.addrs.length > 0 &&
+            <BxpFloatBtn
+              onClick={() => this.cx.depot.bxp([])}
+              bxpSts={this.state.bxpSts}
+            />}
           {(this.state.tabIx === 0 || this.state.addrTscs.length === 0) &&
           <FloatBtn onClick={this.goAddAddr} />}
         </div>
