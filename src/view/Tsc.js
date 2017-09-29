@@ -9,7 +9,7 @@ import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, paperStyle} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack,
-        Modal, CoinIcon, ExtLink} from './Lib'
+        Modal, CoinIcon, ExtLink, formatNumber} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -167,7 +167,7 @@ export default class TscView extends React.Component {
           <LinearProgress />}
           <Paper square style={{...paperStyle, textAlign: 'center'}}>
             <Typography type='headline' style={{color: modeColor}}>
-              {modeSign} {this.state.blc1}
+              {modeSign} {formatNumber(this.state.blc1, this.state.coin0)}
               <CoinIcon coin={this.state.coin0} alt color={modeColor} />
             </Typography>
             <Typography
@@ -175,7 +175,7 @@ export default class TscView extends React.Component {
               style={{color: theme.palette.text.secondary}}
               gutterBottom
             >
-              {modeSign} {this.state.blc2}
+              {modeSign} {formatNumber(this.state.blc2, this.state.coin1)}
               <CoinIcon
                 coin={this.state.coin1}
                 color={theme.palette.text.secondary}

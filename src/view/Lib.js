@@ -101,13 +101,13 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
         color='inherit'
         style={{fontWeight: '100'}}
       >
-        {title || '0.00'}&nbsp;
+        {formatNumber(title, coin0) || formatNumber(0.00, coin0)}&nbsp;
         {coin0 &&
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
         }
       </Typography>
       <Typography align='center' type='headline' color='inherit'>
-        {subTitle || '0.00'}&nbsp;
+        {formatNumber(subTitle, coin1) || formatNumber(0.00, coin1)}&nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
         }
@@ -211,7 +211,7 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
           maxWidth: 0}}
         >
         <Typography type='headline' style={{color: modeColor}}>
-          {modeSign} {tsc.amnt}
+          {modeSign} {formatNumber(tsc.amnt, addr.coin)}
           <CoinIcon coin={addr.coin} color={modeColor} alt />
         </Typography>
         <Typography
@@ -219,7 +219,7 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
           style={{color: theme.palette.text.secondary}}
           gutterBottom
         >
-          {modeSign} {tsc.amnt * addr.rates[coin0]}
+          {modeSign} {formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
           <CoinIcon
             coin={coin0}
             color={theme.palette.text.secondary}
@@ -341,6 +341,14 @@ class Modal extends React.Component {
   }
 }
 
+const formatNumber = (n, currency) => {
+  if (typeof n !== 'number') {
+    n = Number(n)
+  }
+  // TODO use user locale
+  return n.toLocaleString('en-GB', { maximumFractionDigits: __.dec(currency) })
+}
+
 const CoinIcon = ({coin, alt, color, size}) => {
   color = theme.palette.text[color] || color || CryptoColors[coin.toUpperCase()]
   coin = __.cap(coin.toLowerCase())
@@ -435,7 +443,7 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
                       type='headline'
                       style={{color: theme.palette.primary['500']}}
                     >
-                      {addr.amnt}&nbsp;
+                      {formatNumber(addr.amnt, addr.coin)}&nbsp;
                       <CoinIcon
                         coin={addr.coin}
                         color={theme.palette.primary['500']}
@@ -446,7 +454,7 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
                       type='body2'
                       style={{color: theme.palette.text.secondary}}
                     >
-                      {addr.amnt * addr.rates[coin0]}&nbsp;
+                      {formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
                       <CoinIcon
                         coin={coin0}
                         size={14}
@@ -536,5 +544,6 @@ export {
   FloatBtn,
   BxpFloatBtn,
   DropDown,
+  formatNumber,
   ExtLink
 }

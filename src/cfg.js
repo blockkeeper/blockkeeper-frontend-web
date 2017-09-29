@@ -26,7 +26,9 @@ let data = {
     },
     cryp: {
       BTC: {dec: 4},
-      ETH: {dec: 5}
+      ETH: {dec: 3},
+      LTC: {dec: 3},
+      DASH: {dec: 3}
     },
     dflt: {dec: 8}
   },
