@@ -26,7 +26,7 @@ export default class AddAddrView extends React.Component {
     super(props)
     this.cx = props.cx
     this.state = {
-      delay: 750,
+      delay: 250,
       facingMode: 'front',
       noHshMode: false,
       qrMode: false,
@@ -81,7 +81,7 @@ export default class AddAddrView extends React.Component {
   handleQRScan (data) {
     if (data !== null) {
       this.setState({
-        hsh: data.replace(/\w*:/, '') // remove URI format
+        hsh: data.trim().replace(/(\w*:)|((\?.*$))/g, '') // remove URI format + remove ?strings
       })
     }
   }

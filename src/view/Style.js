@@ -122,23 +122,21 @@ const tabStyle = {
 const floatBtnStyle = {
   margin: 0,
   top: 'auto',
-  right: 20,
-  bottom: 20,
+  right: theme.spacing.unit * 2,
+  bottom: theme.spacing.unit * 10,
   left: 'auto',
   position: 'fixed',
-  color: common.white,
-  backgroundColor: styleGuide.error
+  color: common.white
 }
 
 const bxpReadyStyle = {
   margin: 0,
   top: 'auto',
-  left: 20,
-  bottom: 20,
-  right: 'auto',
+  right: theme.spacing.unit * 2,
+  bottom: theme.spacing.unit * 2,
+  left: 'auto',
   position: 'fixed',
-  color: common.white,
-  backgroundColor: styleGuide.error
+  color: common.white
 }
 
 const bxpRunStyle = {

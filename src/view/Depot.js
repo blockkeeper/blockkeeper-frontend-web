@@ -83,7 +83,7 @@ export default class DepotView extends React.Component {
               onClose={() => this.setState({snack: null})}
             />}
           <TopBar
-            midTitle='Blockkeeper'
+            title='BK'
           />
           {this.state.blc1 !== 'undefined' &&
             <Jumbo

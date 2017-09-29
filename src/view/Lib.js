@@ -120,6 +120,7 @@ const FloatBtn = ({onClick, key}) => {
     <Button
       fab
       aria-label='add'
+      color='primary'
       style={floatBtnStyle}
       onClick={onClick}
       key={key || __.uuid()}
@@ -151,6 +152,7 @@ const BxpFloatBtn = ({onClick, bxpSts}) => {
     <Button
       fab
       aria-label={lbl}
+      color='primary'
       style={style}
       onClick={onClick}
       key='bxpFloatBtn'
