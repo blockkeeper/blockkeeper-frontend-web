@@ -13,8 +13,7 @@ import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {Add, Close, Autorenew, HourglassFull, Block,
-        Person} from 'material-ui-icons'
+import {Add, Close, Autorenew, HourglassEmpty, Person} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, tabStyle, floatBtnStyle,
@@ -25,7 +24,7 @@ import __ from '../util'
 const setBxpTrigger = view => {
   view.cx.tmp.bxp = () => setTimeout(() => {
     view.info('View update triggered by bxp')
-    view.setSnack('Data updated')
+    view.setSnack('Synchronization complete')
     view.load()
   }, 1000)
   view.cx.tmp.bxpSts = (sts) => {
@@ -134,12 +133,12 @@ const BxpFloatBtn = ({onClick, bxpSts}) => {
   let icon, lbl, style, dsbld
   if (bxpSts === 'blocked') {
     lbl = 'Blocked'
-    icon = <Block />
+    icon = <HourglassEmpty />
     style = bxpBlockedStyle
     dsbld = true
   } else if (bxpSts === 'run') {
     lbl = 'Updating'
-    icon = <HourglassFull />
+    icon = <Autorenew style={{animation: 'spin 1s linear infinite'}} />
     style = bxpRunStyle
     dsbld = true
   } else {  // ready
