@@ -153,6 +153,7 @@ export default class AddrView extends React.Component {
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
+      const addrUrl = this.state.addr.hsh ? __.cfg('toBxpUrl')('addr', this.state.addr.coin)(this.state.addr.hsh) : undefined
       return (
         <div style={themeBgStyle}>
           {this.state.snack &&
@@ -203,9 +204,18 @@ export default class AddrView extends React.Component {
                     }
                   }}
                 />}
-                {!this.state.edit &&
+                {!this.state.edit && !addrUrl &&
+                  <Typography
+                    type='title'
+                    color='default'
+                    style={{paddingTop: theme.spacing.unit * 2}}
+                  >
+                    {this.state.addr.name}
+                  </Typography>
+                }
+                {!this.state.edit && addrUrl &&
                   <ExtLink
-                    to='#'
+                    to={addrUrl}
                     style={{textDecoration: 'none'}}
                     txt={
                       <Typography

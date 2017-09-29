@@ -34,7 +34,8 @@ let data = {
   },
   toBxpUrl: (ilk, coin) => {
     return {
-      tscBTC: hsh => `https://blockchain.info/tx/${hsh}`
+      tscBTC: hsh => `https://blockchain.info/tx/${hsh}`,
+      addrBTC: hsh => `https://blockchain.info/address/${hsh}`
     }[`${ilk}${coin.toUpperCase()}`]
   }
 }
