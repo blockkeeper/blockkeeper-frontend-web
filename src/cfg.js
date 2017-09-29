@@ -17,6 +17,7 @@ let data = {
   bxpBlockedSec: 15,
   coins: {
     fiat: {
+      AUD: {dec: 2},
       EUR: {dec: 2},
       USD: {dec: 2},
       CAD: {dec: 2},

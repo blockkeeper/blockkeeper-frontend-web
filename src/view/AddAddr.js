@@ -51,7 +51,9 @@ export default class AddAddrView extends React.Component {
 
   async load () {
     try {
-      this.coins = await this.cx.rate.getCoins()
+      this.coins = (await this.cx.rate.getCoins()).filter((c) => {
+        return !__.isFiat(c)
+      })
       this.setState({coin: 'BTC'})
     } catch (e) {
       if (__.cfg('isDev')) throw e
