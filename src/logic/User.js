@@ -45,6 +45,7 @@ export default class User extends ApiBase {
 
   async getCoins (curCoin, user) {
     const coins = (user || await this.load()).coins
+    if (!coins.includes(curCoin)) curCoin = undefined
     const coin0 = curCoin || coins[0]
     const coin1 = (coin0 === coins[1]) ? coins[0] : coins[1]
     return {coin0, coin1}
