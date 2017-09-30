@@ -417,72 +417,68 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
             key={addr._id}
             style={{
               margin: theme.spacing.unit * 2,
-              padding: theme.spacing.unit * 2
+              padding: theme.spacing.unit * 3,
+              display: 'flex',
+              justifyContent: 'space-between'
             }}
           >
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell compact width={'40px'} style={{maxWidth: 0}}>
-                    <CoinIcon coin={addr.coin} size={40} />
-                  </TableCell>
-                  <TableCell style={{maxWidth: 0}}>
-                    {!addrUpdIds.has(addr._id) &&
-                      <Link
-                        to={`/addr/${addr._id}`}
-                        style={{textDecoration: 'none'}}
-                      >
-                        <Typography type='headline'>
-                          {addr.name}
-                        </Typography>
-                      </Link>}
-                    {addrUpdIds.has(addr._id) &&
-                      <Typography type='body2'>
-                        {addr.name}
-                      </Typography>}
-                    <Typography
-                      type='body2'
-                      style={{color: theme.palette.text.secondary}}
-                    >
-                      <Hidden smDown>
-                        <span>
-                          <b>Address</b>&nbsp;
-                        </span>
-                      </Hidden>
-                      {addr.hsh}
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    compact numeric width={'30%'}
-                    style={{maxWidth: 0}}
-                  >
-                    <Typography
-                      type='headline'
-                      style={{color: theme.palette.primary['500']}}
-                    >
-                      {formatNumber(addr.amnt, addr.coin)}&nbsp;
-                      <CoinIcon
-                        coin={addr.coin}
-                        color={theme.palette.primary['500']}
-                        alt
-                      />
-                    </Typography>
-                    <Typography
-                      type='body2'
-                      style={{color: theme.palette.text.secondary}}
-                    >
-                      {formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
-                      <CoinIcon
-                        coin={coin0}
-                        size={14}
-                        color={theme.palette.text.secondary}
-                        alt
-                      />
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+            <div style={{paddingRight: theme.spacing.unit * 2}}>
+              <CoinIcon coin={addr.coin} size={theme.spacing.unit * 5} />
+            </div>
+            <div style={{flexGrow: 1, minWidth: 0}}>
+              {!addrUpdIds.has(addr._id) &&
+              <Link
+                to={`/addr/${addr._id}`}
+                style={{textDecoration: 'none'}}
+              >
+                <Typography
+                  type='display1'
+                  style={{color: theme.palette.text.primary, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden'}}
+                >
+                  {addr.name}
+                </Typography>
+              </Link>}
+              {addrUpdIds.has(addr._id) &&
+              <Typography type='body2'>
+                {addr.name}
+              </Typography>}
+              <Typography
+                type='body2'
+                style={{color: theme.palette.text.secondary, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden'}}
+            >
+                <Hidden smDown>
+                  <span>
+                    <b>Address</b>&nbsp;
+                  </span>
+                </Hidden>
+                {addr.hsh}
+              </Typography>
+            </div>
+            <div style={{textAlign: 'right', whiteSpace: 'nowrap'}}>
+              <Typography
+                type='display1'
+                style={{color: theme.palette.primary['500']}}
+              >
+                {formatNumber(addr.amnt, addr.coin)}&nbsp;
+                <CoinIcon
+                  coin={addr.coin}
+                  color={theme.palette.primary['500']}
+                  alt
+                />
+              </Typography>
+              <Typography
+                type='body2'
+                style={{color: theme.palette.text.secondary}}
+              >
+                {formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
+                <CoinIcon
+                  coin={coin0}
+                  size={14}
+                  color={theme.palette.text.secondary}
+                  alt
+                />
+              </Typography>
+            </div>
           </Paper>
         )
       })}
