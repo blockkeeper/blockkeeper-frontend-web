@@ -30,7 +30,7 @@ export default class LoginView extends React.Component {
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
-      let d = {upd: false, usernameEmsg: __.vldAlphNum(this.state.username)}
+      let d = {upd: false, usernameEmsg: __.vldAlphNum(this.state.username, {min: __.cfg('minUser'), max: __.cfg('maxUser')})}
       d.pwEmsg = __.vldPw(this.state.pw)
       if (this.state.username && this.state.pw &&
           !d.usernameEmsg && !d.pwEmsg) {

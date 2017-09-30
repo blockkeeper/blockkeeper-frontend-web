@@ -101,7 +101,7 @@ export default class AddAddrView extends React.Component {
         if (name && !d.amntEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
       } else {
         let hsh = this.state.hsh.trim()
-        d.hshEmsg = __.vldAlphNum(hsh, {strict: true, max: 250})
+        d.hshEmsg = __.vldAlphNum(hsh, {strict: true, min: __.cfg('coins').cryp[this.state.coin].minAddrLength, max: __.cfg('coins').cryp[this.state.coin].maxAddrLength})
         if (hsh && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
       }
       this.setState(d)
