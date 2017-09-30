@@ -49,7 +49,10 @@ export default class RgstrView extends React.Component {
     this.setState({[ilk]: val}, () => {
       let d = {
         upd: false,
-        usernameEmsg: __.vldAlphNum(this.state.username, {min: __.cfg('minUser'), max: __.cfg('maxUser')})
+        usernameEmsg: __.vldAlphNum(this.state.username, {
+          min: __.cfg('minUser'),
+          max: __.cfg('maxUser')
+        })
       }
       if (this.state.pw) {
         this.setState({pw_: true})

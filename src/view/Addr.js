@@ -192,7 +192,6 @@ export default class AddrView extends React.Component {
                 <CoinIcon coin={this.state.coin} size={100} />
                 {this.state.edit &&
                 <TextField
-                  autoFocus
                   fullWidth
                   value={this.state.name}
                   error={Boolean(this.state.nameEmsg)}

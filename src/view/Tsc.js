@@ -196,7 +196,6 @@ export default class TscView extends React.Component {
                       <TableCell numeric style={{maxWidth: 0}}>
                         {this.state.edit &&
                         <TextField
-                          autoFocus
                           fullWidth
                           placeholder='Name'
                           value={this.state.name}
