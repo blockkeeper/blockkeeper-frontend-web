@@ -8,6 +8,8 @@ let data = {
   lstMax: 50,
   maxLow: 30,
   maxHigh: 500,
+  minAddr: 26,
+  maxAddr: 250,
   minPw: isDev ? 0 : 3,  // TODO
   maxPw: 30,
   tmoMsec: 15000,
@@ -26,10 +28,10 @@ let data = {
       MYR: {dec: 2}
     },
     cryp: {
-      BTC: {dec: 4},
-      ETH: {dec: 3},
-      LTC: {dec: 3},
-      DASH: {dec: 3}
+      BTC: {dec: 4, minAddrLength: 26, maxAddrLength: 35},
+      ETH: {dec: 3, minAddrLength: 40, maxAddrLength: 40},
+      LTC: {dec: 3, minAddrLength: 26, maxAddrLength: 35},
+      DASH: {dec: 3, minAddrLength: 26, maxAddrLength: 35}
     },
     dflt: {dec: 8}
   },
