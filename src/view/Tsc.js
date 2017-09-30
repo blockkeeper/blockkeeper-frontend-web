@@ -44,7 +44,7 @@ export default class TscView extends React.Component {
         addr,
         {coin0, coin1}
       ] = await Promise.all([
-        await this.addrObj.load(),
+        this.addrObj.load(),
         this.cx.user.getCoins(this.state.coin)
       ])
       this.addr = addr

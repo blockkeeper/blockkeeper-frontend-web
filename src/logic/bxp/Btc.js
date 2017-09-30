@@ -29,7 +29,7 @@ export default class BtcBxp extends BxpBase {
       params: {
         cors: true,
         active: Array.from(updAddrs.keys()).join('|'),
-        limit: 100
+        limit: __.cfg('mxTscCnt')    // bckinfo max is 100
       }
     }
     const pld = await __.rqst(req, 'bckinfo-addr-tscs')

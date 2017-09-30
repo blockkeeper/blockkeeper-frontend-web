@@ -19,6 +19,7 @@ let data = {
   prec: 1000000,
   chunkSize: 3,
   bxpBlockedSec: 15,
+  mxTscCnt: 100,
   coins: {
     fiat: {
       AUD: {dec: 2},
@@ -39,8 +40,10 @@ let data = {
   },
   toBxpUrl: (ilk, coin) => {
     return {
+      addrBTC: hsh => `https://blockchain.info/address/${hsh}`,
       tscBTC: hsh => `https://blockchain.info/tx/${hsh}`,
-      addrBTC: hsh => `https://blockchain.info/address/${hsh}`
+      addrETH: hsh => `https://etherscan.io/address/${hsh}`,
+      tscETH: hsh => `https://etherscan.io/tx/${hsh}`
     }[`${ilk}${coin.toUpperCase()}`]
   }
 }

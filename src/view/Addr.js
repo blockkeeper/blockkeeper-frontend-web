@@ -26,12 +26,15 @@ export default class AddrView extends React.Component {
     this.state = {show: false, toggleCoins: false, edit: false}
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
-    this.edit = this.edit.bind(this)
     this.save = this.save.bind(this)
     this.delete = this.delete.bind(this)
-    this.toggleCoins = this.toggleCoins.bind(this)
-    this.show = this.show.bind(this)
+    this.set = this.set.bind(this)
     this.close = () => this.setState({ask: null})
+    this.show = () => this.setState({show: !this.state.show, edit: false})
+    this.edit = edit => this.setState({edit: !this.state.edit, show: true})
+    this.toggleCoins = () => {
+      this.setState({toggleCoins: !this.state.toggleCoins})
+    }
   }
 
   async componentDidMount () {
@@ -50,12 +53,12 @@ export default class AddrView extends React.Component {
         addr,
         {coin0, coin1}
       ] = await Promise.all([
-        await this.addrObj.load(),
+        this.addrObj.load(),
         this.cx.user.getCoins(this.state.coin)
       ])
     } catch (e) {
+      if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
-      if (process.env.NODE_ENV === 'development') throw e
     }
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc([addr])
@@ -92,7 +95,7 @@ export default class AddrView extends React.Component {
       this.setState({addr, snack: this.getSnack(), busy: false, upd: false})
     } catch (e) {
       this.setState({err: e.message, busy: false})
-      if (process.env.NODE_ENV === 'development') throw e
+      if (__.cfg('isDev')) throw e
     }
   }
 
@@ -102,21 +105,9 @@ export default class AddrView extends React.Component {
       this.setSnack('Address deleted')
     } catch (e) {
       this.setState({err: e.message, show: false})
-      if (process.env.NODE_ENV === 'development') throw e
+      if (__.cfg('isDev')) throw e
     }
     this.props.history.push('/depot')
-  }
-
-  show () {
-    this.setState({show: !this.state.show, edit: false})
-  }
-
-  edit (edit) {
-    this.setState({edit: !this.state.edit, show: true})
-  }
-
-  toggleCoins () {
-    this.setState({toggleCoins: !this.state.toggleCoins})
   }
 
   set (ilk, val) {
@@ -154,7 +145,8 @@ export default class AddrView extends React.Component {
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
-      const addrUrl = this.state.addr.hsh ? __.cfg('toBxpUrl')('addr', this.state.addr.coin)(this.state.addr.hsh) : undefined
+      const addrUrl = this.state.addr.hsh ? __.cfg('toBxpUrl')('addr',
+                      this.state.addr.coin)(this.state.addr.hsh) : undefined
       return (
         <div style={themeBgStyle}>
           {this.state.snack &&
