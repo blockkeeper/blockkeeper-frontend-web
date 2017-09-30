@@ -345,6 +345,7 @@ export default {
   err: getErr,
   info: getLogger('info', 'main'),
   warn: getLogger('warn', 'main'),
+  toInt: val => validator.toInt(String(val)),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
   shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
