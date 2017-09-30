@@ -10,7 +10,6 @@ import { FormControl } from 'material-ui/Form'
 import Select from 'material-ui/Select'
 import Input, { InputLabel } from 'material-ui/Input'
 import TransitiveNumber from 'react-transitive-number'
-import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Toolbar from 'material-ui/Toolbar'
 import Paper from 'material-ui/Paper'
 import Hidden from 'material-ui/Hidden'
@@ -25,7 +24,7 @@ import {Add, Close, Autorenew, HourglassEmpty, Person, InfoOutline} from 'materi
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors,
-       paperStyle} from './Style'
+       paperStyle, overflowStyle} from './Style'
 import __ from '../util'
 
 const setBxpTrigger = view => {
@@ -186,20 +185,21 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
   let desc = tsc.desc
   if (desc.length > mx) desc = desc.slice(0, mx) + '...'
   return (
-    <TableRow key={tsc._id}>
+    <div
+      key={tsc._id}
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        borderBottom: `1px solid ${theme.palette.background.light}`,
+        marginBottom: theme.spacing.unit * 4,
+        paddingBottom: theme.spacing.unit * 2
+      }}>
       {addrIcon &&
-        <TableCell width={'10%'} style={{maxWidth: 0}}>
+        <div style={{paddingRight: theme.spacing.unit * 2, paddingTop: theme.spacing.unit * 3}}>
           <CoinIcon coin={addr.coin} size={40} />
-        </TableCell>
+        </div>
       }
-      <TableCell
-        width={'70%'}
-        style={{
-          paddingTop: theme.spacing.unit,
-          paddingBottom: theme.spacing.unit,
-          maxWidth: 0
-        }}
-      >
+      <div style={{flexGrow: 1, minWidth: 0}}>
         <Typography type='body2' style={{color: theme.palette.text.secondary}}>
           {__.ppTme(tsc._t)}
         </Typography>
@@ -207,22 +207,18 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
           to={`/tsc/${addr._id}/${tsc._id}`}
           style={{textDecoration: 'none'}}
         >
-          <Typography type='headline'>
+          <Typography type='headline' style={overflowStyle}>
             {tsc.name}
           </Typography>
         </Link>
-        <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-          {desc} {tags}
+        <Typography type='body2' style={{color: theme.palette.text.secondary, ...overflowStyle}}>
+          {desc} {tags} asdf asdf #test
         </Typography>
-      </TableCell>
-      <TableCell
-        numeric
-        style={{
-          paddingTop: theme.spacing.unit,
-          paddingBottom: theme.spacing.unit,
-          maxWidth: 0}}
+      </div>
+      <div
+        style={{textAlign: 'right', whiteSpace: 'nowrap'}}
         >
-        <Typography type='headline' style={{color: modeColor}}>
+        <Typography type='headline' style={{color: modeColor, paddingTop: theme.spacing.unit * 3}}>
           {modeSign} {formatNumber(tsc.amnt, addr.coin)}
           <CoinIcon coin={addr.coin} color={modeColor} alt />
         </Typography>
@@ -239,34 +235,30 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
             alt
           />
         </Typography>
-      </TableCell>
-    </TableRow>
+      </div>
+    </div>
   )
 }
 
 const TscListAddr = ({addr, tscs, coin0, addrIcon}) => {
   return (
-    <Table>
-      <TableBody>
-        {tscs.map(tsc => {
-          return tscRow(addr, tsc, coin0, addrIcon)
-        })}
-      </TableBody>
-    </Table>
+    <div>
+      {tscs.map(tsc => {
+        return tscRow(addr, tsc, coin0, addrIcon)
+      })}
+    </div>
   )
 }
 
 const TscListAddresses = ({addrTscs, coin0, addrIcon}) =>
   <Paper square style={{...paperStyle}}>
-    <Table>
-      <TableBody>
-        {addrTscs.map(addrTsc => {
-          const addr = addrTsc[0]
-          const tsc = addrTsc[1]
-          return tscRow(addr, tsc, coin0, addrIcon)
-        })}
-      </TableBody>
-    </Table>
+    <div>
+      {addrTscs.map(addrTsc => {
+        const addr = addrTsc[0]
+        const tsc = addrTsc[1]
+        return tscRow(addr, tsc, coin0, addrIcon)
+      })}
+    </div>
   </Paper>
 
 const Snack = ({msg, onClose}) =>
@@ -433,7 +425,7 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
               >
                 <Typography
                   type='display1'
-                  style={{color: theme.palette.text.primary, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden'}}
+                  style={{color: theme.palette.text.primary, ...overflowStyle}}
                 >
                   {addr.name}
                 </Typography>
@@ -444,7 +436,7 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
               </Typography>}
               <Typography
                 type='body2'
-                style={{color: theme.palette.text.secondary, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden'}}
+                style={{color: theme.palette.text.secondary, ...overflowStyle}}
             >
                 <Hidden smDown>
                   <span>

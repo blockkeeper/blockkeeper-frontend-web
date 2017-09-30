@@ -9,7 +9,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
 import QRCode from 'qrcode-react'
-import {theme, themeBgStyle, paperStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, ModeEdit, Delete, Clear, Save} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
@@ -200,7 +200,7 @@ export default class AddrView extends React.Component {
                   <Typography
                     type='title'
                     color='default'
-                    style={{paddingTop: theme.spacing.unit * 2}}
+                    style={{paddingTop: theme.spacing.unit * 2, ...overflowStyle}}
                   >
                     {this.state.addr.name}
                   </Typography>
@@ -213,7 +213,7 @@ export default class AddrView extends React.Component {
                       <Typography
                         type='title'
                         color='default'
-                        style={{paddingTop: theme.spacing.unit * 2}}
+                        style={{paddingTop: theme.spacing.unit * 2, ...overflowStyle}}
                       >
                         {this.state.addr.name}
                         <Launch color='grey' />

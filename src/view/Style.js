@@ -134,12 +134,19 @@ const paperStyle = {
   padding: theme.spacing.unit * 3
 }
 
+const overflowStyle = {
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap'
+}
+
 export {
   theme,
   themeBgStyle,
   loginStyle,
   tabStyle,
   homeStyle,
+  overflowStyle,
   jumboStyle,
   floatBtnStyle,
   paperStyle,
