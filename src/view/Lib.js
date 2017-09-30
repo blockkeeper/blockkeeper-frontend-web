@@ -13,6 +13,7 @@ import TransitiveNumber from 'react-transitive-number'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Toolbar from 'material-ui/Toolbar'
 import Paper from 'material-ui/Paper'
+import Hidden from 'material-ui/Hidden'
 import Button from 'material-ui/Button'
 import * as CryptoIcons from 'react-cryptocoins'
 import getSymbolFromCurrency from 'currency-symbol-map'
@@ -438,6 +439,11 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
                       type='body2'
                       style={{color: theme.palette.text.secondary}}
                     >
+                      <Hidden smDown>
+                        <span>
+                          <b>Address</b>&nbsp;
+                        </span>
+                      </Hidden>
                       {addr.hsh}
                     </Typography>
                   </TableCell>

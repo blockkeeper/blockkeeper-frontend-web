@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import registerServiceWorker from './registerServiceWorker'
 import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import {theme, pageStyle} from './view/Style'
+import {theme} from './view/Style'
 import Core from './logic/Core'
 import UserView from './view/User'
 import DepotView from './view/Depot'
@@ -40,23 +40,21 @@ const AuthRoute = ({component: Component, ...args}) => (
 )
 
 const Routes = () => (
-  <div style={pageStyle}>
-    <MuiThemeProvider theme={theme} >
-      <BrowserRouter>
-        <Switch>
-          <Route path='/' exact component={HomeView} />
-          <Route path='/login' exact render={login} />
-          <Route path='/rgstr' exact render={register} />
-          <AuthRoute path='/user/edit' exact component={UserView} />
-          <AuthRoute path='/depot' exact component={DepotView} />
-          <AuthRoute path='/addr/add' exact component={AddAddrView} />
-          <AuthRoute path='/addr/:addrId' exact component={AddrView} />
-          <AuthRoute path='/tsc/:addrId/:tscId' exact component={TscView} />
-          <Redirect to='/depot' />
-        </Switch>
-      </BrowserRouter>
-    </MuiThemeProvider>
-  </div>
+  <MuiThemeProvider theme={theme} >
+    <BrowserRouter>
+      <Switch>
+        <Route path='/' exact component={HomeView} />
+        <Route path='/login' exact render={login} />
+        <Route path='/rgstr' exact render={register} />
+        <AuthRoute path='/user/edit' exact component={UserView} />
+        <AuthRoute path='/depot' exact component={DepotView} />
+        <AuthRoute path='/addr/add' exact component={AddAddrView} />
+        <AuthRoute path='/addr/:addrId' exact component={AddrView} />
+        <AuthRoute path='/tsc/:addrId/:tscId' exact component={TscView} />
+        <Redirect to='/depot' />
+      </Switch>
+    </BrowserRouter>
+  </MuiThemeProvider>
 )
 
 ReactDOM.render(<Routes />, document.getElementById('root'))

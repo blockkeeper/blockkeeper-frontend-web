@@ -87,11 +87,6 @@ const theme = createMuiTheme({
 theme.overrides = {
 }
 
-const pageStyle = {
-  // height: '100vh',
-  // background: theme.palette.background.default
-}
-
 const themeBgStyle = {
   background: theme.palette.background.default
 }
@@ -141,7 +136,6 @@ const paperStyle = {
 
 export {
   theme,
-  pageStyle,
   themeBgStyle,
   loginStyle,
   tabStyle,
