@@ -61,9 +61,14 @@ const TopBar = ({
       <IconButton aria-label='Menu' onClick={onClickLeft} color='contrast'>
         {iconLeft}
       </IconButton>}
-      {!iconLeft &&
+      {title &&
         <Typography type='headline' color='inherit'>
-          {title || ''}
+          <Hidden xsDown>
+            <span>Blockkeeper</span>
+          </Hidden>
+          <Hidden smUp>
+            <span>BK</span>
+          </Hidden>
         </Typography>}
       <Typography
         type='headline'

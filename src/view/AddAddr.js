@@ -124,7 +124,7 @@ export default class AddAddrView extends React.Component {
           {this.state.busy &&
           <LinearProgress />}
           <TopBar
-            title='BK'
+            title
             midTitle='Address'
             icon={<Clear />}
             onClick={this.goBack}
