@@ -217,7 +217,7 @@ export default class AddAddrView extends React.Component {
             <Grid container spacing={16} justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
                 <Divider style={dividerStyle} light />
-                <Typography type='title'>
+                <Typography type='title' gutterBottom>
                   Blockchain / Type
                 </Typography>
                 {this.coins.map(coin =>
@@ -227,11 +227,12 @@ export default class AddAddrView extends React.Component {
                     control={
                       <Radio
                         checked={this.state.coin === coin}
-                        checkedIcon={<CoinIcon coin={coin} />}
-                        icon={<CoinIcon coin={coin} color={'grey'} />}
+                        checkedIcon={<CoinIcon coin={coin} size={40} />}
+                        icon={<CoinIcon coin={coin} color={'grey'} size={40} />}
                         onChange={() => this.set('coin', coin)}
                         value={coin}
                         name={coin}
+                        style={{paddingLeft: theme.spacing.unit}}
                         aria-label={coin}
                       />
                     }
