@@ -32,7 +32,7 @@ let data = {
     },
     cryp: {
       BTC: {dec: 4, minAddrLength: 26, maxAddrLength: 35},
-      ETH: {dec: 3, minAddrLength: 40, maxAddrLength: 40},
+      ETH: {dec: 3, minAddrLength: 40, maxAddrLength: 42},
       LTC: {dec: 3, minAddrLength: 26, maxAddrLength: 35},
       DASH: {dec: 3, minAddrLength: 26, maxAddrLength: 35}
     },
