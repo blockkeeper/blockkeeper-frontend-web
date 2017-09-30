@@ -2,6 +2,7 @@ import React from 'react'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
+import TransitiveNumber from 'react-transitive-number'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
@@ -236,7 +237,9 @@ export default class AddrView extends React.Component {
                     paddingTop: theme.spacing.unit * 2
                   }}
                 >
-                  {this.state.blc1}&nbsp;
+                  <TransitiveNumber>
+                    {this.state.blc1}
+                  </TransitiveNumber>&nbsp;
                   <CoinIcon
                     coin={this.state.coin}
                     size={35}
@@ -251,7 +254,9 @@ export default class AddrView extends React.Component {
                     style={{color: theme.palette.primary['500']}}
                     gutterBottom
                   >
-                    {this.state.blc2}&nbsp;
+                    <TransitiveNumber>
+                      {this.state.blc2}
+                    </TransitiveNumber>&nbsp;
                     <CoinIcon
                       coin={this.state.coin0}
                       color={theme.palette.primary['500']}
@@ -265,7 +270,9 @@ export default class AddrView extends React.Component {
                     style={{color: theme.palette.primary['500']}}
                     gutterBottom
                   >
-                    {this.state.blc3}&nbsp;
+                    <TransitiveNumber>
+                      {this.state.blc3}
+                    </TransitiveNumber>&nbsp;
                     <CoinIcon
                       coin={this.state.coin1}
                       color={theme.palette.primary['500']}

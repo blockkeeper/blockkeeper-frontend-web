@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom'
 import Menu, { MenuItem } from 'material-ui/Menu'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
+import TransitiveNumber from 'react-transitive-number'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Toolbar from 'material-ui/Toolbar'
 import Paper from 'material-ui/Paper'
@@ -16,8 +17,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import {Add, Close, Autorenew, HourglassEmpty, Person} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
-import {theme, jumboStyle, tabStyle, floatBtnStyle,
-       bxpBlockedStyle, bxpReadyStyle, bxpRunStyle, CryptoColors,
+import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors,
        paperStyle} from './Style'
 import __ from '../util'
 
@@ -100,13 +100,17 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
         color='inherit'
         style={{fontWeight: '100'}}
       >
-        {formatNumber(title, coin0) || formatNumber(0.00, coin0)}&nbsp;
+        <TransitiveNumber>
+          {formatNumber(title, coin0) || formatNumber(0.00, coin0)}
+        </TransitiveNumber>&nbsp;
         {coin0 &&
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
         }
       </Typography>
       <Typography align='center' type='headline' color='inherit'>
-        {formatNumber(subTitle, coin1) || formatNumber(0.00, coin1)}&nbsp;
+        <TransitiveNumber>
+          {formatNumber(subTitle, coin1) || formatNumber(0.00, coin1)}
+        </TransitiveNumber>&nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
         }
@@ -129,22 +133,19 @@ const FloatBtn = ({onClick, key}) => {
   )
 }
 
-const BxpFloatBtn = ({onClick, bxpSts}) => {
-  let icon, lbl, style, dsbld
+const BxpFloatBtn = ({onClick, bxpSts, style}) => {
+  let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
     lbl = 'Blocked'
     icon = <HourglassEmpty />
-    style = bxpBlockedStyle
     dsbld = true
   } else if (bxpSts === 'run') {
     lbl = 'Updating'
     icon = <Autorenew style={{animation: 'spin 1s linear infinite'}} />
-    style = bxpRunStyle
     dsbld = true
   } else {  // ready
     lbl = 'Update'
     icon = <Autorenew />
-    style = bxpReadyStyle
     dsbld = false
   }
   return (
@@ -152,7 +153,7 @@ const BxpFloatBtn = ({onClick, bxpSts}) => {
       fab
       aria-label={lbl}
       color='primary'
-      style={style}
+      style={{...floatBtnStyle, ...style}}
       onClick={onClick}
       key='bxpFloatBtn'
       disabled={dsbld}

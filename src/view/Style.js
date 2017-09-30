@@ -35,7 +35,6 @@ const theme = createMuiTheme({
     },
     text: {
       primary: styleGuide.text,
-      // secondary: common.white
       secondary: styleGuide.textSecondary
     }
   },
@@ -123,29 +122,10 @@ const floatBtnStyle = {
   margin: 0,
   top: 'auto',
   right: theme.spacing.unit * 2,
-  bottom: theme.spacing.unit * 10,
-  left: 'auto',
-  position: 'fixed',
-  color: common.white
-}
-
-const bxpReadyStyle = {
-  margin: 0,
-  top: 'auto',
-  right: theme.spacing.unit * 2,
   bottom: theme.spacing.unit * 2,
   left: 'auto',
   position: 'fixed',
   color: common.white
-}
-
-const bxpRunStyle = {
-  ...bxpReadyStyle,
-  opacity: 0.3
-}
-
-const bxpBlockedStyle = {
-  ...bxpRunStyle
 }
 
 const CryptoColors = {
@@ -156,7 +136,6 @@ const CryptoColors = {
 }
 
 const paperStyle = {
-  // margin: theme.spacing.unit * 3,
   padding: theme.spacing.unit * 3
 }
 
@@ -169,9 +148,6 @@ export {
   homeStyle,
   jumboStyle,
   floatBtnStyle,
-  bxpBlockedStyle,
-  bxpReadyStyle,
-  bxpRunStyle,
   paperStyle,
   CryptoColors
 }

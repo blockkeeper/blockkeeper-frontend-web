@@ -15,6 +15,7 @@
     "react-qr-reader": "^1.2.1",
     "react-router-dom": "^4.1.2",
     "react-scripts": "1.0.11",
+    "react-transitive-number": "^3.0.1",
     "uuid": "^3.1.0",
     "validator": "^8.1.0",
     "yarn": "^1.1.0"
