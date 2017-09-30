@@ -2,6 +2,7 @@ import * as mo from 'moment'
 import {ApiBase} from './Lib'
 import Addr from './Addr'
 import BtcBxp from './bxp/Btc'
+import EthBxp from './bxp/Eth'
 import __ from '../util'
 
 export default class Depot extends ApiBase {
@@ -20,7 +21,7 @@ export default class Depot extends ApiBase {
     this.setBxpSts = this.setBxpSts.bind(this)
     this.watchBxp = this.watchBxp.bind(this)
     this.bxp = this.bxp.bind(this)
-    this.bxps = {BTC: new BtcBxp(this)}
+    this.bxps = {BTC: new BtcBxp(this), ETH: new EthBxp(this)}
     this.info('Created')
   }
 
@@ -95,7 +96,6 @@ export default class Depot extends ApiBase {
     let addrs
     try {
       addrs = await this.loadAddrs(addrIds, {hshOnly: true, skipStruc: true})
-      this.debug(addrs)
     } catch (e) {
       this.watchBxp()
       throw __.err('Bxp failed for all addrs: Loading addrs failed', {e})
