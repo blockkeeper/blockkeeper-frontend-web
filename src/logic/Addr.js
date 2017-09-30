@@ -23,7 +23,7 @@ export default class Addr extends ApiBase {
     const coins = (await this.cx.user.load()).coins
     const rate = await this.cx.rate.load()
     addr.rates = {}
-    for (let coin of coins) {
+    for (let coin of coins.concat(addr.coin)) {
       addr.rates[coin] = await this.cx.rate.getRate(addr.coin, coin, rate)
     }
     return addr
