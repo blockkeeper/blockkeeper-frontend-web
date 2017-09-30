@@ -10,9 +10,9 @@ let data = {
   maxHigh: 500,
   minAddr: 26,
   maxAddr: 250,
-  minPw: isDev ? 1 : 5,
+  minPw: isDev ? 1 : 1, // TODO
   maxPw: 30,
-  minUser: isDev ? 1 : 5,
+  minUser: isDev ? 1 : 1, // TODO
   maxUser: 20,
   tmoMsec: 15000,
   outdSec: 60,
