@@ -112,7 +112,7 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
         style={{fontWeight: '100'}}
       >
         <TransitiveNumber>
-          {formatNumber(title, coin0) || formatNumber(0.00, coin0)}
+          {title ? formatNumber(title, coin0) : formatNumber(0, coin0)}
         </TransitiveNumber>&nbsp;
         {coin0 &&
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
@@ -120,7 +120,7 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
       </Typography>
       <Typography align='center' type='headline' color='inherit'>
         <TransitiveNumber>
-          {formatNumber(subTitle, coin1) || formatNumber(0.00, coin1)}
+          {subTitle ? formatNumber(subTitle, coin1) : formatNumber(0, coin1)}
         </TransitiveNumber>&nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
@@ -527,7 +527,7 @@ class DropDown extends React.Component {
 
 const UserList = ({askLogout, askDelete}) =>
   <List>
-    <a href='https://blockkeeper.io' target='_blank' style={{textDecoration: 'none'}}>
+    <a href='https://blockkeeper.io' target='_blank' style={{textDecoration: 'none'}} rel='noopener noreferrer'>
       <ListItem divider button>
         <ListItemIcon>
           <InfoOutline />
