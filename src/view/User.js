@@ -1,24 +1,33 @@
 import React from 'react'
-import Button from 'material-ui/Button'
-import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import Close from 'material-ui-icons/Close'
-import {TopBar, Modal, DropDown} from './Lib'
+import TextField from 'material-ui/TextField'
+import {TopBar, Modal, DropDown, UserList} from './Lib'
+import {ArrowBack, Clear, Save, ModeEdit} from 'material-ui-icons'
 import {themeBgStyle, paperStyle} from './Style'
 import Paper from 'material-ui/Paper'
+import Grid from 'material-ui/Grid'
 import __ from '../util'
 
 export default class UserView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.state = {}
+    this.state = {
+      edit: false,
+      upd: false,
+      askLogout: false,
+      askDelete: false
+    }
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
     this.setCoin = this.setCoin.bind(this)
     this.save = this.save.bind(this)
+    this.edit = this.edit.bind(this)
+    this.set = this.set.bind(this)
     this.logout = this.logout.bind(this)
     this.delete = this.delete.bind(this)
+    this.askLogout = this.askLogout.bind(this)
+    this.askDelete = this.askDelete.bind(this)
   }
 
   async componentDidMount () {
@@ -53,14 +62,18 @@ export default class UserView extends React.Component {
   }
 
   async save () {
+    if (this.state.upd === false) {
+      return
+    }
     this.setState({busy: true})
     try {
       await this.cx.user.save({coins: [this.state.coin0, this.state.coin1]})
     } catch (e) {
       this.setState({err: e.message})
       if (process.env.NODE_ENV === 'development') throw e
+    } finally {
+      this.setState({busy: false, upd: false})
     }
-    this.setState({busy: false, upd: false})
   }
 
   async delete () {
@@ -76,6 +89,34 @@ export default class UserView extends React.Component {
   logout () {
     this.cx.core.clear()
     this.props.history.push('/login')
+  }
+
+  askLogout () {
+    this.setState({logout: !this.state.logout})
+  }
+
+  askDelete () {
+    this.setState({delAcc: !this.state.delAcc})
+  }
+
+  edit () {
+    this.setState({edit: !this.state.edit})
+  }
+
+  set (ilk, val) {
+    this.setState({[ilk]: val}, () => {
+      let d = {
+        upd: false,
+        usernameEmsg: __.vldAlphNum(this.state.username, {
+          min: __.cfg('minUser'),
+          max: __.cfg('maxUser')
+        })
+      }
+      if (this.state.username && !d.usernameEmsg) {
+        d.upd = true
+      }
+      this.setState(d)
+    })
   }
 
   setCoin (coinData) {
@@ -117,72 +158,69 @@ export default class UserView extends React.Component {
           {'Delete account and related data?'}
         </Modal>
       )
-    } else if (this.state.username) {
+    } else if (this.state.username !== undefined) {
       return (
         <div style={themeBgStyle}>
+          {this.state.busy &&
+            <LinearProgress />}
+          {this.state.edit &&
           <TopBar
-            title='BK'
             midTitle='User'
-            icon={<Close />}
-            onClick={this.goBack}
+            icon={<Save />}
+            onClick={this.save}
+            iconLeft={<Clear />}
+            onClickLeft={() => this.setState({edit: false})}
             noUser
-          />
+          />}
+          {!this.state.edit &&
+          <TopBar
+            midTitle='User'
+            icon={<ModeEdit />}
+            onClick={this.edit}
+            iconLeft={<ArrowBack />}
+            onClickLeft={this.goBack}
+            noUser
+          />}
           <Paper square style={paperStyle}>
-            {
-            // <div>
-            //   <Typography align='left' type='body1'>
-            //     Username
-            //   </Typography>
-            //   <Typography align='left' type='body1'>
-            //     {this.state.username}
-            //   </Typography>
-            // </div>
-            // <p />
-            }
-            <div>
-              <Typography align='left' type='body1'>
-                Primary coin
-              </Typography>
-              <DropDown
-                _id='coin0DropDown'
-                data={this.state.coins.coin0}
-                slctd={this.state.coin0}
-                action={this.setCoin}
-               />
-              <Typography align='left' type='body1'>
-                Secondary coin
-              </Typography>
-              <DropDown
-                _id='coin1DropDown'
-                data={this.state.coins.coin1}
-                slctd={this.state.coin1}
-                action={this.setCoin}
-               />
-            </div>
-            <p />
-            {this.state.busy &&
-              <LinearProgress />}
-            {!this.state.busy &&
-              <div>
-                <Button onClick={this.save} disabled={!this.state.upd}>
-                  Save
-                </Button>
-                <Button onClick={this.goBack}>
-                  Cancel
-                </Button>
-              </div>
-            }
-            <p />
-            <Typography align='left' type='headline'>
-              Danger zone
-            </Typography>
-            <Button onClick={() => this.setState({logout: true})}>
-              Logout (and clear LocalStorage)
-            </Button>
-            <br />
-            <Button onClick={() => this.setState({delAcc: true})}>
-              Delete account
-            </Button>
+            <Grid container justify='center'>
+              <Grid item xs={12} sm={10} md={8} lg={6} style={{marginBottom: '80px'}}>
+                <TextField
+                  fullWidth
+                  label='Username'
+                  margin='normal'
+                  value={this.state.username}
+                  error={
+                    Boolean(this.state.emsg) ||
+                    Boolean(this.state.usernameEmsg)
+                  }
+                  helperText={this.state.emsg || this.state.usernameEmsg}
+                  onChange={evt => this.set('username', evt.target.value)}
+                  disabled={!this.state.edit}
+                  />
+                <DropDown
+                  _id='coin0DropDown'
+                  title={'Primary coin'}
+                  data={this.state.coins.coin0}
+                  slctd={this.state.coin0}
+                  action={this.setCoin}
+                  disabled={!this.state.edit}
+                 />
+                <DropDown
+                  _id='coin1DropDown'
+                  title={'Secondary coin'}
+                  data={this.state.coins.coin1}
+                  slctd={this.state.coin1}
+                  action={this.setCoin}
+                  disabled={!this.state.edit}
+                 />
+              </Grid>
+              <Grid item xs={12}>
+                <UserList
+                  askLogout={this.askLogout}
+                  askDelete={this.askDelete}
+                />
+              </Grid>
+            </Grid>
           </Paper>
         </div>
       )

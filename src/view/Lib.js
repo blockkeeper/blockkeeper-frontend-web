@@ -1,8 +1,14 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import Menu, { MenuItem } from 'material-ui/Menu'
+import { MenuItem } from 'material-ui/Menu'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
+import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List'
+import ExitToAppIcon from 'material-ui-icons/ExitToApp'
+import DeleteForeverIcon from 'material-ui-icons/DeleteForever'
+import { FormControl } from 'material-ui/Form'
+import Select from 'material-ui/Select'
+import Input, { InputLabel } from 'material-ui/Input'
 import TransitiveNumber from 'react-transitive-number'
 import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import Toolbar from 'material-ui/Toolbar'
@@ -14,7 +20,7 @@ import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {Add, Close, Autorenew, HourglassEmpty, Person} from 'material-ui-icons'
+import {Add, Close, Autorenew, HourglassEmpty, Person, InfoOutline} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors,
@@ -480,53 +486,69 @@ class DropDown extends React.Component {
   //     data={this.state.<array_with_objs>}
   //     slctd={this.state.<label_of_selected_item}
   //     action={this.<action_function>}
+  //     disabled={this.state.<disabled>}
   //   />
   constructor (props) {
     super(props)
     this._id = props._id
     this.data = props.data
+    this.title = props.title
     this.action = props.action
-    this.state = {open: false, slctd: props.slctd}
-    this.onOpen = evt => {
-      this.setState({open: true, anchorEl: evt.currentTarget})
+    this.state = {slctd: props.slctd, disabled: props.disabled}
+    this.handleChange = name => event => {
+      this.setState({ [name]: event.target.value })
+      this.action(this.data.find((i) => {
+        return i.lbl === event.target.value
+      }))
     }
-    this.onClose = () => {
-      this.setState({open: false})
-    }
-    this.onActionClose = (slctd) => {
-      this.setState({open: false, slctd: slctd})
-    }
+  }
+  componentWillReceiveProps (props) {
+    this.setState({disabled: props.disabled})
   }
 
   render () {
     return (
-      <div>
-        <Button
-          aria-owns={this.open ? this._id : null}
-          aria-haspopup
-          onClick={this.onOpen}
-        >
-          {this.state.slctd}
-        </Button>
-        <Menu
-          id={this._id}
-          anchorEl={this.state.anchorEl}
-          open={this.state.open}
-          onRequestClose={this.onClose}
-        >
+      <FormControl fullWidth margin='normal'>
+        <InputLabel htmlFor={this._id}>{this.title}</InputLabel>
+        <Select
+          value={this.state.slctd}
+          onChange={this.handleChange('slctd')}
+          input={<Input id={this._id} />}
+          disabled={this.state.disabled}
+          >
           {this.data.map(d =>
-            <MenuItem key={d.key} onClick={() => {
-              this.onActionClose(d.lbl)
-              this.action(d)
-            }
-            }>
+            <MenuItem key={d.key} value={d.lbl}>
               {d.lbl}
             </MenuItem>)}
-        </Menu>
-      </div>
+        </Select>
+      </FormControl>
     )
   }
 }
+
+const UserList = ({askLogout, askDelete}) =>
+  <List>
+    <a href='https://blockkeeper.io' target='_blank' style={{textDecoration: 'none'}}>
+      <ListItem divider button>
+        <ListItemIcon>
+          <InfoOutline />
+        </ListItemIcon>
+        <ListItemText primary='About' />
+      </ListItem>
+    </a>
+    <ListItem divider button onClick={askLogout}>
+      <ListItemIcon>
+        <ExitToAppIcon />
+      </ListItemIcon>
+      <ListItemText primary='Logout (and clear LocalStorage)' />
+    </ListItem>
+    <ListItem button onClick={askDelete}>
+      <ListItemIcon>
+        <DeleteForeverIcon />
+      </ListItemIcon>
+      <ListItemText primary='Delete account' />
+    </ListItem>
+  </List>
 
 export {
   setBxpTrigger,
@@ -545,5 +567,6 @@ export {
   BxpFloatBtn,
   DropDown,
   formatNumber,
-  ExtLink
+  ExtLink,
+  UserList
 }
