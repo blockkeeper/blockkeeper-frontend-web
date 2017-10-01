@@ -1,7 +1,6 @@
 import React from 'react'
 import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
-import {CircularProgress} from 'material-ui/Progress'
 import {homeStyle, themeBgStyle} from './Style'
 
 const rootStyle = {...themeBgStyle, height: '100vh'}
@@ -25,7 +24,6 @@ export default class HomeView extends React.Component {
           <Typography type='display1' color={'inherit'} gutterBottom>
             Your secure blockchain book keeping app
           </Typography>
-          <CircularProgress size={25} color='accent' />
           <Button
             raised
             color='accent'

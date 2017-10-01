@@ -450,12 +450,19 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
                 type='body2'
                 style={{color: theme.palette.text.secondary, ...overflowStyle}}
             >
+                {addr.hsh &&
                 <Hidden smDown>
                   <span>
                     <b>Address</b>&nbsp;
                   </span>
-                </Hidden>
-                {addr.hsh}
+                </Hidden>}
+                {!addr.hsh && addr.desc &&
+                <Hidden smDown>
+                  <span>
+                    <b>Note</b>&nbsp;
+                  </span>
+                </Hidden>}
+                {addr.hsh || addr.desc}
               </Typography>
             </div>
             <div style={{textAlign: 'right', whiteSpace: 'nowrap'}}>
