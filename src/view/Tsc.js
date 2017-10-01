@@ -17,7 +17,7 @@ export default class TscView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.state = {edit: false}
+    this.state = {edit: false, toggleCoins: false}
     this.addrId = props.match.params.addrId
     this.addrObj = new Addr(this.cx, this.addrId)
     this.tscId = props.match.params.tscId
@@ -26,6 +26,9 @@ export default class TscView extends React.Component {
     this.save = this.save.bind(this)
     this.edit = this.edit.bind(this)
     this.set = this.set.bind(this)
+    this.toggleCoins = () => {
+      this.setState({toggleCoins: !this.state.toggleCoins})
+    }
   }
 
   async componentDidMount () {
@@ -132,10 +135,10 @@ export default class TscView extends React.Component {
         </Modal>
       )
     } else if (this.state.tsc) {
-      let modeColor = this.state.mode === 'snd'
+      let modeColor = this.state.tsc.mode === 'snd'
         ? theme.palette.error['500']
         : theme.palette.secondary['500']
-      let modeSign = this.state.mode === 'snd' ? '-' : '+'
+      let modeSign = this.state.tsc.mode === 'snd' ? '-' : '+'
       const tscUrl = __.cfg('toBxpUrl')(
         'tsc', this.state.addr.coin)(this.state.tsc.hsh)
       return (
@@ -167,12 +170,29 @@ export default class TscView extends React.Component {
           <LinearProgress />}
           <Paper square style={{...paperStyle, textAlign: 'center'}}>
             <Typography type='headline' style={{color: modeColor}}>
-              {modeSign} {formatNumber(this.state.blc1, this.state.coin0)}
-              <CoinIcon coin={this.state.coin0} alt color={modeColor} />
+              {modeSign} {formatNumber(this.state.tsc.amnt, this.addr.coin)}
+              <CoinIcon coin={this.addr.coin} alt color={modeColor} />
             </Typography>
+            {!this.state.toggleCoins &&
             <Typography
               type='body2'
               style={{color: theme.palette.text.secondary}}
+              onClick={this.toggleCoins}
+              gutterBottom
+            >
+              {modeSign} {formatNumber(this.state.blc1, this.state.coin0)}
+              <CoinIcon
+                coin={this.state.coin0}
+                color={theme.palette.text.secondary}
+                size={12}
+                alt
+              />
+            </Typography>}
+            {this.state.toggleCoins &&
+            <Typography
+              type='body2'
+              style={{color: theme.palette.text.secondary}}
+              onClick={this.toggleCoins}
               gutterBottom
             >
               {modeSign} {formatNumber(this.state.blc2, this.state.coin1)}
@@ -182,7 +202,7 @@ export default class TscView extends React.Component {
                 size={12}
                 alt
               />
-            </Typography>
+            </Typography>}
           </Paper>
           <Paper square style={{...paperStyle}} elevation={5}>
             <Grid container justify='center'>
