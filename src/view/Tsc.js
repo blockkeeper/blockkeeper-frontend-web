@@ -259,8 +259,26 @@ export default class TscView extends React.Component {
                         Amount
                       </TableCell>
                       <TableCell numeric style={{maxWidth: 0}}>
-                        {this.state.tsc.amntDesc}
-                        <ExtLink to={tscUrl} linkIcon />
+                        {this.state.tsc.amntDesc[0]}
+                      </TableCell>
+                    </TableRow>
+                    {this.state.tsc.amntDesc.length > 1 &&
+                      <TableRow>
+                        <TableCell width={'10%'}>
+                          Amount Details
+                        </TableCell>
+                        <TableCell numeric style={{maxWidth: 0}}>
+                          {this.state.tsc.amntDesc[1]}
+                        </TableCell>
+                      </TableRow>}
+                    <TableRow>
+                      <TableCell width={'10%'}>
+                        Confirmations
+                      </TableCell>
+                      <TableCell numeric style={{maxWidth: 0}}>
+                        {this.state.tsc.cfmCnt > 100
+                          ? 'More than 100'
+                          : this.state.tsc.cfmCnt}
                       </TableCell>
                     </TableRow>
                   </TableBody>

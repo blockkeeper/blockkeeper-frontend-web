@@ -68,7 +68,6 @@ export default class AddrView extends React.Component {
       name: addr.name,
       desc: addr.desc,
       tscs: addr.tscs,
-      tscsCount: addr.tscs.length,
       coin: addr.coin,
       hshMode: Boolean(addr.hsh),
       coin0,
@@ -200,7 +199,10 @@ export default class AddrView extends React.Component {
                   <Typography
                     type='title'
                     color='default'
-                    style={{paddingTop: theme.spacing.unit * 2, ...overflowStyle}}
+                    style={{
+                      paddingTop: theme.spacing.unit * 2,
+                      ...overflowStyle
+                    }}
                   >
                     {this.state.addr.name}
                   </Typography>
@@ -213,7 +215,10 @@ export default class AddrView extends React.Component {
                       <Typography
                         type='title'
                         color='default'
-                        style={{paddingTop: theme.spacing.unit * 2, ...overflowStyle}}
+                        style={{
+                          paddingTop: theme.spacing.unit * 2,
+                          ...overflowStyle
+                        }}
                       >
                         {this.state.addr.name}
                         <Launch color='grey' />
@@ -301,7 +306,10 @@ export default class AddrView extends React.Component {
                             No. Transactions
                           </TableCell>
                           <TableCell numeric>
-                            {this.state.tscsCount}
+                            {this.state.addr.tscCnt}
+                            {this.state.addr.tscCnt > __.cfg('mxTscCnt') &&
+                              ` (only the last ${__.cfg('mxTscCnt')} ` +
+                              'are listed)'}
                           </TableCell>
                         </TableRow>
                         <TableRow>
@@ -309,7 +317,7 @@ export default class AddrView extends React.Component {
                             Total Received
                           </TableCell>
                           <TableCell numeric>
-                            0.0 {/* TODO */}
+                            {this.state.addr.rcvAmnt}
                             <CoinIcon
                               coin={this.state.coin}
                               size={12}
@@ -323,7 +331,7 @@ export default class AddrView extends React.Component {
                             Total Send
                           </TableCell>
                           <TableCell numeric>
-                            0.0 {/* TODO */}
+                            {this.state.addr.sndAmnt}
                             <CoinIcon
                               coin={this.state.coin}
                               size={12}

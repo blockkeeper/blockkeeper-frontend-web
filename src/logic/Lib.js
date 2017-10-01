@@ -1,28 +1,13 @@
+import BtcCoin from './coin/Btc'
+import LtcCoin from './coin/Ltc'
+import EthCoin from './coin/Eth'
+import DashCoin from './coin/Dash'
 import __ from '../util'
 
 class Base {
   constructor (name, cx, _id, pa) {
     if (cx) this.cx = cx
     Object.assign(this, __.init('logic', name, _id, pa))
-  }
-}
-
-class BxpBase extends Base {
-  constructor (name, pa) {
-    super(name, undefined, undefined, pa)
-    this.getChunkSize = () => this.srvs[this.srv].chunkSize
-    this.run = this.run.bind(this)
-  }
-
-  async run (chunk, sleep) {
-    if (sleep) {
-      let sec = this.srvs[this.srv].sleepSec
-      this.info(`Gentle polling: Sleeping ${sec}s before next bxp request`)
-      await __.sleep(sec * 1000)
-    }
-    const pld = await this[this.srv](chunk)    // e.g. BtcBxp.bckinfo()
-    this.info(`Bxp data for ${chunk.length} objects from ${this.srv} fetched`)
-    return pld
   }
 }
 
@@ -45,6 +30,12 @@ class ApiBase extends StoBase {
     this.apiDel = this.apiDel.bind(this)
     this.encrypt = this.cx.core.encrypt
     this.decrypt = this.cx.core.decrypt
+    this.coins = {
+      BTC: new BtcCoin(this),
+      LTC: new LtcCoin(this),
+      ETH: new EthCoin(this),
+      DASH: new DashCoin(this)
+    }
   }
 
   async save (upd, data) {
@@ -131,7 +122,6 @@ class ApiBase extends StoBase {
 
 export {
   Base,
-  BxpBase,
   StoBase,
   ApiBase
 }

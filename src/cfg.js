@@ -40,10 +40,14 @@ let data = {
   },
   toBxpUrl: (ilk, coin) => {
     return {
-      addrBTC: hsh => `https://blockchain.info/address/${hsh}`,
-      tscBTC: hsh => `https://blockchain.info/tx/${hsh}`,
-      addrETH: hsh => `https://etherscan.io/address/${hsh}`,
-      tscETH: hsh => `https://etherscan.io/tx/${hsh}`
+      addrBTC: hsh => `https://live.blockcypher.com/btc/address/${hsh}`,
+      tscBTC: hsh => `https://live.blockcypher.com/btc/tx/${hsh}`,
+      addrLTC: hsh => `https://live.blockcypher.com/ltc/address/${hsh}`,
+      tscLTC: hsh => `https://live.blockcypher.com/ltc/tx/${hsh}`,
+      addrETH: hsh => `https://etherscan.io/address/0x${hsh}`,
+      tscETH: hsh => `https://etherscan.io/tx/0x${hsh}`,
+      addrDASH: hsh => `https://explorer.dash.org/address/${hsh}`,
+      tscDASH: hsh => `https://explorer.dash.org/tx/${hsh}`
     }[`${ilk}${coin.toUpperCase()}`]
   }
 }

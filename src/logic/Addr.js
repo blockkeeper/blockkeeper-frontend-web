@@ -23,7 +23,7 @@ export default class Addr extends ApiBase {
     const coins = (await this.cx.user.load()).coins
     const rate = await this.cx.rate.load()
     addr.rates = {}
-    for (let coin of coins.concat(addr.coin)) {
+    for (let coin of coins) {
       addr.rates[coin] = await this.cx.rate.getRate(addr.coin, coin, rate)
     }
     return addr
@@ -73,25 +73,31 @@ export default class Addr extends ApiBase {
   }
 
   toAddr (upd, cur) {
+    const getAmnt = (ua, ca) => __.toFloat(ua != null ? ua : (ca || 0))
     cur = cur || {}
     upd = upd || {}
     const addr = {
       _id: this._id,
       _t: __.getTme(),
       desc: (upd.desc || cur.desc || '').trim(),
-      amnt: __.toFloat(upd.amnt != null ? upd.amnt : (cur.amnt || 0)),
+      amnt: getAmnt(upd.amnt, cur.amnt),
+      rcvAmnt: getAmnt(upd.rcvAmnt, cur.rcvAmnt),
+      sndAmnt: getAmnt(upd.sndAmnt, cur.sndAmnt),
+      tscCnt: upd.tscCnt || cur.tscCnt || 0,
       coin: upd.coin || cur.coin,
       rates: upd.rates || cur.rates || {},
       name: upd.name || cur.name
     }
+    const toHsh = hsh => this.coins[addr.coin].toHsh(hsh.trim())
     const hsh = upd.hsh || cur.hsh
     if (hsh) {
-      addr.hsh = hsh.trim()
-      addr.name = (addr.name || __.shortn(hsh)).trim()
+      addr.hsh = toHsh(hsh)
+      addr.name = (addr.name || __.shortn(addr.hsh)).trim()
     } else {
       addr.name = (addr.name || __.shortn(addr._id)).trim()
     }
-    const updTscs = new Map((upd.tscs || []).map((upd) => [upd.hsh, upd]))
+    upd.tscs = upd.tscs || []
+    const updTscs = new Map(upd.tscs.map((upd) => [toHsh(upd.hsh), upd]))
     const tscs = new Map()
     for (let tsc of (cur.tscs || [])) {
       tsc = this.toTsc(addr.coin, updTscs.get(tsc.hsh), tsc)
@@ -103,12 +109,19 @@ export default class Addr extends ApiBase {
       tsc = this.toTsc(addr.coin, tsc)
       tscs.set(tsc.hsh, tsc)
     }
-    addr.tscs = __.struc(tscs, {byTme: true})
+    addr.tscs = __.struc(tscs, {byTme: true, max: __.cfg('mxTscCnt')})
     return addr
   }
 
   toTsc (coin, upd, cur) {
-    // private method, called by toAddr()
+    const getAmnt = (ua, ca) => __.toFloat(ua != null ? ua : (ca || 0))
+    const toDesc = (action, tsc) => {
+      let desc = [`${tsc.amnt} ${action}`]
+      if (tsc.sndAmnt && tsc.rcvAmnt) {
+        desc.push(`${tsc.sndAmnt} sent, ${tsc.rcvAmnt} received`)
+      }
+      return desc
+    }
     cur = cur || {}
     upd = upd || {}
     const hsh = upd.hsh || cur.hsh
@@ -116,26 +129,21 @@ export default class Addr extends ApiBase {
       _id: upd._id || cur._id,
       _t: upd._t || cur._t,
       hsh,
-      fee: __.toFloat(upd.fee != null ? upd.fee : cur.fee),
-      amnt: __.toFloat(upd.amnt != null ? upd.amnt : cur.amnt),
+      amnt: getAmnt(upd.amnt, cur.amnt),
+      rcvAmnt: getAmnt(upd.rcvAmnt, cur.rcvAmnt),
+      sndAmnt: getAmnt(upd.sndAmnt, cur.sndAmnt),
+      cfmCnt: upd.cfmCnt || cur.cfmCnt || 0,
       mode: upd.mode || cur.mode,
-      inAddrCnt: upd.inAddrCnt || cur.inAddrCnt,
-      outAddrCnt: upd.outAddrCnt || cur.outAddrCnt,
       name: upd.name || cur.name || __.shortn(hsh),
       desc: upd.desc || cur.desc || '',
       tags: upd.tags || cur.tags || []
     }
-    let desc = `${tsc.amnt} ${coin}`
     if (tsc.mode === 'rcv') {
-      tsc.amntDesc = `${desc} received from ${tsc.inAddrCnt} address(es)`
+      tsc.amntDesc = toDesc('received', tsc, coin)
     } else if (tsc.mode === 'snd') {
-      tsc.amntDesc = `${desc} sent to ${tsc.outAddrCnt} address(es)`
-      tsc.feeDesc = `${tsc.fee} ${coin}`
-      if (tsc.inAddrCnt > 1) {
-        tsc.feeDesc += ` (spread across ${tsc.inAddrCnt} addresses)`
-      }
+      tsc.amntDesc = toDesc('sent', tsc, coin)
     } else {
-      tsc.amntDesc = 'Unknown (not yet fetched)'
+      tsc.amntDesc = ['Unknown (not yet fetched)']
     }
     return tsc
   }

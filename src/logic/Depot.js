@@ -1,8 +1,6 @@
 import * as mo from 'moment'
 import {ApiBase} from './Lib'
 import Addr from './Addr'
-import BtcBxp from './bxp/Btc'
-import EthBxp from './bxp/Eth'
 import __ from '../util'
 
 export default class Depot extends ApiBase {
@@ -21,7 +19,6 @@ export default class Depot extends ApiBase {
     this.setBxpSts = this.setBxpSts.bind(this)
     this.watchBxp = this.watchBxp.bind(this)
     this.bxp = this.bxp.bind(this)
-    this.bxps = {BTC: new BtcBxp(this), ETH: new EthBxp(this)}
     this.info('Created')
   }
 
@@ -110,17 +107,17 @@ export default class Depot extends ApiBase {
     }
     const addrChunks = new Map()
     for (let [coin, addrs] of addrsByCoin) {
-      let chunkSize = this.bxps[coin].getChunkSize()
+      let chunkSize = this.coins[coin].getChunkSize()
       addrChunks.set(coin, __.toChunks(addrs, chunkSize))
     }
     let updAddrs
+    let sleep = false
     for (let [coin, chunks] of addrChunks) {
-      let sleep = false
       for (let addrChunk of chunks) {
         let addrObj
         let addrs = []
         try {
-          updAddrs = await this.bxps[coin].run(addrChunk, sleep)
+          updAddrs = await this.coins[coin].run(addrChunk, sleep)
           sleep = true
           for (let updAddr of updAddrs) {
             addrObj = new Addr(this.cx, updAddr._id)
@@ -128,7 +125,8 @@ export default class Depot extends ApiBase {
           }
           await this.saveAddrs(addrs)
         } catch (e) {
-          this.warn(`Bxp failed for ${updAddrs.length} addrs: ${e.message}`)
+          if (__.cfg('isDev')) throw (e)
+          this.warn(`Bxp failed for addrs: ${e.message}`)
         }
       }
     }
