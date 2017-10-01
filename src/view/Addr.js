@@ -384,7 +384,7 @@ export default class AddrView extends React.Component {
               </Typography>}
           </Paper>
           <BxpFloatBtn
-            onClick={() => this.cx.depot.bxp([])}
+            onClick={() => this.cx.depot.bxp([this.addrId])}
             bxpSts={this.state.bxpSts}
           />
         </div>
