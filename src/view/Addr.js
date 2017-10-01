@@ -296,42 +296,45 @@ export default class AddrView extends React.Component {
                       </Button>}
                     <Table>
                       <TableBody>
-                        <TableRow>
-                          <TableCell width={'10%'}>
-                            No. Transactions
-                          </TableCell>
-                          <TableCell numeric>
-                            {this.state.tscsCount}
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell width={'10%'}>
-                            Total Received
-                          </TableCell>
-                          <TableCell numeric>
-                            0.0 {/* TODO */}
-                            <CoinIcon
-                              coin={this.state.coin}
-                              size={12}
-                              color='primary'
-                              alt
-                            />
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell width={'10%'}>
-                            Total Send
-                          </TableCell>
-                          <TableCell numeric>
-                            0.0 {/* TODO */}
-                            <CoinIcon
-                              coin={this.state.coin}
-                              size={12}
-                              color='primary'
-                              alt
-                            />
-                          </TableCell>
-                        </TableRow>
+                        {this.state.addr.hsh &&
+                          <TableRow>
+                            <TableCell width={'10%'}>
+                              No. Transactions
+                            </TableCell>
+                            <TableCell numeric>
+                              {this.state.tscsCount}
+                            </TableCell>
+                          </TableRow>}
+                        {this.state.addr.hsh &&
+                          <TableRow>
+                            <TableCell width={'10%'}>
+                              Total Received
+                            </TableCell>
+                            <TableCell numeric>
+                              0.0 {/* TODO */}
+                              <CoinIcon
+                                coin={this.state.coin}
+                                size={12}
+                                color='primary'
+                                alt
+                              />
+                            </TableCell>
+                          </TableRow>}
+                        {this.state.addr.hsh &&
+                          <TableRow>
+                            <TableCell width={'10%'}>
+                              Total Send
+                            </TableCell>
+                            <TableCell numeric>
+                              0.0 {/* TODO */}
+                              <CoinIcon
+                                coin={this.state.coin}
+                                size={12}
+                                color='primary'
+                                alt
+                              />
+                            </TableCell>
+                          </TableRow>}
                         <TableRow>
                           <TableCell width={'10%'}>
                             Notes

@@ -218,6 +218,32 @@ export default class TscView extends React.Component {
                       </TableRow>}
                     <TableRow>
                       <TableCell width={'10%'}>
+                        Time
+                      </TableCell>
+                      <TableCell numeric style={{maxWidth: 0}}>
+                        2017-10-01 12:22:27 {/* TODO */}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell width={'10%'}>
+                        Included In Blocks
+                      </TableCell>
+                      <TableCell numeric style={{maxWidth: 0}}>
+                        <a href='#' target='_blank'>
+                          487806 {/* TODO */}
+                        </a>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell width={'10%'}>
+                        Confirmations
+                      </TableCell>
+                      <TableCell numeric style={{maxWidth: 0}}>
+                        21 Confirmations {/* TODO */}
+                      </TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell width={'10%'}>
                         Tags
                       </TableCell>
                       <TableCell numeric style={{maxWidth: 0}}>
