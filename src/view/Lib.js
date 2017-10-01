@@ -20,7 +20,8 @@ import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {Add, Close, Autorenew, HourglassEmpty, Person, InfoOutline} from 'material-ui-icons'
+import {Add, Close, Autorenew, HourglassEmpty,
+        Person, InfoOutline} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors,
@@ -195,7 +196,12 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
         paddingBottom: theme.spacing.unit * 2
       }}>
       {addrIcon &&
-        <div style={{paddingRight: theme.spacing.unit * 2, paddingTop: theme.spacing.unit * 3}}>
+        <div
+          style={{
+            paddingRight: theme.spacing.unit * 2,
+            paddingTop: theme.spacing.unit * 3
+          }}
+        >
           <CoinIcon coin={addr.coin} size={40} />
         </div>
       }
@@ -211,14 +217,20 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
             {tsc.name}
           </Typography>
         </Link>
-        <Typography type='body2' style={{color: theme.palette.text.secondary, ...overflowStyle}}>
-          {desc} {tags} asdf asdf #test
+        <Typography
+          type='body2'
+          style={{color: theme.palette.text.secondary, ...overflowStyle}}
+        >
+          {desc} {tags}
         </Typography>
       </div>
       <div
         style={{textAlign: 'right', whiteSpace: 'nowrap'}}
         >
-        <Typography type='headline' style={{color: modeColor, paddingTop: theme.spacing.unit * 3}}>
+        <Typography
+          type='headline'
+          style={{color: modeColor, paddingTop: theme.spacing.unit * 3}}
+        >
           {modeSign} {formatNumber(tsc.amnt, addr.coin)}
           <CoinIcon coin={addr.coin} color={modeColor} alt />
         </Typography>
@@ -527,7 +539,12 @@ class DropDown extends React.Component {
 
 const UserList = ({askLogout, askDelete}) =>
   <List>
-    <a href='https://blockkeeper.io' target='_blank' style={{textDecoration: 'none'}} rel='noopener noreferrer'>
+    <a
+      href='https://blockkeeper.io'
+      target='_blank'
+      style={{textDecoration: 'none'}}
+      rel='noopener noreferrer'
+    >
       <ListItem divider button>
         <ListItemIcon>
           <InfoOutline />
