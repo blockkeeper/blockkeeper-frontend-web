@@ -74,6 +74,7 @@ export default class AddAddrView extends React.Component {
       })
       this.setSnack('Address added')
       this.props.history.replace(`/addr/${addr._id}`)
+      this.cx.depot.bxp([addr._id])
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message, busy: false})
