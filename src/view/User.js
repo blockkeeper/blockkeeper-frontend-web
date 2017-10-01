@@ -53,6 +53,9 @@ export default class UserView extends React.Component {
         username: user.username,
         coin0: user.coins[0],
         coin1: user.coins[1],
+        _id: user._id,
+        locale: user.locale,
+        depotId: user.depotId,
         coins
       })
     } catch (e) {
@@ -67,12 +70,19 @@ export default class UserView extends React.Component {
     }
     this.setState({busy: true})
     try {
-      await this.cx.user.save({coins: [this.state.coin0, this.state.coin1]})
+      await this.cx.user.save({
+        coins: [this.state.coin0, this.state.coin1],
+        _id: this.state._id,
+        username: this.state.username,
+        locale: this.state.locale,
+        depotId: this.state.depotId,
+        _t: new Date().toISOString()
+      })
     } catch (e) {
       this.setState({err: e.message})
       if (process.env.NODE_ENV === 'development') throw e
     } finally {
-      this.setState({busy: false, upd: false})
+      this.setState({busy: false, upd: false, edit: false})
     }
   }
 

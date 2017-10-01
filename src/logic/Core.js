@@ -125,7 +125,7 @@ export default class Core extends StoBase {
         _t: __.getTme(),
         username: username,
         locale: 'en',
-        coins: ['EUR', 'BTC'],
+        coins: ['USD', 'BTC'],
         depotId
       }, secret)
     }
