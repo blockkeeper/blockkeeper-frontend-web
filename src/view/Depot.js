@@ -48,9 +48,11 @@ export default class DepotView extends React.Component {
     }
     this.setState({
       addrs,
-      addrTscs,
       coin0,
       coin1,
+      addrTscs: addrTscs.sort((x, y) => {
+        return new Date(y[1]._t) - new Date(x[1]._t)
+      }),
       blc1: `${blc.get(coin0)}`,
       blc2: `${blc.get(coin1)}`,
       snack: this.getSnack(),
