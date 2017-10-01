@@ -13,7 +13,7 @@ import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, ModeEdit, Delete, Clear, Save} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
-        CoinIcon, TscListAddr, ExtLink} from './Lib'
+        CoinIcon, TscListAddr, ExtLink, formatNumber} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -234,7 +234,7 @@ export default class AddrView extends React.Component {
                   }}
                 >
                   <TransitiveNumber>
-                    {this.state.blc1}
+                    {formatNumber(this.state.blc1, this.state.coin)}
                   </TransitiveNumber>&nbsp;
                   <CoinIcon
                     coin={this.state.coin}
@@ -251,7 +251,7 @@ export default class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {this.state.blc2}
+                      {formatNumber(this.state.blc2, this.state.coin0)}
                     </TransitiveNumber>&nbsp;
                     <CoinIcon
                       coin={this.state.coin0}
@@ -267,7 +267,7 @@ export default class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {this.state.blc3}
+                      {formatNumber(this.state.blc3, this.state.coin1)}
                     </TransitiveNumber>&nbsp;
                     <CoinIcon
                       coin={this.state.coin1}
