@@ -252,25 +252,20 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
   )
 }
 
-const TscListAddr = ({addr, tscs, coin0, addrIcon}) => {
-  return (
-    <div>
-      {tscs.map(tsc => {
-        return tscRow(addr, tsc, coin0, addrIcon)
-      })}
-    </div>
-  )
-}
+const TscListAddr = ({addr, tscs, coin0, addrIcon}) =>
+  <div>
+    {tscs.map(tsc => {
+      return tscRow(addr, tsc, coin0, addrIcon)
+    })}
+  </div>
 
 const TscListAddresses = ({addrTscs, coin0, addrIcon}) =>
   <Paper square style={{...paperStyle}}>
-    <div>
-      {addrTscs.map(addrTsc => {
-        const addr = addrTsc[0]
-        const tsc = addrTsc[1]
-        return tscRow(addr, tsc, coin0, addrIcon)
-      })}
-    </div>
+    {addrTscs.map(addrTsc => {
+      const addr = addrTsc[0]
+      const tsc = addrTsc[1]
+      return tscRow(addr, tsc, coin0, addrIcon)
+    })}
   </Paper>
 
 const Snack = ({msg, onClose}) =>

@@ -256,14 +256,6 @@ export default class TscView extends React.Component {
                     </TableRow>
                     <TableRow>
                       <TableCell width={'10%'}>
-                        Confirmations
-                      </TableCell>
-                      <TableCell numeric style={{maxWidth: 0}}>
-                        21 Confirmations {/* TODO */}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell width={'10%'}>
                         Tags
                       </TableCell>
                       <TableCell numeric style={{maxWidth: 0}}>
