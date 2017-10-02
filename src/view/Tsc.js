@@ -3,11 +3,11 @@ import {LinearProgress} from 'material-ui/Progress'
 import {ArrowBack, Clear, Save, ModeEdit, Launch} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
+import {Link} from 'react-router-dom'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
-import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import TextField from 'material-ui/TextField'
-import {theme, themeBgStyle, paperStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack,
         Modal, CoinIcon, ExtLink, formatNumber} from './Lib'
 import Addr from '../logic/Addr'
@@ -141,6 +141,9 @@ export default class TscView extends React.Component {
       let modeSign = this.state.tsc.mode === 'snd' ? '-' : '+'
       const tscUrl = __.cfg('toBxpUrl')(
         'tsc', this.state.addr.coin)(this.state.tsc.hsh)
+      const flexStyle = {display: 'flex', marginBottom: theme.spacing.unit * 2}
+      const labelStyle = {color: theme.palette.text.secondary, width: theme.spacing.unit * 14, minWidth: theme.spacing.unit * 14, paddingRight: theme.spacing.unit * 4, textAlign: 'right'}
+      const valueStyle = {flexGrow: 1, minWidth: 0}
       return (
         <div style={themeBgStyle}>
           {this.state.snack &&
@@ -207,120 +210,171 @@ export default class TscView extends React.Component {
           <Paper square style={{...paperStyle}} elevation={5}>
             <Grid container justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell width={'10%'}>
-                        Name
-                      </TableCell>
-                      <TableCell numeric style={{maxWidth: 0}}>
-                        {this.state.edit &&
-                        <TextField
-                          fullWidth
-                          placeholder='Name'
-                          value={this.state.name}
-                          error={Boolean(this.state.nameEmsg)}
-                          helperText={this.state.nameEmsg}
-                          onChange={evt => this.set('name', evt.target.value)}
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Name
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    {this.state.edit &&
+                    <TextField
+                      fullWidth
+                      placeholder='Name'
+                      value={this.state.name}
+                      error={Boolean(this.state.nameEmsg)}
+                      helperText={this.state.nameEmsg}
+                      onChange={evt => this.set('name', evt.target.value)}
                         />}
-                        {!this.state.edit &&
-                          this.state.tsc.name}
-                      </TableCell>
-                    </TableRow>
-                    {this.state.tsc.feeDesc &&
-                      <TableRow>
-                        <TableCell width={'10%'}>
-                          Additional costs (fee)
-                        </TableCell>
-                        <TableCell numeric style={{maxWidth: 0}}>
-                          {this.state.tsc.feeDesc}
-                        </TableCell>
-                      </TableRow>}
-                    <TableRow>
-                      <TableCell width={'10%'}>
-                        Time
-                      </TableCell>
-                      <TableCell numeric style={{maxWidth: 0}}>
-                        2017-10-01 12:22:27 {/* TODO */}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell width={'10%'}>
-                        Included In Blocks
-                      </TableCell>
-                      <TableCell numeric style={{maxWidth: 0}}>
-                        <a href='#' target='_blank'>
-                          487806 {/* TODO */}
-                        </a>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell width={'10%'}>
-                        Tags
-                      </TableCell>
-                      <TableCell numeric style={{maxWidth: 0}}>
-                        {this.state.edit &&
-                          <TextField
-                            placeholder='Tags'
-                            fullWidth
-                            value={this.state.tagsJoin}
-                            error={Boolean(this.state.tagsEmsg)}
-                            helperText={this.state.tagsEmsg}
-                            onChange={evt => {
-                              this.set('tagsJoin', evt.target.value)
-                            }}
-                          />}
-                        {!this.state.edit &&
-                          this.state.tagsJoin}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell width={'10%'}>
-                        Notes
-                      </TableCell>
-                      <TableCell numeric style={{maxWidth: 0}}>
-                        {this.state.edit &&
-                          <TextField
-                            placeholder='Notes'
-                            fullWidth
-                            value={this.state.desc}
-                            error={Boolean(this.state.descEmsg)}
-                            helperText={this.state.descEmsg}
-                            onChange={evt => this.set('desc', evt.target.value)}
-                          />}
-                        {!this.state.edit &&
-                          this.state.tsc.desc}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell width={'10%'}>
-                        Amount
-                      </TableCell>
-                      <TableCell numeric style={{maxWidth: 0}}>
-                        {this.state.tsc.amntDesc[0]}
-                      </TableCell>
-                    </TableRow>
-                    {this.state.tsc.amntDesc.length > 1 &&
-                      <TableRow>
-                        <TableCell width={'10%'}>
-                          Amount Details
-                        </TableCell>
-                        <TableCell numeric style={{maxWidth: 0}}>
-                          {this.state.tsc.amntDesc[1]}
-                        </TableCell>
-                      </TableRow>}
-                    <TableRow>
-                      <TableCell width={'10%'}>
-                        Confirmations
-                      </TableCell>
-                      <TableCell numeric style={{maxWidth: 0}}>
-                        {this.state.tsc.cfmCnt > 100
-                          ? 'More than 100'
-                          : this.state.tsc.cfmCnt}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                    {!this.state.edit &&
+                      <Typography type='body1' style={overflowStyle}>
+                        {this.state.tsc.name}
+                      </Typography>}
+                  </div>
+                </div>
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Amount
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    <Typography type='body1' style={overflowStyle}>
+                      {this.state.tsc.amntDesc[0]}
+                    </Typography>
+                  </div>
+                </div>
+                {this.state.tsc.amntDesc.length > 1 &&
+                  <div style={flexStyle}>
+                    <div style={labelStyle}>
+                      <Typography type='body1' style={overflowStyle} color='inherit'>
+                        Amount Details
+                      </Typography>
+                    </div>
+                    <div style={valueStyle}>
+                      <Typography type='body1' style={overflowStyle}>
+                        {this.state.tsc.amntDesc[1]}
+                      </Typography>
+                    </div>
+                  </div>}
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Confirmations
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    <Typography type='body1' style={overflowStyle}>
+                      {this.state.tsc.cfmCnt > 100
+                        ? 'More than 100'
+                        : this.state.tsc.cfmCnt}
+                    </Typography>
+                  </div>
+                </div>
+                {this.state.tsc.feeDesc &&
+                  <div style={flexStyle}>
+                    <div style={labelStyle}>
+                      <Typography type='body1' style={overflowStyle} color='inherit'>
+                        Additional costs (fee)
+                      </Typography>
+                    </div>
+                    <div style={valueStyle}>
+                      <Typography type='body1' style={overflowStyle}>
+                        {this.state.tsc.feeDesc}
+                      </Typography>
+                    </div>
+                  </div>}
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Time
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    <Typography type='body1' style={overflowStyle}>
+                      2017-10-01 12:22:27 {/* TODO */}
+                    </Typography>
+                  </div>
+                </div>
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Block
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    <a href='#' target='_blank'>
+                      <Typography type='body1' style={overflowStyle}>
+                        487806 {/* TODO */}
+                      </Typography>
+                    </a>
+                  </div>
+                </div>
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Tags
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    {this.state.edit &&
+                      <TextField
+                        placeholder='Tags'
+                        fullWidth
+                        value={this.state.tagsJoin}
+                        error={Boolean(this.state.tagsEmsg)}
+                        helperText={this.state.tagsEmsg}
+                        onChange={evt => {
+                          this.set('tagsJoin', evt.target.value)
+                        }}
+                      />}
+                    {!this.state.edit &&
+                    <Typography type='body1' style={overflowStyle}>
+                      {this.state.tagsJoin}
+                    </Typography>}
+                  </div>
+                </div>
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Notes
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    {this.state.edit &&
+                      <TextField
+                        placeholder='Notes'
+                        fullWidth
+                        value={this.state.desc}
+                        error={Boolean(this.state.descEmsg)}
+                        helperText={this.state.descEmsg}
+                        onChange={evt => this.set('desc', evt.target.value)}
+                      />}
+                    {!this.state.edit &&
+                      <Typography type='body1' style={overflowStyle}>
+                        {this.state.tsc.desc}
+                      </Typography>}
+                  </div>
+                </div>
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Address
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    <Link
+                      to={`/addr/${this.state.addr._id}`}
+                      style={{textDecoration: 'none'}}
+                    >
+                      <Typography type='body1' style={overflowStyle}>
+                        <CoinIcon coin={this.state.addr.coin} size={13} />&nbsp;
+                        <b>{this.state.addr.name}</b>
+                      </Typography>
+                    </Link>
+                  </div>
+                </div>
+
                 <ExtLink
                   to={tscUrl}
                   style={{textDecoration: 'none'}}
