@@ -144,6 +144,16 @@ export default class RgstrView extends React.Component {
                     helperText={this.state.rpwEmsg}
                     onChange={evt => this.set('rpw', evt.target.value)}
                   />
+                  <Typography type='body1' gutterBottom style={{
+                    textAlign: 'left',
+                    marginTop: theme.spacing.unit * 2
+                  }}>
+                    Please make sure you store your username and password safely.
+                    Due to data privacy and security reasons, it is NOT possible
+                    to recover your username or password. If you forget your
+                    login credentials, all your data will be lost and you need
+                    to setup a new account from the scratch.
+                  </Typography>
                   {!this.state.busy &&
                     <div>
                       <Button
