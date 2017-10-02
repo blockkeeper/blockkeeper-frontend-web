@@ -272,7 +272,7 @@ const Snack = ({msg, onClose}) =>
   <Snackbar
     open
     autoHideDuration={3500}
-    enterTransitionDuration={500}
+    transitionDuration={500}
     anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
     onRequestClose={onClose}
     SnackbarContentProps={{'aria-describedby': 'message-id'}}
