@@ -56,7 +56,8 @@ export default class DepotView extends React.Component {
       blc1: `${blc.get(coin0)}`,
       blc2: `${blc.get(coin1)}`,
       snack: this.getSnack(),
-      bxpSts: this.cx.depot.getBxpSts()
+      bxpSts: this.cx.depot.getBxpSts(),
+      addrUpdErrIds: this.cx.depot.addrUpdErrIds
     })
   }
 
@@ -115,6 +116,7 @@ export default class DepotView extends React.Component {
               addrs={this.state.addrs}
               addrUpdIds={new Set()}    // TODO
               coin0={this.state.coin0}
+              addrUpdErrIds={this.state.addrUpdErrIds}
             />}
           {this.state.tabIx === 1 && this.state.addrTscs.length > 0 &&
             <TscListAddresses

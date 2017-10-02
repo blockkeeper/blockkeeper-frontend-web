@@ -9,6 +9,7 @@ export default class Depot extends ApiBase {
     this.getBxpSto = () => __.getSto('bxp')
     this.setBxpSto = val => __.setSto('bxp', val)
     this.delBxpSto = () => __.delSto('bxp')
+    this.addrUpdErrIds = new Set()
     this.getAddrBlc = this.getAddrBlc.bind(this)
     this.getTscBlc = this.getTscBlc.bind(this)
     this.loadAddrs = this.loadAddrs.bind(this)
@@ -44,6 +45,10 @@ export default class Depot extends ApiBase {
     return blcs
   }
 
+  getAddrUpdIds () {
+    return this.addrUpdIds
+  }
+
   getBxpSts () {
     let bxp = this.getBxpSto()
     if (!bxp) return 'ready'
@@ -69,6 +74,12 @@ export default class Depot extends ApiBase {
     try {  // function can be undefined (race condition)
       this.cx.tmp.bxpSts(sts)
     } catch (e) {}
+  }
+
+  setAddrUpdErrIds (addresses) {
+    for (let addr of addresses) {
+      this.addrUpdErrIds.add(addr._id)
+    }
   }
 
   watchBxp () {
@@ -97,6 +108,7 @@ export default class Depot extends ApiBase {
       this.watchBxp()
       throw __.err('Bxp failed for all addrs: Loading addrs failed', {e})
     }
+    this.addrUpdErrIds = new Set()
     const addrsByCoin = new Map()
     const curAddrs = new Map()
     for (let addr of addrs) {
@@ -125,8 +137,8 @@ export default class Depot extends ApiBase {
           }
           await this.saveAddrs(addrs)
         } catch (e) {
-          if (__.cfg('isDev')) throw (e)
           this.warn(`Bxp failed for addrs: ${e.message}`)
+          this.setAddrUpdErrIds(addrChunk)
         }
       }
     }

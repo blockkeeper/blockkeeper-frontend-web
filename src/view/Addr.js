@@ -13,7 +13,7 @@ import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, ModeEdit, Delete, Clear, Save} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
-        CoinIcon, TscListAddr, ExtLink, formatNumber} from './Lib'
+        CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -76,7 +76,8 @@ export default class AddrView extends React.Component {
       blc2: `${blc.get(coin0)}`,
       blc3: `${blc.get(coin1)}`,
       snack: this.getSnack(),
-      bxpSts: this.cx.depot.getBxpSts()
+      bxpSts: this.cx.depot.getBxpSts(),
+      addrUpdErrIds: this.cx.depot.addrUpdErrIds
     })
   }
 
@@ -242,6 +243,8 @@ export default class AddrView extends React.Component {
                     color={theme.palette.primary['500']}
                     alt
                   />
+                  {this.state.addrUpdErrIds.has(this.state.addr._id) &&
+                    <InfoUpdateFailed />}
                 </Typography>
                 {!this.state.toggleCoins &&
                   <Typography

@@ -8,6 +8,7 @@ import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import DeleteForeverIcon from 'material-ui-icons/DeleteForever'
 import { FormControl } from 'material-ui/Form'
 import Select from 'material-ui/Select'
+import Tooltip from 'material-ui/Tooltip'
 import Input, { InputLabel } from 'material-ui/Input'
 import TransitiveNumber from 'react-transitive-number'
 import Toolbar from 'material-ui/Toolbar'
@@ -21,7 +22,7 @@ import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import {Add, Close, Autorenew, HourglassEmpty,
-        Person, InfoOutline} from 'material-ui-icons'
+        Person, InfoOutline, Error} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors,
@@ -400,7 +401,7 @@ const DepotEmpty = () =>
     </Link>
   </Paper>
 
-const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
+const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds}) => {
   return (
     <Paper
       square
@@ -422,10 +423,9 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
             }}
           >
             <div style={{paddingRight: theme.spacing.unit * 2}}>
-              <CoinIcon coin={addr.coin} size={theme.spacing.unit * 5} />
+              <CoinIcon coin={addr.coin} size={42} />
             </div>
             <div style={{flexGrow: 1, minWidth: 0}}>
-              {!addrUpdIds.has(addr._id) &&
               <Link
                 to={`/addr/${addr._id}`}
                 style={{textDecoration: 'none'}}
@@ -434,29 +434,25 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
                   type='display1'
                   style={{color: theme.palette.text.primary, ...overflowStyle}}
                 >
-                  {addr.name}
+                  {addr.name}&nbsp;
                 </Typography>
-              </Link>}
-              {addrUpdIds.has(addr._id) &&
-              <Typography type='body2'>
-                {addr.name}
-              </Typography>}
+              </Link>
               <Typography
                 type='body2'
                 style={{color: theme.palette.text.secondary, ...overflowStyle}}
             >
                 {addr.hsh &&
-                <Hidden smDown>
-                  <span>
-                    <b>Address</b>&nbsp;
-                  </span>
-                </Hidden>}
+                  <Hidden smDown>
+                    <span>
+                      <b>Address</b>&nbsp;
+                    </span>
+                  </Hidden>}
                 {!addr.hsh && addr.desc &&
-                <Hidden smDown>
-                  <span>
-                    <b>Note</b>&nbsp;
-                  </span>
-                </Hidden>}
+                  <Hidden smDown>
+                    <span>
+                      <b>Note</b>&nbsp;
+                    </span>
+                  </Hidden>}
                 {addr.hsh || addr.desc}
               </Typography>
             </div>
@@ -485,6 +481,8 @@ const PaperGrid = ({addrs, addrUpdIds, coin0}) => {
                 />
               </Typography>
             </div>
+            {addrUpdErrIds.has(addr._id) &&
+              <InfoUpdateFailed />}
           </Paper>
         )
       })}
@@ -539,6 +537,13 @@ class DropDown extends React.Component {
   }
 }
 
+const InfoUpdateFailed = () =>
+  <Tooltip id='tooltip-icon' title='Update failed' placement='top'>
+    <IconButton aria-label='Error' style={{height: '100%', marginLeft: theme.spacing.unit * 2}}>
+      <Error style={{color: theme.palette.error[500], height: theme.spacing.unit * 4, width: theme.spacing.unit * 4}} />
+    </IconButton>
+  </Tooltip>
+
 const UserList = ({askLogout, askDelete}) =>
   <List>
     <a
@@ -586,5 +591,6 @@ export {
   DropDown,
   formatNumber,
   ExtLink,
+  InfoUpdateFailed,
   UserList
 }
