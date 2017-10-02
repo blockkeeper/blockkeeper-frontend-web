@@ -47,7 +47,7 @@ class BckcyphBxpBase extends BxpBase {
         //   resources. Since the default, non-registered rate limit per second
         //   is 3, larger batches require a paid API token.
         chunkSize: 3,
-        sleepSec: 1
+        sleepSec: 0.1
       }
     }
     this.baseUrl = `https://api.blockcypher.com/v1/${this.coin}/main`
