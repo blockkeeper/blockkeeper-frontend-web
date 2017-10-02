@@ -103,7 +103,7 @@ export default class RgstrView extends React.Component {
           <LinearProgress />}
           <div style={loginStyle}>
             <Grid container spacing={0} justify='center'>
-              <Grid item xs={12} sm={10}>
+              <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
                 <Typography type='display3' color='inherit'>
                   Blockkeeper
                 </Typography>
