@@ -13,7 +13,7 @@ import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, ModeEdit, Delete, Clear, Save} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
-        CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed} from './Lib'
+        CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed, ToTopBtn} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -400,6 +400,9 @@ export default class AddrView extends React.Component {
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([this.addrId])}
             bxpSts={this.state.bxpSts}
+          />
+          <ToTopBtn
+            style={{bottom: theme.spacing.unit * 10}}
           />
         </div>
       )

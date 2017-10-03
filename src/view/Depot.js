@@ -3,7 +3,8 @@ import {LinearProgress} from 'material-ui/Progress'
 import {theme, themeBgStyle} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
-        DepotEmpty} from './Lib'
+        DepotEmpty, ToTopBtn} from './Lib'
+
 import __ from '../util'
 
 export default class DepotView extends React.Component {
@@ -124,6 +125,9 @@ export default class DepotView extends React.Component {
               coin0={this.state.coin0}
               addrIcon
             />}
+          <ToTopBtn
+            style={{bottom: (this.state.tabIx === 0 || this.state.addrTscs.length === 0) ? theme.spacing.unit * 18 : theme.spacing.unit * 10}}
+          />
           {this.state.addrs.length > 0 &&
             <BxpFloatBtn
               onClick={() => this.cx.depot.bxp([])}

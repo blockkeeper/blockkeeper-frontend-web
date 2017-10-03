@@ -8,6 +8,7 @@ import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import DeleteForeverIcon from 'material-ui-icons/DeleteForever'
 import { FormControl } from 'material-ui/Form'
 import Select from 'material-ui/Select'
+import ScrollToTop from 'react-scroll-up'
 import Tooltip from 'material-ui/Tooltip'
 import Input, { InputLabel } from 'material-ui/Input'
 import TransitiveNumber from 'react-transitive-number'
@@ -22,7 +23,7 @@ import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import {Add, Close, Autorenew, HourglassEmpty,
-        Person, InfoOutline, Error} from 'material-ui-icons'
+        Person, InfoOutline, Error, KeyboardArrowUp} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors,
@@ -130,6 +131,17 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
       </Typography>
     </div>
   </div>
+
+const ToTopBtn = ({style}) =>
+  <ScrollToTop showUnder={200} style={{right: theme.spacing.unit * 2, ...style}}>
+    <Button
+      fab
+      aria-label='add'
+      color='primary'
+    >
+      <KeyboardArrowUp />
+    </Button>
+  </ScrollToTop>
 
 const FloatBtn = ({onClick, key}) => {
   return (
@@ -586,6 +598,7 @@ export {
   CoinIcon,
   Snack,
   Modal,
+  ToTopBtn,
   FloatBtn,
   BxpFloatBtn,
   DropDown,
