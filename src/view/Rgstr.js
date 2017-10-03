@@ -150,8 +150,8 @@ export default class RgstrView extends React.Component {
                   }}>
                     Please make sure you store your username and password safely.
                     Due to data privacy and security reasons, it is NOT possible
-                    to recover your username or password. If you forget your
-                    login credentials, all your data will be lost and you need
+                    to recover your username or password. If you <b>forget your
+                    login</b> credentials, all your <b>data will be lost</b> and you need
                     to setup a new account from the scratch.
                   </Typography>
                   {!this.state.busy &&
