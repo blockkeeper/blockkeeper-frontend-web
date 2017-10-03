@@ -8,6 +8,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
+import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
@@ -284,14 +285,20 @@ export default class AddrView extends React.Component {
                   </IconButton>}
                 {this.state.show &&
                   <div>
+                    <Divider light />
                     {this.state.addr.hsh &&
-                    <div style={{padding: theme.spacing.unit * 2}}>
+                    <div style={{
+                      paddingTop: theme.spacing.unit * 4,
+                      paddingBottom: theme.spacing.unit * 4,
+                      paddingLeft: theme.spacing.unit * 2,
+                      paddingRight: theme.spacing.unit * 2
+                    }}>
                       <QRCode value={this.state.addr.hsh} />
                       <Typography style={{fontSize: '13px'}}>
                         {this.state.addr.hsh}
                       </Typography>
-                    </div>
-                    }
+                    </div>}
+                    <Divider light />
                     {this.state.edit &&
                       <Button onClick={() => this.setState({ask: true})}>
                         <Delete
@@ -302,77 +309,79 @@ export default class AddrView extends React.Component {
                         />
                         Delete Address
                       </Button>}
-                    <Table>
-                      <TableBody>
-                        {this.state.addr.hsh &&
+                    <div style={{overflowX: 'auto'}}>
+                      <Table>
+                        <TableBody>
+                          {this.state.addr.hsh &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                No. Transactions
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {this.state.addr.tscCnt}
+                                {this.state.addr.tscCnt > __.cfg('mxTscCnt') &&
+                                  ` (only the last ${__.cfg('mxTscCnt')} ` +
+                                  'are listed)'}
+                              </TableCell>
+                            </TableRow>}
+                          {this.state.addr.hsh &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                Total Received
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {this.state.addr.rcvAmnt}
+                                <CoinIcon
+                                  coin={this.state.coin}
+                                  size={12}
+                                  color='primary'
+                                  alt
+                                />
+                              </TableCell>
+                            </TableRow>}
+                          {this.state.addr.hsh &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                Total Send
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {this.state.addr.sndAmnt}
+                                <CoinIcon
+                                  coin={this.state.coin}
+                                  size={12}
+                                  color='primary'
+                                  alt
+                                />
+                              </TableCell>
+                            </TableRow>}
                           <TableRow>
-                            <TableCell width={'10%'}>
-                              No. Transactions
+                            <TableCell width={'10%'} padding='none'>
+                              Notes
                             </TableCell>
-                            <TableCell numeric>
-                              {this.state.addr.tscCnt}
-                              {this.state.addr.tscCnt > __.cfg('mxTscCnt') &&
-                                ` (only the last ${__.cfg('mxTscCnt')} ` +
-                                'are listed)'}
+                            <TableCell numeric padding='none'>
+                              {this.state.edit &&
+                                <TextField
+                                  fullWidth
+                                  value={this.state.desc}
+                                  error={Boolean(this.state.descEmsg)}
+                                  helperText={this.state.descEmsg}
+                                  onChange={evt => {
+                                    this.set('desc', evt.target.value)
+                                  }}
+                                />}
+                              {!this.state.edit &&
+                                this.state.addr.desc}
                             </TableCell>
-                          </TableRow>}
-                        {this.state.addr.hsh &&
+                          </TableRow>
                           <TableRow>
-                            <TableCell width={'10%'}>
-                              Total Received
+                            <TableCell width={'10%'} padding='none'>
+                              Tags
                             </TableCell>
-                            <TableCell numeric>
-                              {this.state.addr.rcvAmnt}
-                              <CoinIcon
-                                coin={this.state.coin}
-                                size={12}
-                                color='primary'
-                                alt
-                              />
-                            </TableCell>
-                          </TableRow>}
-                        {this.state.addr.hsh &&
-                          <TableRow>
-                            <TableCell width={'10%'}>
-                              Total Send
-                            </TableCell>
-                            <TableCell numeric>
-                              {this.state.addr.sndAmnt}
-                              <CoinIcon
-                                coin={this.state.coin}
-                                size={12}
-                                color='primary'
-                                alt
-                              />
-                            </TableCell>
-                          </TableRow>}
-                        <TableRow>
-                          <TableCell width={'10%'}>
-                            Notes
-                          </TableCell>
-                          <TableCell numeric>
-                            {this.state.edit &&
-                              <TextField
-                                fullWidth
-                                value={this.state.desc}
-                                error={Boolean(this.state.descEmsg)}
-                                helperText={this.state.descEmsg}
-                                onChange={evt => {
-                                  this.set('desc', evt.target.value)
-                                }}
-                              />}
-                            {!this.state.edit &&
-                              this.state.addr.desc}
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell width={'10%'}>
-                            Tags
-                          </TableCell>
-                          <TableCell numeric />
-                        </TableRow>
-                      </TableBody>
-                    </Table>
+                            <TableCell numeric padding='none' />
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </div>
                     <IconButton onClick={this.show}>
                       <ArrowDropUp style={{height: '50px', width: '50px'}} />
                     </IconButton>
