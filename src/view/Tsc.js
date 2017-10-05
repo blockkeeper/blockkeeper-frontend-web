@@ -8,7 +8,7 @@ import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
-import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack,
+import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
         Modal, CoinIcon, ExtLink, formatNumber} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
@@ -396,10 +396,6 @@ export default class TscView extends React.Component {
               </Grid>
             </Grid>
           </Paper>
-          <BxpFloatBtn
-            onClick={() => this.cx.depot.bxp([])}
-            bxpSts={this.state.bxpSts}
-          />
         </div>
       )
     } else {
