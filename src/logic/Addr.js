@@ -116,9 +116,14 @@ export default class Addr extends ApiBase {
   toTsc (coin, upd, cur) {
     const getAmnt = (ua, ca) => __.toFloat(ua != null ? ua : (ca || 0))
     const toDesc = (action, tsc) => {
-      let desc = [`${tsc.amnt} ${action}`]
+      let desc = [{
+        [action]: tsc.amnt
+      }]
       if (tsc.sndAmnt && tsc.rcvAmnt) {
-        desc.push(`${tsc.sndAmnt} sent, ${tsc.rcvAmnt} received`)
+        desc.push({
+          snd: tsc.sndAmnt,
+          rcv: tsc.rcvAmnt
+        })
       }
       return desc
     }
@@ -139,9 +144,9 @@ export default class Addr extends ApiBase {
       tags: upd.tags || cur.tags || []
     }
     if (tsc.mode === 'rcv') {
-      tsc.amntDesc = toDesc('received', tsc, coin)
+      tsc.amntDesc = toDesc(tsc.mode, tsc, coin)
     } else if (tsc.mode === 'snd') {
-      tsc.amntDesc = toDesc('sent', tsc, coin)
+      tsc.amntDesc = toDesc(tsc.mode, tsc, coin)
     } else {
       tsc.amntDesc = ['Unknown (not yet fetched)']
     }

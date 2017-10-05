@@ -356,6 +356,20 @@ export default class AddrView extends React.Component {
                             </TableRow>}
                           <TableRow>
                             <TableCell width={'10%'} padding='none'>
+                              Balance
+                            </TableCell>
+                            <TableCell numeric padding='none'>
+                              {formatNumber(this.state.blc1, this.state.coin)}
+                              <CoinIcon
+                                coin={this.state.coin}
+                                size={12}
+                                color='primary'
+                                alt
+                              />
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell width={'10%'} padding='none'>
                               Notes
                             </TableCell>
                             <TableCell numeric padding='none'>

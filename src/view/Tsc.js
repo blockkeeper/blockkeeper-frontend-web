@@ -173,8 +173,8 @@ export default class TscView extends React.Component {
           <LinearProgress />}
           <Paper square style={{...paperStyle, textAlign: 'center'}}>
             <Typography type='headline' style={{color: modeColor}}>
-              {modeSign} {formatNumber(this.state.tsc.amnt, this.addr.coin)}
-              <CoinIcon coin={this.addr.coin} alt color={modeColor} />
+              {modeSign} {formatNumber(this.state.tsc.amnt, this.state.addr.coin)}
+              <CoinIcon coin={this.state.addr.coin} alt color={modeColor} />
             </Typography>
             {!this.state.toggleCoins &&
             <Typography
@@ -235,12 +235,18 @@ export default class TscView extends React.Component {
                 <div style={flexStyle}>
                   <div style={labelStyle}>
                     <Typography type='body1' style={overflowStyle} color='inherit'>
-                      Amount
+                      Amount Exact
                     </Typography>
                   </div>
                   <div style={valueStyle}>
                     <Typography type='body1' style={overflowStyle}>
-                      {this.state.tsc.amntDesc[0]}
+                      {this.state.tsc.amntDesc[0][this.state.tsc.mode]}
+                      <CoinIcon
+                        coin={this.state.addr.coin}
+                        size={12}
+                        color='primary'
+                        alt
+                      />
                     </Typography>
                   </div>
                 </div>
@@ -253,10 +259,45 @@ export default class TscView extends React.Component {
                     </div>
                     <div style={valueStyle}>
                       <Typography type='body1' style={overflowStyle}>
-                        {this.state.tsc.amntDesc[1]}
+                        {this.state.tsc.amntDesc[1]['snd']}
+                        <CoinIcon
+                          coin={this.state.addr.coin}
+                          size={12}
+                          color='primary'
+                          alt
+                        />&nbsp;
+                        send
+                        <br />
+                        {this.state.tsc.amntDesc[1]['rcv']}
+                        <CoinIcon
+                          coin={this.state.addr.coin}
+                          size={12}
+                          color='primary'
+                          alt
+                        />&nbsp;
+                        received
                       </Typography>
                     </div>
                   </div>}
+                <div style={flexStyle}>
+                  <div style={labelStyle}>
+                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                      Fees
+                    </Typography>
+                  </div>
+                  <div style={valueStyle}>
+                    <Typography type='body1' style={overflowStyle}>
+                      0.2345
+                      <CoinIcon
+                        coin={this.state.addr.coin}
+                        size={12}
+                        color='primary'
+                        alt
+                      />
+                      {/* TODO */}
+                    </Typography>
+                  </div>
+                </div>
                 <div style={flexStyle}>
                   <div style={labelStyle}>
                     <Typography type='body1' style={overflowStyle} color='inherit'>
@@ -303,11 +344,9 @@ export default class TscView extends React.Component {
                     </Typography>
                   </div>
                   <div style={valueStyle}>
-                    <a href='#' target='_blank'>
-                      <Typography type='body1' style={overflowStyle}>
+                    <Typography type='body1' style={overflowStyle}>
                         487806 {/* TODO */}
-                      </Typography>
-                    </a>
+                    </Typography>
                   </div>
                 </div>
                 <div style={flexStyle}>
