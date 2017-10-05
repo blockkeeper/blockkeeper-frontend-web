@@ -366,11 +366,11 @@ class Modal extends React.Component {
 }
 
 const formatNumber = (n, currency) => {
-  if (typeof n !== 'number') {
-    n = Number(n)
-  }
   // TODO use user locale
-  return n.toLocaleString('en-GB', { maximumFractionDigits: __.dec(currency) })
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: __.dec(currency)
+  }).format(n)
 }
 
 const CoinIcon = ({coin, alt, color, size}) => {
