@@ -23,7 +23,7 @@ import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import {Add, Close, Autorenew, HourglassEmpty,
-        Person, InfoOutline, Error, KeyboardArrowUp} from 'material-ui-icons'
+        AccountCircle, InfoOutline, Error, KeyboardArrowUp} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors,
@@ -86,7 +86,7 @@ const TopBar = ({
       {!noUser &&
       <Link to={'/user/edit'}>
         <IconButton aria-label='Menu' color='contrast'>
-          <Person />
+          <AccountCircle />
         </IconButton>
       </Link>}
     </Toolbar>
@@ -112,7 +112,7 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
         align='center'
         type='display3'
         color='inherit'
-        style={{fontWeight: '100'}}
+        style={{fontWeight: '200'}}
       >
         <TransitiveNumber>
           {title ? formatNumber(title, coin0) : formatNumber(0, coin0)}
@@ -556,6 +556,12 @@ const InfoUpdateFailed = () =>
     </IconButton>
   </Tooltip>
 
+const Edit = () =>
+  <span>Edit</span>
+
+const Save = () =>
+  <span>Save</span>
+
 const UserList = ({askLogout, askDelete}) =>
   <List>
     <a
@@ -605,5 +611,7 @@ export {
   formatNumber,
   ExtLink,
   InfoUpdateFailed,
+  Save,
+  Edit,
   UserList
 }

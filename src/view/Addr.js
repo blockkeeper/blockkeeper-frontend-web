@@ -12,9 +12,9 @@ import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
-       Launch, ModeEdit, Delete, Clear, Save} from 'material-ui-icons'
+       Launch, Delete, Clear} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
-        CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed, ToTopBtn} from './Lib'
+        CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed, ToTopBtn, Save, Edit} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -169,7 +169,7 @@ export default class AddrView extends React.Component {
             midTitle='Address'
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}
-            icon={<ModeEdit />}
+            icon={<Edit />}
             onClick={this.edit}
             noUser
           />}

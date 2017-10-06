@@ -1,6 +1,6 @@
 import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
-import {ArrowBack, Clear, Save, ModeEdit, Launch} from 'material-ui-icons'
+import {ArrowBack, Clear, Launch} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
 import {Link} from 'react-router-dom'
@@ -9,7 +9,7 @@ import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
-        Modal, CoinIcon, ExtLink, formatNumber} from './Lib'
+        Modal, CoinIcon, ExtLink, formatNumber, Save, Edit} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -165,7 +165,7 @@ export default class TscView extends React.Component {
               midTitle='Transaction'
               iconLeft={<ArrowBack />}
               onClickLeft={this.goBack}
-              icon={<ModeEdit />}
+              icon={<Edit />}
               onClick={this.edit}
               noUser
             />}

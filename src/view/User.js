@@ -1,8 +1,8 @@
 import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
 import TextField from 'material-ui/TextField'
-import {TopBar, Modal, DropDown, UserList} from './Lib'
-import {ArrowBack, Clear, Save, ModeEdit} from 'material-ui-icons'
+import {TopBar, Modal, DropDown, UserList, Save, Edit} from './Lib'
+import {ArrowBack, Clear} from 'material-ui-icons'
 import {themeBgStyle, paperStyle} from './Style'
 import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
@@ -185,7 +185,7 @@ export default class UserView extends React.Component {
           {!this.state.edit &&
           <TopBar
             midTitle='User'
-            icon={<ModeEdit />}
+            icon={<Edit />}
             onClick={this.edit}
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}
