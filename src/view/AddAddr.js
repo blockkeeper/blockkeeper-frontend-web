@@ -98,7 +98,8 @@ class AddAddrView extends React.Component {
   handleQRScan (data) {
     if (data !== null) {
       this.setState({
-        hsh: data.trim().replace(/(\w*:)|((\?.*$))/g, '') // remove URI format + remove ?strings
+        hsh: data.trim().replace(/(\w*:)|((\?.*$))/g, ''), // remove URI format + remove ?strings
+        qrMode: false
       })
     }
   }
@@ -116,7 +117,9 @@ class AddAddrView extends React.Component {
         if (name && !d.amntEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
       } else {
         let hsh = this.state.hsh.trim()
-        d.hshEmsg = __.vldAlphNum(hsh, {strict: true, min: __.cfg('coins').cryp[this.state.coin].minAddrLength, max: __.cfg('coins').cryp[this.state.coin].maxAddrLength})
+        if (hsh) {
+          d.hshEmsg = __.vldAlphNum(hsh, {strict: true, min: __.cfg('coins').cryp[this.state.coin].minAddrLength, max: __.cfg('coins').cryp[this.state.coin].maxAddrLength})
+        }
         if (hsh && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
       }
       this.setState(d)

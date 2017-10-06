@@ -15,7 +15,7 @@ import {theme, themeBgStyle, paperStyle, overflowStyle, noTxtDeco, qrCodeWrap} f
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, Delete, Clear} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
-        CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed, ToTopBtn, Save, Edit} from './Lib'
+        CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed, ToTopBtn, Done, Edit} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -38,10 +38,6 @@ const styles = {
     fontWeight: '400',
     color: theme.palette.primary['500'],
     paddingTop: theme.spacing.unit * 2
-  },
-  arrowWrap: {
-    height: '50px',
-    width: '50px'
   },
   colorPrimary: {
     color: theme.palette.primary['500']
@@ -124,6 +120,7 @@ class AddrView extends React.Component {
 
   async save () {
     if (this.state.upd === false) {
+      this.setState({edit: false})
       return
     }
     this.setState({edit: false, busy: true})
@@ -200,7 +197,7 @@ class AddrView extends React.Component {
             midTitle='Address'
             iconLeft={<Clear />}
             onClickLeft={() => this.setState({edit: false})}
-            icon={<Save />}
+            icon={<Done />}
             onClick={this.save}
             noUser
           />}
@@ -311,7 +308,10 @@ class AddrView extends React.Component {
                   </Typography>}
                 {!this.state.show &&
                   <IconButton onClick={this.show}>
-                    <ArrowDropDown className={this.props.arrowWrap} />
+                    <ArrowDropDown style={{
+                      height: '50px',
+                      width: '50px'
+                    }} />
                   </IconButton>}
                 {this.state.show &&
                   <div>
@@ -352,13 +352,7 @@ class AddrView extends React.Component {
                                 Total Received
                               </TableCell>
                               <TableCell numeric padding='none'>
-                                {this.state.addr.rcvAmnt}
-                                <CoinIcon
-                                  coin={this.state.coin}
-                                  size={12}
-                                  color='primary'
-                                  alt
-                                />
+                                {this.state.addr.rcvAmnt} {this.state.coin}
                               </TableCell>
                             </TableRow>}
                           {this.state.addr.hsh &&
@@ -367,13 +361,7 @@ class AddrView extends React.Component {
                                 Total Send
                               </TableCell>
                               <TableCell numeric padding='none'>
-                                {this.state.addr.sndAmnt}
-                                <CoinIcon
-                                  coin={this.state.coin}
-                                  size={12}
-                                  color='primary'
-                                  alt
-                                />
+                                {this.state.addr.sndAmnt} {this.state.coin}
                               </TableCell>
                             </TableRow>}
                           <TableRow>
@@ -381,13 +369,7 @@ class AddrView extends React.Component {
                               Balance
                             </TableCell>
                             <TableCell numeric padding='none'>
-                              {formatNumber(this.state.blc1, this.state.coin)}
-                              <CoinIcon
-                                coin={this.state.coin}
-                                size={12}
-                                color='primary'
-                                alt
-                              />
+                              {formatNumber(this.state.blc1, this.state.coin)} {this.state.coin}
                             </TableCell>
                           </TableRow>
                           <TableRow>
@@ -419,7 +401,10 @@ class AddrView extends React.Component {
                       </Table>
                     </div>
                     <IconButton onClick={this.show}>
-                      <ArrowDropUp className={this.props.arrowWrap} />
+                      <ArrowDropUp style={{
+                        height: '50px',
+                        width: '50px'
+                      }} />
                     </IconButton>
                   </div>
                 }

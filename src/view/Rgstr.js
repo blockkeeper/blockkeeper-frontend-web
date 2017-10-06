@@ -117,7 +117,7 @@ class RgstrView extends React.Component {
       )
     } else {
       return (
-        <div className={this.props.classes.root}>
+        <div className={this.props.classes.fullHeightRoot}>
           {this.state.busy &&
           <LinearProgress />}
           <div className={this.props.classes.loginStyle}>

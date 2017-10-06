@@ -5,7 +5,7 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn} from './Lib'
 import __ from '../util'
-import {theme, themeBgStyle} from './Style'
+import {themeBgStyle} from './Style'
 
 const styles = {
   themeBgStyle

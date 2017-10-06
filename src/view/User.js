@@ -2,7 +2,7 @@ import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
 import TextField from 'material-ui/TextField'
 import { withStyles } from 'material-ui/styles'
-import {TopBar, Modal, DropDown, UserList, Save, Edit} from './Lib'
+import {TopBar, Modal, DropDown, UserList, Done, Edit} from './Lib'
 import {ArrowBack, Clear} from 'material-ui-icons'
 import {themeBgStyle, paperStyle} from './Style'
 import Paper from 'material-ui/Paper'
@@ -75,6 +75,7 @@ class UserView extends React.Component {
 
   async save () {
     if (this.state.upd === false) {
+      this.setState({edit: false})
       return
     }
     this.setState({busy: true})
@@ -185,7 +186,7 @@ class UserView extends React.Component {
           {this.state.edit &&
           <TopBar
             midTitle='User'
-            icon={<Save />}
+            icon={<Done />}
             onClick={this.save}
             iconLeft={<Clear />}
             onClickLeft={() => this.setState({edit: false})}

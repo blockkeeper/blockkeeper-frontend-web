@@ -165,6 +165,7 @@ const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
     lbl = 'Blocked'
     icon = <HourglassEmpty />
     dsbld = true
+    /* return null */
   } else if (bxpSts === 'run') {
     lbl = 'Updating'
     icon = <Autorenew style={{animation: 'spin 1s linear infinite'}} />
@@ -189,7 +190,7 @@ const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
   )
 }
 
-const tscRow = (addr, tsc, coin0, addrIcon) => {
+const tscRow = (addr, tsc, coin0, addrIcon, showAddrInfos) => {
   const mx = 40
   let modeColor = tsc.mode === 'snd'
     ? theme.palette.error['500']
@@ -228,14 +229,20 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
           style={{textDecoration: 'none'}}
         >
           <Typography type='headline' style={overflowStyle}>
-            {tsc.name}
+            {showAddrInfos &&
+              addr.name}
+            {!showAddrInfos &&
+              tsc.name}
           </Typography>
         </Link>
         <Typography
           type='body2'
           style={{color: theme.palette.text.secondary, ...overflowStyle}}
         >
-          {desc} {tags}
+          {showAddrInfos &&
+            (tsc.name || tsc.desc)}
+          {!showAddrInfos &&
+            (tsc.desc || 'Empty description')}
         </Typography>
       </div>
       <div
@@ -269,16 +276,14 @@ const tscRow = (addr, tsc, coin0, addrIcon) => {
 const TscListAddr = ({addr, tscs, coin0, addrIcon}) =>
   <div>
     {tscs.map(tsc => {
-      return tscRow(addr, tsc, coin0, addrIcon)
+      return tscRow(addr, tsc, coin0, addrIcon, false)
     })}
   </div>
 
 const TscListAddresses = ({addrTscs, coin0, addrIcon}) =>
   <Paper square style={{...paperStyle}}>
     {addrTscs.map(addrTsc => {
-      const addr = addrTsc[0]
-      const tsc = addrTsc[1]
-      return tscRow(addr, tsc, coin0, addrIcon)
+      return tscRow(addrTsc[0], addrTsc[1], coin0, addrIcon, true)
     })}
   </Paper>
 
@@ -561,8 +566,8 @@ const InfoUpdateFailed = () =>
 const Edit = () =>
   <span>Edit</span>
 
-const Save = () =>
-  <span>Save</span>
+const Done = () =>
+  <span>Done</span>
 
 const UserList = ({askLogout, askDelete}) =>
   <List>
@@ -613,7 +618,7 @@ export {
   formatNumber,
   ExtLink,
   InfoUpdateFailed,
-  Save,
+  Done,
   Edit,
   UserList
 }

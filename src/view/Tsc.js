@@ -10,7 +10,7 @@ import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, paperStyle, overflowStyle, noTxtDeco} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
-        Modal, CoinIcon, ExtLink, formatNumber, Save, Edit} from './Lib'
+        Modal, CoinIcon, ExtLink, formatNumber, Done, Edit, BxpFloatBtn} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -132,6 +132,7 @@ class TscView extends React.Component {
 
   async save () {
     if (this.state.upd === false) {
+      this.setState({edit: false})
       return
     }
     this.setState({busy: true})
@@ -184,7 +185,7 @@ class TscView extends React.Component {
               midTitle='Transaction'
               iconLeft={<Clear />}
               onClickLeft={this.edit}
-              icon={<Save />}
+              icon={<Done />}
               onClick={this.save}
               noUser
             />}
@@ -274,13 +275,7 @@ class TscView extends React.Component {
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     <Typography type='body1' className={this.props.classes.overflowStyle}>
-                      {this.state.tsc.amntDesc[0][this.state.tsc.mode]}
-                      <CoinIcon
-                        coin={this.state.addr.coin}
-                        size={12}
-                        color='primary'
-                        alt
-                      />
+                      {this.state.tsc.amntDesc[0][this.state.tsc.mode]} {this.state.addr.coin}
                     </Typography>
                   </div>
                 </div>
@@ -321,14 +316,7 @@ class TscView extends React.Component {
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     <Typography type='body1' className={this.props.classes.overflowStyle}>
-                      0.2345
-                      <CoinIcon
-                        coin={this.state.addr.coin}
-                        size={12}
-                        color='primary'
-                        alt
-                      />
-                      {/* TODO */}
+                      0.2345 {this.state.addr.coin} {/* TODO */}
                     </Typography>
                   </div>
                 </div>
@@ -410,13 +398,13 @@ class TscView extends React.Component {
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
-                      Notes
+                      Description
                     </Typography>
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     {this.state.edit &&
                       <TextField
-                        placeholder='Notes'
+                        placeholder='Description'
                         fullWidth
                         value={this.state.desc}
                         error={Boolean(this.state.descEmsg)}
@@ -465,6 +453,11 @@ class TscView extends React.Component {
               </Grid>
             </Grid>
           </Paper>
+          <BxpFloatBtn
+            onClick={() => this.cx.depot.bxp([])}
+            bxpSts={this.state.bxpSts}
+            first
+          />
         </div>
       )
     } else {
