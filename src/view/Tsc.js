@@ -6,14 +6,45 @@ import Grid from 'material-ui/Grid'
 import {Link} from 'react-router-dom'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
+import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
-import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, overflowStyle, noTxtDeco} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
         Modal, CoinIcon, ExtLink, formatNumber, Save, Edit} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
-export default class TscView extends React.Component {
+const styles = {
+  themeBgStyle,
+  paperStyle,
+  overflowStyle,
+  noTxtDeco,
+  flexStyle: {
+    display: 'flex',
+    marginBottom: theme.spacing.unit * 2
+  },
+  labelStyle: {
+    color: theme.palette.text.secondary,
+    width: theme.spacing.unit * 14,
+    minWidth: theme.spacing.unit * 14,
+    paddingRight: theme.spacing.unit * 4,
+    textAlign: 'right'
+  },
+  valueStyle: {
+    flexGrow: 1,
+    minWidth: 0
+  },
+  extBtn: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit
+  },
+  body2: {
+    color: theme.palette.text.secondary
+  }
+}
+
+class TscView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -141,11 +172,8 @@ export default class TscView extends React.Component {
       let modeSign = this.state.tsc.mode === 'snd' ? '-' : '+'
       const tscUrl = __.cfg('toBxpUrl')(
         'tsc', this.state.addr.coin)(this.state.tsc.hsh)
-      const flexStyle = {display: 'flex', marginBottom: theme.spacing.unit * 2}
-      const labelStyle = {color: theme.palette.text.secondary, width: theme.spacing.unit * 14, minWidth: theme.spacing.unit * 14, paddingRight: theme.spacing.unit * 4, textAlign: 'right'}
-      const valueStyle = {flexGrow: 1, minWidth: 0}
       return (
-        <div style={themeBgStyle}>
+        <div className={this.props.classes.themeBgStyle}>
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
@@ -171,15 +199,20 @@ export default class TscView extends React.Component {
             />}
           {this.state.busy &&
           <LinearProgress />}
-          <Paper square style={{...paperStyle, textAlign: 'center'}}>
-            <Typography type='headline' style={{color: modeColor}}>
+          <Paper square className={this.props.classes.paperStyle}>
+            <Typography
+              type='headline'
+              align='center'
+              style={{color: modeColor}}
+            >
               {modeSign} {formatNumber(this.state.tsc.amnt, this.state.addr.coin)}
               <CoinIcon coin={this.state.addr.coin} alt color={modeColor} />
             </Typography>
             {!this.state.toggleCoins &&
             <Typography
               type='body2'
-              style={{color: theme.palette.text.secondary}}
+              align='center'
+              className={this.props.classes.body2}
               onClick={this.toggleCoins}
               gutterBottom
             >
@@ -194,7 +227,8 @@ export default class TscView extends React.Component {
             {this.state.toggleCoins &&
             <Typography
               type='body2'
-              style={{color: theme.palette.text.secondary}}
+              align='center'
+              className={this.props.classes.body2}
               onClick={this.toggleCoins}
               gutterBottom
             >
@@ -207,16 +241,16 @@ export default class TscView extends React.Component {
               />
             </Typography>}
           </Paper>
-          <Paper square style={{...paperStyle}} elevation={5}>
+          <Paper square className={this.props.classes.paperStyle} elevation={5}>
             <Grid container justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Name
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
+                  <div className={this.props.classes.valueStyle}>
                     {this.state.edit &&
                     <TextField
                       fullWidth
@@ -227,19 +261,19 @@ export default class TscView extends React.Component {
                       onChange={evt => this.set('name', evt.target.value)}
                         />}
                     {!this.state.edit &&
-                      <Typography type='body1' style={overflowStyle}>
+                      <Typography type='body1' className={this.props.classes.overflowStyle}>
                         {this.state.tsc.name}
                       </Typography>}
                   </div>
                 </div>
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Amount Exact
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
-                    <Typography type='body1' style={overflowStyle}>
+                  <div className={this.props.classes.valueStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle}>
                       {this.state.tsc.amntDesc[0][this.state.tsc.mode]}
                       <CoinIcon
                         coin={this.state.addr.coin}
@@ -251,14 +285,14 @@ export default class TscView extends React.Component {
                   </div>
                 </div>
                 {this.state.tsc.amntDesc.length > 1 &&
-                  <div style={flexStyle}>
-                    <div style={labelStyle}>
-                      <Typography type='body1' style={overflowStyle} color='inherit'>
+                  <div className={this.props.classes.flexStyle}>
+                    <div className={this.props.classes.labelStyle}>
+                      <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                         Amount Details
                       </Typography>
                     </div>
-                    <div style={valueStyle}>
-                      <Typography type='body1' style={overflowStyle}>
+                    <div className={this.props.classes.valueStyle}>
+                      <Typography type='body1' className={this.props.classes.overflowStyle}>
                         {this.state.tsc.amntDesc[1]['snd']}
                         <CoinIcon
                           coin={this.state.addr.coin}
@@ -279,14 +313,14 @@ export default class TscView extends React.Component {
                       </Typography>
                     </div>
                   </div>}
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Fees
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
-                    <Typography type='body1' style={overflowStyle}>
+                  <div className={this.props.classes.valueStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle}>
                       0.2345
                       <CoinIcon
                         coin={this.state.addr.coin}
@@ -298,14 +332,14 @@ export default class TscView extends React.Component {
                     </Typography>
                   </div>
                 </div>
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Confirmations
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
-                    <Typography type='body1' style={overflowStyle}>
+                  <div className={this.props.classes.valueStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle}>
                       {this.state.tsc.cfmCnt > 100
                         ? 'More than 100'
                         : this.state.tsc.cfmCnt}
@@ -313,49 +347,49 @@ export default class TscView extends React.Component {
                   </div>
                 </div>
                 {this.state.tsc.feeDesc &&
-                  <div style={flexStyle}>
-                    <div style={labelStyle}>
-                      <Typography type='body1' style={overflowStyle} color='inherit'>
+                  <div className={this.props.classes.flexStyle}>
+                    <div className={this.props.classes.labelStyle}>
+                      <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                         Additional costs (fee)
                       </Typography>
                     </div>
-                    <div style={valueStyle}>
-                      <Typography type='body1' style={overflowStyle}>
+                    <div className={this.props.classes.valueStyle}>
+                      <Typography type='body1' className={this.props.classes.overflowStyle}>
                         {this.state.tsc.feeDesc}
                       </Typography>
                     </div>
                   </div>}
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Time
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
-                    <Typography type='body1' style={overflowStyle}>
+                  <div className={this.props.classes.valueStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle}>
                       2017-10-01 12:22:27 {/* TODO */}
                     </Typography>
                   </div>
                 </div>
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Block
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
-                    <Typography type='body1' style={overflowStyle}>
+                  <div className={this.props.classes.valueStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle}>
                         487806 {/* TODO */}
                     </Typography>
                   </div>
                 </div>
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Tags
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
+                  <div className={this.props.classes.valueStyle}>
                     {this.state.edit &&
                       <TextField
                         placeholder='Tags'
@@ -368,18 +402,18 @@ export default class TscView extends React.Component {
                         }}
                       />}
                     {!this.state.edit &&
-                    <Typography type='body1' style={overflowStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle}>
                       {this.state.tagsJoin}
                     </Typography>}
                   </div>
                 </div>
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Notes
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
+                  <div className={this.props.classes.valueStyle}>
                     {this.state.edit &&
                       <TextField
                         placeholder='Notes'
@@ -390,23 +424,23 @@ export default class TscView extends React.Component {
                         onChange={evt => this.set('desc', evt.target.value)}
                       />}
                     {!this.state.edit &&
-                      <Typography type='body1' style={overflowStyle}>
+                      <Typography type='body1' className={this.props.classes.overflowStyle}>
                         {this.state.tsc.desc}
                       </Typography>}
                   </div>
                 </div>
-                <div style={flexStyle}>
-                  <div style={labelStyle}>
-                    <Typography type='body1' style={overflowStyle} color='inherit'>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' className={this.props.classes.overflowStyle} color='inherit'>
                       Address
                     </Typography>
                   </div>
-                  <div style={valueStyle}>
+                  <div className={this.props.classes.valueStyle}>
                     <Link
                       to={`/addr/${this.state.addr._id}`}
-                      style={{textDecoration: 'none'}}
+                      className={this.props.classes.noTxtDeco}
                     >
-                      <Typography type='body1' style={overflowStyle}>
+                      <Typography type='body1' className={this.props.classes.overflowStyle}>
                         <CoinIcon coin={this.state.addr.coin} size={13} />&nbsp;
                         <b>{this.state.addr.name}</b>
                       </Typography>
@@ -416,16 +450,12 @@ export default class TscView extends React.Component {
 
                 <ExtLink
                   to={tscUrl}
-                  style={{textDecoration: 'none'}}
+                  className={this.props.classes.noTxtDeco}
                   txt={
                     <Button
                       raised
                       color={'contrast'}
-                      style={{
-                        width: '100%',
-                        marginTop: theme.spacing.unit * 2,
-                        marginBottom: theme.spacing.unit
-                      }}
+                      className={this.props.classes.extBtn}
                     >
                       Detailed transaction
                       <Launch />
@@ -442,3 +472,5 @@ export default class TscView extends React.Component {
     }
   }
 }
+
+export default withStyles(styles)(TscView)

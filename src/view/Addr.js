@@ -8,9 +8,10 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import Grid from 'material-ui/Grid'
 import Paper from 'material-ui/Paper'
+import {withStyles} from 'material-ui/styles'
 import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
-import {theme, themeBgStyle, paperStyle, overflowStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, overflowStyle, noTxtDeco, qrCodeWrap} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, Delete, Clear} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
@@ -18,7 +19,46 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
 import Addr from '../logic/Addr'
 import __ from '../util'
 
-export default class AddrView extends React.Component {
+const styles = {
+  themeBgStyle,
+  paperStyle,
+  overflowStyle,
+  noTxtDeco,
+  qrCodeWrap,
+  paperWrap: {
+    ...paperStyle,
+    textAlign: 'center',
+    paddingBottom: 0
+  },
+  titleStyle: {
+    paddingTop: theme.spacing.unit * 2,
+    ...overflowStyle
+  },
+  display3: {
+    fontWeight: '400',
+    color: theme.palette.primary['500'],
+    paddingTop: theme.spacing.unit * 2
+  },
+  arrowWrap: {
+    height: '50px',
+    width: '50px'
+  },
+  colorPrimary: {
+    color: theme.palette.primary['500']
+  },
+  deleteWrap: {
+    width: theme.spacing.unit * 2,
+    height: theme.spacing.unit * 2
+  },
+  tableWrap: {
+    overflowX: 'auto'
+  },
+  addrStyle: {
+    fontSize: '13px'
+  }
+}
+
+class AddrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -149,7 +189,7 @@ export default class AddrView extends React.Component {
       const addrUrl = this.state.addr.hsh ? __.cfg('toBxpUrl')('addr',
                       this.state.addr.coin)(this.state.addr.hsh) : undefined
       return (
-        <div style={themeBgStyle}>
+        <div className={this.props.classes.themeBgStyle}>
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
@@ -178,7 +218,7 @@ export default class AddrView extends React.Component {
           <Paper
             elevation={0}
             square
-            style={{...paperStyle, textAlign: 'center', paddingBottom: 0}}
+            className={this.props.classes.paperWrap}
           >
             <Grid container justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
@@ -201,10 +241,7 @@ export default class AddrView extends React.Component {
                   <Typography
                     type='title'
                     color='default'
-                    style={{
-                      paddingTop: theme.spacing.unit * 2,
-                      ...overflowStyle
-                    }}
+                    className={this.props.classes.titleStyle}
                   >
                     {this.state.addr.name}
                   </Typography>
@@ -212,15 +249,12 @@ export default class AddrView extends React.Component {
                 {!this.state.edit && addrUrl &&
                   <ExtLink
                     to={addrUrl}
-                    style={{textDecoration: 'none'}}
+                    className={this.props.classes.noTxtDeco}
                     txt={
                       <Typography
                         type='title'
                         color='default'
-                        style={{
-                          paddingTop: theme.spacing.unit * 2,
-                          ...overflowStyle
-                        }}
+                        className={this.props.classes.titleStyle}
                       >
                         {this.state.addr.name}
                         <Launch color='grey' />
@@ -229,11 +263,7 @@ export default class AddrView extends React.Component {
                 }
                 <Typography
                   type='display3'
-                  style={{
-                    fontWeight: '400',
-                    color: theme.palette.primary['500'],
-                    paddingTop: theme.spacing.unit * 2
-                  }}
+                  className={this.props.classes.display3}
                 >
                   <TransitiveNumber>
                     {formatNumber(this.state.blc1, this.state.coin)}
@@ -251,7 +281,7 @@ export default class AddrView extends React.Component {
                   <Typography
                     type='headline'
                     onClick={this.toggleCoins}
-                    style={{color: theme.palette.primary['500']}}
+                    className={this.props.classes.colorPrimary}
                     gutterBottom
                   >
                     <TransitiveNumber>
@@ -267,7 +297,7 @@ export default class AddrView extends React.Component {
                   <Typography
                     type='headline'
                     onClick={this.toggleCoins}
-                    style={{color: theme.palette.primary['500']}}
+                    className={this.props.classes.colorPrimary}
                     gutterBottom
                   >
                     <TransitiveNumber>
@@ -281,20 +311,15 @@ export default class AddrView extends React.Component {
                   </Typography>}
                 {!this.state.show &&
                   <IconButton onClick={this.show}>
-                    <ArrowDropDown style={{height: '50px', width: '50px'}} />
+                    <ArrowDropDown className={this.props.arrowWrap} />
                   </IconButton>}
                 {this.state.show &&
                   <div>
                     <Divider light />
                     {this.state.addr.hsh &&
-                    <div style={{
-                      paddingTop: theme.spacing.unit * 4,
-                      paddingBottom: theme.spacing.unit * 4,
-                      paddingLeft: theme.spacing.unit * 2,
-                      paddingRight: theme.spacing.unit * 2
-                    }}>
+                    <div className={this.props.classes.qrCodeWrap}>
                       <QRCode value={this.state.addr.hsh} />
-                      <Typography style={{fontSize: '13px'}}>
+                      <Typography className={this.props.classes.addrStyle}>
                         {this.state.addr.hsh}
                       </Typography>
                     </div>}
@@ -302,14 +327,11 @@ export default class AddrView extends React.Component {
                     {this.state.edit &&
                       <Button onClick={() => this.setState({ask: true})}>
                         <Delete
-                          style={{
-                            width: theme.spacing.unit * 2,
-                            height: theme.spacing.unit * 2
-                          }}
+                          className={this.props.classes.deleteWrap}
                         />
                         Delete Address
                       </Button>}
-                    <div style={{overflowX: 'auto'}}>
+                    <div className={this.props.classes.tableWrap}>
                       <Table>
                         <TableBody>
                           {this.state.addr.hsh &&
@@ -397,14 +419,14 @@ export default class AddrView extends React.Component {
                       </Table>
                     </div>
                     <IconButton onClick={this.show}>
-                      <ArrowDropUp style={{height: '50px', width: '50px'}} />
+                      <ArrowDropUp className={this.props.arrowWrap} />
                     </IconButton>
                   </div>
                 }
               </Grid>
             </Grid>
           </Paper>
-          <Paper square style={{...paperStyle}} elevation={5}>
+          <Paper square className={this.props.classes.paperStyle} elevation={5}>
             {this.state.tscs.length > 0 &&
               <TscListAddr
                 addr={this.state.addr}
@@ -423,10 +445,9 @@ export default class AddrView extends React.Component {
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([this.addrId])}
             bxpSts={this.state.bxpSts}
+            first
           />
-          <ToTopBtn
-            style={{bottom: theme.spacing.unit * 10}}
-          />
+          <ToTopBtn second />
         </div>
       )
     } else {
@@ -434,3 +455,5 @@ export default class AddrView extends React.Component {
     }
   }
 }
+
+export default withStyles(styles)(AddrView)

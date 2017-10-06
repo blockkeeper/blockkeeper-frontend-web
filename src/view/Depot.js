@@ -1,13 +1,17 @@
 import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
-import {theme, themeBgStyle} from './Style'
+import {withStyles} from 'material-ui/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn} from './Lib'
-
 import __ from '../util'
+import {theme, themeBgStyle} from './Style'
 
-export default class DepotView extends React.Component {
+const styles = {
+  themeBgStyle
+}
+
+class DepotView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -80,7 +84,7 @@ export default class DepotView extends React.Component {
       )
     } else if (this.state.addrs) {
       return (
-        <div style={themeBgStyle}>
+        <div className={this.props.classes.themeBgStyle}>
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
@@ -103,7 +107,6 @@ export default class DepotView extends React.Component {
               coin1={this.state.coin1}
              />
           }
-
           <SubBar
             tabs={['Addresses', 'Transactions']}
             ix={this.state.tabIx}
@@ -126,13 +129,13 @@ export default class DepotView extends React.Component {
               addrIcon
             />}
           <ToTopBtn
-            style={{bottom: (this.state.tabIx === 0 || this.state.addrTscs.length === 0) ? theme.spacing.unit * 18 : theme.spacing.unit * 10}}
+            second={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
           />
           {this.state.addrs.length > 0 &&
             <BxpFloatBtn
               onClick={() => this.cx.depot.bxp([])}
               bxpSts={this.state.bxpSts}
-              style={{bottom: (this.state.tabIx === 0 || this.state.addrTscs.length === 0) ? theme.spacing.unit * 10 : theme.spacing.unit * 2}}
+              first={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
             />}
           {(this.state.tabIx === 0 || this.state.addrTscs.length === 0) &&
           <FloatBtn onClick={this.goAddAddr} />}
@@ -143,3 +146,5 @@ export default class DepotView extends React.Component {
     }
   }
 }
+
+export default withStyles(styles)(DepotView)

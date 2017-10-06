@@ -75,7 +75,8 @@ const TopBar = ({
       <Typography
         type='headline'
         color='inherit'
-        style={{flex: 1, textAlign: 'center'}}
+        align='center'
+        style={{flex: 1}}
       >
         {midTitle || ''}
       </Typography>
@@ -132,8 +133,8 @@ const Jumbo = ({title, subTitle, coin0, coin1}) =>
     </div>
   </div>
 
-const ToTopBtn = ({style}) =>
-  <ScrollToTop showUnder={200} style={{right: theme.spacing.unit * 2, ...style}}>
+const ToTopBtn = ({second}) =>
+  <ScrollToTop showUnder={200} style={{right: theme.spacing.unit * 2, bottom: second ? theme.spacing.unit * 10 : theme.spacing.unit * 18}}>
     <Button
       fab
       aria-label='add'
@@ -158,7 +159,7 @@ const FloatBtn = ({onClick, key}) => {
   )
 }
 
-const BxpFloatBtn = ({onClick, bxpSts, style}) => {
+const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
     lbl = 'Blocked'
@@ -178,7 +179,7 @@ const BxpFloatBtn = ({onClick, bxpSts, style}) => {
       fab
       aria-label={lbl}
       color='primary'
-      style={{...floatBtnStyle, ...style}}
+      style={{...floatBtnStyle, bottom: first ? theme.spacing.unit * 2 : theme.spacing.unit * 10}}
       onClick={onClick}
       key='bxpFloatBtn'
       disabled={dsbld}
@@ -303,10 +304,11 @@ const Snack = ({msg, onClose}) =>
     ]}
   />
 
-const ExtLink = ({to, txt, style}) =>
+const ExtLink = ({to, txt, className, style}) =>
   <a
     href={to}
     target='_blank'
+    className={className}
     style={style}
   >
     {txt}

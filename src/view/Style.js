@@ -140,6 +140,39 @@ const overflowStyle = {
   whiteSpace: 'nowrap'
 }
 
+const dividerStyle = {
+  marginTop: theme.spacing.unit * 2,
+  marginBottom: theme.spacing.unit * 4
+}
+
+const qrReaderStyle = {
+  height: '100%',
+  width: '100%',
+  maxHeight: '400px',
+  marginTop: theme.spacing.unit * 2,
+  background: theme.palette.background.light
+}
+
+const noTxtDeco = {
+  textDecoration: 'none'
+}
+
+const qrCodeWrap = {
+  paddingTop: theme.spacing.unit * 4,
+  paddingBottom: theme.spacing.unit * 4,
+  paddingLeft: theme.spacing.unit * 2,
+  paddingRight: theme.spacing.unit * 2
+}
+
+const fullWidth = {
+  width: '100%'
+}
+
+const fullHeightRoot = {
+  ...themeBgStyle,
+  height: '100vh'
+}
+
 export {
   theme,
   themeBgStyle,
@@ -149,6 +182,12 @@ export {
   overflowStyle,
   jumboStyle,
   floatBtnStyle,
+  CryptoColors,
   paperStyle,
-  CryptoColors
+  dividerStyle,
+  qrReaderStyle,
+  noTxtDeco,
+  qrCodeWrap,
+  fullWidth,
+  fullHeightRoot
 }

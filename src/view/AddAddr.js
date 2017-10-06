@@ -4,6 +4,7 @@ import TextField from 'material-ui/TextField'
 import {FormControlLabel} from 'material-ui/Form'
 import Switch from 'material-ui/Switch'
 import Radio from 'material-ui/Radio'
+import { withStyles } from 'material-ui/styles'
 import {Add, Clear} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import Divider from 'material-ui/Divider'
@@ -11,17 +12,30 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import Grid from 'material-ui/Grid'
 import QrReader from 'react-qr-reader'
-import {theme, themeBgStyle, paperStyle} from './Style'
+import {theme, themeBgStyle, paperStyle, dividerStyle, qrReaderStyle} from './Style'
 import {TopBar, Modal, CoinIcon} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
-const dividerStyle = {
-  marginTop: theme.spacing.unit * 2,
-  marginBottom: theme.spacing.unit * 4
+const styles = {
+  themeBgStyle,
+  paperStyle,
+  dividerStyle,
+  qrReaderStyle,
+  saveStyle: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit
+  },
+  radios: {
+    paddingLeft: theme.spacing.unit
+  },
+  center: {
+    textAlign: 'center'
+  }
 }
 
-export default class AddAddrView extends React.Component {
+class AddAddrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -121,7 +135,7 @@ export default class AddAddrView extends React.Component {
       )
     } else if (this.state.coin) {
       return (
-        <div style={themeBgStyle}>
+        <div className={this.props.classes.themeBgStyle}>
           {this.state.busy &&
           <LinearProgress />}
           <TopBar
@@ -131,7 +145,7 @@ export default class AddAddrView extends React.Component {
             onClick={this.goBack}
             noUser
           />
-          <Paper square style={paperStyle}>
+          <Paper square className={this.props.classes.paperStyle}>
             <Grid container spacing={16} justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
                 <Typography type='title'>
@@ -199,12 +213,11 @@ export default class AddAddrView extends React.Component {
                   <QrReader
                     facingMode={this.state.facingMode}
                     delay={this.state.delay}
+                    className={this.props.classes.qrReaderStyle}
                     style={{
                       height: '100%',
                       width: '100%',
-                      maxHeight: '400px',
-                      marginTop: theme.spacing.unit * 2,
-                      background: theme.palette.background.light
+                      maxHeight: '400px'
                     }}
                     onError={err => this.warn(err)}
                     onScan={this.handleQRScan}
@@ -217,7 +230,7 @@ export default class AddAddrView extends React.Component {
             </Grid>}
             <Grid container spacing={16} justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
-                <Divider style={dividerStyle} light />
+                <Divider className={this.props.classes.dividerStyle} light />
                 <Typography type='title' gutterBottom>
                   Blockchain / Type
                 </Typography>
@@ -233,7 +246,7 @@ export default class AddAddrView extends React.Component {
                         onChange={() => this.set('coin', coin)}
                         value={coin}
                         name={coin}
-                        style={{paddingLeft: theme.spacing.unit}}
+                        className={this.props.classes.radios}
                         aria-label={coin}
                       />
                     }
@@ -243,7 +256,7 @@ export default class AddAddrView extends React.Component {
             </Grid>
             <Grid container spacing={16} justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
-                <Divider style={dividerStyle} light />
+                <Divider className={this.props.classes.dividerStyle} light />
                 <Typography type='title'>
                   Personal details
                 </Typography>
@@ -270,15 +283,11 @@ export default class AddAddrView extends React.Component {
             <Grid container spacing={16} justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6}>
                 {!this.state.busy &&
-                <div style={{textAlign: 'center'}}>
+                <div className={this.props.classes.center}>
                   <Button
                     raised
                     color={'accent'}
-                    style={{
-                      width: '100%',
-                      marginTop: theme.spacing.unit * 2,
-                      marginBottom: theme.spacing.unit
-                    }}
+                    className={this.props.classes.saveStyle}
                     onClick={this.save}
                     disabled={!this.state.upd}
                   >
@@ -296,3 +305,5 @@ export default class AddAddrView extends React.Component {
     }
   }
 }
+
+export default withStyles(styles)(AddAddrView)

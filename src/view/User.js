@@ -1,6 +1,7 @@
 import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
 import TextField from 'material-ui/TextField'
+import { withStyles } from 'material-ui/styles'
 import {TopBar, Modal, DropDown, UserList, Save, Edit} from './Lib'
 import {ArrowBack, Clear} from 'material-ui-icons'
 import {themeBgStyle, paperStyle} from './Style'
@@ -8,7 +9,15 @@ import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
 import __ from '../util'
 
-export default class UserView extends React.Component {
+const styles = {
+  themeBgStyle,
+  paperStyle,
+  item: {
+    marginBottom: '80px'
+  }
+}
+
+class UserView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -170,7 +179,7 @@ export default class UserView extends React.Component {
       )
     } else if (this.state.username !== undefined) {
       return (
-        <div style={themeBgStyle}>
+        <div className={this.props.classes.themeBgStyle}>
           {this.state.busy &&
             <LinearProgress />}
           {this.state.edit &&
@@ -191,9 +200,9 @@ export default class UserView extends React.Component {
             onClickLeft={this.goBack}
             noUser
           />}
-          <Paper square style={paperStyle}>
+          <Paper square className={this.props.classes.paperStyle}>
             <Grid container justify='center'>
-              <Grid item xs={12} sm={10} md={8} lg={6} style={{marginBottom: '80px'}}>
+              <Grid item xs={12} sm={10} md={8} lg={6} className={this.props.classes.item}>
                 <TextField
                   fullWidth
                   label='Username'
@@ -239,3 +248,5 @@ export default class UserView extends React.Component {
     }
   }
 }
+
+export default withStyles(styles)(UserView)

@@ -4,15 +4,34 @@ import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
 import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
+import { withStyles } from 'material-ui/styles'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
-import {theme, themeBgStyle, paperStyle, loginStyle} from './Style'
+import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot} from './Style'
 import {Modal} from './Lib'
 import __ from '../util'
 
-const rootStyle = {...themeBgStyle, height: '100vh'}
+const styles = {
+  fullHeightRoot,
+  loginStyle,
+  paperStyle,
+  fullWidth,
+  body1: {
+    textAlign: 'left',
+    marginTop: theme.spacing.unit * 2
+  },
+  btnRg: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit
+  },
+  person: {
+    width: theme.spacing.unit * 2,
+    height: theme.spacing.unit * 2
+  }
+}
 
-export default class RgstrView extends React.Component {
+class RgstrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -98,10 +117,10 @@ export default class RgstrView extends React.Component {
       )
     } else {
       return (
-        <div style={rootStyle}>
+        <div className={this.props.classes.root}>
           {this.state.busy &&
           <LinearProgress />}
-          <div style={loginStyle}>
+          <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
                 <Typography type='display3' color='inherit'>
@@ -110,7 +129,7 @@ export default class RgstrView extends React.Component {
                 <Typography type='display1' color='inherit' gutterBottom>
                   Please choose your account details
                 </Typography>
-                <Paper square style={paperStyle} elevation={24}>
+                <Paper square className={this.props.classes.paperStyle} elevation={24}>
                   <TextField
                     autoFocus
                     fullWidth
@@ -144,10 +163,7 @@ export default class RgstrView extends React.Component {
                     helperText={this.state.rpwEmsg}
                     onChange={evt => this.set('rpw', evt.target.value)}
                   />
-                  <Typography type='body1' gutterBottom style={{
-                    textAlign: 'left',
-                    marginTop: theme.spacing.unit * 2
-                  }}>
+                  <Typography type='body1' gutterBottom className={this.props.classes.body1}>
                     Please make sure you store your username and password safely.
                     Due to data privacy and security reasons, it is NOT possible
                     to recover your username or password. If you <b>forget your
@@ -159,25 +175,18 @@ export default class RgstrView extends React.Component {
                       <Button
                         raised
                         color={'accent'}
-                        style={{
-                          width: '100%',
-                          marginTop: theme.spacing.unit * 2,
-                          marginBottom: theme.spacing.unit
-                        }}
+                        className={this.props.classes.btnRg}
                         onClick={this.save}
                         disabled={!this.state.upd}
                       >
                         <PersonAdd
-                          style={{
-                            width: theme.spacing.unit * 2,
-                            height: theme.spacing.unit * 2
-                          }}
+                          className={this.props.classes.person}
                         />
                         Register
                       </Button>
                       <br />
                       <Button
-                        style={{width: '100%'}}
+                        className={this.props.classes.fullWidth}
                         onClick={this.goBack}
                       >
                         Cancel
@@ -192,3 +201,5 @@ export default class RgstrView extends React.Component {
     }
   }
 }
+
+export default withStyles(styles)(RgstrView)

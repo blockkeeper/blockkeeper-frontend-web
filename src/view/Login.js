@@ -4,15 +4,30 @@ import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
 import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
+import { withStyles } from 'material-ui/styles'
 import {LinearProgress} from 'material-ui/Progress'
 import {Lock} from 'material-ui-icons'
-import {theme, themeBgStyle, paperStyle, loginStyle} from './Style'
+import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot} from './Style'
 import {Modal} from './Lib'
 import __ from '../util'
 
-const rootStyle = {...themeBgStyle, height: '100vh'}
+const styles = {
+  fullHeightRoot,
+  loginStyle,
+  paperStyle,
+  fullWidth,
+  loginButton: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit
+  },
+  lockIcon: {
+    width: theme.spacing.unit * 2,
+    height: theme.spacing.unit * 2
+  }
+}
 
-export default class LoginView extends React.Component {
+class LoginView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -64,11 +79,11 @@ export default class LoginView extends React.Component {
       )
     } else {
       return (
-        <div style={rootStyle}>
+        <div className={this.props.classes.fullHeightRoot}>
           {this.state.busy &&
           <LinearProgress />}
           {!this.state.busy &&
-          <div style={loginStyle}>
+          <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
                 <Typography type='display3' color='inherit'>
@@ -77,7 +92,7 @@ export default class LoginView extends React.Component {
                 <Typography type='display1' color='inherit' gutterBottom>
                   Please enter your login credentials
                 </Typography>
-                <Paper square style={paperStyle} elevation={24}>
+                <Paper square className={this.props.classes.paperStyle} elevation={24}>
                   <TextField
                     autoFocus
                     fullWidth
@@ -105,23 +120,19 @@ export default class LoginView extends React.Component {
                   <Button
                     raised
                     color={'accent'}
-                    style={{
-                      width: '100%',
-                      marginTop: theme.spacing.unit * 2,
-                      marginBottom: theme.spacing.unit
-                    }}
+                    className={this.props.classes.loginButton}
                     onClick={(event) => this.login(event)}
                     disabled={!this.state.upd}
                     >
                     <Lock
-                      style={{
-                        width: theme.spacing.unit * 2,
-                        height: theme.spacing.unit * 2
-                      }} />
+                      className={this.props.classes.lockIcon} />
                       Login
                   </Button>
                   <br />
-                  <Button style={{width: '100%'}} href='/rgstr'>
+                  <Button
+                    href='/rgstr'
+                    className={this.props.classes.fullWidth}
+                  >
                     Register
                   </Button>
                 </Paper>
@@ -133,3 +144,5 @@ export default class LoginView extends React.Component {
     }
   }
 }
+
+export default withStyles(styles)(LoginView)

@@ -1,11 +1,15 @@
 import React from 'react'
 import Typography from 'material-ui/Typography'
 import Button from 'material-ui/Button'
-import {homeStyle, themeBgStyle} from './Style'
+import { withStyles } from 'material-ui/styles'
+import {homeStyle, fullHeightRoot} from './Style'
 
-const rootStyle = {...themeBgStyle, height: '100vh'}
+const styles = {
+  fullHeightRoot,
+  homeStyle
+}
 
-export default class HomeView extends React.Component {
+class HomeView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
@@ -16,8 +20,8 @@ export default class HomeView extends React.Component {
   //  (state to true after rates and logged in user data is finished)
   render () {
     return (
-      <div style={rootStyle}>
-        <div style={homeStyle}>
+      <div className={this.props.classes.fullHeightRoot}>
+        <div className={this.props.classes.homeStyle}>
           <Typography type='display3' color={'inherit'}>
             Blockkeeper
           </Typography>
@@ -36,3 +40,5 @@ export default class HomeView extends React.Component {
     )
   }
 }
+
+export default withStyles(styles)(HomeView)
