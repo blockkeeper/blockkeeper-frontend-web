@@ -3,7 +3,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import TextField from 'material-ui/TextField'
 import { withStyles } from 'material-ui/styles'
 import {TopBar, Modal, DropDown, UserList, Done, Edit} from './Lib'
-import {ArrowBack, Clear} from 'material-ui-icons'
+import {ArrowBack} from 'material-ui-icons'
 import {themeBgStyle, gridWrap, gridSpacer, gridGutter, gridGutterFluid} from './Style'
 import Paper from 'material-ui/Paper'
 import __ from '../util'
@@ -185,8 +185,6 @@ class UserView extends React.Component {
             midTitle='User'
             icon={<Done />}
             onClick={this.save}
-            iconLeft={<Clear />}
-            onClickLeft={() => this.setState({edit: false})}
             className={this.props.classes.gridWrap}
             noUser
           />}

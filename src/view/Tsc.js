@@ -1,7 +1,7 @@
 import React from 'react'
 import compose from 'recompose/compose'
 import {LinearProgress} from 'material-ui/Progress'
-import {ArrowBack, Clear, Launch} from 'material-ui-icons'
+import {ArrowBack, Launch} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import {Link} from 'react-router-dom'
 import Button from 'material-ui/Button'
@@ -191,8 +191,6 @@ class TscView extends React.Component {
           {this.state.edit &&
             <TopBar
               midTitle='Transaction'
-              iconLeft={<Clear />}
-              onClickLeft={this.edit}
               icon={<Done />}
               onClick={this.save}
               className={this.props.classes.gridWrap}

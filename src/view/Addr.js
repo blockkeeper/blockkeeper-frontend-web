@@ -15,7 +15,7 @@ import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2
         } from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
-       Launch, Delete, Clear} from 'material-ui-icons'
+       Launch, Delete} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
         CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed, ToTopBtn, Done, Edit} from './Lib'
 import Addr from '../logic/Addr'
@@ -202,8 +202,6 @@ class AddrView extends React.Component {
           {this.state.edit &&
           <TopBar
             midTitle='Address'
-            iconLeft={<Clear />}
-            onClickLeft={() => this.setState({edit: false})}
             icon={<Done />}
             onClick={this.save}
             className={this.props.classes.gridWrap}
