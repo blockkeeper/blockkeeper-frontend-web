@@ -14,6 +14,7 @@ import Input, { InputLabel } from 'material-ui/Input'
 import TransitiveNumber from 'react-transitive-number'
 import Toolbar from 'material-ui/Toolbar'
 import Paper from 'material-ui/Paper'
+import Divider from 'material-ui/Divider'
 import Hidden from 'material-ui/Hidden'
 import Button from 'material-ui/Button'
 import * as CryptoIcons from 'react-cryptocoins'
@@ -26,8 +27,7 @@ import {Add, Close, Autorenew, HourglassEmpty,
         AccountCircle, InfoOutline, Error, KeyboardArrowUp} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
-import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors,
-       paperStyle, overflowStyle} from './Style'
+import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors} from './Style'
 import __ from '../util'
 
 const setBxpTrigger = view => {
@@ -55,72 +55,106 @@ const TopBar = ({
   onClickLeft,
   onClick,
   color,
-  noUser
+  noUser,
+  className
 }) =>
-  <AppBar position='static' color={color || 'default'} elevation={0}>
+  <AppBar position='static' color={color || 'default'} elevation={0} className={className}>
     <Toolbar style={{minHeight: '50px'}}>
-      {iconLeft &&
-      <IconButton aria-label='Menu' onClick={onClickLeft} color='contrast'>
-        {iconLeft}
-      </IconButton>}
-      {title &&
-        <Typography type='headline' color='inherit'>
-          <Hidden xsDown>
-            <span>Blockkeeper</span>
-          </Hidden>
-          <Hidden smUp>
-            <span>BK</span>
-          </Hidden>
-        </Typography>}
-      <Typography
-        type='headline'
-        color='inherit'
-        align='center'
-        style={{flex: 1}}
-      >
-        {midTitle || ''}
-      </Typography>
-      {icon &&
-        <IconButton aria-label='Menu' onClick={onClick} color='contrast'>
-          {icon}
-        </IconButton>}
-      {!noUser &&
-      <Link to={'/user/edit'}>
-        <IconButton aria-label='Menu' color='contrast'>
-          <AccountCircle />
-        </IconButton>
-      </Link>}
+      <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
+        <div style={{marginRight: 'auto'}}>
+          {iconLeft &&
+            <IconButton
+              aria-label='Menu'
+              onClick={onClickLeft}
+              color='contrast'
+              style={{
+                right: theme.spacing.unit * 2,
+                marginRight: 'auto'
+              }}
+            >
+              {iconLeft}
+            </IconButton>}
+          {title &&
+            <Typography type='headline' color='inherit'>
+              <Hidden xsDown>
+                <span>Blockkeeper</span>
+              </Hidden>
+              <Hidden smUp>
+                <span>BK</span>
+              </Hidden>
+            </Typography>}
+        </div>
+      </div>
+      <div>
+        <Typography
+          type='headline'
+          color='inherit'
+          align='center'
+          style={{flex: 1}}
+        >
+          {midTitle || ''}
+        </Typography>
+      </div>
+      <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
+        <div style={{marginLeft: 'auto'}}>
+          {icon &&
+            <Typography onClick={onClick} type='headline' color='inherit'>
+              {icon}
+            </Typography>}
+          {!noUser &&
+          <Link to={'/user/edit'}>
+            <IconButton
+              aria-label='Menu'
+              color='contrast'
+              style={{left: theme.spacing.unit * 2}}
+            >
+              <AccountCircle />
+            </IconButton>
+          </Link>}
+        </div>
+      </div>
     </Toolbar>
   </AppBar>
 
-const SubBar = ({tabs, ix, onClick}) =>
-  <AppBar style={{position: 'relative'}}>
+const SubBar = ({tabs, ix, onClick, rootClassName}) =>
+  <AppBar style={{position: 'relative', backgroundColor: 'white'}}>
     <Tabs
       centered
       value={ix}
       onChange={onClick}
       indicatorColor='primary'
-      style={tabStyle}
+      textColor='primary'
     >
-      {tabs.map(lbl => <Tab key={__.uuid()} label={lbl} />)}
+      {tabs.map(lbl =>
+        <Tab
+          key={__.uuid()}
+          label={lbl}
+          classes={{
+            root: rootClassName
+          }}
+        />
+      )}
     </Tabs>
   </AppBar>
 
-const Jumbo = ({title, subTitle, coin0, coin1}) =>
+const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
   <div style={jumboStyle}>
     <div>
       <Typography
         align='center'
         type='display3'
         color='inherit'
-        style={{fontWeight: '200'}}
+        className={display3ClassName}
       >
         <TransitiveNumber>
           {title ? formatNumber(title, coin0) : formatNumber(0, coin0)}
         </TransitiveNumber>&nbsp;
-        {coin0 &&
+        <Hidden xsDown>
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
-        }
+        </Hidden>
+        <Hidden smUp>
+          <CoinIcon coin={coin0} size={32} color={'white'} alt />
+        </Hidden>
       </Typography>
       <Typography align='center' type='headline' color='inherit'>
         <TransitiveNumber>
@@ -190,7 +224,20 @@ const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
   )
 }
 
-const tscRow = (addr, tsc, coin0, addrIcon, showAddrInfos) => {
+const tscRow = (
+  addr,
+  tsc,
+  coin0,
+  addrIcon,
+  showAddrInfos,
+  gridWrapClassName,
+  gridGutterClassName,
+  itemClassName,
+  display1ClassName,
+  body2ClassName,
+  tscAmntClassName,
+  tscIconClassname
+) => {
   const mx = 40
   let modeColor = tsc.mode === 'snd'
     ? theme.palette.error['500']
@@ -201,89 +248,186 @@ const tscRow = (addr, tsc, coin0, addrIcon, showAddrInfos) => {
   let desc = tsc.desc
   if (desc.length > mx) desc = desc.slice(0, mx) + '...'
   return (
-    <div
-      key={tsc._id}
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        borderBottom: `1px solid ${theme.palette.background.light}`,
-        marginBottom: theme.spacing.unit * 4,
-        paddingBottom: theme.spacing.unit * 2
-      }}>
-      {addrIcon &&
-        <div
-          style={{
-            paddingRight: theme.spacing.unit * 2,
-            paddingTop: theme.spacing.unit * 3
-          }}
-        >
-          <CoinIcon coin={addr.coin} size={40} />
+    <div key={tsc._id} className={gridWrapClassName}>
+      <div className={gridGutterClassName}>
+        <div className={itemClassName}>
+          {addrIcon &&
+            <div className={tscIconClassname}>
+              <Hidden xsDown>
+                <CoinIcon coin={addr.coin} size={42} />
+              </Hidden>
+              <Hidden smUp>
+                <CoinIcon coin={addr.coin} size={28} />
+              </Hidden>
+            </div>
+          }
+          <div style={{flexGrow: 1, minWidth: 0}}>
+            <Typography
+              type='body2'
+              className={body2ClassName}
+              style={{color: theme.palette.text.secondary}}
+            >
+              {__.ppTme(tsc._t)}
+            </Typography>
+            <Link
+              to={`/tsc/${addr._id}/${tsc._id}`}
+              style={{textDecoration: 'none'}}
+            >
+              <Typography
+                type='display1'
+                className={display1ClassName}
+                style={{
+                  color: theme.palette.text.primary
+                }}
+                noWrap
+              >
+                {showAddrInfos &&
+                  addr.name}
+                {!showAddrInfos &&
+                  tsc.name}
+              </Typography>
+            </Link>
+            <Typography
+              type='body2'
+              className={body2ClassName}
+              style={{color: theme.palette.text.secondary}}
+              noWrap
+            >
+              {showAddrInfos &&
+                (tsc.name || tsc.desc)}
+              {!showAddrInfos &&
+                (tsc.desc || 'Empty description')}
+            </Typography>
+          </div>
+          <div className={tscAmntClassName}>
+            <Typography
+              type='display1'
+              style={{
+                color: modeColor
+              }}
+              className={display1ClassName}
+            >
+              {modeSign} {formatNumber(tsc.amnt, addr.coin)}&nbsp;
+              <Hidden xsDown>
+                <CoinIcon
+                  coin={addr.coin}
+                  color={modeColor}
+                  alt
+                  />
+              </Hidden>
+              <Hidden smUp>
+                <CoinIcon
+                  coin={addr.coin}
+                  color={modeColor}
+                  size={12}
+                  alt
+                  />
+              </Hidden>
+            </Typography>
+            <Typography
+              type='body2'
+              style={{color: theme.palette.text.secondary}}
+              className={body2ClassName}
+              gutterBottom
+            >
+              {modeSign} {formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
+              <Hidden xsDown>
+                <CoinIcon
+                  coin={coin0}
+                  color={theme.palette.text.secondary}
+                  size={12}
+                  alt
+                />
+              </Hidden>
+              <Hidden smUp>
+                <CoinIcon
+                  coin={coin0}
+                  color={theme.palette.text.secondary}
+                  size={10}
+                  alt
+                />
+              </Hidden>
+            </Typography>
+          </div>
         </div>
-      }
-      <div style={{flexGrow: 1, minWidth: 0}}>
-        <Typography type='body2' style={{color: theme.palette.text.secondary}}>
-          {__.ppTme(tsc._t)}
-        </Typography>
-        <Link
-          to={`/tsc/${addr._id}/${tsc._id}`}
-          style={{textDecoration: 'none'}}
-        >
-          <Typography type='headline' style={overflowStyle}>
-            {showAddrInfos &&
-              addr.name}
-            {!showAddrInfos &&
-              tsc.name}
-          </Typography>
-        </Link>
-        <Typography
-          type='body2'
-          style={{color: theme.palette.text.secondary, ...overflowStyle}}
-        >
-          {showAddrInfos &&
-            (tsc.name || tsc.desc)}
-          {!showAddrInfos &&
-            (tsc.desc || 'Empty description')}
-        </Typography>
+        <Hidden mdDown>
+          <Divider />
+        </Hidden>
       </div>
-      <div
-        style={{textAlign: 'right', whiteSpace: 'nowrap'}}
-        >
-        <Typography
-          type='headline'
-          style={{color: modeColor, paddingTop: theme.spacing.unit * 3}}
-        >
-          {modeSign} {formatNumber(tsc.amnt, addr.coin)}
-          <CoinIcon coin={addr.coin} color={modeColor} alt />
-        </Typography>
-        <Typography
-          type='body2'
-          style={{color: theme.palette.text.secondary}}
-          gutterBottom
-        >
-          {modeSign} {formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
-          <CoinIcon
-            coin={coin0}
-            color={theme.palette.text.secondary}
-            size={12}
-            alt
-          />
-        </Typography>
-      </div>
+      <Hidden lgUp>
+        <Divider />
+      </Hidden>
     </div>
   )
 }
 
-const TscListAddr = ({addr, tscs, coin0, addrIcon}) =>
-  <div>
+const TscListAddr = ({
+  addr,
+  tscs,
+  coin0,
+  addrIcon,
+  className,
+  gridGutterClassName,
+  itemClassName,
+  gridWrapClassName,
+  display1ClassName,
+  body2ClassName,
+  tscAmntClassName
+}) =>
+  <Paper
+    square
+    className={className}
+    elevation={5}
+  >
     {tscs.map(tsc => {
-      return tscRow(addr, tsc, coin0, addrIcon, false)
+      return tscRow(
+        addr,
+        tsc,
+        coin0,
+        addrIcon,
+        false,
+        gridWrapClassName,
+        gridGutterClassName,
+        itemClassName,
+        display1ClassName,
+        body2ClassName,
+        tscAmntClassName
+      )
     })}
-  </div>
+  </Paper>
 
-const TscListAddresses = ({addrTscs, coin0, addrIcon}) =>
-  <Paper square style={{...paperStyle}}>
+const TscListAddresses = ({
+  addrTscs,
+  coin0,
+  addrIcon,
+  className,
+  gridGutterClassName,
+  itemClassName,
+  gridWrapClassName,
+  display1ClassName,
+  body2ClassName,
+  tscAmntClassName,
+  tscIconClassname
+}) =>
+  <Paper
+    square
+    className={className}
+  >
     {addrTscs.map(addrTsc => {
-      return tscRow(addrTsc[0], addrTsc[1], coin0, addrIcon, true)
+      return tscRow(
+        addrTsc[0],
+        addrTsc[1],
+        coin0,
+        addrIcon,
+        true,
+        gridWrapClassName,
+        gridGutterClassName,
+        itemClassName,
+        display1ClassName,
+        body2ClassName,
+        tscAmntClassName,
+        tscIconClassname
+      )
     })}
   </Paper>
 
@@ -420,46 +564,49 @@ const DepotEmpty = () =>
     </Link>
   </Paper>
 
-const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds}) => {
+const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds, className, itemClassName, addrClassName, amntClassName, display1ClassName, body2ClassName}) => {
   return (
     <Paper
       square
       elevation={0}
-      style={{
-        background: theme.palette.background.light,
-        padding: theme.spacing.unit
-      }}
+      className={className}
     >
       {addrs.map(addr => {
         return (
           <Paper
             key={addr._id}
-            style={{
-              margin: theme.spacing.unit * 2,
-              padding: theme.spacing.unit * 3,
-              display: 'flex',
-              justifyContent: 'space-between'
-            }}
+            elevation={3}
+            className={itemClassName}
           >
-            <div style={{paddingRight: theme.spacing.unit * 2}}>
-              <CoinIcon coin={addr.coin} size={42} />
+            <div>
+              <Hidden xsDown>
+                <CoinIcon coin={addr.coin} size={42} />
+              </Hidden>
+              <Hidden smUp>
+                <CoinIcon coin={addr.coin} size={28} />
+              </Hidden>
             </div>
-            <div style={{flexGrow: 1, minWidth: 0}}>
+            <div className={addrClassName}>
               <Link
                 to={`/addr/${addr._id}`}
                 style={{textDecoration: 'none'}}
               >
                 <Typography
                   type='display1'
-                  style={{color: theme.palette.text.primary, ...overflowStyle}}
+                  className={display1ClassName}
+                  style={{
+                    color: theme.palette.text.primary
+                  }}
+                  noWrap
                 >
                   {addr.name}&nbsp;
                 </Typography>
               </Link>
               <Typography
                 type='body2'
-                style={{color: theme.palette.text.secondary, ...overflowStyle}}
-            >
+                className={body2ClassName}
+                noWrap
+              >
                 {addr.hsh &&
                   <Hidden smDown>
                     <span>
@@ -475,29 +622,51 @@ const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds}) => {
                 {addr.hsh || addr.desc}
               </Typography>
             </div>
-            <div style={{textAlign: 'right', whiteSpace: 'nowrap'}}>
+            <div className={amntClassName}>
               <Typography
                 type='display1'
-                style={{color: theme.palette.primary['500']}}
+                color='primary'
+                className={display1ClassName}
               >
                 {formatNumber(addr.amnt, addr.coin)}&nbsp;
-                <CoinIcon
-                  coin={addr.coin}
-                  color={theme.palette.primary['500']}
-                  alt
-                />
+                <Hidden xsDown>
+                  <CoinIcon
+                    coin={addr.coin}
+                    color={theme.palette.primary['500']}
+                    alt
+                  />
+                </Hidden>
+                <Hidden smUp>
+                  <CoinIcon
+                    coin={addr.coin}
+                    color={theme.palette.primary['500']}
+                    size={12}
+                    alt
+                  />
+                </Hidden>
               </Typography>
               <Typography
                 type='body2'
+                className={body2ClassName}
                 style={{color: theme.palette.text.secondary}}
               >
                 {formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
-                <CoinIcon
-                  coin={coin0}
-                  size={14}
-                  color={theme.palette.text.secondary}
-                  alt
-                />
+                <Hidden xsDown>
+                  <CoinIcon
+                    coin={coin0}
+                    size={14}
+                    color={theme.palette.text.secondary}
+                    alt
+                  />
+                </Hidden>
+                <Hidden smUp>
+                  <CoinIcon
+                    coin={coin0}
+                    size={10}
+                    color={theme.palette.text.secondary}
+                    alt
+                  />
+                </Hidden>
               </Typography>
             </div>
             {addrUpdErrIds.has(addr._id) &&

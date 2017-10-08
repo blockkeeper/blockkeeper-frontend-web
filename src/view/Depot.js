@@ -1,14 +1,32 @@
 import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
 import {withStyles} from 'material-ui/styles'
+import withWidth from 'material-ui/utils/withWidth'
+import compose from 'recompose/compose'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn} from './Lib'
 import __ from '../util'
-import {themeBgStyle} from './Style'
+import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
+        tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab
+        } from './Style'
 
 const styles = {
-  themeBgStyle
+  themeBgStyle,
+  gridWrap,
+  gridWrapPaper,
+  gridItem,
+  gridSpacer,
+  gridGutter,
+  tscitem,
+  addr,
+  amnt,
+  tscIcon,
+  tscAmnt,
+  display1,
+  body2,
+  display3,
+  tab
 }
 
 class DepotView extends React.Component {
@@ -84,33 +102,39 @@ class DepotView extends React.Component {
       )
     } else if (this.state.addrs) {
       return (
-        <div className={this.props.classes.themeBgStyle}>
-          {this.state.snack &&
-            <Snack
-              msg={this.state.snack}
-              onClose={() => this.setState({snack: null})}
-            />}
-          <TopBar
-            title
-          />
-          {this.state.blc1 !== 'undefined' &&
-            <Jumbo
-              title={this.state.blc1}
-              subTitle={this.state.blc2}
-              coin0={this.state.coin0}
-              coin1={this.state.coin1}
-             />
-          }
-          {this.state.blc1 === 'undefined' &&
-            <Jumbo
-              coin0={this.state.coin0}
-              coin1={this.state.coin1}
-             />
-          }
+        <div>
+          <div className={this.props.classes.themeBgStyle}>
+            {this.state.snack &&
+              <Snack
+                msg={this.state.snack}
+                onClose={() => this.setState({snack: null})}
+              />}
+            <TopBar
+              title
+              className={this.props.classes.gridWrap}
+            />
+            {this.state.blc1 !== 'undefined' &&
+              <Jumbo
+                title={this.state.blc1}
+                subTitle={this.state.blc2}
+                coin0={this.state.coin0}
+                coin1={this.state.coin1}
+                display3ClassName={this.props.classes.display3}
+               />
+            }
+            {this.state.blc1 === 'undefined' &&
+              <Jumbo
+                coin0={this.state.coin0}
+                coin1={this.state.coin1}
+                display3ClassName={this.props.classes.display3}
+               />
+            }
+          </div>
           <SubBar
             tabs={['Addresses', 'Transactions']}
             ix={this.state.tabIx}
             onClick={this.tab}
+            rootClassName={this.props.classes.tab}
           />
           {this.state.addrs.length < 1 &&
             <DepotEmpty />
@@ -121,11 +145,25 @@ class DepotView extends React.Component {
               addrUpdIds={new Set()}    // TODO
               coin0={this.state.coin0}
               addrUpdErrIds={this.state.addrUpdErrIds}
+              className={this.props.classes.gridWrapPaper}
+              itemClassName={this.props.classes.gridItem}
+              addrClassName={this.props.classes.addr}
+              amntClassName={this.props.classes.amnt}
+              display1ClassName={this.props.classes.display1}
+              body2ClassName={this.props.classes.body2}
             />}
           {this.state.tabIx === 1 && this.state.addrTscs.length > 0 &&
             <TscListAddresses
               addrTscs={this.state.addrTscs}
               coin0={this.state.coin0}
+              className={this.props.classes.gridSpacer}
+              gridWrapClassName={this.props.classes.gridWrap}
+              gridGutterClassName={this.props.classes.gridGutter}
+              itemClassName={this.props.classes.tscitem}
+              display1ClassName={this.props.classes.display1}
+              body2ClassName={this.props.classes.body2}
+              tscAmntClassName={this.props.classes.tscAmnt}
+              tscIconClassname={this.props.classes.tscIcon}
               addrIcon
             />}
           <ToTopBtn
@@ -147,4 +185,4 @@ class DepotView extends React.Component {
   }
 }
 
-export default withStyles(styles)(DepotView)
+export default compose(withStyles(styles), withWidth())(DepotView)

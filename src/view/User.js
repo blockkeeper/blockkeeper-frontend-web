@@ -4,17 +4,16 @@ import TextField from 'material-ui/TextField'
 import { withStyles } from 'material-ui/styles'
 import {TopBar, Modal, DropDown, UserList, Done, Edit} from './Lib'
 import {ArrowBack, Clear} from 'material-ui-icons'
-import {themeBgStyle, paperStyle} from './Style'
+import {themeBgStyle, gridWrap, gridSpacer, gridGutter, gridGutterFluid} from './Style'
 import Paper from 'material-ui/Paper'
-import Grid from 'material-ui/Grid'
 import __ from '../util'
 
 const styles = {
   themeBgStyle,
-  paperStyle,
-  item: {
-    marginBottom: '80px'
-  }
+  gridWrap,
+  gridSpacer,
+  gridGutter,
+  gridGutterFluid
 }
 
 class UserView extends React.Component {
@@ -181,8 +180,6 @@ class UserView extends React.Component {
     } else if (this.state.username !== undefined) {
       return (
         <div className={this.props.classes.themeBgStyle}>
-          {this.state.busy &&
-            <LinearProgress />}
           {this.state.edit &&
           <TopBar
             midTitle='User'
@@ -190,6 +187,7 @@ class UserView extends React.Component {
             onClick={this.save}
             iconLeft={<Clear />}
             onClickLeft={() => this.setState({edit: false})}
+            className={this.props.classes.gridWrap}
             noUser
           />}
           {!this.state.edit &&
@@ -199,11 +197,17 @@ class UserView extends React.Component {
             onClick={this.edit}
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}
+            className={this.props.classes.gridWrap}
             noUser
           />}
-          <Paper square className={this.props.classes.paperStyle}>
-            <Grid container justify='center'>
-              <Grid item xs={12} sm={10} md={8} lg={6} className={this.props.classes.item}>
+          {this.state.busy &&
+            <LinearProgress />}
+          <Paper
+            square
+            className={this.props.classes.gridSpacer}
+          >
+            <div className={this.props.classes.gridWrap}>
+              <div className={this.props.classes.gridGutter}>
                 <TextField
                   fullWidth
                   label='Username'
@@ -233,14 +237,14 @@ class UserView extends React.Component {
                   action={this.setCoin}
                   disabled={!this.state.edit}
                  />
-              </Grid>
-              <Grid item xs={12}>
+              </div>
+              <div className={this.props.classes.gridGutterFluid}>
                 <UserList
                   askLogout={this.askLogout}
                   askDelete={this.askDelete}
-                />
-              </Grid>
-            </Grid>
+                 />
+              </div>
+            </div>
           </Paper>
         </div>
       )

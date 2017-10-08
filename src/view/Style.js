@@ -9,7 +9,8 @@ const styleGuide = {
   backgroundDark: 'linear-gradient(to bottom right,#210045, #9A40FF)',
   text: '#210045',
   textSecondary: '#907FA2',
-  spacertop: '100px'
+  spacertop: '100px',
+  fontWeightBold: '700'
 }
 
 const theme = createMuiTheme({
@@ -38,9 +39,11 @@ const theme = createMuiTheme({
       secondary: styleGuide.textSecondary
     }
   },
-
   typography: {
     fontFamily: 'Lato, sans-serif',
+    fontWeightLight: 200,
+    fontWeightRegular: 400,
+    fontWeightMedium: 400,
     display3: {
       fontSize: 48,
       lineHeight: 1,
@@ -108,11 +111,6 @@ const jumboStyle = {
   overflow: 'hidden'
 }
 
-const tabStyle = {
-  backgroundColor: 'white',
-  color: styleGuide.text
-}
-
 const floatBtnStyle = {
   margin: 0,
   top: 'auto',
@@ -134,12 +132,6 @@ const paperStyle = {
   padding: theme.spacing.unit * 3
 }
 
-const overflowStyle = {
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap'
-}
-
 const dividerStyle = {
   marginTop: theme.spacing.unit * 2,
   marginBottom: theme.spacing.unit * 4
@@ -159,9 +151,7 @@ const noTxtDeco = {
 
 const qrCodeWrap = {
   paddingTop: theme.spacing.unit * 4,
-  paddingBottom: theme.spacing.unit * 4,
-  paddingLeft: theme.spacing.unit * 2,
-  paddingRight: theme.spacing.unit * 2
+  paddingBottom: theme.spacing.unit * 4
 }
 
 const fullWidth = {
@@ -173,13 +163,121 @@ const fullHeightRoot = {
   height: '100vh'
 }
 
+const gridWrap = {
+  maxWidth: '1232px',
+  margin: '0 auto'
+}
+
+const gridWrapPaper = {
+  ...gridWrap,
+  background: theme.palette.background.light,
+  paddingTop: theme.spacing.unit * 2
+}
+
+const gridItem = {
+  marginBottom: theme.spacing.unit,
+  marginLeft: theme.spacing.unit * 3,
+  marginRight: theme.spacing.unit * 3,
+  padding: theme.spacing.unit * 3,
+  display: 'flex',
+  justifyContent: 'space-between',
+  [theme.breakpoints.down('sm')]: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+    paddingLeft: theme.spacing.unit,
+    paddingRight: theme.spacing.unit,
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2
+  }
+}
+
+const gridSpacer = {
+  paddingTop: theme.spacing.unit
+}
+
+const gridGutter = {
+  margin: theme.spacing.unit * 3,
+  [theme.breakpoints.down('sm')]: {
+    margin: theme.spacing.unit * 2
+  }
+}
+
+const gridGutterFluid = {
+  margin: theme.spacing.unit * 3,
+  [theme.breakpoints.down('sm')]: {
+    margin: 0
+  }
+}
+
+const tscitem = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: theme.spacing.unit * 3,
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: theme.spacing.unit * 2
+  }
+}
+
+const addr = {
+  flexGrow: 1,
+  minWidth: 0,
+  paddingLeft: theme.spacing.unit * 2,
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: theme.spacing.unit
+  }
+}
+
+const amnt = {
+  textAlign: 'right',
+  whiteSpace: 'nowrap'
+}
+
+const tscIcon = {
+  paddingRight: theme.spacing.unit * 2,
+  paddingTop: theme.spacing.unit * 3,
+  [theme.breakpoints.down('sm')]: {
+    paddingRight: theme.spacing.unit,
+    paddingTop: theme.spacing.unit * 2
+  }
+}
+
+const tscAmnt = {
+  textAlign: 'right',
+  whiteSpace: 'nowrap',
+  paddingTop: theme.spacing.unit * 3,
+  [theme.breakpoints.down('sm')]: {
+    paddingTop: theme.spacing.unit * 2
+  }
+}
+
+const display1 = {
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '18px'
+  }
+}
+
+const body2 = {
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '12px'
+  }
+}
+
+const display3 = {
+  fontWeight: '200',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '40px'
+  }
+}
+
+const tab = {
+  fontWeight: styleGuide.fontWeightBold
+}
+
 export {
   theme,
   themeBgStyle,
   loginStyle,
-  tabStyle,
   homeStyle,
-  overflowStyle,
   jumboStyle,
   floatBtnStyle,
   CryptoColors,
@@ -189,5 +287,20 @@ export {
   noTxtDeco,
   qrCodeWrap,
   fullWidth,
-  fullHeightRoot
+  fullHeightRoot,
+  gridWrap,
+  gridWrapPaper,
+  gridItem,
+  gridSpacer,
+  gridGutter,
+  gridGutterFluid,
+  tscitem,
+  addr,
+  amnt,
+  tscIcon,
+  tscAmnt,
+  display1,
+  body2,
+  display3,
+  tab
 }

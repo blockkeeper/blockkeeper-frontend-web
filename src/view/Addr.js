@@ -11,7 +11,9 @@ import Paper from 'material-ui/Paper'
 import {withStyles} from 'material-ui/styles'
 import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
-import {theme, themeBgStyle, paperStyle, overflowStyle, noTxtDeco, qrCodeWrap} from './Style'
+import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
+        gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2
+        } from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, Delete, Clear} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
@@ -21,28 +23,33 @@ import __ from '../util'
 
 const styles = {
   themeBgStyle,
-  paperStyle,
-  overflowStyle,
   noTxtDeco,
   qrCodeWrap,
+  gridWrap,
+  gridSpacer,
+  gridGutter,
+  tscitem,
+  addr,
+  amnt,
+  tscIcon,
+  tscAmnt,
+  display1,
+  body2,
   paperWrap: {
-    ...paperStyle,
     textAlign: 'center',
-    paddingBottom: 0
+    paddingTop: theme.spacing.unit * 3,
+    paddingBottom: theme.spacing.unit * 3
   },
   titleStyle: {
-    paddingTop: theme.spacing.unit * 2,
-    ...overflowStyle
+    paddingTop: theme.spacing.unit * 2
   },
   display3: {
+    // ...display3,
     fontWeight: '400',
     color: theme.palette.primary['500'],
     paddingTop: theme.spacing.unit * 2
   },
-  colorPrimary: {
-    color: theme.palette.primary['500']
-  },
-  deleteWrap: {
+  deleteIcon: {
     width: theme.spacing.unit * 2,
     height: theme.spacing.unit * 2
   },
@@ -199,6 +206,7 @@ class AddrView extends React.Component {
             onClickLeft={() => this.setState({edit: false})}
             icon={<Done />}
             onClick={this.save}
+            className={this.props.classes.gridWrap}
             noUser
           />}
           {!this.state.edit &&
@@ -208,6 +216,7 @@ class AddrView extends React.Component {
             onClickLeft={this.goBack}
             icon={<Edit />}
             onClick={this.edit}
+            className={this.props.classes.gridWrap}
             noUser
           />}
           {this.state.busy &&
@@ -217,33 +226,21 @@ class AddrView extends React.Component {
             square
             className={this.props.classes.paperWrap}
           >
-            <Grid container justify='center'>
-              <Grid item xs={12} sm={10} md={8} lg={6}>
-                <CoinIcon coin={this.state.coin} size={100} />
-                {this.state.edit &&
-                <TextField
-                  fullWidth
-                  value={this.state.name}
-                  error={Boolean(this.state.nameEmsg)}
-                  helperText={this.state.nameEmsg}
-                  onChange={evt => this.set('name', evt.target.value)}
-                  inputProps={{
-                    style: {
-                      textAlign: 'center',
-                      fontSize: theme.typography.title.fontSize
-                    }
-                  }}
-                />}
-                {!this.state.edit && !addrUrl &&
+            <div className={this.props.classes.gridGutter}>
+              <Grid container justify='center' spacing={0}>
+                <Grid item xs={12} sm={10} md={8} lg={6}>
+                  <CoinIcon coin={this.state.coin} size={100} />
+                  {!addrUrl &&
                   <Typography
                     type='title'
                     color='default'
                     className={this.props.classes.titleStyle}
+                    noWrap
                   >
                     {this.state.addr.name}
                   </Typography>
                 }
-                {!this.state.edit && addrUrl &&
+                  {addrUrl &&
                   <ExtLink
                     to={addrUrl}
                     className={this.props.classes.noTxtDeco}
@@ -252,68 +249,70 @@ class AddrView extends React.Component {
                         type='title'
                         color='default'
                         className={this.props.classes.titleStyle}
+                        noWrap
                       >
                         {this.state.addr.name}
                         <Launch color='grey' />
                       </Typography>}
                   />
                 }
-                <Typography
-                  type='display3'
-                  className={this.props.classes.display3}
+                  <Typography
+                    type='display3'
+                    className={this.props.classes.display3}
                 >
-                  <TransitiveNumber>
-                    {formatNumber(this.state.blc1, this.state.coin)}
-                  </TransitiveNumber>&nbsp;
-                  <CoinIcon
-                    coin={this.state.coin}
-                    size={35}
-                    color={theme.palette.primary['500']}
-                    alt
+                    <TransitiveNumber>
+                      {formatNumber(this.state.blc1, this.state.coin)}
+                    </TransitiveNumber>
+                  &nbsp;
+                    <CoinIcon
+                      coin={this.state.coin}
+                      size={35}
+                      color={theme.palette.primary['500']}
+                      alt
                   />
-                  {this.state.addrUpdErrIds.has(this.state.addr._id) &&
+                    {this.state.addrUpdErrIds.has(this.state.addr._id) &&
                     <InfoUpdateFailed />}
-                </Typography>
-                {!this.state.toggleCoins &&
+                  </Typography>
+                  {!this.state.toggleCoins &&
                   <Typography
                     type='headline'
+                    color='primary'
                     onClick={this.toggleCoins}
-                    className={this.props.classes.colorPrimary}
                     gutterBottom
                   >
                     <TransitiveNumber>
                       {formatNumber(this.state.blc2, this.state.coin0)}
-                    </TransitiveNumber>&nbsp;
+                    </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin0}
                       color={theme.palette.primary['500']}
                       alt
                     />
                   </Typography>}
-                {this.state.toggleCoins &&
+                  {this.state.toggleCoins &&
                   <Typography
                     type='headline'
                     onClick={this.toggleCoins}
-                    className={this.props.classes.colorPrimary}
+                    color='primary'
                     gutterBottom
                   >
                     <TransitiveNumber>
                       {formatNumber(this.state.blc3, this.state.coin1)}
-                    </TransitiveNumber>&nbsp;
+                    </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin1}
                       color={theme.palette.primary['500']}
                       alt
                     />
                   </Typography>}
-                {!this.state.show &&
+                  {!this.state.show &&
                   <IconButton onClick={this.show}>
                     <ArrowDropDown style={{
                       height: '50px',
                       width: '50px'
                     }} />
                   </IconButton>}
-                {this.state.show &&
+                  {this.state.show &&
                   <div>
                     <Divider light />
                     {this.state.addr.hsh &&
@@ -324,16 +323,61 @@ class AddrView extends React.Component {
                       </Typography>
                     </div>}
                     <Divider light />
-                    {this.state.edit &&
-                      <Button onClick={() => this.setState({ask: true})}>
-                        <Delete
-                          className={this.props.classes.deleteWrap}
-                        />
-                        Delete Address
-                      </Button>}
                     <div className={this.props.classes.tableWrap}>
                       <Table>
                         <TableBody>
+                          <TableRow>
+                            <TableCell width={'10%'} padding='none'>
+                              Name
+                            </TableCell>
+                            <TableCell numeric padding='none'>
+                              {this.state.edit &&
+                              <TextField
+                                fullWidth
+                                value={this.state.name}
+                                error={Boolean(this.state.nameEmsg)}
+                                helperText={this.state.nameEmsg}
+                                onChange={evt => this.set('name', evt.target.value)}
+                                inputProps={{
+                                  style: {
+                                    textAlign: 'right'
+                                  }
+                                }}
+                              />}
+                              {!this.state.edit &&
+                                this.state.addr.name}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell width={'10%'} padding='none'>
+                              Notes
+                            </TableCell>
+                            <TableCell numeric padding='none'>
+                              {this.state.edit &&
+                                <TextField
+                                  fullWidth
+                                  value={this.state.desc}
+                                  error={Boolean(this.state.descEmsg)}
+                                  helperText={this.state.descEmsg}
+                                  onChange={evt => {
+                                    this.set('desc', evt.target.value)
+                                  }}
+                                  inputProps={{
+                                    style: {
+                                      textAlign: 'right'
+                                    }
+                                  }}
+                                />}
+                              {!this.state.edit &&
+                                this.state.addr.desc}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell width={'10%'} padding='none'>
+                              Tags
+                            </TableCell>
+                            <TableCell numeric padding='none' />
+                          </TableRow>
                           {this.state.addr.hsh &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
@@ -372,34 +416,18 @@ class AddrView extends React.Component {
                               {formatNumber(this.state.blc1, this.state.coin)} {this.state.coin}
                             </TableCell>
                           </TableRow>
-                          <TableRow>
-                            <TableCell width={'10%'} padding='none'>
-                              Notes
-                            </TableCell>
-                            <TableCell numeric padding='none'>
-                              {this.state.edit &&
-                                <TextField
-                                  fullWidth
-                                  value={this.state.desc}
-                                  error={Boolean(this.state.descEmsg)}
-                                  helperText={this.state.descEmsg}
-                                  onChange={evt => {
-                                    this.set('desc', evt.target.value)
-                                  }}
-                                />}
-                              {!this.state.edit &&
-                                this.state.addr.desc}
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell width={'10%'} padding='none'>
-                              Tags
-                            </TableCell>
-                            <TableCell numeric padding='none' />
-                          </TableRow>
                         </TableBody>
                       </Table>
                     </div>
+                    {this.state.edit &&
+                      <div className={this.props.classes.qrCodeWrap}>
+                        <Button onClick={() => this.setState({ask: true})}>
+                          <Delete
+                            className={this.props.classes.deleteIcon}
+                          />
+                          Delete Address
+                        </Button>
+                      </div>}
                     <IconButton onClick={this.show}>
                       <ArrowDropUp style={{
                         height: '50px',
@@ -408,25 +436,31 @@ class AddrView extends React.Component {
                     </IconButton>
                   </div>
                 }
+                </Grid>
               </Grid>
-            </Grid>
+            </div>
           </Paper>
-          <Paper square className={this.props.classes.paperStyle} elevation={5}>
-            {this.state.tscs.length > 0 &&
-              <TscListAddr
-                addr={this.state.addr}
-                tscs={this.state.tscs}
-                coin0={this.state.coin0}
-                addrIcon={false}
-              />}
-            {this.state.tscs.length <= 0 &&
-              <Typography align='center' type='body1'>
-                {this.state.addr.hsh &&
-                  'No transactions'}
-                {!this.state.addr.hsh &&
-                  'No transactions (manually added address)'}
-              </Typography>}
-          </Paper>
+          {this.state.tscs.length > 0 &&
+            <TscListAddr
+              addr={this.state.addr}
+              tscs={this.state.tscs}
+              coin0={this.state.coin0}
+              addrIcon={false}
+              className={this.props.classes.gridSpacer}
+              gridWrapClassName={this.props.classes.gridWrap}
+              gridGutterClassName={this.props.classes.gridGutter}
+              itemClassName={this.props.classes.tscitem}
+              display1ClassName={this.props.classes.display1}
+              body2ClassName={this.props.classes.body2}
+              tscAmntClassName={this.props.classes.tscAmnt}
+            />}
+          {this.state.tscs.length <= 0 &&
+            <Typography align='center' type='body1'>
+              {this.state.addr.hsh &&
+                'No transactions'}
+              {!this.state.addr.hsh &&
+                'No transactions (manually added address)'}
+            </Typography>}
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([this.addrId])}
             bxpSts={this.state.bxpSts}

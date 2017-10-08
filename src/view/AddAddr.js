@@ -10,22 +10,23 @@ import Paper from 'material-ui/Paper'
 import Divider from 'material-ui/Divider'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import Grid from 'material-ui/Grid'
 import QrReader from 'react-qr-reader'
-import {theme, themeBgStyle, paperStyle, dividerStyle, qrReaderStyle} from './Style'
+import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
+        gridWrap, gridGutter, gridSpacer} from './Style'
 import {TopBar, Modal, CoinIcon} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
 const styles = {
   themeBgStyle,
-  paperStyle,
+  gridWrap,
+  gridGutter,
+  gridSpacer,
   dividerStyle,
   qrReaderStyle,
   saveStyle: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit
+    width: '50%',
+    margin: theme.spacing.unit * 4
   },
   radios: {
     paddingLeft: theme.spacing.unit
@@ -139,18 +140,22 @@ class AddAddrView extends React.Component {
     } else if (this.state.coin) {
       return (
         <div className={this.props.classes.themeBgStyle}>
-          {this.state.busy &&
-          <LinearProgress />}
           <TopBar
-            title
+            // title
             midTitle='Address'
             icon={<Clear />}
             onClick={this.goBack}
+            className={this.props.classes.gridWrap}
             noUser
           />
-          <Paper square className={this.props.classes.paperStyle}>
-            <Grid container spacing={16} justify='center'>
-              <Grid item xs={12} sm={10} md={8} lg={6}>
+          {this.state.busy &&
+          <LinearProgress />}
+          <Paper
+            square
+            className={this.props.classes.gridSpacer}
+          >
+            <div className={this.props.classes.gridWrap}>
+              <div className={this.props.classes.gridGutter}>
                 <Typography type='title'>
                   Details
                 </Typography>
@@ -165,7 +170,7 @@ class AddAddrView extends React.Component {
                     error={Boolean(this.state.hshEmsg)}
                     helperText={this.state.hshEmsg}
                     onChange={evt => this.set('hsh', evt.target.value)}
-                    />}
+                          />}
                 {this.state.noHshMode &&
                   <TextField
                     autoFocus
@@ -177,7 +182,7 @@ class AddAddrView extends React.Component {
                     error={Boolean(this.state.amntEmsg)}
                     helperText={this.state.amntEmsg}
                     onChange={evt => this.set('amnt', evt.target.value)}
-                    />}
+                          />}
                 <FormControlLabel
                   control={
                     <Switch
@@ -186,10 +191,10 @@ class AddAddrView extends React.Component {
                         this.set('qrMode', checked)
                         this.set('noHshMode', false)
                       }}
-                      />
-                    }
+                            />
+                          }
                   label='Scan QR Code'
-                  />
+                        />
                 <FormControlLabel
                   control={
                     <Switch
@@ -198,45 +203,37 @@ class AddAddrView extends React.Component {
                         this.set('noHshMode', checked)
                         this.set('qrMode', false)
                       }}
-                      />
-                    }
+                            />
+                          }
                   label='Manage manually (no public key)'
-                  />
-              </Grid>
-            </Grid>
-            {this.state.qrMode &&
-            <Grid container spacing={16} justify='center'>
-              <Grid item xs={12} sm={10} md={8} lg={6} >
-                <div onClick={() => this.setState({
-                  facingMode: this.state.facingMode === 'front'
-                    ? 'rear'
-                    : 'front'
-                })}
-                >
-                  <QrReader
-                    facingMode={this.state.facingMode}
-                    delay={this.state.delay}
-                    className={this.props.classes.qrReaderStyle}
-                    style={{
-                      height: '100%',
-                      width: '100%',
-                      maxHeight: '400px'
-                    }}
-                    onError={err => this.warn(err)}
-                    onScan={this.handleQRScan}
-                  />
-                  <Typography type='caption' align='center'>
-                    {__.cap(this.state.facingMode)} camera
-                  </Typography>
-                </div>
-              </Grid>
-            </Grid>}
-            <Grid container spacing={16} justify='center'>
-              <Grid item xs={12} sm={10} md={8} lg={6}>
+                        />
+                {this.state.qrMode &&
+                  <div onClick={() => this.setState({
+                    facingMode: this.state.facingMode === 'front'
+                          ? 'rear'
+                          : 'front'
+                  })}
+                      >
+                    <QrReader
+                      facingMode={this.state.facingMode}
+                      delay={this.state.delay}
+                      className={this.props.classes.qrReaderStyle}
+                      style={{
+                        height: '100%',
+                        width: '100%',
+                        maxHeight: '400px'
+                      }}
+                      onError={err => this.warn(err)}
+                      onScan={this.handleQRScan}
+                        />
+                    <Typography type='caption' align='center'>
+                      {__.cap(this.state.facingMode)} camera
+                        </Typography>
+                  </div>}
                 <Divider className={this.props.classes.dividerStyle} light />
                 <Typography type='title' gutterBottom>
-                  Blockchain / Type
-                </Typography>
+                        Blockchain / Type
+                      </Typography>
                 {this.coins.map(coin =>
                   <FormControlLabel
                     key={coin}
@@ -251,18 +248,14 @@ class AddAddrView extends React.Component {
                         name={coin}
                         className={this.props.classes.radios}
                         aria-label={coin}
-                      />
-                    }
-                  />
-                )}
-              </Grid>
-            </Grid>
-            <Grid container spacing={16} justify='center'>
-              <Grid item xs={12} sm={10} md={8} lg={6}>
+                            />
+                          }
+                        />
+                      )}
                 <Divider className={this.props.classes.dividerStyle} light />
                 <Typography type='title'>
-                  Personal details
-                </Typography>
+                        Personal details
+                      </Typography>
                 <TextField
                   fullWidth
                   label={this.state.noHshMode ? 'Name *' : 'Name'}
@@ -271,7 +264,7 @@ class AddAddrView extends React.Component {
                   error={Boolean(this.state.nameEmsg)}
                   helperText={this.state.nameEmsg}
                   onChange={evt => this.set('name', evt.target.value)}
-                    />
+                          />
                 <TextField
                   fullWidth
                   label='Notes'
@@ -280,26 +273,22 @@ class AddAddrView extends React.Component {
                   error={Boolean(this.state.descEmsg)}
                   helperText={this.state.descEmsg}
                   onChange={evt => this.set('desc', evt.target.value)}
-                    />
-              </Grid>
-            </Grid>
-            <Grid container spacing={16} justify='center'>
-              <Grid item xs={12} sm={10} md={8} lg={6}>
+                          />
                 {!this.state.busy &&
-                <div className={this.props.classes.center}>
-                  <Button
-                    raised
-                    color={'accent'}
-                    className={this.props.classes.saveStyle}
-                    onClick={this.save}
-                    disabled={!this.state.upd}
-                  >
-                    <Add />
-                    Add address
-                  </Button>
-                </div>}
-              </Grid>
-            </Grid>
+                  <div className={this.props.classes.center}>
+                    <Button
+                      raised
+                      color={'accent'}
+                      className={this.props.classes.saveStyle}
+                      onClick={this.save}
+                      disabled={!this.state.upd}
+                        >
+                      <Add />
+                          Add address
+                        </Button>
+                  </div>}
+              </div>
+            </div>
           </Paper>
         </div>
       )
