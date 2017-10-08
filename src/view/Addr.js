@@ -454,12 +454,19 @@ class AddrView extends React.Component {
               tscAmntClassName={this.props.classes.tscAmnt}
             />}
           {this.state.tscs.length <= 0 &&
-            <Typography align='center' type='body1'>
-              {this.state.addr.hsh &&
-                'No transactions'}
-              {!this.state.addr.hsh &&
-                'No transactions (manually added address)'}
-            </Typography>}
+            <Paper
+              elevation={5}
+              square
+              className={this.props.classes.paperWrap}
+            >
+              <Typography align='center' type='body1'>
+                {this.state.addr.hsh &&
+                  'No transactions'}
+                {!this.state.addr.hsh &&
+                  'No transactions (manually added address)'}
+              </Typography>
+            </Paper>}
+
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([this.addrId])}
             bxpSts={this.state.bxpSts}
