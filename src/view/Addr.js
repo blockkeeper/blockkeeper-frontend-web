@@ -174,7 +174,7 @@ class AddrView extends React.Component {
   render () {
     if (this.state.err) {
       return (
-        <Modal onClose={this.goBack} >
+        <Modal onClose={this.goBack}>
           {this.state.err}
         </Modal>
       )

@@ -1,5 +1,5 @@
 import {createMuiTheme} from 'material-ui/styles'
-import {purple, teal, red, common} from 'material-ui/colors'
+import {common} from 'material-ui/colors'
 
 const styleGuide = {
   primary: '#9A40FF',
@@ -16,17 +16,55 @@ const styleGuide = {
 const theme = createMuiTheme({
   palette: {
     primary: {
-      ...purple,
-      '500': styleGuide.primary
+      50: '#f3e8ff',
+      100: '#e1c6ff',
+      200: '#cda0ff',
+      300: '#b879ff',
+      400: '#a95dff',
+      500: '#9a40ff',
+      600: '#923aff',
+      700: '#8832ff',
+      800: '#7e2aff',
+      900: '#6c1cff',
+      A100: '#ffffff',
+      A200: '#ffffff',
+      A400: '#ddcdff',
+      A700: '#ccb3ff',
+      contrastDefaultColor: 'light'
     },
     secondary: {
-      ...teal,
-      '500': styleGuide.secondary
+      50: '#e2f5f2',
+      100: '#b6e6e0',
+      200: '#86d6cb',
+      300: '#56c5b6',
+      400: '#31b8a6',
+      500: '#0dac96',
+      600: '#0ba58e',
+      700: '#099b83',
+      800: '#079279',
+      900: '#038268',
+      A100: '#afffec',
+      A200: '#7cffdf',
+      A400: '#49ffd3',
+      A700: '#30ffcd',
+      'contrastDefaultColor': 'light'
     },
     error: {
-      ...red,
-      'A400': styleGuide.error,
-      '500': styleGuide.error
+      50: '#fae0ee',
+      100: '#f2b3d5',
+      200: '#ea80b9',
+      300: '#e24d9d',
+      400: '#db2688',
+      500: '#d50073',
+      600: '#d0006b',
+      700: '#ca0060',
+      800: '#c40056',
+      900: '#ba0043',
+      A100: '#ffe3eb',
+      A200: '#ffb0c7',
+      A400: '#ff7da2',
+      A700: '#ff6390',
+      'contrastDefaultColor': 'light'
     },
     background: {
       default: styleGuide.backgroundDark,
