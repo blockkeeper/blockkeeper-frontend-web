@@ -9,7 +9,7 @@ import Typography from 'material-ui/Typography'
 import withWidth from 'material-ui/utils/withWidth'
 import { withStyles } from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
-import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter} from './Style'
+import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter, actnBtnClr} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
         Modal, CoinIcon, ExtLink, formatNumber, Done,
         Edit, BxpFloatBtn} from './Lib'
@@ -21,6 +21,7 @@ const styles = {
   noTxtDeco,
   gridWrap,
   gridGutter,
+  actnBtnClr,
   spacer: {
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2
@@ -465,6 +466,7 @@ class TscView extends React.Component {
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([])}
             bxpSts={this.state.bxpSts}
+            actnBtnClrClassName={this.props.classes.actnBtnClr}
             first
           />
         </div>

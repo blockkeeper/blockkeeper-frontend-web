@@ -12,7 +12,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import QrReader from 'react-qr-reader'
 import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
-        gridWrap, gridGutter, gridSpacer} from './Style'
+        gridWrap, gridGutter, gridSpacer, actnBtnClr} from './Style'
 import {TopBar, Modal, CoinIcon} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
@@ -24,6 +24,7 @@ const styles = {
   gridSpacer,
   dividerStyle,
   qrReaderStyle,
+  actnBtnClr,
   saveStyle: {
     width: '50%',
     margin: theme.spacing.unit * 4
@@ -170,7 +171,7 @@ class AddAddrView extends React.Component {
                     error={Boolean(this.state.hshEmsg)}
                     helperText={this.state.hshEmsg}
                     onChange={evt => this.set('hsh', evt.target.value)}
-                          />}
+                  />}
                 {this.state.noHshMode &&
                   <TextField
                     autoFocus
@@ -182,7 +183,7 @@ class AddAddrView extends React.Component {
                     error={Boolean(this.state.amntEmsg)}
                     helperText={this.state.amntEmsg}
                     onChange={evt => this.set('amnt', evt.target.value)}
-                          />}
+                  />}
                 <FormControlLabel
                   control={
                     <Switch
@@ -191,10 +192,9 @@ class AddAddrView extends React.Component {
                         this.set('qrMode', checked)
                         this.set('noHshMode', false)
                       }}
-                            />
-                          }
+                    />}
                   label='Scan QR Code'
-                        />
+                />
                 <FormControlLabel
                   control={
                     <Switch
@@ -203,17 +203,15 @@ class AddAddrView extends React.Component {
                         this.set('noHshMode', checked)
                         this.set('qrMode', false)
                       }}
-                            />
-                          }
+                    />}
                   label='Manage manually (no public key)'
-                        />
+                />
                 {this.state.qrMode &&
                   <div onClick={() => this.setState({
                     facingMode: this.state.facingMode === 'front'
                           ? 'rear'
                           : 'front'
-                  })}
-                      >
+                  })}>
                     <QrReader
                       facingMode={this.state.facingMode}
                       delay={this.state.delay}
@@ -232,8 +230,8 @@ class AddAddrView extends React.Component {
                   </div>}
                 <Divider className={this.props.classes.dividerStyle} light />
                 <Typography type='title' gutterBottom>
-                        Blockchain / Type
-                      </Typography>
+                  Blockchain / Type
+                </Typography>
                 {this.coins.map(coin =>
                   <FormControlLabel
                     key={coin}
@@ -248,14 +246,12 @@ class AddAddrView extends React.Component {
                         name={coin}
                         className={this.props.classes.radios}
                         aria-label={coin}
-                            />
-                          }
-                        />
-                      )}
+                      />}
+                  />)}
                 <Divider className={this.props.classes.dividerStyle} light />
                 <Typography type='title'>
-                        Personal details
-                      </Typography>
+                  Personal details
+                </Typography>
                 <TextField
                   fullWidth
                   label={this.state.noHshMode ? 'Name *' : 'Name'}
@@ -264,7 +260,7 @@ class AddAddrView extends React.Component {
                   error={Boolean(this.state.nameEmsg)}
                   helperText={this.state.nameEmsg}
                   onChange={evt => this.set('name', evt.target.value)}
-                          />
+                />
                 <TextField
                   fullWidth
                   label='Notes'
@@ -273,7 +269,7 @@ class AddAddrView extends React.Component {
                   error={Boolean(this.state.descEmsg)}
                   helperText={this.state.descEmsg}
                   onChange={evt => this.set('desc', evt.target.value)}
-                          />
+                />
                 {!this.state.busy &&
                   <div className={this.props.classes.center}>
                     <Button
@@ -282,7 +278,10 @@ class AddAddrView extends React.Component {
                       className={this.props.classes.saveStyle}
                       onClick={this.save}
                       disabled={!this.state.upd}
-                        >
+                      classes={{
+                        raisedAccent: this.props.classes.actnBtnClr
+                      }}
+                    >
                       <Add />
                           Add address
                         </Button>

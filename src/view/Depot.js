@@ -8,8 +8,8 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         DepotEmpty, ToTopBtn} from './Lib'
 import __ from '../util'
 import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
-        tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab
-        } from './Style'
+        tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
+        actnBtnClr} from './Style'
 
 const styles = {
   themeBgStyle,
@@ -26,7 +26,8 @@ const styles = {
   display1,
   body2,
   display3,
-  tab
+  tab,
+  actnBtnClr
 }
 
 class DepotView extends React.Component {
@@ -168,15 +169,20 @@ class DepotView extends React.Component {
             />}
           <ToTopBtn
             second={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
+            actnBtnClrClassName={this.props.classes.actnBtnClr}
           />
           {this.state.addrs.length > 0 &&
             <BxpFloatBtn
               onClick={() => this.cx.depot.bxp([])}
               bxpSts={this.state.bxpSts}
               first={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
+              actnBtnClrClassName={this.props.classes.actnBtnClr}
             />}
           {(this.state.tabIx === 0 || this.state.addrTscs.length === 0) &&
-          <FloatBtn onClick={this.goAddAddr} />}
+          <FloatBtn
+            onClick={this.goAddAddr}
+            actnBtnClrClassName={this.props.classes.actnBtnClr}
+          />}
         </div>
       )
     } else {

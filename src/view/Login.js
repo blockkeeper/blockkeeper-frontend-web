@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid'
 import { withStyles } from 'material-ui/styles'
 import {LinearProgress} from 'material-ui/Progress'
 import {Lock} from 'material-ui-icons'
-import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot} from './Style'
+import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} from './Style'
 import {Modal} from './Lib'
 import __ from '../util'
 
@@ -16,6 +16,7 @@ const styles = {
   loginStyle,
   paperStyle,
   fullWidth,
+  actnBtnClr,
   loginButton: {
     width: '100%',
     marginTop: theme.spacing.unit * 2,
@@ -125,6 +126,9 @@ class LoginView extends React.Component {
                     className={this.props.classes.loginButton}
                     onClick={(event) => this.login(event)}
                     disabled={!this.state.upd}
+                    classes={{
+                      raisedAccent: this.props.classes.actnBtnClr
+                    }}
                     >
                     <Lock
                       className={this.props.classes.lockIcon} />

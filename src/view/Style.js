@@ -2,9 +2,6 @@ import {createMuiTheme} from 'material-ui/styles'
 import {common} from 'material-ui/colors'
 
 const styleGuide = {
-  primary: '#9A40FF',
-  secondary: '#0DAC96',
-  error: '#D50073',
   backgroundLight: '#F4F2F5',
   backgroundDark: 'linear-gradient(to bottom right,#210045, #9A40FF)',
   text: '#210045',
@@ -311,6 +308,18 @@ const tab = {
   fontWeight: styleGuide.fontWeightBold
 }
 
+const actnBtnClr = {
+  color: 'white',
+  backgroundColor: theme.palette.error[500],
+  '&:hover': {
+    backgroundColor: theme.palette.error.A400,
+    // Reset on mouse devices
+    '@media (hover: none)': {
+      backgroundColor: theme.palette.error[500]
+    }
+  }
+}
+
 export {
   theme,
   themeBgStyle,
@@ -340,5 +349,6 @@ export {
   display1,
   body2,
   display3,
-  tab
+  tab,
+  actnBtnClr
 }

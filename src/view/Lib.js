@@ -27,7 +27,7 @@ import {Add, Close, Autorenew, HourglassEmpty,
         AccountCircle, InfoOutline, Error, KeyboardArrowUp} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
         DialogTitle } from 'material-ui/Dialog'
-import {theme, jumboStyle, tabStyle, floatBtnStyle, CryptoColors} from './Style'
+import {theme, jumboStyle, floatBtnStyle, CryptoColors} from './Style'
 import __ from '../util'
 
 const setBxpTrigger = view => {
@@ -167,18 +167,21 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
     </div>
   </div>
 
-const ToTopBtn = ({second}) =>
+const ToTopBtn = ({second, actnBtnClrClassName}) =>
   <ScrollToTop showUnder={200} style={{right: theme.spacing.unit * 2, bottom: second ? theme.spacing.unit * 10 : theme.spacing.unit * 18}}>
     <Button
       fab
       aria-label='add'
       color='primary'
+      classes={{
+        raisedPrimary: actnBtnClrClassName
+      }}
     >
       <KeyboardArrowUp />
     </Button>
   </ScrollToTop>
 
-const FloatBtn = ({onClick, key}) => {
+const FloatBtn = ({onClick, key, actnBtnClrClassName}) => {
   return (
     <Button
       fab
@@ -187,13 +190,16 @@ const FloatBtn = ({onClick, key}) => {
       style={floatBtnStyle}
       onClick={onClick}
       key={key || __.uuid()}
+      classes={{
+        raisedPrimary: actnBtnClrClassName
+      }}
     >
       <Add />
     </Button>
   )
 }
 
-const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
+const BxpFloatBtn = ({onClick, bxpSts, style, first, actnBtnClrClassName}) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
     lbl = 'Blocked'
@@ -218,6 +224,9 @@ const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
       onClick={onClick}
       key='bxpFloatBtn'
       disabled={dsbld}
+      classes={{
+        raisedPrimary: actnBtnClrClassName
+      }}
     >
       {icon}
     </Button>

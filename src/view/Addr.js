@@ -12,8 +12,8 @@ import {withStyles} from 'material-ui/styles'
 import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
-        gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2
-        } from './Style'
+        gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
+        actnBtnClr} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp,
        Launch, Delete} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
@@ -35,6 +35,7 @@ const styles = {
   tscAmnt,
   display1,
   body2,
+  actnBtnClr,
   paperWrap: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 3,
@@ -463,8 +464,12 @@ class AddrView extends React.Component {
             onClick={() => this.cx.depot.bxp([this.addrId])}
             bxpSts={this.state.bxpSts}
             first
+            actnBtnClrClassName={this.props.classes.actnBtnClr}
           />
-          <ToTopBtn second />
+          <ToTopBtn
+            second
+            actnBtnClrClassName={this.props.classes.actnBtnClr}
+          />
         </div>
       )
     } else {

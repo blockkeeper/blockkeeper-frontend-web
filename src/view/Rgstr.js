@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid'
 import { withStyles } from 'material-ui/styles'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
-import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot} from './Style'
+import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} from './Style'
 import {Modal} from './Lib'
 import __ from '../util'
 
@@ -16,6 +16,7 @@ const styles = {
   loginStyle,
   paperStyle,
   fullWidth,
+  actnBtnClr,
   body1: {
     textAlign: 'left',
     marginTop: theme.spacing.unit * 2
@@ -178,6 +179,9 @@ class RgstrView extends React.Component {
                         className={this.props.classes.btnRg}
                         onClick={this.save}
                         disabled={!this.state.upd}
+                        classes={{
+                          raisedAccent: this.props.classes.actnBtnClr
+                        }}
                       >
                         <PersonAdd
                           className={this.props.classes.person}
