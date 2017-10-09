@@ -107,7 +107,6 @@ class AddrView extends React.Component {
     }
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc([addr])
-    this.debug(addr, addr.tags)
     const tagsJoin = (addr.tags || []).join(' ')
     this.setState({
       upd: false,
