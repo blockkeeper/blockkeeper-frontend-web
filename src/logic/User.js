@@ -4,7 +4,7 @@ import {localization as deLoc} from 'moment/locale/de'
 import __ from '../util'
 
 export default class User extends ApiBase {
-  constructor (cx, _id, depotId) {
+  constructor (cx, _id, pld) {
     super('user', cx, _id || '0005b739-8462-4959-af94-271cd93f5195')
     this._store = 'user'
     this._load = this._load.bind(this)
@@ -12,6 +12,7 @@ export default class User extends ApiBase {
     this._apiSet = this._apiSet.bind(this)
     this._apiDel = this._apiDel.bind(this)
     this.getCoins = this.getCoins.bind(this)
+    if (pld) this.setSto(pld)
     this.info('Created')
   }
 

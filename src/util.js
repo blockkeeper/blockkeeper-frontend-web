@@ -349,6 +349,7 @@ export default {
   toTags: tags => tags.trim().split(' ').filter(item => item !== '').join(' '),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
+  clearObj: obj => { for (let prop of Object.keys(obj)) delete obj[prop] },
   shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
   isFiat: coin => Boolean(cfg('coins').fiat[coin.toUpperCase()]),
   dec: coin => {

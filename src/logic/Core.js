@@ -8,8 +8,8 @@ export default class Core extends StoBase {
   constructor (cx) {
     super('core', cx, '000a1e26-ab63-445a-97ec-7ff61d942ef8')
     this._store = 'core'
-    this.clear = () => __.clearSto()
     this.isActive = () => Boolean(this.getSto())
+    this.clear = this.clear.bind(this)
     this.toUserHsh = this.toUserHsh.bind(this)
     this.toSecret = this.toSecret.bind(this)
     this.encrypt = this.encrypt.bind(this)
@@ -17,6 +17,13 @@ export default class Core extends StoBase {
     this.init = this.init.bind(this)
     this.get = this.get.bind(this)
     this.info('Created')
+  }
+
+  clear () {
+    const cx = this.cx
+    __.clearObj(cx)
+    cx.core = new Core(cx)
+    __.clearSto()
   }
 
   get (key) {
@@ -61,7 +68,7 @@ export default class Core extends StoBase {
     }
   }
 
-  init (userHsh, secret, userId, depotId) {
+  init (userHsh, secret, userId, depotId, user) {
     if (userHsh) this.setSto({userHsh, secret, userId, depotId})
     const core = this.getSto()
     if (!core) return false
@@ -69,7 +76,7 @@ export default class Core extends StoBase {
       // order matters, e.g. depot has cx.user as parent
       Object.assign(this.cx, {
         tmp: {},
-        user: new User(this.cx, core.userId),
+        user: new User(this.cx, core.userId, user),
         rate: new Rate(this.cx)
       })
       Object.assign(this.cx, {
@@ -109,7 +116,7 @@ export default class Core extends StoBase {
     } catch (e) {
       throw this.err('Invalid user/password', {e, sts: 404})
     }
-    this.init(userHsh, secret, user._id, user.depotId)
+    this.init(userHsh, secret, user._id, user.depotId, user)
   }
 
   async register (username, pw) {

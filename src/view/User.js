@@ -156,7 +156,7 @@ class UserView extends React.Component {
           onClose={() => this.setState({logout: null})}
           lbl='Logout'
           actions={[{
-            lbl: 'Logout and clear?',
+            lbl: 'Clear and logout?',
             onClick: () => this.logout()
           }]}
         >
@@ -174,7 +174,7 @@ class UserView extends React.Component {
             onClick: () => this.delete()
           }]}
         >
-          {'Delete account and related data?'}
+          {'Delete account and all related data?'}
         </Modal>
       )
     } else if (this.state.username !== undefined) {
