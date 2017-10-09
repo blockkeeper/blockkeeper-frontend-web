@@ -107,11 +107,14 @@ class AddrView extends React.Component {
     }
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc([addr])
+    this.debug(addr, addr.tags)
+    const tagsJoin = (addr.tags || []).join(' ')
     this.setState({
       upd: false,
       addr: addr,
       name: addr.name,
       desc: addr.desc,
+      tagsJoin,
       tscs: addr.tscs,
       coin: addr.coin,
       hshMode: Boolean(addr.hsh),
@@ -135,7 +138,8 @@ class AddrView extends React.Component {
     try {
       const addr = await this.addrObj.save({
         name: this.state.name,
-        desc: this.state.desc
+        desc: this.state.desc,
+        tags: __.toTags(this.state.tagsJoin).split(' ')
       })
       this.setSnack('Address updated')
       this.setState({addr, snack: this.getSnack(), busy: false, upd: false})
@@ -161,12 +165,16 @@ class AddrView extends React.Component {
       let d = {
         upd: false,
         nameEmsg: __.vldAlphNum(this.state.name),
-        descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')})
+        descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')}),
+        tagsEmsg: __.vldAlphNum(this.state.tagsJoin, {max: __.cfg('maxHigh')})
       }
       if (this.state.hshMode) {
-        if (!d.nameEmsg && !d.descEmsg) d.upd = true
+        if (!d.nameEmsg && !d.descEmsg && !d.tagsEmsg) d.upd = true
       } else {
-        if (this.state.name.trim() && !d.nameEmsg && !d.descEmsg) d.upd = true
+        if (this.state.name.trim() &&
+            !d.nameEmsg && !d.descEmsg && !d.tagsEmsg) {
+          d.upd = true
+        }
       }
       this.setState(d)
     })
@@ -375,7 +383,25 @@ class AddrView extends React.Component {
                             <TableCell width={'10%'} padding='none'>
                               Tags
                             </TableCell>
-                            <TableCell numeric padding='none' />
+                            <TableCell numeric padding='none'>
+                              {this.state.edit &&
+                                <TextField
+                                  fullWidth
+                                  value={this.state.tagsJoin}
+                                  error={Boolean(this.state.tagsEmsg)}
+                                  helperText={this.state.tagsEmsg}
+                                  onChange={evt => {
+                                    this.set('tagsJoin', evt.target.value)
+                                  }}
+                                  inputProps={{
+                                    style: {
+                                      textAlign: 'right'
+                                    }
+                                  }}
+                                />}
+                              {!this.state.edit &&
+                                this.state.tagsJoin}
+                            </TableCell>
                           </TableRow>
                           {this.state.addr.hsh &&
                             <TableRow>

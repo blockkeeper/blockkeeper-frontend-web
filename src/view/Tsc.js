@@ -132,13 +132,6 @@ class TscView extends React.Component {
     })
   }
 
-  getTags () {
-    if (this.state.tsc.tags) {
-      return this.state.tsc.tags.trim().split(' ').map(
-        tag => '#' + tag).join(' ')
-    }
-  }
-
   async save () {
     if (this.state.upd === false) {
       this.setState({edit: false})
@@ -151,7 +144,7 @@ class TscView extends React.Component {
         hsh: tsc.hsh,
         name: this.state.name,
         desc: this.state.desc,
-        tags: this.state.tagsJoin.trim().split(' ')
+        tags: __.toTags(this.state.tagsJoin).split(' ')
       }
       this.addr = await this.addrObj.save({tscs: [updTsc]})
       this.setSnack('Transaction updated')

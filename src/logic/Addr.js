@@ -86,7 +86,8 @@ export default class Addr extends ApiBase {
       tscCnt: upd.tscCnt || cur.tscCnt || 0,
       coin: upd.coin || cur.coin,
       rates: upd.rates || cur.rates || {},
-      name: upd.name || cur.name
+      name: upd.name || cur.name,
+      tags: upd.tags || cur.tags || []
     }
     const toHsh = hsh => this.coins[addr.coin].toHsh(hsh.trim())
     const hsh = upd.hsh || cur.hsh
