@@ -47,6 +47,15 @@ const unsetBxpTrigger = view => {
   delete view.cx.tmp.bxpSts
 }
 
+const addrLimitReached = (cmp, addrs) => {
+  if (addrs.length >= __.cfg('mxAddrCnt')) {
+    cmp.setSnack('Maximum number of addresses reached: ' +
+                   'Please delete old addresses first')
+    return true
+  }
+  return false
+}
+
 const TopBar = ({
   title,
   midTitle,
@@ -781,6 +790,7 @@ const UserList = ({askLogout, askDelete}) =>
 export {
   setBxpTrigger,
   unsetBxpTrigger,
+  addrLimitReached,
   TopBar,
   TscListAddr,
   TscListAddresses,

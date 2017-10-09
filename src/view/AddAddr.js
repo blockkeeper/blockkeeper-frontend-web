@@ -13,7 +13,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import QrReader from 'react-qr-reader'
 import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
         gridWrap, gridGutter, gridSpacer, actnBtnClr} from './Style'
-import {TopBar, Modal, CoinIcon} from './Lib'
+import {addrLimitReached, TopBar, Modal, CoinIcon} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -78,6 +78,17 @@ class AddAddrView extends React.Component {
   }
 
   async save () {
+    try {
+      const addrs = await this.cx.depot.loadAddrs()
+      if (addrLimitReached(this, addrs)) {
+        this.props.history.replace('/depot')
+        return
+      }
+    } catch (e) {
+      if (__.cfg('isDev')) throw e
+      this.setState({err: e.message})
+      return
+    }
     this.setState({busy: true})
     const addrObj = new Addr(this.cx)
     try {
