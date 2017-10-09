@@ -23,8 +23,7 @@ export default class User extends ApiBase {
   }
 
   async _apiGet () {
-    const userHsh = this.cx.core.get('userHsh')
-    const pld = await __.rqst({url: `${__.cfg('apiUrl')}/login/${userHsh}`})
+    const pld = await __.rqst({url: `${__.cfg('apiUrl')}/user/${this._id}`})
     const user = this.decrypt(pld.data)
     return user
   }
