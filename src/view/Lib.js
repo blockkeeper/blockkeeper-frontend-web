@@ -51,9 +51,9 @@ const TopBar = ({
   title,
   midTitle,
   icon,
+  onClick,
   iconLeft,
   onClickLeft,
-  onClick,
   color,
   noUser,
   className
@@ -98,9 +98,13 @@ const TopBar = ({
       <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
         <div style={{marginLeft: 'auto'}}>
           {icon &&
-            <Typography onClick={onClick} type='headline' color='inherit'>
+            <IconButton
+              aria-label='Menu'
+              color='contrast'
+              onClick={onClick}
+            >
               {icon}
-            </Typography>}
+            </IconButton>}
           {!noUser &&
           <Link to={'/user/edit'}>
             <IconButton
