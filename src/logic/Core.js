@@ -68,7 +68,7 @@ export default class Core extends StoBase {
     }
   }
 
-  init (userHsh, secret, userId, depotId) {
+  init (userHsh, secret, userId, depotId, user) {
     if (userHsh) this.setSto({userHsh, secret, userId, depotId})
     const core = this.getSto()
     if (!core) return false
@@ -76,7 +76,7 @@ export default class Core extends StoBase {
       // order matters, e.g. depot has cx.user as parent
       Object.assign(this.cx, {
         tmp: {},
-        user: new User(this.cx, core.userId),
+        user: new User(this.cx, core.userId, user),
         rate: new Rate(this.cx)
       })
       Object.assign(this.cx, {
@@ -116,7 +116,7 @@ export default class Core extends StoBase {
     } catch (e) {
       throw this.err('Invalid user/password', {e, sts: 404})
     }
-    this.init(userHsh, secret, user._id, user.depotId)
+    this.init(userHsh, secret, user._id, user.depotId, user)
   }
 
   async register (username, pw) {
