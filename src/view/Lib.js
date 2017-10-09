@@ -269,9 +269,13 @@ const tscRow = (
   if (desc.length > mx) desc = desc.slice(0, mx) + '...'
   return (
     <div key={tsc._id} className={gridWrapClassName}>
-      <div className={gridGutterClassName}>
-        <div className={itemClassName}>
-          {addrIcon &&
+      <Link
+        to={`/tsc/${addr._id}/${tsc._id}`}
+        style={{textDecoration: 'none'}}
+      >
+        <div className={gridGutterClassName}>
+          <div className={itemClassName}>
+            {addrIcon &&
             <div className={tscIconClassname}>
               <Hidden xsDown>
                 <CoinIcon coin={addr.coin} size={42} />
@@ -281,18 +285,14 @@ const tscRow = (
               </Hidden>
             </div>
           }
-          <div style={{flexGrow: 1, minWidth: 0}}>
-            <Typography
-              type='body2'
-              className={body2ClassName}
-              style={{color: theme.palette.text.secondary}}
+            <div style={{flexGrow: 1, minWidth: 0}}>
+              <Typography
+                type='body2'
+                className={body2ClassName}
+                style={{color: theme.palette.text.secondary}}
             >
-              {__.ppTme(tsc._t)}
-            </Typography>
-            <Link
-              to={`/tsc/${addr._id}/${tsc._id}`}
-              style={{textDecoration: 'none'}}
-            >
+                {__.ppTme(tsc._t)}
+              </Typography>
               <Typography
                 type='display1'
                 className={display1ClassName}
@@ -306,77 +306,77 @@ const tscRow = (
                 {!showAddrInfos &&
                   tsc.name}
               </Typography>
-            </Link>
-            <Typography
-              type='body2'
-              className={body2ClassName}
-              style={{color: theme.palette.text.secondary}}
-              noWrap
+              <Typography
+                type='body2'
+                className={body2ClassName}
+                style={{color: theme.palette.text.secondary}}
+                noWrap
             >
-              {showAddrInfos &&
+                {showAddrInfos &&
                 (tsc.name || tsc.desc)}
-              {!showAddrInfos &&
+                {!showAddrInfos &&
                 (tsc.desc || 'Empty description')}
-            </Typography>
-          </div>
-          <div className={tscAmntClassName}>
-            <Typography
-              type='display1'
-              style={{
-                color: modeColor
-              }}
-              className={display1ClassName}
+              </Typography>
+            </div>
+            <div className={tscAmntClassName}>
+              <Typography
+                type='display1'
+                style={{
+                  color: modeColor
+                }}
+                className={display1ClassName}
             >
-              {modeSign} {formatNumber(tsc.amnt, addr.coin)}&nbsp;
-              <Hidden xsDown>
-                <CoinIcon
-                  coin={addr.coin}
-                  color={modeColor}
-                  alt
+                {modeSign} {formatNumber(tsc.amnt, addr.coin)}&nbsp;
+                <Hidden xsDown>
+                  <CoinIcon
+                    coin={addr.coin}
+                    color={modeColor}
+                    alt
                   />
-              </Hidden>
-              <Hidden smUp>
-                <CoinIcon
-                  coin={addr.coin}
-                  color={modeColor}
-                  size={12}
-                  alt
+                </Hidden>
+                <Hidden smUp>
+                  <CoinIcon
+                    coin={addr.coin}
+                    color={modeColor}
+                    size={12}
+                    alt
                   />
-              </Hidden>
-            </Typography>
-            <Typography
-              type='body2'
-              style={{color: theme.palette.text.secondary}}
-              className={body2ClassName}
-              gutterBottom
+                </Hidden>
+              </Typography>
+              <Typography
+                type='body2'
+                style={{color: theme.palette.text.secondary}}
+                className={body2ClassName}
+                gutterBottom
             >
-              {modeSign} {formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
-              <Hidden xsDown>
-                <CoinIcon
-                  coin={coin0}
-                  color={theme.palette.text.secondary}
-                  size={12}
-                  alt
+                {modeSign} {formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
+                <Hidden xsDown>
+                  <CoinIcon
+                    coin={coin0}
+                    color={theme.palette.text.secondary}
+                    size={12}
+                    alt
                 />
-              </Hidden>
-              <Hidden smUp>
-                <CoinIcon
-                  coin={coin0}
-                  color={theme.palette.text.secondary}
-                  size={10}
-                  alt
+                </Hidden>
+                <Hidden smUp>
+                  <CoinIcon
+                    coin={coin0}
+                    color={theme.palette.text.secondary}
+                    size={10}
+                    alt
                 />
-              </Hidden>
-            </Typography>
+                </Hidden>
+              </Typography>
+            </div>
           </div>
+          <Hidden mdDown>
+            <Divider />
+          </Hidden>
         </div>
-        <Hidden mdDown>
+        <Hidden lgUp>
           <Divider />
         </Hidden>
-      </div>
-      <Hidden lgUp>
-        <Divider />
-      </Hidden>
+      </Link>
     </div>
   )
 }
