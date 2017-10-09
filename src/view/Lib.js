@@ -768,7 +768,7 @@ const UserList = ({askLogout, askDelete}) =>
       <ListItemIcon>
         <ExitToAppIcon />
       </ListItemIcon>
-      <ListItemText primary='Logout (and clear LocalStorage)' />
+      <ListItemText primary='Logout' />
     </ListItem>
     <ListItem button onClick={askDelete}>
       <ListItemIcon>

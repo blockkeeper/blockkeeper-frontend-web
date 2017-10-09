@@ -8,8 +8,8 @@ export default class Core extends StoBase {
   constructor (cx) {
     super('core', cx, '000a1e26-ab63-445a-97ec-7ff61d942ef8')
     this._store = 'core'
-    this.clear = () => __.clearSto()
     this.isActive = () => Boolean(this.getSto())
+    this.clear = this.clear.bind(this)
     this.toUserHsh = this.toUserHsh.bind(this)
     this.toSecret = this.toSecret.bind(this)
     this.encrypt = this.encrypt.bind(this)
@@ -17,6 +17,13 @@ export default class Core extends StoBase {
     this.init = this.init.bind(this)
     this.get = this.get.bind(this)
     this.info('Created')
+  }
+
+  clear () {
+    const cx = this.cx
+    __.clearObj(cx)
+    cx.core = new Core(cx)
+    __.clearSto()
   }
 
   get (key) {
