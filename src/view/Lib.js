@@ -584,24 +584,24 @@ const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds, className, itemClas
     >
       {addrs.map(addr => {
         return (
-          <Paper
+          <Link
+            to={`/addr/${addr._id}`}
+            style={{textDecoration: 'none'}}
             key={addr._id}
-            elevation={3}
-            className={itemClassName}
           >
-            <div>
-              <Hidden xsDown>
-                <CoinIcon coin={addr.coin} size={42} />
-              </Hidden>
-              <Hidden smUp>
-                <CoinIcon coin={addr.coin} size={28} />
-              </Hidden>
-            </div>
-            <div className={addrClassName}>
-              <Link
-                to={`/addr/${addr._id}`}
-                style={{textDecoration: 'none'}}
-              >
+            <Paper
+              elevation={3}
+              className={itemClassName}
+            >
+              <div>
+                <Hidden xsDown>
+                  <CoinIcon coin={addr.coin} size={42} />
+                </Hidden>
+                <Hidden smUp>
+                  <CoinIcon coin={addr.coin} size={28} />
+                </Hidden>
+              </div>
+              <div className={addrClassName}>
                 <Typography
                   type='display1'
                   className={display1ClassName}
@@ -612,77 +612,77 @@ const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds, className, itemClas
                 >
                   {addr.name}&nbsp;
                 </Typography>
-              </Link>
-              <Typography
-                type='body2'
-                className={body2ClassName}
-                noWrap
-              >
-                {addr.hsh &&
+                <Typography
+                  type='body2'
+                  className={body2ClassName}
+                  noWrap
+                >
+                  {addr.hsh &&
                   <Hidden smDown>
                     <span>
                       <b>Address</b>&nbsp;
                     </span>
                   </Hidden>}
-                {!addr.hsh && addr.desc &&
+                  {!addr.hsh && addr.desc &&
                   <Hidden smDown>
                     <span>
                       <b>Note</b>&nbsp;
                     </span>
                   </Hidden>}
-                {addr.hsh || addr.desc}
-              </Typography>
-            </div>
-            <div className={amntClassName}>
-              <Typography
-                type='display1'
-                color='primary'
-                className={display1ClassName}
-              >
-                {formatNumber(addr.amnt, addr.coin)}&nbsp;
-                <Hidden xsDown>
-                  <CoinIcon
-                    coin={addr.coin}
-                    color={theme.palette.primary['500']}
-                    alt
+                  {addr.hsh || addr.desc}
+                </Typography>
+              </div>
+              <div className={amntClassName}>
+                <Typography
+                  type='display1'
+                  color='primary'
+                  className={display1ClassName}
+                >
+                  {formatNumber(addr.amnt, addr.coin)}&nbsp;
+                  <Hidden xsDown>
+                    <CoinIcon
+                      coin={addr.coin}
+                      color={theme.palette.primary['500']}
+                      alt
                   />
-                </Hidden>
-                <Hidden smUp>
-                  <CoinIcon
-                    coin={addr.coin}
-                    color={theme.palette.primary['500']}
-                    size={12}
-                    alt
+                  </Hidden>
+                  <Hidden smUp>
+                    <CoinIcon
+                      coin={addr.coin}
+                      color={theme.palette.primary['500']}
+                      size={12}
+                      alt
                   />
-                </Hidden>
-              </Typography>
-              <Typography
-                type='body2'
-                className={body2ClassName}
-                style={{color: theme.palette.text.secondary}}
-              >
-                {formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
-                <Hidden xsDown>
-                  <CoinIcon
-                    coin={coin0}
-                    size={14}
-                    color={theme.palette.text.secondary}
-                    alt
+                  </Hidden>
+                </Typography>
+                <Typography
+                  type='body2'
+                  className={body2ClassName}
+                  style={{color: theme.palette.text.secondary}}
+                >
+                  {formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
+                  <Hidden xsDown>
+                    <CoinIcon
+                      coin={coin0}
+                      size={14}
+                      color={theme.palette.text.secondary}
+                      alt
                   />
-                </Hidden>
-                <Hidden smUp>
-                  <CoinIcon
-                    coin={coin0}
-                    size={10}
-                    color={theme.palette.text.secondary}
-                    alt
+                  </Hidden>
+                  <Hidden smUp>
+                    <CoinIcon
+                      coin={coin0}
+                      size={10}
+                      color={theme.palette.text.secondary}
+                      alt
                   />
-                </Hidden>
-              </Typography>
-            </div>
-            {addrUpdErrIds.has(addr._id) &&
+                  </Hidden>
+                </Typography>
+              </div>
+              {addrUpdErrIds.has(addr._id) &&
               <InfoUpdateFailed />}
-          </Paper>
+            </Paper>
+          </Link>
         )
       })}
     </Paper>
