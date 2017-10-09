@@ -99,6 +99,10 @@ export default class Depot extends ApiBase {
   }
 
   async bxp (addrIds) {
+    try {
+      this.cx.rate.clear()
+      await this.cx.rate.load()
+    } catch (e) { /* using cached values */ }
     this.setBxpSts('run')
     this.info('Bxp started')
     let addrs
