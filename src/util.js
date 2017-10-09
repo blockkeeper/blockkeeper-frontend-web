@@ -346,6 +346,7 @@ export default {
   info: getLogger('info', 'main'),
   warn: getLogger('warn', 'main'),
   toInt: val => validator.toInt(String(val)),
+  toTags: tags => tags.trim().split(' ').filter(item => item !== '').join(' '),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
   shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
