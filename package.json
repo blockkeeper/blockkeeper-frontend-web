@@ -5,8 +5,8 @@
   "dependencies": {
     "axios": "^0.16.2",
     "currency-symbol-map": "^4.0.2",
-    "material-ui": "^1.0.0-beta.13",
-    "material-ui-icons": "^1.0.0-beta.10",
+    "material-ui": "^1.0.0-beta.16",
+    "material-ui-icons": "^1.0.0-beta.15",
     "moment": "^2.18.1",
     "qrcode-react": "^0.1.14",
     "react": "^15.6.2",
