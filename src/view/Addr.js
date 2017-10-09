@@ -497,7 +497,6 @@ class AddrView extends React.Component {
             onClick={() => this.cx.depot.bxp([this.addrId])}
             bxpSts={this.state.bxpSts}
             first
-            actnBtnClrClassName={this.props.classes.actnBtnClr}
           />
           <ToTopBtn
             second

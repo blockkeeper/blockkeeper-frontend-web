@@ -459,7 +459,6 @@ class TscView extends React.Component {
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([])}
             bxpSts={this.state.bxpSts}
-            actnBtnClrClassName={this.props.classes.actnBtnClr}
             first
           />
         </div>
