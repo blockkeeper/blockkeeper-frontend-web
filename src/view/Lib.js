@@ -102,6 +102,7 @@ const TopBar = ({
               aria-label='Menu'
               color='contrast'
               onClick={onClick}
+              style={{width: 'auto'}}
             >
               {icon}
             </IconButton>}
