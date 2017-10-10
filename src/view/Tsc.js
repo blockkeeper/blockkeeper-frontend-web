@@ -99,6 +99,7 @@ class TscView extends React.Component {
     setBxpTrigger(this)
     const blc = this.cx.depot.getTscBlc([tsc], this.addr)
     const tagsJoin = tsc.tags.join(' ')
+    this.debug(tsc)
     this.setState({
       upd: false,
       tsc,
@@ -327,19 +328,8 @@ class TscView extends React.Component {
                         received
                       </Typography>
                     </div>
-                  </div>}
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
-                      Fees
-                    </Typography>
                   </div>
-                  <div className={this.props.classes.valueStyle}>
-                    <Typography type='body1' noWrap>
-                      0.2345 {this.state.addr.coin} {/* TODO */}
-                    </Typography>
-                  </div>
-                </div>
+                }
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
@@ -354,19 +344,6 @@ class TscView extends React.Component {
                     </Typography>
                   </div>
                 </div>
-                {this.state.tsc.feeDesc &&
-                  <div className={this.props.classes.flexStyle}>
-                    <div className={this.props.classes.labelStyle}>
-                      <Typography type='body1' noWrap color='inherit'>
-                        Additional costs (fee)
-                      </Typography>
-                    </div>
-                    <div className={this.props.classes.valueStyle}>
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.feeDesc}
-                      </Typography>
-                    </div>
-                  </div>}
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
