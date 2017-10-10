@@ -21,6 +21,7 @@ let data = {
   bxpBlockedSec: 15,
   mxTscCnt: 100,
   mxAddrCnt: 100,
+  newAddrNotice: 'New address ',
   coins: {
     fiat: {
       AUD: {dec: 2},

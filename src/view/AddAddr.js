@@ -281,22 +281,21 @@ class AddAddrView extends React.Component {
                   helperText={this.state.descEmsg}
                   onChange={evt => this.set('desc', evt.target.value)}
                 />
-                {!this.state.busy &&
-                  <div className={this.props.classes.center}>
-                    <Button
-                      raised
-                      color={'accent'}
-                      className={this.props.classes.saveStyle}
-                      onClick={this.save}
-                      disabled={!this.state.upd}
-                      classes={{
-                        raisedAccent: this.props.classes.actnBtnClr
-                      }}
-                    >
-                      <Add />
-                          Add address
-                        </Button>
-                  </div>}
+                <div className={this.props.classes.center}>
+                  <Button
+                    raised
+                    color={'accent'}
+                    className={this.props.classes.saveStyle}
+                    onClick={this.save}
+                    disabled={!this.state.upd || this.state.busy}
+                    classes={{
+                      raisedAccent: this.props.classes.actnBtnClr
+                    }}
+                  >
+                    <Add />
+                        Add address
+                      </Button>
+                </div>
               </div>
             </div>
           </Paper>

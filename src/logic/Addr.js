@@ -93,9 +93,9 @@ export default class Addr extends ApiBase {
     const hsh = upd.hsh || cur.hsh
     if (hsh) {
       addr.hsh = toHsh(hsh)
-      addr.name = (addr.name || __.shortn(addr.hsh)).trim()
+      addr.name = (addr.name || __.cfg('newAddrNotice') + __.shortn(addr.hsh, 7)).trim()
     } else {
-      addr.name = (addr.name || __.shortn(addr._id)).trim()
+      addr.name = (addr.name || __.cfg('newAddrNotice') + __.shortn(addr._id, 7)).trim()
     }
     upd.tscs = upd.tscs || []
     const updTscs = new Map(upd.tscs.map((upd) => [toHsh(upd.hsh), upd]))

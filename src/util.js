@@ -350,7 +350,7 @@ export default {
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
   clearObj: obj => { for (let prop of Object.keys(obj)) delete obj[prop] },
-  shortn: val => `${val.trim().slice(0, cfg('maxLow') - 3)}...`,
+  shortn: (val, maxLow) => `${val.trim().slice(0, maxLow || cfg('maxLow'))}...`,
   isFiat: coin => Boolean(cfg('coins').fiat[coin.toUpperCase()]),
   dec: coin => {
     coin = coin.toUpperCase()
