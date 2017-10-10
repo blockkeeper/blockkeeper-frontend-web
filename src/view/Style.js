@@ -129,13 +129,11 @@ const themeBgStyle = {
   background: theme.palette.background.default
 }
 
-const homeStyle = {
+const loginStyle = {
   paddingTop: styleGuide.spacertop,
   textAlign: 'center',
   color: common.white
 }
-
-const loginStyle = homeStyle
 
 const jumboStyle = {
   minHeight: '25vh',
@@ -324,7 +322,6 @@ export {
   theme,
   themeBgStyle,
   loginStyle,
-  homeStyle,
   jumboStyle,
   floatBtnStyle,
   CryptoColors,
