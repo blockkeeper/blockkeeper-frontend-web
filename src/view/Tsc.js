@@ -7,7 +7,7 @@ import {Link} from 'react-router-dom'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import withWidth from 'material-ui/utils/withWidth'
-import { withStyles } from 'material-ui/styles'
+import {withStyles} from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter, actnBtnClr} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
@@ -353,18 +353,6 @@ class TscView extends React.Component {
                   <div className={this.props.classes.valueStyle}>
                     <Typography type='body1' noWrap>
                       2017-10-01 12:22:27 {/* TODO */}
-                    </Typography>
-                  </div>
-                </div>
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
-                      Block
-                    </Typography>
-                  </div>
-                  <div className={this.props.classes.valueStyle}>
-                    <Typography type='body1' noWrap>
-                        487806 {/* TODO */}
                     </Typography>
                   </div>
                 </div>
