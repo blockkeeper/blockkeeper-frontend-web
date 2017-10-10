@@ -23,7 +23,7 @@ class HomeView extends React.Component {
       <div className={this.props.classes.fullHeightRoot}>
         <div className={this.props.classes.homeStyle}>
           <Typography type='display3' color={'inherit'}>
-            Blockkeeper
+            Block keeper
           </Typography>
           <Typography type='display1' color={'inherit'} gutterBottom>
             Your secure blockchain book keeping app

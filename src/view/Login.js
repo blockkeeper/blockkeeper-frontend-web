@@ -90,7 +90,7 @@ class LoginView extends React.Component {
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={6} lg={4} xl={4}>
                 <Typography type='display3' color='inherit'>
-                  Blockkeeper
+                  Block Keeper
                 </Typography>
                 <Typography type='display1' color='inherit' gutterBottom>
                   Please enter your login credentials

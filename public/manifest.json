@@ -1,6 +1,6 @@
 {
-  "short_name": "Blockkeeper",
-  "name": "Blockkeeper - Your secure blockchain book keeping app",
+  "short_name": "Block Keeper",
+  "name": "Block Keeper - Your secure blockchain book keeping app",
   "icons": [
     {
         "src": "/android-chrome-192x192.png",

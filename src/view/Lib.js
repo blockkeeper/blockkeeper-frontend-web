@@ -86,7 +86,7 @@ const TopBar = ({
           {title &&
             <Typography type='headline' color='inherit'>
               <Hidden xsDown>
-                <span>Blockkeeper</span>
+                <span>Block Keeper</span>
               </Hidden>
               <Hidden smUp>
                 <span>BK</span>
