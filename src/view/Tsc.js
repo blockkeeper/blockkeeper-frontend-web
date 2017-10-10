@@ -415,8 +415,6 @@ class TscView extends React.Component {
                     className={this.props.classes.noTxtDeco}
                     txt={
                       <Button
-                        raised
-                        color={'contrast'}
                         className={this.props.classes.extBtn}
                       >
                         Detailed transaction
