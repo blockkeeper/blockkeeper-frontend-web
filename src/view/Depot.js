@@ -58,20 +58,22 @@ class DepotView extends React.Component {
   }
 
   async load () {
-    let addrs, coin0, coin1
+    let addrs, user
     try {
       ;[
         addrs,
-        {coin0, coin1}
+        user
       ] = await Promise.all([
         this.cx.depot.loadAddrs(),
-        this.cx.user.getCoins(this.state.coin)
+        this.cx.user.load()
       ])
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
       return
     }
+    this.user = user
+    const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc(addrs)
     const addrTscs = []

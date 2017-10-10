@@ -81,21 +81,28 @@ class TscView extends React.Component {
   }
 
   async load () {
-    let addr, coin0, coin1, tsc
+    let addr, coin0, coin1, tsc, user
     try {
       ;[
         addr,
-        {coin0, coin1}
+        user
       ] = await Promise.all([
         this.addrObj.load(),
-        this.cx.user.getCoins(this.state.coin)
+        this.cx.user.load()
       ])
-      this.addr = addr
-      tsc = await this.addrObj.getTsc(this.tscId, this.addr)
+      ;[
+        tsc,
+        {coin0, coin1}
+      ] = await Promise.all([
+        this.addrObj.getTsc(this.tscId, addr),
+        this.cx.user.getCoins(this.state.coin, user)
+      ])
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
     }
+    this.addr = addr
+    this.user = user
     setBxpTrigger(this)
     const blc = this.cx.depot.getTscBlc([tsc], this.addr)
     const tagsJoin = tsc.tags.join(' ')
