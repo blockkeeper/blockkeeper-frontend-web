@@ -214,7 +214,9 @@ class AddrView extends React.Component {
             midTitle='Address'
             icon={<Done />}
             onClick={this.save}
+            onClickLeft={() => this.setState({edit: false})}
             className={this.props.classes.gridWrap}
+            modeCancel
             noUser
           />}
           {!this.state.edit &&

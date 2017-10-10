@@ -65,12 +65,22 @@ const TopBar = ({
   onClickLeft,
   color,
   noUser,
+  modeCancel,
   className
 }) =>
   <AppBar position='static' color={color || 'default'} elevation={0} className={className}>
     <Toolbar style={{minHeight: '50px'}}>
       <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
         <div style={{marginRight: 'auto'}}>
+          {modeCancel &&
+            <IconButton
+              aria-label='Menu'
+              onClick={onClickLeft}
+              color='contrast'
+              style={{width: 'auto'}}
+            >
+              Cancel
+            </IconButton>}
           {iconLeft &&
             <IconButton
               aria-label='Menu'
