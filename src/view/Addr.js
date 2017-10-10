@@ -92,19 +92,21 @@ class AddrView extends React.Component {
   }
 
   async load () {
-    let addr, coin0, coin1
+    let addr, user
     try {
       ;[
         addr,
-        {coin0, coin1}
+        user
       ] = await Promise.all([
         this.addrObj.load(),
-        this.cx.user.getCoins(this.state.coin)
+        this.cx.user.load()
       ])
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
     }
+    this.user = user
+    const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc([addr])
     const tagsJoin = (addr.tags || []).join(' ')

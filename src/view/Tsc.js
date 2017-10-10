@@ -7,7 +7,7 @@ import {Link} from 'react-router-dom'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import withWidth from 'material-ui/utils/withWidth'
-import { withStyles } from 'material-ui/styles'
+import {withStyles} from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter, actnBtnClr} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
@@ -81,24 +81,32 @@ class TscView extends React.Component {
   }
 
   async load () {
-    let addr, coin0, coin1, tsc
+    let addr, coin0, coin1, tsc, user
     try {
       ;[
         addr,
-        {coin0, coin1}
+        user
       ] = await Promise.all([
         this.addrObj.load(),
-        this.cx.user.getCoins(this.state.coin)
+        this.cx.user.load()
       ])
-      this.addr = addr
-      tsc = await this.addrObj.getTsc(this.tscId, this.addr)
+      ;[
+        tsc,
+        {coin0, coin1}
+      ] = await Promise.all([
+        this.addrObj.getTsc(this.tscId, addr),
+        this.cx.user.getCoins(this.state.coin, user)
+      ])
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
     }
+    this.addr = addr
+    this.user = user
     setBxpTrigger(this)
     const blc = this.cx.depot.getTscBlc([tsc], this.addr)
     const tagsJoin = tsc.tags.join(' ')
+    this.debug(tsc)
     this.setState({
       upd: false,
       tsc,
@@ -327,19 +335,8 @@ class TscView extends React.Component {
                         received
                       </Typography>
                     </div>
-                  </div>}
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
-                      Fees
-                    </Typography>
                   </div>
-                  <div className={this.props.classes.valueStyle}>
-                    <Typography type='body1' noWrap>
-                      0.2345 {this.state.addr.coin} {/* TODO */}
-                    </Typography>
-                  </div>
-                </div>
+                }
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
@@ -354,19 +351,6 @@ class TscView extends React.Component {
                     </Typography>
                   </div>
                 </div>
-                {this.state.tsc.feeDesc &&
-                  <div className={this.props.classes.flexStyle}>
-                    <div className={this.props.classes.labelStyle}>
-                      <Typography type='body1' noWrap color='inherit'>
-                        Additional costs (fee)
-                      </Typography>
-                    </div>
-                    <div className={this.props.classes.valueStyle}>
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.feeDesc}
-                      </Typography>
-                    </div>
-                  </div>}
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
@@ -376,18 +360,6 @@ class TscView extends React.Component {
                   <div className={this.props.classes.valueStyle}>
                     <Typography type='body1' noWrap>
                       2017-10-01 12:22:27 {/* TODO */}
-                    </Typography>
-                  </div>
-                </div>
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
-                      Block
-                    </Typography>
-                  </div>
-                  <div className={this.props.classes.valueStyle}>
-                    <Typography type='body1' noWrap>
-                        487806 {/* TODO */}
                     </Typography>
                   </div>
                 </div>
