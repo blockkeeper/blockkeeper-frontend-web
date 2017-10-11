@@ -1,5 +1,6 @@
 import {createMuiTheme} from 'material-ui/styles'
 import {common} from 'material-ui/colors'
+import { fade } from 'material-ui/styles/colorManipulator'
 
 const styleGuide = {
   backgroundLight: '#F4F2F5',
@@ -44,7 +45,7 @@ const theme = createMuiTheme({
       A200: '#7cffdf',
       A400: '#49ffd3',
       A700: '#30ffcd',
-      'contrastDefaultColor': 'light'
+      contrastDefaultColor: 'light'
     },
     error: {
       50: '#fae0ee',
@@ -61,7 +62,7 @@ const theme = createMuiTheme({
       A200: '#ffb0c7',
       A400: '#ff7da2',
       A700: '#ff6390',
-      'contrastDefaultColor': 'light'
+      contrastDefaultColor: 'light'
     },
     background: {
       default: styleGuide.backgroundDark,
@@ -123,6 +124,18 @@ const theme = createMuiTheme({
 })
 
 theme.overrides = {
+  MuiButton: {
+    raisedContrast: {
+      background: styleGuide.textSecondary,
+      '&:hover': {
+        backgroundColor: fade(styleGuide.textSecondary, 0.5),
+        '@media (hover: none)': {
+          background: styleGuide.textSecondary
+        }
+      }
+
+    }
+  }
 }
 
 const themeBgStyle = {
@@ -310,7 +323,7 @@ const actnBtnClr = {
   color: 'white',
   backgroundColor: theme.palette.error[500],
   '&:hover': {
-    backgroundColor: theme.palette.error.A400,
+    backgroundColor: fade(theme.palette.error[500], 0.5),
     // Reset on mouse devices
     '@media (hover: none)': {
       backgroundColor: theme.palette.error[500]
