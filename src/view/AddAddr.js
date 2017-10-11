@@ -46,7 +46,7 @@ class AddAddrView extends React.Component {
       facingMode: 'front',
       noHshMode: false,
       qrMode: false,
-      coin: 'BTC',
+      coin: '',
       amnt: '0.00',
       hsh: '',
       name: '',
@@ -70,7 +70,7 @@ class AddAddrView extends React.Component {
       this.coins = (await this.cx.rate.getCoins()).filter((c) => {
         return !__.isFiat(c)
       })
-      this.setState({coin: 'BTC'})
+      this.setState({coin: ''})
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
@@ -127,13 +127,13 @@ class AddAddrView extends React.Component {
       if (this.state.noHshMode) {
         d.amntEmsg = __.vldFloat(this.state.amnt)
         const name = this.state.name.trim()
-        if (name && !d.amntEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
+        if (name && this.state.coin && !d.amntEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
       } else {
         let hsh = this.state.hsh.trim()
-        if (hsh) {
+        if (hsh && this.state.coin) {
           d.hshEmsg = __.vldAlphNum(hsh, {strict: true, min: __.cfg('coins').cryp[this.state.coin].minAddrLength, max: __.cfg('coins').cryp[this.state.coin].maxAddrLength})
         }
-        if (hsh && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
+        if (hsh && this.state.coin && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
       }
       this.setState(d)
     })
@@ -149,7 +149,7 @@ class AddAddrView extends React.Component {
           {this.state.err}
         </Modal>
       )
-    } else if (this.state.coin) {
+    } else if (this.state.coin !== undefined) {
       return (
         <div className={this.props.classes.themeBgStyle}>
           <TopBar
