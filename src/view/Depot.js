@@ -114,12 +114,12 @@ class DepotView extends React.Component {
     } else if (this.state.addrs) {
       return (
         <div>
+          {this.state.snack &&
+          <Snack
+            msg={this.state.snack}
+            onClose={() => this.setState({snack: null})}
+            />}
           <div className={this.props.classes.themeBgStyle}>
-            {this.state.snack &&
-              <Snack
-                msg={this.state.snack}
-                onClose={() => this.setState({snack: null})}
-              />}
             <TopBar
               title
               className={this.props.classes.gridWrap}

@@ -132,8 +132,20 @@ theme.overrides = {
         '@media (hover: none)': {
           background: styleGuide.textSecondary
         }
+      },
+      '&$disabled': {
+        backgroundColor: fade(styleGuide.textSecondary, 0.5),
+        '@media (hover: none)': {
+          background: styleGuide.textSecondary
+        }
       }
-
+    }
+  },
+  MuiSnackbar: {
+    anchorTopCenter: {
+      [theme.breakpoints.up('md')]: {
+        top: '50px'
+      }
     }
   }
 }
@@ -324,10 +336,12 @@ const actnBtnClr = {
   backgroundColor: theme.palette.error[500],
   '&:hover': {
     backgroundColor: fade(theme.palette.error[500], 0.5),
-    // Reset on mouse devices
     '@media (hover: none)': {
       backgroundColor: theme.palette.error[500]
     }
+  },
+  '&:disabled': {
+    backgroundColor: fade(styleGuide.textSecondary, 0.5)
   }
 }
 

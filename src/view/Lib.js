@@ -466,7 +466,7 @@ const Snack = ({msg, onClose}) =>
     open
     autoHideDuration={3500}
     transitionDuration={500}
-    anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
+    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
     onRequestClose={onClose}
     SnackbarContentProps={{'aria-describedby': 'message-id'}}
     message={<span id='message-id'>{msg}</span>}
@@ -630,6 +630,8 @@ const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds, className, itemClas
                   noWrap
                 >
                   {addr.name}&nbsp;
+                  {addrUpdErrIds.has(addr._id) &&
+                  <InfoUpdateFailed />}
                 </Typography>
                 <Typography
                   type='body2'
@@ -698,8 +700,6 @@ const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds, className, itemClas
                   </Hidden>
                 </Typography>
               </div>
-              {addrUpdErrIds.has(addr._id) &&
-              <InfoUpdateFailed />}
             </Paper>
           </Link>
         )
@@ -756,11 +756,18 @@ class DropDown extends React.Component {
 }
 
 const InfoUpdateFailed = () =>
-  <Tooltip id='tooltip-icon' title='Update failed' placement='top'>
-    <IconButton aria-label='Error' style={{height: '100%', marginLeft: theme.spacing.unit * 2}}>
-      <Error style={{color: theme.palette.error[500], height: theme.spacing.unit * 4, width: theme.spacing.unit * 4}} />
-    </IconButton>
-  </Tooltip>
+  <div style={{display: 'inline'}}>
+    <Hidden xsDown>
+      <Tooltip id='tooltip-icon' title='Update failed' placement='top'>
+        <IconButton aria-label='Error'>
+          <Error style={{color: theme.palette.error[500], height: theme.spacing.unit * 3, width: theme.spacing.unit * 3}} />
+        </IconButton>
+      </Tooltip>
+    </Hidden>
+    <Hidden smUp>
+      <Error style={{color: theme.palette.error[500], height: theme.spacing.unit * 2, width: theme.spacing.unit * 2}} />
+    </Hidden>
+  </div>
 
 const Edit = () =>
   <span>Edit</span>
