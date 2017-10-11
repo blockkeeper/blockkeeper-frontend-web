@@ -5495,9 +5495,9 @@ react-scripts@1.0.14:
   optionalDependencies:
     fsevents "1.1.2"
 
-react-scroll-up@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/react-scroll-up/-/react-scroll-up-1.3.2.tgz#03cde6d705385520d9e6c4f965333be23f03518c"
+react-scroll-up@^1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/react-scroll-up/-/react-scroll-up-1.3.3.tgz#c02dcf57feb9b33e1491e864ccad220e7f7e50d3"
   dependencies:
     detect-passive-events "^1.0.0"
     object-assign "^4.0.1"
@@ -7042,6 +7042,6 @@ yargs@~3.10.0:
     decamelize "^1.0.0"
     window-size "0.1.0"
 
-yarn@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.1.0.tgz#f2da9340490236b6c56de305b1c21a8a19c433c3"
+yarn@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.2.0.tgz#c5004499eb6dc7ecdd0f93743f463bbc5998324c"
