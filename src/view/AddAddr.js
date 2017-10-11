@@ -153,7 +153,6 @@ class AddAddrView extends React.Component {
       return (
         <div className={this.props.classes.themeBgStyle}>
           <TopBar
-            // title
             midTitle='Address'
             icon={<Clear />}
             onClick={this.goBack}
@@ -251,7 +250,7 @@ class AddAddrView extends React.Component {
                       <Radio
                         checked={this.state.coin === coin}
                         checkedIcon={<CoinIcon coin={coin} size={40} />}
-                        icon={<CoinIcon coin={coin} color={'grey'} size={40} />}
+                        icon={<CoinIcon coin={coin} size={40} style={{opacity: 0.3}} />}
                         onChange={() => this.set('coin', coin)}
                         value={coin}
                         name={coin}
@@ -265,7 +264,8 @@ class AddAddrView extends React.Component {
                 </Typography>
                 <TextField
                   fullWidth
-                  label={this.state.noHshMode ? 'Name *' : 'Name'}
+                  label={'Name'}
+                  required={this.state.noHshMode}
                   margin='normal'
                   value={this.state.name}
                   error={Boolean(this.state.nameEmsg)}

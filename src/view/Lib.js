@@ -554,7 +554,7 @@ const formatNumber = (n, currency) => {
   }).format(n)
 }
 
-const CoinIcon = ({coin, alt, color, size}) => {
+const CoinIcon = ({coin, alt, color, size, style}) => {
   color = theme.palette.text[color] || color || CryptoColors[coin.toUpperCase()]
   coin = __.cap(coin.toLowerCase())
   if (CryptoIcons[coin]) {
@@ -562,7 +562,7 @@ const CoinIcon = ({coin, alt, color, size}) => {
       coin = coin + 'Alt'
     }
     const IconType = CryptoIcons[coin]
-    return <IconType color={color} size={size || '18'} />
+    return <IconType color={color} size={size || '18'} style={style} />
   }
   return <span>{getSymbolFromCurrency(coin.toUpperCase())}</span>
 }
