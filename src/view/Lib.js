@@ -141,7 +141,7 @@ const TopBar = ({
   </AppBar>
 
 const SubBar = ({tabs, ix, onClick, rootClassName}) =>
-  <AppBar style={{position: 'sticky', backgroundColor: 'white'}}>
+  <AppBar style={{position: 'relative', backgroundColor: 'white'}}>
     <Tabs
       centered
       value={ix}
