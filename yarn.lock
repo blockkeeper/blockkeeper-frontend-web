@@ -5523,9 +5523,9 @@ react-transition-group@^2.2.1:
     prop-types "^15.5.8"
     warning "^3.0.0"
 
-react-transitive-number@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/react-transitive-number/-/react-transitive-number-3.0.1.tgz#ebee94ede712db6ab7d8163d896fddd5575b09ab"
+react-transitive-number@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-transitive-number/-/react-transitive-number-3.1.0.tgz#57f3f8025b6665384918a6d75b92b4d02bf38dfe"
 
 "react@^15 || ^16":
   version "16.0.0"
