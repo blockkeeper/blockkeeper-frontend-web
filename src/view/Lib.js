@@ -759,7 +759,7 @@ const InfoUpdateFailed = () =>
   <div style={{display: 'inline'}}>
     <Hidden xsDown>
       <Tooltip id='tooltip-icon' title='Update failed' placement='top'>
-        <IconButton aria-label='Error'>
+        <IconButton aria-label='Error' style={{height: 'auto'}}>
           <Error style={{color: theme.palette.error[500], height: theme.spacing.unit * 3, width: theme.spacing.unit * 3}} />
         </IconButton>
       </Tooltip>
