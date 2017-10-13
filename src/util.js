@@ -183,6 +183,7 @@ async function sleep (tmoMsec, func, ...args) {
 
 const toChunks = (lst, size) => {
   size = size || cfg('chunkSize')
+  lst = isArray(lst) ? lst : Array.from(lst)
   const chunks = []
   let i, j
   for (i = 0, j = lst.length; i < j; i += size) {
