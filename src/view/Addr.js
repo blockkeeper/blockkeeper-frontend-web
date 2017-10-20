@@ -212,7 +212,7 @@ class AddrView extends React.Component {
           {this.state.edit &&
           <TopBar
             midTitle='Address'
-            icon={<Done />}
+            action={<Done />}
             onClick={this.save}
             onClickLeft={() => this.setState({edit: false})}
             className={this.props.classes.gridWrap}
@@ -224,7 +224,7 @@ class AddrView extends React.Component {
             midTitle='Address'
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}
-            icon={<Edit />}
+            action={<Edit />}
             onClick={this.edit}
             className={this.props.classes.gridWrap}
             noUser

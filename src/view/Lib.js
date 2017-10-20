@@ -59,7 +59,7 @@ const addrLimitReached = (cmp, addrs) => {
 const TopBar = ({
   title,
   midTitle,
-  icon,
+  action,
   onClick,
   iconLeft,
   onClickLeft,
@@ -73,14 +73,17 @@ const TopBar = ({
       <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
         <div style={{marginRight: 'auto'}}>
           {modeCancel &&
-            <IconButton
-              aria-label='Menu'
+            <Typography
+              type='headline'
+              color='inherit'
               onClick={onClickLeft}
-              color='contrast'
-              style={{width: 'auto'}}
+              style={{
+                fontSize: '16px',
+                cursor: 'pointer'
+              }}
             >
               Cancel
-            </IconButton>}
+            </Typography>}
           {iconLeft &&
             <IconButton
               aria-label='Menu'
@@ -109,28 +112,37 @@ const TopBar = ({
           type='headline'
           color='inherit'
           align='center'
-          style={{flex: 1}}
+          style={{
+            flex: 1,
+            fontSize: '16px',
+            fontWeight: '700'
+          }}
         >
           {midTitle || ''}
         </Typography>
       </div>
       <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
         <div style={{marginLeft: 'auto'}}>
-          {icon &&
-            <IconButton
-              aria-label='Menu'
-              color='contrast'
+          {action &&
+            <Typography
+              type='headline'
+              color='inherit'
               onClick={onClick}
-              style={{width: 'auto'}}
+              style={{
+                fontSize: '16px',
+                cursor: 'pointer'
+              }}
             >
-              {icon}
-            </IconButton>}
+              {action}
+            </Typography>}
           {!noUser &&
           <Link to={'/user/edit'}>
             <IconButton
               aria-label='Menu'
               color='contrast'
-              style={{left: theme.spacing.unit * 2}}
+              style={{
+                left: theme.spacing.unit * 2
+              }}
             >
               <AccountCircle />
             </IconButton>

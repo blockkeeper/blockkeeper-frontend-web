@@ -193,7 +193,7 @@ class TscView extends React.Component {
           {this.state.edit &&
             <TopBar
               midTitle='Transaction'
-              icon={<Done />}
+              action={<Done />}
               onClick={this.save}
               onClickLeft={() => this.setState({edit: false})}
               className={this.props.classes.gridWrap}
@@ -205,7 +205,7 @@ class TscView extends React.Component {
               midTitle='Transaction'
               iconLeft={<ArrowBack />}
               onClickLeft={this.goBack}
-              icon={<Edit />}
+              action={<Edit />}
               onClick={this.edit}
               className={this.props.classes.gridWrap}
               noUser
