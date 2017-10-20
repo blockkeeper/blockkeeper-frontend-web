@@ -203,14 +203,14 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
     </div>
   </div>
 
-const ToTopBtn = ({second, actnBtnClrClassName}) =>
-  <ScrollToTop showUnder={200} style={{right: theme.spacing.unit * 2, bottom: second ? theme.spacing.unit * 10 : theme.spacing.unit * 18}}>
+const ToTopBtn = ({className}) =>
+  <ScrollToTop showUnder={200} style={{right: '50%', bottom: theme.spacing.unit * 2}}>
     <Button
       fab
-      aria-label='add'
-      color='primary'
+      aria-label='top'
+      color='contrast'
       classes={{
-        raisedPrimary: actnBtnClrClassName
+        raisedContrast: className
       }}
     >
       <KeyboardArrowUp />
