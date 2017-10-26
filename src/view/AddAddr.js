@@ -172,7 +172,6 @@ class AddAddrView extends React.Component {
                 </Typography>
                 {!this.state.noHshMode &&
                   <TextField
-                    autoFocus
                     required
                     fullWidth
                     label={`${this.state.coin} Address (Public Key)`}
@@ -184,7 +183,6 @@ class AddAddrView extends React.Component {
                   />}
                 {this.state.noHshMode &&
                   <TextField
-                    autoFocus
                     required
                     fullWidth
                     label='Amount'
