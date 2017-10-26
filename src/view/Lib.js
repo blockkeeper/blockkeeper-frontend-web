@@ -1,12 +1,12 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import { MenuItem } from 'material-ui/Menu'
-import Tabs, { Tab } from 'material-ui/Tabs'
+import {MenuItem} from 'material-ui/Menu'
+import Tabs, {Tab} from 'material-ui/Tabs'
 import AppBar from 'material-ui/AppBar'
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List'
+import List, {ListItem, ListItemIcon, ListItemText} from 'material-ui/List'
 import ExitToAppIcon from 'material-ui-icons/ExitToApp'
 import DeleteForeverIcon from 'material-ui-icons/DeleteForever'
-import { FormControl } from 'material-ui/Form'
+import {FormControl} from 'material-ui/Form'
 import Select from 'material-ui/Select'
 import ScrollToTop from 'react-scroll-up'
 import Tooltip from 'material-ui/Tooltip'
@@ -23,10 +23,10 @@ import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {Add, Close, Autorenew, HourglassEmpty,
-        AccountCircle, InfoOutline, Error, KeyboardArrowUp} from 'material-ui-icons'
+import {Add, Close, Autorenew, HourglassEmpty, AccountCircle, InfoOutline,
+       Error, KeyboardArrowUp} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
-        DialogTitle } from 'material-ui/Dialog'
+       DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, floatBtnStyle, CryptoColors} from './Style'
 import __ from '../util'
 
@@ -48,9 +48,9 @@ const unsetBxpTrigger = view => {
 }
 
 const addrLimitReached = (cmp, addrs) => {
-  if (addrs.length >= __.cfg('mxAddrCnt')) {
+  if (addrs.length >= __.cfg('maxAddrCnt')) {
     cmp.setSnack('Maximum number of addresses reached: ' +
-                   'Please delete old addresses first')
+                 'Please delete old addresses first')
     return true
   }
   return false
@@ -171,7 +171,7 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
         className={display3ClassName}
       >
         <TransitiveNumber>
-          {title ? formatNumber(title, coin0) : formatNumber(0, coin0)}
+          {title ? __.formatNumber(title, coin0) : __.formatNumber(0, coin0)}
         </TransitiveNumber>&nbsp;
         <Hidden xsDown>
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
@@ -182,7 +182,9 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
       </Typography>
       <Typography align='center' type='headline' color='inherit'>
         <TransitiveNumber>
-          {subTitle ? formatNumber(subTitle, coin1) : formatNumber(0, coin1)}
+          {subTitle
+            ? __.formatNumber(subTitle, coin1)
+            : __.formatNumber(0, coin1)}
         </TransitiveNumber>&nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
@@ -336,7 +338,7 @@ const tscRow = (
                 }}
                 className={display1ClassName}
             >
-                {modeSign} {formatNumber(tsc.amnt, addr.coin)}&nbsp;
+                {modeSign} {__.formatNumber(tsc.amnt, addr.coin)}&nbsp;
                 <Hidden xsDown>
                   <CoinIcon
                     coin={addr.coin}
@@ -358,8 +360,9 @@ const tscRow = (
                 style={{color: theme.palette.text.secondary}}
                 className={body2ClassName}
                 gutterBottom
-            >
-                {modeSign} {formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
+              >
+                {modeSign}
+                {__.formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
                 <Hidden xsDown>
                   <CoinIcon
                     coin={coin0}
@@ -484,12 +487,7 @@ const Snack = ({msg, onClose}) =>
   />
 
 const ExtLink = ({to, txt, className, style}) =>
-  <a
-    href={to}
-    target='_blank'
-    className={className}
-    style={style}
-  >
+  <a href={to} target='_blank' className={className} style={style}>
     {txt}
   </a>
 
@@ -546,14 +544,6 @@ class Modal extends React.Component {
   }
 }
 
-const formatNumber = (n, currency) => {
-  // TODO use user locale
-  return new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: __.dec(currency)
-  }).format(n)
-}
-
 const CoinIcon = ({coin, alt, color, size, style}) => {
   color = theme.palette.text[color] || color || CryptoColors[coin.toUpperCase()]
   coin = __.cap(coin.toLowerCase())
@@ -594,7 +584,18 @@ const DepotEmpty = () =>
     </Link>
   </Paper>
 
-const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds, className, itemClassName, addrClassName, amntClassName, display1ClassName, body2ClassName}) => {
+const PaperGrid = ({
+  addrs,
+  coin0,
+  addrUpdIds,
+  addrUpdErrIds,
+  className,
+  itemClassName,
+  addrClassName,
+  amntClassName,
+  display1ClassName,
+  body2ClassName
+}) => {
   return (
     <Paper
       square
@@ -659,7 +660,7 @@ const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds, className, itemClas
                   color='primary'
                   className={display1ClassName}
                 >
-                  {formatNumber(addr.amnt, addr.coin)}&nbsp;
+                  {__.formatNumber(addr.amnt, addr.coin)}&nbsp;
                   <Hidden xsDown>
                     <CoinIcon
                       coin={addr.coin}
@@ -681,7 +682,7 @@ const PaperGrid = ({addrs, coin0, addrUpdIds, addrUpdErrIds, className, itemClas
                   className={body2ClassName}
                   style={{color: theme.palette.text.secondary}}
                 >
-                  {formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
+                  {__.formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
                   <Hidden xsDown>
                     <CoinIcon
                       coin={coin0}
@@ -760,12 +761,24 @@ const InfoUpdateFailed = () =>
     <Hidden xsDown>
       <Tooltip id='tooltip-icon' title='Update failed' placement='top'>
         <IconButton aria-label='Error' style={{height: 'auto'}}>
-          <Error style={{color: theme.palette.error[500], height: theme.spacing.unit * 3, width: theme.spacing.unit * 3}} />
+          <Error
+            style={{
+              color: theme.palette.error[500],
+              height: theme.spacing.unit * 3,
+              width: theme.spacing.unit * 3
+            }}
+          />
         </IconButton>
       </Tooltip>
     </Hidden>
     <Hidden smUp>
-      <Error style={{color: theme.palette.error[500], height: theme.spacing.unit * 2, width: theme.spacing.unit * 2}} />
+      <Error
+        style={{
+          color: theme.palette.error[500],
+          height: theme.spacing.unit * 2,
+          width: theme.spacing.unit * 2
+        }}
+      />
     </Hidden>
   </div>
 
@@ -822,7 +835,6 @@ export {
   FloatBtn,
   BxpFloatBtn,
   DropDown,
-  formatNumber,
   ExtLink,
   InfoUpdateFailed,
   Done,

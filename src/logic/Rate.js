@@ -10,7 +10,6 @@ export default class Rate extends ApiBase {
     this.getCoins = this.getCoins.bind(this)
     this.clear = this.delSto
     this.clear()    // we want always fresh rates at startup
-    this.info('Created')
   }
 
   async _apiGet () {

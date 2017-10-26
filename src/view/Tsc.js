@@ -11,8 +11,7 @@ import {withStyles} from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter, actnBtnClr} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
-        Modal, CoinIcon, ExtLink, formatNumber, Done,
-        Edit, BxpFloatBtn} from './Lib'
+        Modal, CoinIcon, ExtLink, Done, Edit, BxpFloatBtn} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -106,7 +105,6 @@ class TscView extends React.Component {
     setBxpTrigger(this)
     const blc = this.cx.depot.getTscBlc([tsc], this.addr)
     const tagsJoin = tsc.tags.join(' ')
-    this.debug(tsc)
     this.setState({
       upd: false,
       tsc,
@@ -181,8 +179,12 @@ class TscView extends React.Component {
         ? theme.palette.error['500']
         : theme.palette.secondary['500']
       let modeSign = this.state.tsc.mode === 'snd' ? '-' : '+'
-      const tscUrl = __.cfg('toBxpUrl')(
-        'tsc', this.state.addr.coin)(this.state.tsc.hsh)
+      const tscUrl = __.toBxpUrl(
+        'tsc',
+        this.state.addr.coin,
+        this.state.tsc.hsh,
+        this.state.addr.bxp
+      )
       return (
         <div className={this.props.classes.themeBgStyle}>
           {this.state.snack &&
@@ -218,7 +220,8 @@ class TscView extends React.Component {
               align='center'
               style={{color: modeColor}}
             >
-              {modeSign} {formatNumber(this.state.tsc.amnt, this.state.addr.coin)}&nbsp;
+              {modeSign}
+              {__.formatNumber(this.state.tsc.amnt, this.state.addr.coin)}&nbsp;
               <CoinIcon coin={this.state.addr.coin} alt color={modeColor} />
             </Typography>
             {!this.state.toggleCoins &&
@@ -229,7 +232,8 @@ class TscView extends React.Component {
               onClick={this.toggleCoins}
               gutterBottom
             >
-              {modeSign} {formatNumber(this.state.blc1, this.state.coin0)}&nbsp;
+              {modeSign}
+              {__.formatNumber(this.state.blc1, this.state.coin0)}&nbsp;
               <CoinIcon
                 coin={this.state.coin0}
                 color={theme.palette.text.secondary}
@@ -245,7 +249,7 @@ class TscView extends React.Component {
               onClick={this.toggleCoins}
               gutterBottom
             >
-              {modeSign} {formatNumber(this.state.blc2, this.state.coin1)}
+              {modeSign} {__.formatNumber(this.state.blc2, this.state.coin1)}
               <CoinIcon
                 coin={this.state.coin1}
                 color={theme.palette.text.secondary}
@@ -297,19 +301,22 @@ class TscView extends React.Component {
                       </Typography>}
                   </div>
                 </div>
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
-                      Amount Exact
-                    </Typography>
+                {this.state.tsc.amntDesc &&
+                  <div className={this.props.classes.flexStyle}>
+                    <div className={this.props.classes.labelStyle}>
+                      <Typography type='body1' noWrap color='inherit'>
+                        Amount
+                      </Typography>
+                    </div>
+                    <div className={this.props.classes.valueStyle}>
+                      <Typography type='body1' noWrap>
+                        {this.state.tsc.amntDesc[0][this.state.tsc.mode]} {this.state.addr.coin}
+                      </Typography>
+                    </div>
                   </div>
-                  <div className={this.props.classes.valueStyle}>
-                    <Typography type='body1' noWrap>
-                      {this.state.tsc.amntDesc[0][this.state.tsc.mode]} {this.state.addr.coin}
-                    </Typography>
-                  </div>
-                </div>
-                {this.state.tsc.amntDesc.length > 1 &&
+                }
+                {this.state.tsc.amntDesc &&
+                  this.state.tsc.amntDesc.length > 1 &&
                   <div className={this.props.classes.flexStyle}>
                     <div className={this.props.classes.labelStyle}>
                       <Typography type='body1' noWrap color='inherit'>
@@ -339,20 +346,22 @@ class TscView extends React.Component {
                     </div>
                   </div>
                 }
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
-                      Confirmations
-                    </Typography>
+                {this.state.tsc.cfmCnt >= 0 &&
+                  <div className={this.props.classes.flexStyle}>
+                    <div className={this.props.classes.labelStyle}>
+                      <Typography type='body1' noWrap color='inherit'>
+                        Confirmations
+                      </Typography>
+                    </div>
+                    <div className={this.props.classes.valueStyle}>
+                      <Typography type='body1' noWrap>
+                        {this.state.tsc.cfmCnt > 100
+                          ? 'More than 100'
+                          : this.state.tsc.cfmCnt}
+                      </Typography>
+                    </div>
                   </div>
-                  <div className={this.props.classes.valueStyle}>
-                    <Typography type='body1' noWrap>
-                      {this.state.tsc.cfmCnt > 100
-                        ? 'More than 100'
-                        : this.state.tsc.cfmCnt}
-                    </Typography>
-                  </div>
-                </div>
+                }
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
@@ -361,7 +370,7 @@ class TscView extends React.Component {
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     <Typography type='body1' noWrap>
-                      2017-10-01 12:22:27 {/* TODO */}
+                      {__.ppTme(this.state.tsc._t)}
                     </Typography>
                   </div>
                 </div>
@@ -411,14 +420,42 @@ class TscView extends React.Component {
                       </Typography>}
                   </div>
                 </div>
+                {(
+                    (this.state.tsc.hd || {}).addrHshs &&
+                    this.state.tsc.hd.addrHshs.length > 0
+                  ) &&
+                  <div className={this.props.classes.flexStyle}>
+                    <div className={this.props.classes.labelStyle}>
+                      <Typography type='body1' noWrap color='inherit'>
+                        Used addresses
+                      </Typography>
+                    </div>
+                    <div className={this.props.classes.valueStyle}>
+                      <Typography type='body1' noWrap>
+                        {this.state.tsc.hd.addrHshs.map(hsh => {
+                          let addr = this.state.addr
+                          let to = __.toBxpUrl('addr', addr.coin, hsh, addr.bxp)
+                          return (
+                            <span key={__.uuid()}>
+                              <ExtLink
+                                to={to}
+                                className={this.props.classes.noTxtDeco}
+                                txt={hsh}
+                              />
+                              <br />
+                            </span>
+                          )
+                        })}
+                      </Typography>
+                    </div>
+                  </div>
+                }
                 <div style={{textAlign: 'center'}}>
                   <ExtLink
                     to={tscUrl}
                     className={this.props.classes.noTxtDeco}
                     txt={
-                      <Button
-                        className={this.props.classes.extBtn}
-                      >
+                      <Button className={this.props.classes.extBtn}>
                         Detailed transaction
                         <Launch />
                       </Button>

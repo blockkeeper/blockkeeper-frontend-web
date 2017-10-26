@@ -10,7 +10,6 @@ export default class User extends ApiBase {
     this._apiDel = this._apiDel.bind(this)
     this.getCoins = this.getCoins.bind(this)
     if (pld) this.setSto(pld)
-    this.info('Created')
   }
 
   async _apiGet () {
