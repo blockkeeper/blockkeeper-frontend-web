@@ -127,13 +127,17 @@ class AddAddrView extends React.Component {
       if (this.state.noHshMode) {
         d.amntEmsg = __.vldFloat(this.state.amnt)
         const name = this.state.name.trim()
-        if (name && this.state.coin && !d.amntEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
+        if (name && this.state.coin &&
+            !d.amntEmsg && !d.nameEmsg && !d.descEmsg) {
+          d.upd = true
+        }
       } else {
         let hsh = this.state.hsh.trim()
-        if (hsh && this.state.coin) {
-          d.hshEmsg = __.vldAlphNum(hsh, {strict: true, min: __.cfg('coins').cryp[this.state.coin].minAddrLength, max: __.cfg('coins').cryp[this.state.coin].maxAddrLength})
+        let coinObj = this.cx.depot.coinObjs[this.state.coin]
+        if (hsh && coinObj) d.hshEmsg = coinObj.vldHsh(hsh)
+        if (hsh && coinObj && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) {
+          d.upd = true
         }
-        if (hsh && this.state.coin && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) d.upd = true
       }
       this.setState(d)
     })
@@ -291,8 +295,8 @@ class AddAddrView extends React.Component {
                     }}
                   >
                     <Add />
-                        Add address
-                      </Button>
+                    Add address
+                  </Button>
                 </div>
               </div>
             </div>

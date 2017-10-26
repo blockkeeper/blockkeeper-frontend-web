@@ -16,7 +16,6 @@ export default class Core extends StoBase {
     this.decrypt = this.decrypt.bind(this)
     this.init = this.init.bind(this)
     this.get = this.get.bind(this)
-    this.info('Created')
   }
 
   clear () {

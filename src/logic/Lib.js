@@ -1,7 +1,4 @@
-import BtcCoin from './coin/Btc'
-import LtcCoin from './coin/Ltc'
-import EthCoin from './coin/Eth'
-import DashCoin from './coin/Dash'
+import {Btc, Ltc, Dash, Eth} from './Coin'
 import __ from '../util'
 
 class Base {
@@ -14,6 +11,7 @@ class Base {
 class StoBase extends Base {
   constructor (name, cx, _id, pa) {
     super(name, cx, _id, pa)
+    this._store = this._type[1] + '_' + this._id
     this.getSto = () => __.getJsonSto(this._store)
     this.setSto = pld => __.setJsonSto(this._store, pld)
     this.delSto = () => __.delSto(this._store)
@@ -30,11 +28,11 @@ class ApiBase extends StoBase {
     this.apiDel = this.apiDel.bind(this)
     this.encrypt = this.cx.core.encrypt
     this.decrypt = this.cx.core.decrypt
-    this.coins = {
-      BTC: new BtcCoin(this),
-      LTC: new LtcCoin(this),
-      ETH: new EthCoin(this),
-      DASH: new DashCoin(this)
+    this.coinObjs = {
+      BTC: new Btc(this),
+      LTC: new Ltc(this),
+      ETH: new Eth(this),
+      DASH: new Dash(this)
     }
   }
 
@@ -50,7 +48,7 @@ class ApiBase extends StoBase {
       this.warn('Saving failed')
       throw e
     }
-    this.info('Saved')
+    // this.info('Saved')
     return pld
   }
 
@@ -63,7 +61,7 @@ class ApiBase extends StoBase {
       this.warn('Loading failed')
       throw e
     }
-    this.info('Loaded')
+    // this.info('Loaded')
     return pld
   }
 
@@ -77,7 +75,7 @@ class ApiBase extends StoBase {
       this.warn('Deleting failed')
       throw e
     }
-    this.info('Deleted')
+    // this.info('Deleted')
   }
 
   async apiGet (data) {
@@ -89,7 +87,7 @@ class ApiBase extends StoBase {
     } catch (e) {
       throw this.err(e.message, {e, dmsg: `Api-Get ${this._type[1]} failed`})
     }
-    this.info('Api-Get %s finished', this._type[1])
+    // this.info('Api-Get %s finished', this._type[1])
     return pld
   }
 
@@ -102,7 +100,7 @@ class ApiBase extends StoBase {
     } catch (e) {
       throw this.err(e.message, {e, dmsg: `Api-Set ${this._type[1]} failed`})
     }
-    this.info('Api-Set %s finished', this._type[1])
+    // this.info('Api-Set %s finished', this._type[1])
     return pld
   }
 
@@ -115,7 +113,7 @@ class ApiBase extends StoBase {
     } catch (e) {
       throw this.err(e.message, {e, dmsg: `Api-Delete ${this._type[1]} failed`})
     }
-    this.info('Api-Delete %s finished', this._type[1])
+    // this.info('Api-Delete %s finished', this._type[1])
     return pld
   }
 }

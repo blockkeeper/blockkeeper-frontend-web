@@ -68,12 +68,13 @@ const getLogger = (ilk, lbl) => {
   const func = ilk === 'warn' ? console.warn : console.log
   ilk = ilk.toUpperCase()
   return (...args) => {
+    if (ilk === 'DEBUG' && !cfg('isDev')) return
+    let pfx = ilk + (lbl ? ` [${lbl}]:  ` : ':  ')
+    is('String', args[0]) ? args[0] = `${pfx}${args[0]}` : args.unshift(pfx)
     if (ilk === 'DEBUG') {
-      args.unshift('===== DEBUG =====')
-    } else {
-      if (typeof args[0] === 'string') {
-        args[0] = ilk + (lbl ? ` [${lbl}]:  ` : ':  ') + args[0]
-      }
+      // prevent Chrome console.log's inconsistency with objects/arrays
+      //   https://stackoverflow.com/a/24176305
+      args = args.map(arg => deepClone(arg))
     }
     func.apply(console, args)
   }
@@ -92,12 +93,11 @@ const init = (mainType, subType, _id, pa) => {
     _type: [mainType.toLowerCase(), subType.toLowerCase()],
     _t: mo.utc().format()
   }
-  d._store = d._type[1] + '_' + d._id
   if (pa != null) d._pa = pa
   d._lbl = toLbl(d._type[0], d._type[1], d._id, (pa || {})._lbl)
+  d.debug = getLogger('debug', d._lbl)
   d.info = getLogger('info', d._lbl)
   d.warn = getLogger('warn', d._lbl)
-  d.debug = getLogger('debug')
   d.err = (umsg, kwargs = {}) => getErr(umsg, {...kwargs, lbl: d._lbl})
   return d
 }
@@ -110,7 +110,6 @@ const initView = (cmp, name) => {
     return msg
   }
   cmp.setSnack = msg => { cmp.cx.tmp.snack = msg }
-  cmp.info('Created')
   return cmp
 }
 
@@ -154,6 +153,14 @@ const toUrl = req => {
   return `${req.url}?${params.join('&')}`
 }
 
+const mergeMaps = mapObjs => {
+  const newMapObj = new Map()
+  for (let mapObj of mapObjs) {
+    for (let [key, val] of mapObj) newMapObj.set(key, val)
+  }
+  return newMapObj
+}
+
 const rndPop = lst => {
   if (lst.length < 1) return
   const ix = Math.floor((Math.random() * lst.length) + 1) - 1
@@ -183,7 +190,7 @@ async function sleep (tmoMsec, func, ...args) {
 
 const toChunks = (lst, size) => {
   size = size || cfg('chunkSize')
-  lst = isArray(lst) ? lst : Array.from(lst)
+  lst = is('Array', lst) ? lst : Array.from(lst)
   const chunks = []
   let i, j
   for (i = 0, j = lst.length; i < j; i += size) {
@@ -193,7 +200,7 @@ const toChunks = (lst, size) => {
 }
 
 const struc = (lst, {toBeg, max, byTme, noSort}) => {
-  lst = isArray(lst) ? lst : Array.from(lst.values()) // lst can be array or map
+  lst = is('Array', lst) ? lst : Array.from(lst.values()) // lst = array or map
   if (byTme) {
     lst.sort((a, b) => (new Date(b._t)) - (new Date(a._t)))
   } else {
@@ -207,15 +214,48 @@ const struc = (lst, {toBeg, max, byTme, noSort}) => {
   return lst
 }
 
-const isArray = val => Object.prototype.toString.call(val) === '[object Array]'
+const deepClone = d => {
+  if (d == null) return d
+  if (is('Function', d)) throw Error(`Cannot clone function '${d}'`)
+  return JSON.parse(JSON.stringify(d))
+}
+
+const clone = d => {
+  // NOT a deep clone:
+  //  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
+  //    Global_Objects/Object/assign#Deep_Clone
+  if (is('Object', d)) return Object.assign({}, d)
+  if (is('Array', d)) return [...d]
+  if (is('Map', d)) return new Map(d)
+  if (is('Set', d)) return new Set(d)
+  if (is('Function', d)) throw Error(`Cannot clone function '${d}'`)
+  return d
+}
+
+// ilk = 'Array', 'Object', 'Map', 'Set', 'String', 'Boolean'
+const is = (ilk, d) => Object.prototype.toString.call(d) === `[object ${ilk}]`
 
 const cap = (val) => val.charAt(0).toUpperCase() + val.slice(1)
+
+const dec = coin => {
+  coin = coin.toUpperCase()
+  let coins = cfg('coins')
+  return (coins.fiat[coin] || coins.cryp[coin] || coins.dflt).dec
+}
 
 const ppTme = _t => {
   let tme = mo(_t)
   return tme.isBefore(mo().subtract(1, 'days').startOf('day'))
-    ? tme.format('L')
+    ? tme.format('YYYY-MM-DD / HH:mm / Z')
     : tme.fromNow()
+}
+
+const formatNumber = (n, coin) => {
+  // TODO use user locale
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: dec(coin)
+  }).format(n)
 }
 
 const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
@@ -273,6 +313,15 @@ const isOutd = (tme, sec) => {
   return (mo.utc().diff(tme, 'seconds') > (sec || cfg('outdSec')))
 }
 
+const toBxpUrl = (ilk, coin, hsh, srv) => {
+  const d = cfg('bxpUrls')[coin.toUpperCase()][ilk]
+  const forceSrv = cfg('bxpUrls')[coin].force
+  if (forceSrv) srv = forceSrv
+  const dfltSrv = cfg('bxpUrls')[coin].dflt
+  const func = d[srv || dfltSrv] || d[dfltSrv]
+  return func(hsh)
+}
+
 const getStos = (term, convert) => {
   let stos = []
   for (let sto of Object.keys(localStorage)) {
@@ -319,19 +368,25 @@ export default {
   rndPop,
   shuffle,
   ppTme,
+  formatNumber,
+  toBxpUrl,
   getLogger,
   toLbl,
   init,
   initView,
   toMoPro,
+  mergeMaps,
   sleep,
+  clone,
+  deepClone,
   vldAlphNum,
   vldFloat,
   vldPw,
   toFloat,
-  isArray,
+  is,
   toChunks,
   cfg,
+  dec,
   getStos,
   getStoIds,
   getSto,
@@ -344,18 +399,15 @@ export default {
   uuid: uuidv4,
   vld: validator,
   err: getErr,
+  debug: getLogger('debug', 'main'),
   info: getLogger('info', 'main'),
   warn: getLogger('warn', 'main'),
   toInt: val => validator.toInt(String(val)),
   toTags: tags => tags.trim().split(' ').filter(item => item !== '').join(' '),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
   getTme: () => mo.utc().format(),
+  getAmnt: (ua, ca) => toFloat(ua != null ? ua : (ca || 0)),
   clearObj: obj => { for (let prop of Object.keys(obj)) delete obj[prop] },
   shortn: (val, maxLow) => `${val.trim().slice(0, maxLow || cfg('maxLow'))}...`,
-  isFiat: coin => Boolean(cfg('coins').fiat[coin.toUpperCase()]),
-  dec: coin => {
-    coin = coin.toUpperCase()
-    let coins = cfg('coins')
-    return (coins.fiat[coin] || coins.cryp[coin] || coins.dflt).dec
-  }
+  isFiat: coin => Boolean(cfg('coins').fiat[coin.toUpperCase()])
 }

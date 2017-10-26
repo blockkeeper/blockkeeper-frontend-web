@@ -188,10 +188,10 @@ class DepotView extends React.Component {
               first={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
             />}
           {(this.state.tabIx === 0 || this.state.addrTscs.length === 0) &&
-          <FloatBtn
-            onClick={this.goAddAddr}
-            actnBtnClrClassName={this.props.classes.actnBtnClr}
-          />}
+            <FloatBtn
+              onClick={this.goAddAddr}
+              actnBtnClrClassName={this.props.classes.actnBtnClr}
+            />}
         </div>
       )
     } else {

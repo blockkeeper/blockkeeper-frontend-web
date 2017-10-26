@@ -14,10 +14,11 @@ import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
         actnBtnClr, topBtnClass} from './Style'
-import {ArrowBack, ArrowDropDown, ArrowDropUp,
-       Launch, Delete} from 'material-ui-icons'
+import {ArrowBack, ArrowDropDown, ArrowDropUp, ArrowForward,
+        Launch, Delete} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
-        CoinIcon, TscListAddr, ExtLink, formatNumber, InfoUpdateFailed, ToTopBtn, Done, Edit} from './Lib'
+        CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
+        Edit} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -95,10 +96,7 @@ class AddrView extends React.Component {
   async load () {
     let addr, user
     try {
-      ;[
-        addr,
-        user
-      ] = await Promise.all([
+      ;[addr, user] = await Promise.all([
         this.addrObj.load(),
         this.cx.user.load()
       ])
@@ -201,8 +199,16 @@ class AddrView extends React.Component {
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
-      const addrUrl = this.state.addr.hsh ? __.cfg('toBxpUrl')('addr',
-                      this.state.addr.coin)(this.state.addr.hsh) : undefined
+      // don't enable link for 'man' and 'hd' (for privacy reasons) addrs
+      let addrUrl
+      if (this.state.addr.type === 'std') {
+        addrUrl = __.toBxpUrl(
+          'addr',
+          this.state.addr.coin,
+          this.state.addr.hsh,
+          this.state.addr.bxp
+        )
+      }
       return (
         <div className={this.props.classes.themeBgStyle}>
           {this.state.snack &&
@@ -272,7 +278,7 @@ class AddrView extends React.Component {
                     className={this.props.classes.display3}
                 >
                     <TransitiveNumber>
-                      {formatNumber(this.state.blc1, this.state.coin)}
+                      {__.formatNumber(this.state.blc1, this.state.coin)}
                     </TransitiveNumber>
                   &nbsp;
                     <CoinIcon
@@ -292,7 +298,7 @@ class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {formatNumber(this.state.blc2, this.state.coin0)}
+                      {__.formatNumber(this.state.blc2, this.state.coin0)}
                     </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin0}
@@ -308,7 +314,7 @@ class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {formatNumber(this.state.blc3, this.state.coin1)}
+                      {__.formatNumber(this.state.blc3, this.state.coin1)}
                     </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin1}
@@ -348,11 +354,11 @@ class AddrView extends React.Component {
                                 value={this.state.name}
                                 error={Boolean(this.state.nameEmsg)}
                                 helperText={this.state.nameEmsg}
-                                onChange={evt => this.set('name', evt.target.value)}
+                                onChange={evt => {
+                                  this.set('name', evt.target.value)
+                                }}
                                 inputProps={{
-                                  style: {
-                                    textAlign: 'right'
-                                  }
+                                  style: {textAlign: 'right'}
                                 }}
                               />}
                               {!this.state.edit &&
@@ -414,12 +420,15 @@ class AddrView extends React.Component {
                               </TableCell>
                               <TableCell numeric padding='none'>
                                 {this.state.addr.tscCnt}
-                                {this.state.addr.tscCnt > __.cfg('mxTscCnt') &&
-                                  ` (only the last ${__.cfg('mxTscCnt')} ` +
+                                {this.state.addr.tscCnt > __.cfg('maxTscCnt') &&
+                                  ` (only the last ${__.cfg('maxTscCnt')} ` +
                                   'are listed)'}
                               </TableCell>
                             </TableRow>}
-                          {this.state.addr.hsh &&
+                          {(
+                              this.state.addr.hsh &&
+                              this.state.addr.rcvAmnt != null
+                            ) &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
                                 Total Received
@@ -428,7 +437,10 @@ class AddrView extends React.Component {
                                 {this.state.addr.rcvAmnt} {this.state.coin}
                               </TableCell>
                             </TableRow>}
-                          {this.state.addr.hsh &&
+                          {(
+                              this.state.addr.hsh &&
+                              this.state.addr.sndAmnt != null
+                            ) &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
                                 Total Send
@@ -437,14 +449,43 @@ class AddrView extends React.Component {
                                 {this.state.addr.sndAmnt} {this.state.coin}
                               </TableCell>
                             </TableRow>}
-                          <TableRow>
-                            <TableCell width={'10%'} padding='none'>
-                              Balance
-                            </TableCell>
-                            <TableCell numeric padding='none'>
-                              {formatNumber(this.state.blc1, this.state.coin)} {this.state.coin}
-                            </TableCell>
-                          </TableRow>
+                          {false &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                Balance
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {__.formatNumber(
+                                  this.state.blc1, this.state.coin
+                                )}
+                                {this.state.coin}
+                              </TableCell>
+                            </TableRow>
+                          }
+                          {(this.state.addr.hd || {}).nxAddrHsh &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                Next HD path/address
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {this.state.addr.hd.nxAbsPath}
+                                <ArrowForward />
+                                {this.state.addr.hd.nxAddrHsh}
+                              </TableCell>
+                            </TableRow>
+                          }
+                          {(this.state.addr.hd || {}).baseAbsPath &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                HD base path
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {this.state.addr.hd.baseAbsPath}
+                                {/* this.state.addr.hd.isMstr &&
+                                  ' (HD address is master)' */}
+                              </TableCell>
+                            </TableRow>
+                          }
                         </TableBody>
                       </Table>
                     </div>

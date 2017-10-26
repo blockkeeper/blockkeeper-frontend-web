@@ -6,10 +6,10 @@ import __ from '../util'
 export default class Depot extends ApiBase {
   constructor (cx, _id) {
     super('depot', cx, _id, cx.user)
+    this.addrUpdErrIds = new Set()
     this.getBxpSto = () => __.getSto('bxp')
     this.setBxpSto = val => __.setSto('bxp', val)
     this.delBxpSto = () => __.delSto('bxp')
-    this.addrUpdErrIds = new Set()
     this.getAddrBlc = this.getAddrBlc.bind(this)
     this.getTscBlc = this.getTscBlc.bind(this)
     this.loadAddrs = this.loadAddrs.bind(this)
@@ -19,8 +19,9 @@ export default class Depot extends ApiBase {
     this.getBxpSts = this.getBxpSts.bind(this)
     this.setBxpSts = this.setBxpSts.bind(this)
     this.watchBxp = this.watchBxp.bind(this)
+    this.prepareBxp = this.prepareBxp.bind(this)
     this.bxp = this.bxp.bind(this)
-    this.info('Created')
+    this.finishBxp = this.finishBxp.bind(this)
   }
 
   getAddrBlc (addrs) {
@@ -43,10 +44,6 @@ export default class Depot extends ApiBase {
       }
     }
     return blcs
-  }
-
-  getAddrUpdIds () {
-    return this.addrUpdIds
   }
 
   getBxpSts () {
@@ -76,12 +73,6 @@ export default class Depot extends ApiBase {
     } catch (e) {}
   }
 
-  setAddrUpdErrIds (addresses) {
-    for (let addr of addresses) {
-      this.addrUpdErrIds.add(addr._id)
-    }
-  }
-
   watchBxp () {
     const bxp = this.getBxpSto()
     if (bxp && bxp !== 'run') {  // bxp is an iso date
@@ -98,60 +89,80 @@ export default class Depot extends ApiBase {
     }
   }
 
-  async bxp (addrIds) {
-    try {
-      this.cx.rate.clear()
-      await this.cx.rate.load()
-    } catch (e) { /* using cached values */ }
+  async prepareBxp (addrIds) {
     this.setBxpSts('run')
     this.info('Bxp started')
+    let d = {addrsByType: undefined, curAddrs: {}}
     let addrs
     try {
       addrs = await this.loadAddrs(addrIds, {hshOnly: true, skipStruc: true})
     } catch (e) {
       this.watchBxp()
-      throw __.err('Bxp failed for all addrs: Loading addrs failed', {e})
+      throw this.err('Bxp failed for all addrs: Loading addrs failed', {e})
     }
+    if (addrs.length < 1) return d
+    try {
+      this.cx.rate.clear()
+      await this.cx.rate.load()
+    } catch (e) { /* messy but using cached values instead */ }
     this.addrUpdErrIds = new Set()
-    const addrsByCoin = new Map()
-    const curAddrs = new Map()
+    d.addrsByType = {hd: {}, std: {}, man: {}}
     for (let addr of addrs) {
-      let lst = addrsByCoin.get(addr.coin) || []
-      lst.push(addr)
-      addrsByCoin.set(addr.coin, lst)
-      curAddrs.set(addr._id, addr)
+      let addrsByCoin = d.addrsByType[addr.type]
+      if (!addrsByCoin[addr.coin]) addrsByCoin[addr.coin] = {}
+      addrsByCoin[addr.coin][addr.hsh] = addr
+      d.curAddrs[addr._id] = addr
     }
-    const addrChunks = new Map()
-    for (let [coin, addrs] of addrsByCoin) {
-      let chunkSize = this.coins[coin].getChunkSize()
-      addrChunks.set(coin, __.toChunks(addrs, chunkSize))
-    }
-    let updAddrs
-    let sleep = false
-    for (let [coin, chunks] of addrChunks) {
-      for (let addrChunk of chunks) {
-        let addrObj
-        let addrs = []
+    return d
+  }
+
+  async bxp (addrIds) {  // bxp = query block explorer
+    const {addrsByType, curAddrs} = await this.prepareBxp(addrIds)
+    if (!addrsByType) return
+    const addrs = []
+    for (let addrType of Object.keys(addrsByType)) {
+      let addrsByCoin = addrsByType[addrType]
+      for (let coin of Object.keys(addrsByCoin)) {
+        let updAddrs
         try {
-          updAddrs = await this.coins[coin].run(addrChunk, sleep)
-          sleep = true
-          for (let updAddr of updAddrs) {
-            addrObj = new Addr(this.cx, updAddr._id)
-            addrs.push(addrObj.toAddr(updAddr, curAddrs.get(updAddr._id)))
+          if (addrType === 'hd') {
+            let bxp = this.coinObjs[coin].bxp.bckinfo
+            let d = await bxp.apiGetHdAddrs(addrsByCoin[coin])
+            updAddrs = d.upd
+          } else if (addrType === 'std') {
+            let bxp = this.coinObjs[coin].bxp.bckcyph
+            updAddrs = await bxp.apiGetAddrs(addrsByCoin[coin])
+          } // else: "man" address: ignore
+          for (let updAddr of Object.values(updAddrs)) {
+            let addrObj = new Addr(this.cx, updAddr._id)
+            addrs.push(addrObj.toAddr(updAddr, curAddrs[updAddr._id]))
           }
-          await this.saveAddrs(addrs)
         } catch (e) {
-          this.warn(`Bxp failed for addrs: ${e.message}`)
-          this.setAddrUpdErrIds(addrChunk)
+          this.warn(`Bxp failed for ${addrType} addrs: ${e.message}`)
+          for (let addr of Object.values(addrsByCoin[coin])) {
+            this.addrUpdErrIds.add(addr._id)
+          }
         }
+      }
+    }
+    await this.finishBxp(addrs)
+  }
+
+  async finishBxp (addrs) {
+    if (addrs.length > 0) {
+      try {
+        await this.saveAddrs(addrs)
+      } catch (e) {
+        this.warn(`Bxp failed for ${addrs.length} addrs: ${e.message}`)
+        for (let addr of addrs) this.addrUpdErrIds.add(addr._id)
       }
     }
     this.info('Bxp finished')
     this.setBxpSts('blocked')
     this.watchBxp()
-    try {  // function can be undefined (race condition)
+    try {
       this.cx.tmp.bxp()
-    } catch (e) {}
+    } catch (e) { /* function can be undefined (race condition) */ }
   }
 
   async saveAddrs (addrs) {
@@ -225,6 +236,7 @@ export default class Depot extends ApiBase {
       pld.addresses.push({
         _id: addr._id,
         data: this.encrypt(addr),
+        type: addr.type,
         tscs: encTscs
       })
       addr.tscs = tscs
@@ -236,7 +248,7 @@ export default class Depot extends ApiBase {
       })
       for (let addr of addrs) (new Addr(this.cx, addr._id)).setSto(addr)
     } catch (e) {
-      throw this.err(e.message, {e, dmsg: `Api-Set addrs failed`})
+      throw this.err(e.message, {e, dmsg: 'Api-Set addrs failed'})
     }
     this.info('Api-Set addrs finished', this._type[1])
     return addrs
