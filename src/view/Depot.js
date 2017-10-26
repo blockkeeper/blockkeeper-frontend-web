@@ -9,7 +9,7 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
 import __ from '../util'
 import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
-        actnBtnClr} from './Style'
+        actnBtnClr, topBtnClass} from './Style'
 
 const styles = {
   themeBgStyle,
@@ -27,7 +27,8 @@ const styles = {
   body2,
   display3,
   tab,
-  actnBtnClr
+  actnBtnClr,
+  topBtnClass
 }
 
 class DepotView extends React.Component {
@@ -178,8 +179,7 @@ class DepotView extends React.Component {
               addrIcon
             />}
           <ToTopBtn
-            second={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
-            actnBtnClrClassName={this.props.classes.actnBtnClr}
+            className={this.props.classes.topBtnClass}
           />
           {this.state.addrs.length > 0 &&
             <BxpFloatBtn

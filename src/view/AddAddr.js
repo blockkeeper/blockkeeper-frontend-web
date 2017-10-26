@@ -158,7 +158,7 @@ class AddAddrView extends React.Component {
         <div className={this.props.classes.themeBgStyle}>
           <TopBar
             midTitle='Address'
-            icon={<Clear />}
+            action={<Clear />}
             onClick={this.goBack}
             className={this.props.classes.gridWrap}
             noUser

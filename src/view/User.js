@@ -183,7 +183,7 @@ class UserView extends React.Component {
           {this.state.edit &&
           <TopBar
             midTitle='User'
-            icon={<Done />}
+            action={<Done />}
             onClick={this.save}
             onClickLeft={() => this.setState({edit: false})}
             className={this.props.classes.gridWrap}
@@ -193,7 +193,7 @@ class UserView extends React.Component {
           {!this.state.edit &&
           <TopBar
             midTitle='User'
-            icon={<Edit />}
+            action={<Edit />}
             onClick={this.edit}
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}

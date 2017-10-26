@@ -345,6 +345,11 @@ const actnBtnClr = {
   }
 }
 
+const topBtnClass = {
+  height: '30px',
+  width: '30px'
+}
+
 export {
   theme,
   themeBgStyle,
@@ -374,5 +379,6 @@ export {
   body2,
   display3,
   tab,
-  actnBtnClr
+  actnBtnClr,
+  topBtnClass
 }
