@@ -269,7 +269,7 @@ class TscView extends React.Component {
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     <Link
-                      to={`/addr/${this.state.addr._id}`}
+                      to={`/wallet/${this.state.addr._id}`}
                       className={this.props.classes.noTxtDeco}
                     >
                       <Typography type='body1' noWrap>

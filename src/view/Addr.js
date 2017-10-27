@@ -141,7 +141,7 @@ class AddrView extends React.Component {
         desc: this.state.desc,
         tags: __.toTags(this.state.tagsJoin).split(' ')
       })
-      this.setSnack('Address updated')
+      this.setSnack('Wallet updated')
       this.setState({addr, snack: this.getSnack(), busy: false, upd: false})
     } catch (e) {
       this.setState({err: e.message, busy: false})
@@ -152,7 +152,7 @@ class AddrView extends React.Component {
   async delete () {
     try {
       await this.addrObj.delete()
-      this.setSnack('Address deleted')
+      this.setSnack('Wallet deleted')
     } catch (e) {
       this.setState({err: e.message, show: false})
       if (__.cfg('isDev')) throw e
@@ -192,10 +192,10 @@ class AddrView extends React.Component {
         <Modal
           withBusy
           onClose={this.close}
-          lbl='Disconnect address'
-          actions={[{lbl: 'Disconnect address', onClick: this.delete}]}
+          lbl='Disconnect wallet'
+          actions={[{lbl: 'Disconnect wallet', onClick: this.delete}]}
         >
-          {`Are you sure you want to disconnect address "${this.state.name}"?`}
+          {`Are you sure you want to disconnect wallet "${this.state.name}"?`}
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
@@ -218,7 +218,7 @@ class AddrView extends React.Component {
             />}
           {this.state.edit &&
           <TopBar
-            midTitle='Address'
+            midTitle='Wallet'
             action={<Done />}
             onClick={this.save}
             onClickLeft={() => this.setState({edit: false})}
@@ -228,7 +228,7 @@ class AddrView extends React.Component {
           />}
           {!this.state.edit &&
           <TopBar
-            midTitle='Address'
+            midTitle='Wallet'
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}
             action={<Edit />}
@@ -495,7 +495,7 @@ class AddrView extends React.Component {
                           <RemoveCircleOutline
                             className={this.props.classes.deleteIcon}
                           />&nbsp;
-                          Disconnect address
+                          Disconnect wallet
                         </Button>
                       </div>}
                     <IconButton onClick={this.show}>
@@ -534,7 +534,7 @@ class AddrView extends React.Component {
                 {this.state.addr.hsh &&
                   'No transactions'}
                 {!this.state.addr.hsh &&
-                  'No transactions (manually added address)'}
+                  'No transactions (manually added wallet)'}
               </Typography>
             </Paper>}
 
