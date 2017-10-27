@@ -295,7 +295,7 @@ class AddAddrView extends React.Component {
                     }}
                   >
                     <Add />
-                    Add address
+                    Connect address
                   </Button>
                 </div>
               </div>

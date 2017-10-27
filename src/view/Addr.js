@@ -15,7 +15,7 @@ import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
         actnBtnClr, topBtnClass} from './Style'
 import {ArrowBack, ArrowDropDown, ArrowDropUp, ArrowForward,
-        Launch, Delete} from 'material-ui-icons'
+        Launch, RemoveCircleOutline} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
         CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
         Edit} from './Lib'
@@ -192,10 +192,10 @@ class AddrView extends React.Component {
         <Modal
           withBusy
           onClose={this.close}
-          lbl='Delete address'
-          actions={[{lbl: 'Delete', onClick: this.delete}]}
+          lbl='Disconnect address'
+          actions={[{lbl: 'Disconnect address', onClick: this.delete}]}
         >
-          {`Are you sure you want to delete address "${this.state.name}"?`}
+          {`Are you sure you want to disconnect address "${this.state.name}"?`}
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
@@ -492,10 +492,10 @@ class AddrView extends React.Component {
                     {this.state.edit &&
                       <div className={this.props.classes.qrCodeWrap}>
                         <Button onClick={() => this.setState({ask: true})}>
-                          <Delete
+                          <RemoveCircleOutline
                             className={this.props.classes.deleteIcon}
-                          />
-                          Delete Address
+                          />&nbsp;
+                          Disconnect address
                         </Button>
                       </div>}
                     <IconButton onClick={this.show}>
