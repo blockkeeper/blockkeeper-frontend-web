@@ -1,4 +1,5 @@
 import React from 'react'
+import {UserAgentProvider, UserAgent} from '@quentin-sommer/react-useragent'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
@@ -171,6 +172,22 @@ class RgstrView extends React.Component {
                     login</b> credentials, all your <b>data will be lost</b> and you need
                     to setup a new account from the scratch.
                   </Typography>
+                  <UserAgentProvider ua={window.navigator.userAgent}>
+                    <UserAgent returnfullParser>
+                      {parser => (
+                        <Typography type='body1' gutterBottom className={this.props.classes.body1}>
+                          Your Browser is not supported
+                          I see you, {parser.getOS().name} {parser.getCPU().architecture}
+                          edge 16
+                          safari 11
+                          ff 55
+                          chrome 60
+                          opera 48
+
+                        </Typography>
+                      )}
+                    </UserAgent>
+                  </UserAgentProvider>
                   {!this.state.busy &&
                     <div>
                       <Button
