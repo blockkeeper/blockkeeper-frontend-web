@@ -24,7 +24,7 @@ import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import {Add, Close, Autorenew, HourglassEmpty, AccountCircle, InfoOutline,
-       Error, KeyboardArrowUp} from 'material-ui-icons'
+       Error, KeyboardArrowUp, Feedback, BugReport} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
        DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, floatBtnStyle, CryptoColors} from './Style'
@@ -813,6 +813,32 @@ const UserList = ({askLogout, askDelete}) =>
           <InfoOutline />
         </ListItemIcon>
         <ListItemText primary='About' />
+      </ListItem>
+    </a>
+    <a
+      href='https://wantoo.io/blockkeeper-feedback/'
+      target='_blank'
+      style={{textDecoration: 'none'}}
+      rel='noopener noreferrer'
+    >
+      <ListItem divider button>
+        <ListItemIcon>
+          <Feedback />
+        </ListItemIcon>
+        <ListItemText primary='Feedback' />
+      </ListItem>
+    </a>
+    <a
+      href='https://github.com/blockkeeper/blockkeeper-frontend-web/issues'
+      target='_blank'
+      style={{textDecoration: 'none'}}
+      rel='noopener noreferrer'
+    >
+      <ListItem divider button>
+        <ListItemIcon>
+          <BugReport />
+        </ListItemIcon>
+        <ListItemText primary='Report errors + bugs' />
       </ListItem>
     </a>
     <ListItem divider button onClick={askLogout}>
