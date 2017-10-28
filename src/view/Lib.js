@@ -50,7 +50,7 @@ const unsetBxpTrigger = view => {
 const addrLimitReached = (cmp, addrs) => {
   if (addrs.length >= __.cfg('maxAddrCnt')) {
     cmp.setSnack('Maximum number of wallets reached: ' +
-                 'Please disconnect a wallets first')
+                 'Please disconnect a wallet first')
     return true
   }
   return false
