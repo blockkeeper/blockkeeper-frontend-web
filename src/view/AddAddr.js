@@ -137,7 +137,7 @@ class AddAddrView extends React.Component {
       } else {
         let hsh = this.state.hsh.trim()
         let coinObj = this.cx.depot.coinObjs[this.state.coin]
-        if (hsh && coinObj) d.hshEmsg = coinObj.vldHsh(hsh)
+        if (hsh && coinObj) d.hshEmsg = coinObj.vldAddrHsh(hsh)
         if (hsh && coinObj && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) {
           d.upd = true
         }

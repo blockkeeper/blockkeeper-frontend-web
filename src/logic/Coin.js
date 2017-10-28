@@ -5,6 +5,7 @@ import {
   address as bjsAddress,
   networks as bjsNetworks
 } from 'bitcoinjs-lib'
+import Web3Utils from 'web3-utils'
 import {BckcyphBxp, BckinfoBxp} from './Bxp'
 import __ from '../util'
 
@@ -18,16 +19,17 @@ class Coin extends Base {
   constructor (coin, pa) {
     super(coin, pa)
     this.coin = coin
-    this.vldHsh = this.vldHsh.bind(this)
+    this.toAddrHsh = hsh => hsh.trim()
+    this.toTscHsh = hsh => hsh.trim()
+    this.vldAddrHsh = this.vldAddrHsh.bind(this)
     this.isHdAddr = hsh => false
-    this.toHsh = hsh => hsh
     this.conv = val => val
     this.bxp = {
       bckcyph: new BckcyphBxp(this)
     }
   }
 
-  vldHsh (hsh) {
+  vldAddrHsh (hsh) {
     const cfg = __.cfg('coins').cryp[this.coin] || __.cfg('coins').dflt
     return __.vldAlphNum(hsh, {
       strict: true,
@@ -45,7 +47,7 @@ class XtcCoin extends Coin {
     this.net = bjsNetworks[this.coin === 'LTC' ? 'litecoin' : 'bitcoin']
     this.conv = val => val / 1e8   // satoshi to btc/ltc/...
     this.isHdAddr = hsh => hsh.startsWith('xpub')
-    this.vldHsh = this.vldHsh.bind(this)
+    this.vldAddrHsh = this.vldAddrHsh.bind(this)
     this.toSegWitAddr = this.toSegWitAddr.bind(this)
     this.walkHdPath = this.walkHdPath.bind(this)
     this.toAbsHdPath = this.toAbsHdPath.bind(this)
@@ -55,10 +57,12 @@ class XtcCoin extends Coin {
     })
   }
 
-  vldHsh (hsh) {
-    if (hsh.startsWith('xpriv')) {
+  vldAddrHsh (hsh) {
+    hsh = hsh.trim()
+    let hshLo = hsh.toLowerCase()
+    if (hshLo.startsWith('xpriv')) {
       return 'xpriv is not supported: Please enter xpub address'
-    } else if (hsh.startsWith('xpub')) {
+    } else if (hshLo.startsWith('xpub')) {
       try {
         bjsHDNode.fromBase58(hsh, this.net)
       } catch (e) {
@@ -130,8 +134,8 @@ class XtcCoin extends Coin {
       let drvAddr = {
         hdAddr,
         hsh: addrType === 'sgwt'
-          ? this.toSegWitAddr(node)
-          : node.getAddress(),
+          ? this.toAddrHsh(this.toSegWitAddr(node))
+          : this.toAddrHsh(node.getAddress()),
         isMstr: !rootNode.parentFingerprint,
         addrType,
         startAbsPath: this.toAbsHdPath(rootNode, startPath),
@@ -157,6 +161,34 @@ class Ltc extends XtcCoin {
   constructor (pa) {
     super('LTC', pa)
   }
+
+  vldAddrHsh (hsh) {
+    hsh = hsh.trim()
+    let hshLo = hsh.toLowerCase()
+    if (hshLo.startsWith('xpriv') || hshLo.startsWith('ltpv')) {
+      return 'xpriv and ltpv are not supported ' +
+             '(but xpub addresses will be in the near future)'
+    } else if (hshLo.startsWith('ltub')) {
+      return 'ltub is not supported ' +
+             '(but xpub addresses will be in the near future)'
+    } else if (hshLo.startsWith('xpub')) {
+      return 'xpub is not YET supported (but will be in the near future)'
+    } else {
+      try {
+        bjsAddress.toOutputScript(hsh, this.net)
+      } catch (e) {
+        if (!hsh.startsWith('3')) return 'Invalid address'
+        try {
+          // fix me: workaround to prevent 'has no matching script' error:
+          //   validate against bitcoin instead of litecoin network
+          // https://github.com/litecoin-project/litecoin/issues/312
+          bjsAddress.toOutputScript(hsh, bjsNetworks.bitcoin)
+        } catch (e) {
+          return 'Invalid address'
+        }
+      }
+    }
+  }
 }
 
 class Dash extends Coin {
@@ -170,7 +202,30 @@ class Eth extends Coin {
   constructor (pa) {
     super('ETH', pa)
     this.conv = val => val / 1e18   // wei to eth
-    this.toHsh = hsh => hsh.replace(/^0x/, '')
+    this.toAddrHsh = hsh => {
+      hsh = hsh.toLowerCase().trim()
+      return Web3Utils.toChecksumAddress(
+        hsh.startsWith('0x') ? hsh : `0x${hsh}`
+      )
+    }
+    this.toTscHsh = hsh => {
+      hsh = hsh.toLowerCase().trim()
+      return hsh.startsWith('0x') ? hsh : `0x${hsh}`
+    }
+    this.vldAddrHsh = this.vldAddrHsh.bind(this)
+  }
+
+  vldAddrHsh (hsh) {
+    hsh = hsh.toLowerCase().trim()
+    if (!hsh.startsWith('0x')) {
+      return 'Invalid address: Address must start with "0x"'
+    }
+    try {
+      this.toAddrHsh(hsh)
+    } catch (e) {
+      return 'Invalid address'
+    }
+    return ''
   }
 }
 

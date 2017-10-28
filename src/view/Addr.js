@@ -152,7 +152,7 @@ class AddrView extends React.Component {
   async delete () {
     try {
       await this.addrObj.delete()
-      this.setSnack('Wallet deleted')
+      this.setSnack('Wallet disconnected')
     } catch (e) {
       this.setState({err: e.message, show: false})
       if (__.cfg('isDev')) throw e
