@@ -1,15 +1,16 @@
 import React from 'react'
-import {LinearProgress} from 'material-ui/Progress'
-import {withStyles} from 'material-ui/styles'
+import Button from 'material-ui/Button'
 import withWidth from 'material-ui/utils/withWidth'
 import compose from 'recompose/compose'
+import {LinearProgress} from 'material-ui/Progress'
+import {withStyles} from 'material-ui/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn, addrLimitReached} from './Lib'
 import __ from '../util'
 import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
-        actnBtnClr, topBtnClass, depotEmpty} from './Style'
+        actnBtnClr, topBtnClass, depotEmpty, cnctBtn} from './Style'
 
 const styles = {
   themeBgStyle,
@@ -29,7 +30,8 @@ const styles = {
   tab,
   actnBtnClr,
   topBtnClass,
-  depotEmpty
+  depotEmpty,
+  cnctBtn
 }
 
 class DepotView extends React.Component {
@@ -138,7 +140,22 @@ class DepotView extends React.Component {
             }
           </div>
           {this.state.addrs.length === 0 &&
-            <DepotEmpty className={this.props.classes.depotEmpty} />
+            <div>
+              <DepotEmpty className={this.props.classes.depotEmpty} />
+              <div style={{position: 'absolute', bottom: '40px', width: '100%', textAlign: 'center'}}>
+                <Button
+                  raised
+                  color={'accent'}
+                  className={this.props.classes.cnctBtn}
+                  onClick={this.goAddAddr}
+                  classes={{
+                    raisedAccent: this.props.classes.actnBtnClr
+                  }}
+                  >
+                    Connect wallet
+                  </Button>
+              </div>
+            </div>
           }
           {this.state.addrs.length > 0 &&
             <SubBar
@@ -184,7 +201,7 @@ class DepotView extends React.Component {
               bxpSts={this.state.bxpSts}
               first={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
             />}
-          {(this.state.tabIx === 0 || this.state.addrTscs.length === 0) &&
+          {this.state.tabIx === 0 && this.state.addrs.length !== 0 &&
             <FloatBtn
               onClick={this.goAddAddr}
               actnBtnClrClassName={this.props.classes.actnBtnClr}

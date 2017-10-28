@@ -12,7 +12,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import QrReader from 'react-qr-reader'
 import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
-        gridWrap, gridGutter, gridSpacer, actnBtnClr} from './Style'
+        gridWrap, gridGutter, gridSpacer, actnBtnClr, cnctBtn} from './Style'
 import {addrLimitReached, TopBar, Modal, CoinIcon} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
@@ -25,13 +25,7 @@ const styles = {
   dividerStyle,
   qrReaderStyle,
   actnBtnClr,
-  saveStyle: {
-    width: '60%',
-    margin: theme.spacing.unit * 4,
-    [theme.breakpoints.down('sm')]: {
-      width: '80%'
-    }
-  },
+  cnctBtn,
   radios: {
     paddingLeft: theme.spacing.unit
   },
@@ -290,7 +284,7 @@ class AddAddrView extends React.Component {
                   <Button
                     raised
                     color={'accent'}
-                    className={this.props.classes.saveStyle}
+                    className={this.props.classes.cnctBtn}
                     onClick={this.save}
                     disabled={!this.state.upd || this.state.busy}
                     classes={{

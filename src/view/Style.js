@@ -355,6 +355,14 @@ const depotEmpty = {
   textAlign: 'center'
 }
 
+const cnctBtn = {
+  width: '40%',
+  margin: theme.spacing.unit * 4,
+  [theme.breakpoints.down('sm')]: {
+    width: '80%'
+  }
+}
+
 export {
   theme,
   themeBgStyle,
@@ -386,5 +394,6 @@ export {
   tab,
   actnBtnClr,
   topBtnClass,
-  depotEmpty
+  depotEmpty,
+  cnctBtn
 }

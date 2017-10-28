@@ -571,23 +571,25 @@ const CoinIcon = ({coin, alt, color, size, style}) => {
 }
 
 const DepotEmpty = ({className}) =>
-  <Grid container spacing={0} justify='center'>
-    <Grid item xs={6} className={className}>
-      <Typography
-        type='display2'
-        gutterBottom
-        style={{
-          color: theme.palette.text.primary,
-          marginTop: '130px'
-        }}
-      >
-        Welcome to Block Keeper
-      </Typography>
-      <Typography type='subheading' gutterBottom>
-        In order to start using our app, please go ahead and connect your first wallet.
-      </Typography>
+  <div>
+    <Grid container spacing={0} justify='center'>
+      <Grid item xs={6} className={className}>
+        <Typography
+          type='display2'
+          gutterBottom
+          style={{
+            color: theme.palette.text.primary,
+            marginTop: '130px'
+          }}
+        >
+          Welcome to Block Keeper
+        </Typography>
+        <Typography type='subheading' gutterBottom>
+          In order to start using our app, please go ahead and connect your first wallet.
+        </Typography>
+      </Grid>
     </Grid>
-  </Grid>
+  </div>
 
 const PaperGrid = ({
   addrs,
