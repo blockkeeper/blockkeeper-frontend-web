@@ -199,9 +199,9 @@ class DepotView extends React.Component {
             <BxpFloatBtn
               onClick={() => this.cx.depot.bxp([])}
               bxpSts={this.state.bxpSts}
-              first={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
+              first={this.state.tabIx === 1}
             />}
-          {this.state.tabIx === 0 && this.state.addrs.length !== 0 &&
+          {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
             <FloatBtn
               onClick={this.goAddAddr}
               actnBtnClrClassName={this.props.classes.actnBtnClr}
