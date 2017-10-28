@@ -45,7 +45,7 @@ class DepotView extends React.Component {
     if (addrLimitReached(this, this.state.addrs)) {
       this.setState({snack: this.getSnack()})
     } else {
-      this.props.history.push('/addr/add')
+      this.props.history.push('/wallet/add')
     }
   }
 
@@ -143,7 +143,7 @@ class DepotView extends React.Component {
             }
           </div>
           <SubBar
-            tabs={['Addresses', 'Transactions']}
+            tabs={['Wallets', 'Transactions']}
             ix={this.state.tabIx}
             onClick={this.tab}
             rootClassName={this.props.classes.tab}

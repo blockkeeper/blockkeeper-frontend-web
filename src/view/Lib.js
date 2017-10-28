@@ -24,7 +24,7 @@ import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import {Add, Close, Autorenew, HourglassEmpty, AccountCircle, InfoOutline,
-       Error, KeyboardArrowUp} from 'material-ui-icons'
+       Error, KeyboardArrowUp, Feedback, BugReport} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
        DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, floatBtnStyle, CryptoColors} from './Style'
@@ -49,8 +49,8 @@ const unsetBxpTrigger = view => {
 
 const addrLimitReached = (cmp, addrs) => {
   if (addrs.length >= __.cfg('maxAddrCnt')) {
-    cmp.setSnack('Maximum number of addresses reached: ' +
-                 'Please delete old addresses first')
+    cmp.setSnack('Maximum number of wallets reached: ' +
+                 'Please disconnect a wallets first')
     return true
   }
   return false
@@ -580,9 +580,9 @@ const DepotEmpty = () =>
       paddingTop: '50px'
     }}
   >
-    <Link to={`/addr/add`} style={{textDecoration: 'none'}}>
+    <Link to={`/wallet/add`} style={{textDecoration: 'none'}}>
       <Typography type='headline' gutterBottom>
-        No addresses found, start by adding your first address
+        No wallets found, start by adding your first wallet
       </Typography>
     </Link>
     <Link to={`/user/edit`} style={{textDecoration: 'none'}}>
@@ -617,7 +617,7 @@ const PaperGrid = ({
       {addrs.map(addr => {
         return (
           <Link
-            to={`/addr/${addr._id}`}
+            to={`/wallet/${addr._id}`}
             style={{textDecoration: 'none'}}
             key={addr._id}
           >
@@ -654,7 +654,7 @@ const PaperGrid = ({
                   {addr.hsh &&
                   <Hidden smDown>
                     <span>
-                      <b>Address</b>&nbsp;
+                      <b>Wallet</b>&nbsp;
                     </span>
                   </Hidden>}
                   {!addr.hsh && addr.desc &&
@@ -813,6 +813,32 @@ const UserList = ({askLogout, askDelete}) =>
           <InfoOutline />
         </ListItemIcon>
         <ListItemText primary='About' />
+      </ListItem>
+    </a>
+    <a
+      href='https://wantoo.io/blockkeeper-feedback/'
+      target='_blank'
+      style={{textDecoration: 'none'}}
+      rel='noopener noreferrer'
+    >
+      <ListItem divider button>
+        <ListItemIcon>
+          <Feedback />
+        </ListItemIcon>
+        <ListItemText primary='Feedback' />
+      </ListItem>
+    </a>
+    <a
+      href='https://github.com/blockkeeper/blockkeeper-frontend-web/issues'
+      target='_blank'
+      style={{textDecoration: 'none'}}
+      rel='noopener noreferrer'
+    >
+      <ListItem divider button>
+        <ListItemIcon>
+          <BugReport />
+        </ListItemIcon>
+        <ListItemText primary='Report errors + bugs' />
       </ListItem>
     </a>
     <ListItem divider button onClick={askLogout}>

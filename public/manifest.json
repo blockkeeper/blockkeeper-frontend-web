@@ -1,6 +1,6 @@
 {
   "short_name": "Block Keeper",
-  "name": "Block Keeper - Your secure blockchain book keeping app",
+  "name": "Block Keeper",
   "start_url": "index.html",
   "icons": [
     {
@@ -15,6 +15,6 @@
     }
   ],
   "display": "standalone",
-  "theme_color": "#F4F2F5",
+  "theme_color": "#9a40ff",
   "background_color": "#F4F2F5"
 }

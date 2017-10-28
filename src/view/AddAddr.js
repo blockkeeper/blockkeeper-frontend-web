@@ -99,8 +99,8 @@ class AddAddrView extends React.Component {
         desc: this.state.desc,
         name: this.state.name
       })
-      this.setSnack('Address added')
-      this.props.history.replace(`/addr/${addr._id}`)
+      this.setSnack('Wallet added')
+      this.props.history.replace(`/wallet/${addr._id}`)
       this.cx.depot.bxp([addr._id])
     } catch (e) {
       if (__.cfg('isDev')) throw e
@@ -157,7 +157,7 @@ class AddAddrView extends React.Component {
       return (
         <div className={this.props.classes.themeBgStyle}>
           <TopBar
-            midTitle='Address'
+            midTitle='Wallet'
             action={<Clear />}
             onClick={this.goBack}
             className={this.props.classes.gridWrap}
@@ -176,10 +176,9 @@ class AddAddrView extends React.Component {
                 </Typography>
                 {!this.state.noHshMode &&
                   <TextField
-                    autoFocus
                     required
                     fullWidth
-                    label={`${this.state.coin} Address (Public Key)`}
+                    label={`${this.state.coin} Wallet (Public Key)`}
                     margin='normal'
                     value={this.state.hsh}
                     error={Boolean(this.state.hshEmsg)}
@@ -188,7 +187,6 @@ class AddAddrView extends React.Component {
                   />}
                 {this.state.noHshMode &&
                   <TextField
-                    autoFocus
                     required
                     fullWidth
                     label='Amount'
@@ -297,7 +295,7 @@ class AddAddrView extends React.Component {
                     }}
                   >
                     <Add />
-                    Add address
+                    Connect wallet
                   </Button>
                 </div>
               </div>
