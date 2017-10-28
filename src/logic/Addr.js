@@ -97,7 +97,7 @@ export default class Addr extends ApiBase {
     const bxp = upd.bxp || cur.bxp
     if (bxp) addr.bxp = bxp
     const hsh = upd.hsh || cur.hsh
-    addr.name = (addr.name || `${__.cfg('newAddrNotice')} ${__.shortn(addr.hsh, 7).trim()}`)
+    addr.name = (addr.name || `${__.cfg('newAddrNotice')} ${__.shortn(hsh, 7).trim()}`)
     if (hsh) {
       addr.hsh = coinObj.toAddrHsh(hsh)
       addr.type = coinObj.isHdAddr(addr.hsh) ? 'hd' : 'std'
