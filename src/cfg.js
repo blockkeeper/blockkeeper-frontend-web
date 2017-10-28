@@ -45,7 +45,7 @@ Object.assign(d, {
       MYR: {dec: 2}
     },
     cryp: {
-      BTC: {dec: 4},
+      BTC: {dec: 5},
       LTC: {dec: 3},
       ETH: {dec: 3},
       DASH: {dec: 3, minAddrSize: 26, maxAddrSize: 35}
