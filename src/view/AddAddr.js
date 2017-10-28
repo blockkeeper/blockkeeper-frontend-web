@@ -122,6 +122,7 @@ class AddAddrView extends React.Component {
         descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')})
       }
       if (this.state.noHshMode) {
+        d.hsh = undefined
         d.amntEmsg = __.vldFloat(this.state.amnt)
         const name = this.state.name.trim()
         if (name && this.state.coin &&
