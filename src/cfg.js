@@ -22,7 +22,8 @@ Object.assign(d, {
   bxpBlockedSec: 15,
   maxTscCnt: 50,
   maxAddrCnt: 5,
-  newAddrNotice: 'New wallet ',
+  newAddrNotice: 'New wallet',
+  newTscNotice: 'New transaction',
   bip44IxGap: d.isDev ? 5 : 20, // BIP44 gap is 20, sync with bckinfo's tscs
   xtcHdAddrTypes: ['lgcy', 'sgwt'],  // order matters: first has precedence
   hdBasePaths: [                     // order matters: first has precedence

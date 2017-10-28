@@ -309,13 +309,13 @@ const tscRow = (
                 <CoinIcon coin={addr.coin} size={28} />
               </Hidden>
             </div>
-          }
+            }
             <div style={{flexGrow: 1, minWidth: 0}}>
               <Typography
                 type='body2'
                 className={body2ClassName}
                 style={{color: theme.palette.text.secondary}}
-            >
+              >
                 {__.ppTme(tsc._t)}
               </Typography>
               <Typography
@@ -336,7 +336,7 @@ const tscRow = (
                 className={body2ClassName}
                 style={{color: theme.palette.text.secondary}}
                 noWrap
-            >
+              >
                 {showAddrInfos &&
                 (tsc.name || tsc.desc)}
                 {!showAddrInfos &&
@@ -350,7 +350,7 @@ const tscRow = (
                   color: modeColor
                 }}
                 className={display1ClassName}
-            >
+              >
                 {modeSign} {__.formatNumber(tsc.amnt, addr.coin)}&nbsp;
                 <Hidden xsDown>
                   <CoinIcon

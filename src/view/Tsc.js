@@ -280,6 +280,18 @@ class TscView extends React.Component {
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
+                      Hash
+                    </Typography>
+                  </div>
+                  <div className={this.props.classes.valueStyle}>
+                    <Typography type='body1' noWrap>
+                      {this.state.tsc.hsh}
+                    </Typography>
+                  </div>
+                </div>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' noWrap color='inherit'>
                       Name
                     </Typography>
                   </div>
