@@ -68,7 +68,7 @@ const theme = createMuiTheme({
     background: {
       default: styleGuide.backgroundDark,
       paper: common.white,
-      appBar: common.transparent,
+      appBar: styleGuide.backgroundDark,
       light: styleGuide.backgroundLight
     },
     text: {
@@ -229,7 +229,6 @@ const gridWrap = {
 
 const gridWrapPaper = {
   ...gridWrap,
-  background: theme.palette.background.light,
   paddingTop: theme.spacing.unit * 2
 }
 
@@ -351,6 +350,11 @@ const topBtnClass = {
   width: '30px'
 }
 
+const depotEmpty = {
+  // paddingTop: '50px',
+  textAlign: 'center'
+}
+
 export {
   theme,
   themeBgStyle,
@@ -381,5 +385,6 @@ export {
   display3,
   tab,
   actnBtnClr,
-  topBtnClass
+  topBtnClass,
+  depotEmpty
 }

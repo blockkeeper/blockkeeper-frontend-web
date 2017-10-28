@@ -186,7 +186,6 @@ class UserView extends React.Component {
             action={<Done />}
             onClick={this.save}
             onClickLeft={() => this.setState({edit: false})}
-            className={this.props.classes.gridWrap}
             modeCancel
             noUser
           />}
@@ -197,7 +196,6 @@ class UserView extends React.Component {
             onClick={this.edit}
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}
-            className={this.props.classes.gridWrap}
             noUser
           />}
           {this.state.busy &&

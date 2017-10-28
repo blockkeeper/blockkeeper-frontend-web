@@ -11,6 +11,7 @@ import Select from 'material-ui/Select'
 import ScrollToTop from 'react-scroll-up'
 import Tooltip from 'material-ui/Tooltip'
 import Input, { InputLabel } from 'material-ui/Input'
+import Grid from 'material-ui/Grid'
 import TransitiveNumber from 'react-transitive-number'
 import Toolbar from 'material-ui/Toolbar'
 import Paper from 'material-ui/Paper'
@@ -569,32 +570,24 @@ const CoinIcon = ({coin, alt, color, size, style}) => {
   return <span>{getSymbolFromCurrency(coin.toUpperCase())}</span>
 }
 
-const DepotEmpty = () =>
-  <Paper
-    square
-    elevation={0}
-    style={{
-      background: theme.palette.background.light,
-      padding: theme.spacing.unit,
-      textAlign: 'center',
-      paddingTop: '50px'
-    }}
-  >
-    <Link to={`/wallet/add`} style={{textDecoration: 'none'}}>
-      <Typography type='headline' gutterBottom>
-        No wallets found, start by adding your first wallet
-      </Typography>
-    </Link>
-    <Link to={`/user/edit`} style={{textDecoration: 'none'}}>
+const DepotEmpty = ({className}) =>
+  <Grid container spacing={0} justify='center'>
+    <Grid item xs={6} className={className}>
       <Typography
-        type='subheading'
-        style={{color: theme.palette.text.secondary}}
+        type='display2'
         gutterBottom
+        style={{
+          color: theme.palette.text.primary,
+          marginTop: '130px'
+        }}
       >
-        or edit your user settings
+        Welcome to Block Keeper
       </Typography>
-    </Link>
-  </Paper>
+      <Typography type='subheading' gutterBottom>
+        In order to start using our app, please go ahead and connect your first wallet.
+      </Typography>
+    </Grid>
+  </Grid>
 
 const PaperGrid = ({
   addrs,

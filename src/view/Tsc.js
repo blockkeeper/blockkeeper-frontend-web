@@ -198,7 +198,6 @@ class TscView extends React.Component {
               action={<Done />}
               onClick={this.save}
               onClickLeft={() => this.setState({edit: false})}
-              className={this.props.classes.gridWrap}
               modeCancel
               noUser
             />}
@@ -209,7 +208,6 @@ class TscView extends React.Component {
               onClickLeft={this.goBack}
               action={<Edit />}
               onClick={this.edit}
-              className={this.props.classes.gridWrap}
               noUser
             />}
           {this.state.busy &&

@@ -26,8 +26,11 @@ const styles = {
   qrReaderStyle,
   actnBtnClr,
   saveStyle: {
-    width: '50%',
-    margin: theme.spacing.unit * 4
+    width: '60%',
+    margin: theme.spacing.unit * 4,
+    [theme.breakpoints.down('sm')]: {
+      width: '80%'
+    }
   },
   radios: {
     paddingLeft: theme.spacing.unit
@@ -155,18 +158,18 @@ class AddAddrView extends React.Component {
       )
     } else if (this.state.coin !== undefined) {
       return (
-        <div className={this.props.classes.themeBgStyle}>
+        <div>
           <TopBar
             midTitle='Wallet'
             action={<Clear />}
             onClick={this.goBack}
-            className={this.props.classes.gridWrap}
             noUser
           />
           {this.state.busy &&
           <LinearProgress />}
           <Paper
             square
+            elevation={0}
             className={this.props.classes.gridSpacer}
           >
             <div className={this.props.classes.gridWrap}>

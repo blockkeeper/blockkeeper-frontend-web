@@ -9,7 +9,7 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
 import __ from '../util'
 import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
-        actnBtnClr, topBtnClass} from './Style'
+        actnBtnClr, topBtnClass, depotEmpty} from './Style'
 
 const styles = {
   themeBgStyle,
@@ -28,7 +28,8 @@ const styles = {
   display3,
   tab,
   actnBtnClr,
-  topBtnClass
+  topBtnClass,
+  depotEmpty
 }
 
 class DepotView extends React.Component {
@@ -113,13 +114,14 @@ class DepotView extends React.Component {
         </Modal>
       )
     } else if (this.state.addrs) {
+      console.log('this.state.blc1', this.state.blc1)
       return (
         <div>
           {this.state.snack &&
           <Snack
             msg={this.state.snack}
             onClose={() => this.setState({snack: null})}
-            />}
+          />}
           <div className={this.props.classes.themeBgStyle}>
             <TopBar
               title
@@ -134,24 +136,19 @@ class DepotView extends React.Component {
                 display3ClassName={this.props.classes.display3}
                />
             }
-            {this.state.blc1 === 'undefined' &&
-              <Jumbo
-                coin0={this.state.coin0}
-                coin1={this.state.coin1}
-                display3ClassName={this.props.classes.display3}
-               />
-            }
           </div>
-          <SubBar
-            tabs={['Wallets', 'Transactions']}
-            ix={this.state.tabIx}
-            onClick={this.tab}
-            rootClassName={this.props.classes.tab}
-          />
-          {this.state.addrs.length < 1 &&
-            <DepotEmpty />
+          {this.state.addrs.length === 0 &&
+            <DepotEmpty className={this.props.classes.depotEmpty} />
           }
-          {this.state.tabIx === 0 &&
+          {this.state.addrs.length > 0 &&
+            <SubBar
+              tabs={['Wallets', 'Transactions']}
+              ix={this.state.tabIx}
+              onClick={this.tab}
+              rootClassName={this.props.classes.tab}
+            />
+          }
+          {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
             <PaperGrid
               addrs={this.state.addrs}
               addrUpdIds={new Set()}    // TODO
