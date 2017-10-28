@@ -58,9 +58,11 @@ class XtcCoin extends Coin {
   }
 
   vldAddrHsh (hsh) {
-    if (hsh.startsWith('xpriv')) {
+    hsh = hsh.trim()
+    let hshLo = hsh.toLowerCase()
+    if (hshLo.startsWith('xpriv')) {
       return 'xpriv is not supported: Please enter xpub address'
-    } else if (hsh.startsWith('xpub')) {
+    } else if (hshLo.startsWith('xpub')) {
       try {
         bjsHDNode.fromBase58(hsh, this.net)
       } catch (e) {
@@ -159,6 +161,34 @@ class Ltc extends XtcCoin {
   constructor (pa) {
     super('LTC', pa)
   }
+
+  vldAddrHsh (hsh) {
+    hsh = hsh.trim()
+    let hshLo = hsh.toLowerCase()
+    if (hshLo.startsWith('xpriv') || hshLo.startsWith('ltpv')) {
+      return 'xpriv and ltpv are not supported ' +
+             '(but xpub addresses will be in the near future)'
+    } else if (hshLo.startsWith('ltub')) {
+      return 'ltub is not supported ' +
+             '(but xpub addresses will be in the near future)'
+    } else if (hshLo.startsWith('xpub')) {
+      return 'xpub is not YET supported (but will be in the near future)'
+    } else {
+      try {
+        bjsAddress.toOutputScript(hsh, this.net)
+      } catch (e) {
+        if (!hsh.startsWith('3')) return 'Invalid address'
+        try {
+          // fix me: workaround to prevent 'has no matching script' error:
+          //   validate against bitcoin instead of litecoin network
+          // https://github.com/litecoin-project/litecoin/issues/312
+          bjsAddress.toOutputScript(hsh, bjsNetworks.bitcoin)
+        } catch (e) {
+          return 'Invalid address'
+        }
+      }
+    }
+  }
 }
 
 class Dash extends Coin {
@@ -173,18 +203,23 @@ class Eth extends Coin {
     super('ETH', pa)
     this.conv = val => val / 1e18   // wei to eth
     this.toAddrHsh = hsh => {
+      hsh = hsh.toLowerCase().trim()
       return Web3Utils.toChecksumAddress(
-        (hsh.startsWith('0x') ? hsh : `0x${hsh}`).trim()
+        hsh.startsWith('0x') ? hsh : `0x${hsh}`
       )
     }
     this.toTscHsh = hsh => {
-      return (hsh.startsWith('0x') ? hsh : `0x${hsh}`).trim().toLowerCase()
+      hsh = hsh.toLowerCase().trim()
+      return hsh.startsWith('0x') ? hsh : `0x${hsh}`
     }
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
   }
 
   vldAddrHsh (hsh) {
-    if (!hsh.startsWith('0x')) return 'Address must start with "0x"'
+    hsh = hsh.toLowerCase().trim()
+    if (!hsh.startsWith('0x')) {
+      return 'Invalid address: Address must start with "0x"'
+    }
     try {
       this.toAddrHsh(hsh)
     } catch (e) {
