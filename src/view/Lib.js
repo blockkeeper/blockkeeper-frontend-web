@@ -658,7 +658,13 @@ const PaperGrid = ({
                       <b>Note</b>&nbsp;
                     </span>
                   </Hidden>}
-                  {addr.hsh || addr.desc}
+                  {!addr.hsh && !addr.desc &&
+                  <Hidden smDown>
+                    <span>
+                      <b>Wallet</b>&nbsp;
+                    </span>
+                  </Hidden>}
+                  {addr.hsh || addr.desc || 'manual'}
                 </Typography>
               </div>
               <div className={amntClassName}>
