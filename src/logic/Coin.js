@@ -5,6 +5,7 @@ import {
   address as bjsAddress,
   networks as bjsNetworks
 } from 'bitcoinjs-lib'
+import Web3Utils from 'web3-utils'
 import {BckcyphBxp, BckinfoBxp} from './Bxp'
 import __ from '../util'
 
@@ -18,16 +19,17 @@ class Coin extends Base {
   constructor (coin, pa) {
     super(coin, pa)
     this.coin = coin
-    this.vldHsh = this.vldHsh.bind(this)
+    this.toAddrHsh = hsh => hsh.trim()
+    this.toTscHsh = hsh => hsh.trim()
+    this.vldAddrHsh = this.vldAddrHsh.bind(this)
     this.isHdAddr = hsh => false
-    this.toHsh = hsh => hsh
     this.conv = val => val
     this.bxp = {
       bckcyph: new BckcyphBxp(this)
     }
   }
 
-  vldHsh (hsh) {
+  vldAddrHsh (hsh) {
     const cfg = __.cfg('coins').cryp[this.coin] || __.cfg('coins').dflt
     return __.vldAlphNum(hsh, {
       strict: true,
@@ -45,7 +47,7 @@ class XtcCoin extends Coin {
     this.net = bjsNetworks[this.coin === 'LTC' ? 'litecoin' : 'bitcoin']
     this.conv = val => val / 1e8   // satoshi to btc/ltc/...
     this.isHdAddr = hsh => hsh.startsWith('xpub')
-    this.vldHsh = this.vldHsh.bind(this)
+    this.vldAddrHsh = this.vldAddrHsh.bind(this)
     this.toSegWitAddr = this.toSegWitAddr.bind(this)
     this.walkHdPath = this.walkHdPath.bind(this)
     this.toAbsHdPath = this.toAbsHdPath.bind(this)
@@ -55,7 +57,7 @@ class XtcCoin extends Coin {
     })
   }
 
-  vldHsh (hsh) {
+  vldAddrHsh (hsh) {
     if (hsh.startsWith('xpriv')) {
       return 'xpriv is not supported: Please enter xpub address'
     } else if (hsh.startsWith('xpub')) {
@@ -130,8 +132,8 @@ class XtcCoin extends Coin {
       let drvAddr = {
         hdAddr,
         hsh: addrType === 'sgwt'
-          ? this.toSegWitAddr(node)
-          : node.getAddress(),
+          ? this.toAddrHsh(this.toSegWitAddr(node))
+          : this.toAddrHsh(node.getAddress()),
         isMstr: !rootNode.parentFingerprint,
         addrType,
         startAbsPath: this.toAbsHdPath(rootNode, startPath),
@@ -170,7 +172,25 @@ class Eth extends Coin {
   constructor (pa) {
     super('ETH', pa)
     this.conv = val => val / 1e18   // wei to eth
-    this.toHsh = hsh => hsh.replace(/^0x/, '')
+    this.toAddrHsh = hsh => {
+      return Web3Utils.toChecksumAddress(
+        (hsh.startsWith('0x') ? hsh : `0x${hsh}`).trim()
+      )
+    }
+    this.toTscHsh = hsh => {
+      return (hsh.startsWith('0x') ? hsh : `0x${hsh}`).trim().toLowerCase()
+    }
+    this.vldAddrHsh = this.vldAddrHsh.bind(this)
+  }
+
+  vldAddrHsh (hsh) {
+    if (!hsh.startsWith('0x')) return 'Address must start with "0x"'
+    try {
+      this.toAddrHsh(hsh)
+    } catch (e) {
+      return 'Invalid address'
+    }
+    return ''
   }
 }
 

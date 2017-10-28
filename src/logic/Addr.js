@@ -93,15 +93,15 @@ export default class Addr extends ApiBase {
       name: upd.name || cur.name,
       tags: upd.tags || cur.tags || []
     }
+    const coinObj = this.coinObjs[addr.coin]
     const bxp = upd.bxp || cur.bxp
     if (bxp) addr.bxp = bxp
-    const toHsh = hsh => this.coinObjs[addr.coin].toHsh(hsh.trim())
     const hsh = upd.hsh || cur.hsh
     if (hsh) {
-      addr.hsh = toHsh(hsh)
+      addr.hsh = coinObj.toAddrHsh(hsh)
       addr.name = (addr.name || __.cfg('newAddrNotice') +
                   __.shortn(addr.hsh, 7)).trim()
-      addr.type = this.coinObjs[addr.coin].isHdAddr(addr.hsh) ? 'hd' : 'std'
+      addr.type = coinObj.isHdAddr(addr.hsh) ? 'hd' : 'std'
     } else {
       addr.name = (addr.name || __.cfg('newAddrNotice') +
                   __.shortn(addr._id, 7)).trim()
@@ -121,7 +121,9 @@ export default class Addr extends ApiBase {
       }
     }
     upd.tscs = upd.tscs || []
-    const updTscs = new Map(upd.tscs.map((upd) => [toHsh(upd.hsh), upd]))
+    const updTscs = new Map(
+      upd.tscs.map(upd => [coinObj.toTscHsh(upd.hsh), upd])
+    )
     const tscs = new Map()
     for (let tsc of (cur.tscs || [])) {
       tsc = this.toTsc(addr.coin, updTscs.get(tsc.hsh), tsc)

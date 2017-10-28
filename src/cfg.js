@@ -46,7 +46,7 @@ Object.assign(d, {
     cryp: {
       BTC: {dec: 4},
       LTC: {dec: 3},
-      ETH: {dec: 3, minAddrSize: 40, maxAddrSize: 42},
+      ETH: {dec: 3},
       DASH: {dec: 3, minAddrSize: 26, maxAddrSize: 35}
     },
     dflt: {dec: 4, minAddrSize: 1, maxAddrSize: 100}
@@ -79,10 +79,10 @@ Object.assign(d, {
     ETH: {
       dflt: 'ethscan',
       addr: {
-        ethscan: hsh => `https://etherscan.io/address/0x${hsh}`
+        ethscan: hsh => `https://etherscan.io/address/${hsh}`
       },
       tsc: {
-        ethscan: hsh => `https://etherscan.io/tx/0x${hsh}`
+        ethscan: hsh => `https://etherscan.io/tx/${hsh}`
       }
     },
     DASH: {
