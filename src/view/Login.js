@@ -8,7 +8,7 @@ import { withStyles } from 'material-ui/styles'
 import {LinearProgress} from 'material-ui/Progress'
 import {Lock} from 'material-ui-icons'
 import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} from './Style'
-import {Modal} from './Lib'
+import {Modal, BrowserGate, NtAllwd} from './Lib'
 import __ from '../util'
 
 const styles = {
@@ -120,27 +120,34 @@ class LoginView extends React.Component {
                     helperText={this.state.pwEmsg}
                     onChange={evt => this.set('pw', evt.target.value)}
                     />
-                  <Button
-                    raised
-                    color={'accent'}
-                    className={this.props.classes.loginButton}
-                    onClick={(event) => this.login(event)}
-                    disabled={!this.state.upd}
-                    classes={{
-                      raisedAccent: this.props.classes.actnBtnClr
-                    }}
-                    >
-                    <Lock
-                      className={this.props.classes.lockIcon} />
-                      Login
-                  </Button>
-                  <br />
-                  <Button
-                    href='/rgstr'
-                    className={this.props.classes.fullWidth}
-                  >
-                    Register
-                  </Button>
+                  <BrowserGate
+                    allwd={
+                      <div>
+                        <Button
+                          raised
+                          color={'accent'}
+                          className={this.props.classes.loginButton}
+                          onClick={(event) => this.login(event)}
+                          disabled={!this.state.upd}
+                          classes={{
+                            raisedAccent: this.props.classes.actnBtnClr
+                          }}
+                          >
+                          <Lock
+                            className={this.props.classes.lockIcon} />
+                            Login
+                        </Button>
+                        <br />
+                        <Button
+                          href='/rgstr'
+                          className={this.props.classes.fullWidth}
+                        >
+                          Register
+                        </Button>
+                      </div>
+                    }
+                    ntAll={<NtAllwd />}
+                  />
                 </Paper>
               </Grid>
             </Grid>
