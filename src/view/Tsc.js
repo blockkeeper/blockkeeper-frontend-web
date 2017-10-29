@@ -33,15 +33,14 @@ const styles = {
     color: theme.palette.text.secondary,
     width: '40%',
     minWidth: theme.spacing.unit * 14,
-    paddingRight: theme.spacing.unit * 4,
     textAlign: 'right',
     [theme.breakpoints.down('sm')]: {
       width: theme.spacing.unit * 14
     }
   },
   valueStyle: {
-    flexGrow: 1,
-    minWidth: 0
+    width: '60%',
+    paddingLeft: theme.spacing.unit * 4
   },
   extBtn: {
     width: '50%',
@@ -264,19 +263,13 @@ class TscView extends React.Component {
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
-                      Address
+                      Hash
                     </Typography>
                   </div>
                   <div className={this.props.classes.valueStyle}>
-                    <Link
-                      to={`/addr/${this.state.addr._id}`}
-                      className={this.props.classes.noTxtDeco}
-                    >
-                      <Typography type='body1' noWrap>
-                        <CoinIcon coin={this.state.addr.coin} size={13} />&nbsp;
-                        <b>{this.state.addr.name}</b>
-                      </Typography>
-                    </Link>
+                    <Typography type='body1' noWrap>
+                      {this.state.tsc.hsh}
+                    </Typography>
                   </div>
                 </div>
                 <div className={this.props.classes.flexStyle}>
@@ -418,6 +411,24 @@ class TscView extends React.Component {
                       <Typography type='body1' noWrap>
                         {this.state.tsc.desc}
                       </Typography>}
+                  </div>
+                </div>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' noWrap color='inherit'>
+                      Address
+                    </Typography>
+                  </div>
+                  <div className={this.props.classes.valueStyle}>
+                    <Link
+                      to={`/wallet/${this.state.addr._id}`}
+                      className={this.props.classes.noTxtDeco}
+                    >
+                      <Typography type='body1' noWrap>
+                        <CoinIcon coin={this.state.addr.coin} size={13} />&nbsp;
+                        <b>{this.state.addr.name}</b>
+                      </Typography>
+                    </Link>
                   </div>
                 </div>
                 {(

@@ -1,15 +1,16 @@
 import React from 'react'
-import {LinearProgress} from 'material-ui/Progress'
-import {withStyles} from 'material-ui/styles'
+import Button from 'material-ui/Button'
 import withWidth from 'material-ui/utils/withWidth'
 import compose from 'recompose/compose'
+import {LinearProgress} from 'material-ui/Progress'
+import {withStyles} from 'material-ui/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn, addrLimitReached} from './Lib'
 import __ from '../util'
 import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
-        actnBtnClr, topBtnClass} from './Style'
+        actnBtnClr, topBtnClass, depotEmpty, cnctBtn} from './Style'
 
 const styles = {
   themeBgStyle,
@@ -28,7 +29,9 @@ const styles = {
   display3,
   tab,
   actnBtnClr,
-  topBtnClass
+  topBtnClass,
+  depotEmpty,
+  cnctBtn
 }
 
 class DepotView extends React.Component {
@@ -45,13 +48,18 @@ class DepotView extends React.Component {
     if (addrLimitReached(this, this.state.addrs)) {
       this.setState({snack: this.getSnack()})
     } else {
-      this.props.history.push('/addr/add')
+      this.props.history.push('/wallet/add')
     }
   }
 
   async componentDidMount () {
     Object.assign(this, __.initView(this, 'depot'))
     await this.load()
+
+    // style body bg for empty depot view (without connected addresses)
+    if (this.state.addrs.length === 0) {
+      document.body.style.backgroundColor = 'white'
+    }
   }
 
   componentWillUnmount () {
@@ -119,7 +127,7 @@ class DepotView extends React.Component {
           <Snack
             msg={this.state.snack}
             onClose={() => this.setState({snack: null})}
-            />}
+          />}
           <div className={this.props.classes.themeBgStyle}>
             <TopBar
               title
@@ -134,24 +142,34 @@ class DepotView extends React.Component {
                 display3ClassName={this.props.classes.display3}
                />
             }
-            {this.state.blc1 === 'undefined' &&
-              <Jumbo
-                coin0={this.state.coin0}
-                coin1={this.state.coin1}
-                display3ClassName={this.props.classes.display3}
-               />
-            }
           </div>
-          <SubBar
-            tabs={['Addresses', 'Transactions']}
-            ix={this.state.tabIx}
-            onClick={this.tab}
-            rootClassName={this.props.classes.tab}
-          />
-          {this.state.addrs.length < 1 &&
-            <DepotEmpty />
+          {this.state.addrs.length === 0 &&
+            <div>
+              <DepotEmpty className={this.props.classes.depotEmpty} />
+              <div style={{position: 'absolute', bottom: '40px', width: '100%', textAlign: 'center'}}>
+                <Button
+                  raised
+                  color={'accent'}
+                  className={this.props.classes.cnctBtn}
+                  onClick={this.goAddAddr}
+                  classes={{
+                    raisedAccent: this.props.classes.actnBtnClr
+                  }}
+                  >
+                    Connect wallet
+                  </Button>
+              </div>
+            </div>
           }
-          {this.state.tabIx === 0 &&
+          {this.state.addrs.length > 0 &&
+            <SubBar
+              tabs={['Wallets', 'Transactions']}
+              ix={this.state.tabIx}
+              onClick={this.tab}
+              rootClassName={this.props.classes.tab}
+            />
+          }
+          {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
             <PaperGrid
               addrs={this.state.addrs}
               addrUpdIds={new Set()}    // TODO
@@ -185,9 +203,9 @@ class DepotView extends React.Component {
             <BxpFloatBtn
               onClick={() => this.cx.depot.bxp([])}
               bxpSts={this.state.bxpSts}
-              first={this.state.tabIx === 1 || this.state.addrTscs.length === 0}
+              first={this.state.tabIx === 1}
             />}
-          {(this.state.tabIx === 0 || this.state.addrTscs.length === 0) &&
+          {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
             <FloatBtn
               onClick={this.goAddAddr}
               actnBtnClrClassName={this.props.classes.actnBtnClr}

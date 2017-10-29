@@ -46,8 +46,8 @@ const Routes = () => (
         <Route path='/rgstr' exact render={register} />
         <AuthRoute path='/user/edit' exact component={UserView} />
         <AuthRoute path='/depot' exact component={DepotView} />
-        <AuthRoute path='/addr/add' exact component={AddAddrView} />
-        <AuthRoute path='/addr/:addrId' exact component={AddrView} />
+        <AuthRoute path='/wallet/add' exact component={AddAddrView} />
+        <AuthRoute path='/wallet/:addrId' exact component={AddrView} />
         <AuthRoute path='/tsc/:addrId/:tscId' exact component={TscView} />
         <Redirect to='/depot' />
       </Switch>

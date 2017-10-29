@@ -4,7 +4,8 @@ import { fade } from 'material-ui/styles/colorManipulator'
 
 const styleGuide = {
   backgroundLight: '#F4F2F5',
-  backgroundDark: 'linear-gradient(to bottom right,#210045, #9A40FF)',
+  // backgroundDark: 'linear-gradient(to bottom right,#210045, #9A40FF)',
+  backgroundDark: '#1e003c',
   text: '#210045',
   textSecondary: '#907FA2',
   spacertop: '100px',
@@ -67,7 +68,7 @@ const theme = createMuiTheme({
     background: {
       default: styleGuide.backgroundDark,
       paper: common.white,
-      appBar: common.transparent,
+      appBar: styleGuide.backgroundDark,
       light: styleGuide.backgroundLight
     },
     text: {
@@ -228,8 +229,8 @@ const gridWrap = {
 
 const gridWrapPaper = {
   ...gridWrap,
-  background: theme.palette.background.light,
-  paddingTop: theme.spacing.unit * 2
+  paddingTop: theme.spacing.unit * 2,
+  backgroundColor: theme.palette.background.light
 }
 
 const gridItem = {
@@ -350,6 +351,19 @@ const topBtnClass = {
   width: '30px'
 }
 
+const depotEmpty = {
+  // paddingTop: '50px',
+  textAlign: 'center'
+}
+
+const cnctBtn = {
+  width: '40%',
+  margin: theme.spacing.unit * 4,
+  [theme.breakpoints.down('sm')]: {
+    width: '80%'
+  }
+}
+
 export {
   theme,
   themeBgStyle,
@@ -380,5 +394,7 @@ export {
   display3,
   tab,
   actnBtnClr,
-  topBtnClass
+  topBtnClass,
+  depotEmpty,
+  cnctBtn
 }

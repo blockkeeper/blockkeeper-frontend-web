@@ -11,6 +11,7 @@ import Select from 'material-ui/Select'
 import ScrollToTop from 'react-scroll-up'
 import Tooltip from 'material-ui/Tooltip'
 import Input, { InputLabel } from 'material-ui/Input'
+import Grid from 'material-ui/Grid'
 import TransitiveNumber from 'react-transitive-number'
 import Toolbar from 'material-ui/Toolbar'
 import Paper from 'material-ui/Paper'
@@ -23,7 +24,7 @@ import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {Add, Close, Autorenew, HourglassEmpty, AccountCircle, InfoOutline,
+import {Add, Close, Autorenew, AccountCircle, InfoOutline,
        Error, KeyboardArrowUp, Feedback, BugReport} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
        DialogTitle } from 'material-ui/Dialog'
@@ -49,8 +50,8 @@ const unsetBxpTrigger = view => {
 
 const addrLimitReached = (cmp, addrs) => {
   if (addrs.length >= __.cfg('maxAddrCnt')) {
-    cmp.setSnack('Maximum number of addresses reached: ' +
-                 'Please delete old addresses first')
+    cmp.setSnack('Maximum number of wallets reached: ' +
+                 'Please disconnect a wallet first')
     return true
   }
   return false
@@ -240,10 +241,10 @@ const FloatBtn = ({onClick, key, actnBtnClrClassName}) => {
 const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
-    lbl = 'Blocked'
+    /* lbl = 'Blocked'
     icon = <HourglassEmpty />
-    dsbld = true
-    /* return null */
+    dsbld = true */
+    return null
   } else if (bxpSts === 'run') {
     lbl = 'Updating'
     icon = <Autorenew style={{animation: 'spin 1s linear infinite'}} />
@@ -308,13 +309,13 @@ const tscRow = (
                 <CoinIcon coin={addr.coin} size={28} />
               </Hidden>
             </div>
-          }
+            }
             <div style={{flexGrow: 1, minWidth: 0}}>
               <Typography
                 type='body2'
                 className={body2ClassName}
                 style={{color: theme.palette.text.secondary}}
-            >
+              >
                 {__.ppTme(tsc._t)}
               </Typography>
               <Typography
@@ -335,7 +336,7 @@ const tscRow = (
                 className={body2ClassName}
                 style={{color: theme.palette.text.secondary}}
                 noWrap
-            >
+              >
                 {showAddrInfos &&
                 (tsc.name || tsc.desc)}
                 {!showAddrInfos &&
@@ -349,7 +350,7 @@ const tscRow = (
                   color: modeColor
                 }}
                 className={display1ClassName}
-            >
+              >
                 {modeSign} {__.formatNumber(tsc.amnt, addr.coin)}&nbsp;
                 <Hidden xsDown>
                   <CoinIcon
@@ -569,32 +570,26 @@ const CoinIcon = ({coin, alt, color, size, style}) => {
   return <span>{getSymbolFromCurrency(coin.toUpperCase())}</span>
 }
 
-const DepotEmpty = () =>
-  <Paper
-    square
-    elevation={0}
-    style={{
-      background: theme.palette.background.light,
-      padding: theme.spacing.unit,
-      textAlign: 'center',
-      paddingTop: '50px'
-    }}
-  >
-    <Link to={`/addr/add`} style={{textDecoration: 'none'}}>
-      <Typography type='headline' gutterBottom>
-        No addresses found, start by adding your first address
-      </Typography>
-    </Link>
-    <Link to={`/user/edit`} style={{textDecoration: 'none'}}>
-      <Typography
-        type='subheading'
-        style={{color: theme.palette.text.secondary}}
-        gutterBottom
-      >
-        or edit your user settings
-      </Typography>
-    </Link>
-  </Paper>
+const DepotEmpty = ({className}) =>
+  <div>
+    <Grid container spacing={0} justify='center'>
+      <Grid item xs={6} className={className}>
+        <Typography
+          type='display2'
+          gutterBottom
+          style={{
+            color: theme.palette.text.primary,
+            marginTop: '130px'
+          }}
+        >
+          Welcome to Block Keeper
+        </Typography>
+        <Typography type='subheading' gutterBottom>
+          In order to start using our app, please go ahead and connect your first wallet.
+        </Typography>
+      </Grid>
+    </Grid>
+  </div>
 
 const PaperGrid = ({
   addrs,
@@ -617,7 +612,7 @@ const PaperGrid = ({
       {addrs.map(addr => {
         return (
           <Link
-            to={`/addr/${addr._id}`}
+            to={`/wallet/${addr._id}`}
             style={{textDecoration: 'none'}}
             key={addr._id}
           >
@@ -654,7 +649,7 @@ const PaperGrid = ({
                   {addr.hsh &&
                   <Hidden smDown>
                     <span>
-                      <b>Address</b>&nbsp;
+                      <b>Wallet</b>&nbsp;
                     </span>
                   </Hidden>}
                   {!addr.hsh && addr.desc &&
@@ -663,7 +658,13 @@ const PaperGrid = ({
                       <b>Note</b>&nbsp;
                     </span>
                   </Hidden>}
-                  {addr.hsh || addr.desc}
+                  {!addr.hsh && !addr.desc &&
+                  <Hidden smDown>
+                    <span>
+                      <b>Wallet</b>&nbsp;
+                    </span>
+                  </Hidden>}
+                  {addr.hsh || addr.desc || 'manual'}
                 </Typography>
               </div>
               <div className={amntClassName}>

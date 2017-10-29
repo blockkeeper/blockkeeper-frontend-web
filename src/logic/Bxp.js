@@ -17,7 +17,6 @@ class Bxp extends Base {
 
   async sleep (sec, nxSec) {
     if (sec) {
-      // this.info(`Gentle polling: Sleeping ${sec}s before next bxp request`)
       this.debug(`Gentle polling: Sleeping ${sec}s`)
       await __.sleep(sec * 1000)
     }
@@ -28,8 +27,8 @@ class Bxp extends Base {
 class BckcyphBxp extends Bxp {
   constructor (pa) {
     super('bckcyph', pa)
-    this.apiGetAddrs = this.apiGetAddrs.bind(this)
     this.toTscs = this.toTscs.bind(this)
+    this.apiGetAddrs = this.apiGetAddrs.bind(this)
   }
 
   toTscs (txs) {
@@ -83,7 +82,7 @@ class BckcyphBxp extends Bxp {
       }
       tscs.push({
         _t: (cTme || rTme).format(),
-        hsh,
+        hsh: this.coinObj.toTscHsh(hsh),
         mode,
         amnt: this.coinObj.conv(amnt),
         cfmCnt: d.cfmCnt
@@ -116,7 +115,7 @@ class BckcyphBxp extends Bxp {
       for (let addr of (__.is('Array', pld) ? pld : [pld])) {
         let addrHsh = addr.address
         if (!addrHsh) continue
-        let updAddr = updAddrs[addrHsh]
+        let updAddr = updAddrs[this.coinObj.toAddrHsh(addrHsh)]
         if (!updAddr) continue
         Object.assign(updAddr, {
           bxp: 'bckcyph',
@@ -241,11 +240,14 @@ class BckinfoBxp extends Bxp {
           // addr[`${tx._mode}Amnt`] += tx._amnt // untested
           tscs.push({
             _t: mo.unix(tx.time).format(),
-            hsh: tx.hash,
+            hsh: this.coinObj.toTscHsh(tx.hash),
             mode: tx._mode,
             amnt: tx._amnt,
             hd: {
-              addrHshs: Array.from(addr._txAddrs[tx.hash]).sort()
+              addrHshs: Array.from(addr._txAddrs[tx.hash])
+                        .sort()
+                        .slice(0, __.cfg('lstMax'))
+                        .map(addr => this.coinObj.toAddrHsh(addr))
             }
           })
         }
@@ -287,8 +289,9 @@ class BckinfoBxp extends Bxp {
         this.addTxs(drvAddrs, pld.txs)
         for (let addrPld of pld.addresses) {
           if (addrPld.n_tx > 0 && drvAddrs[addrPld.address]) {
-            let drvAddr = drvAddrs[addrPld.address]
-            delete drvAddrs[addrPld.address]
+            const addrPldHsh = this.coinObj.toAddrHsh(addrPld.address)
+            let drvAddr = drvAddrs[addrPldHsh]
+            delete drvAddrs[addrPldHsh]
             let hsh = drvAddr.hdAddr.hsh
             let hdAddr = hdAddrs.cur[hsh]
             hdAddr.amnt += this.coinObj.conv(addrPld.final_balance)

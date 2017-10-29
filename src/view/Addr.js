@@ -3,7 +3,6 @@ import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
 import TransitiveNumber from 'react-transitive-number'
-import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import Grid from 'material-ui/Grid'
@@ -14,7 +13,7 @@ import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
         actnBtnClr, topBtnClass} from './Style'
-import {ArrowBack, ArrowDropDown, ArrowDropUp, ArrowForward,
+import {ArrowBack, ArrowForward,
         Launch, RemoveCircleOutline} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
         CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
@@ -44,13 +43,12 @@ const styles = {
     paddingBottom: theme.spacing.unit * 3
   },
   titleStyle: {
-    paddingTop: theme.spacing.unit * 2
+    paddingTop: theme.spacing.unit * 2,
+    lineHeight: 1.5
   },
   display3: {
-    // ...display3,
     fontWeight: '400',
-    color: theme.palette.primary['500'],
-    paddingTop: theme.spacing.unit * 2
+    color: theme.palette.primary['500']
   },
   deleteIcon: {
     width: theme.spacing.unit * 2,
@@ -141,7 +139,7 @@ class AddrView extends React.Component {
         desc: this.state.desc,
         tags: __.toTags(this.state.tagsJoin).split(' ')
       })
-      this.setSnack('Address updated')
+      this.setSnack('Wallet updated')
       this.setState({addr, snack: this.getSnack(), busy: false, upd: false})
     } catch (e) {
       this.setState({err: e.message, busy: false})
@@ -152,7 +150,7 @@ class AddrView extends React.Component {
   async delete () {
     try {
       await this.addrObj.delete()
-      this.setSnack('Address deleted')
+      this.setSnack('Wallet disconnected')
     } catch (e) {
       this.setState({err: e.message, show: false})
       if (__.cfg('isDev')) throw e
@@ -192,10 +190,10 @@ class AddrView extends React.Component {
         <Modal
           withBusy
           onClose={this.close}
-          lbl='Disconnect address'
-          actions={[{lbl: 'Disconnect address', onClick: this.delete}]}
+          lbl='Disconnect wallet'
+          actions={[{lbl: 'Disconnect wallet', onClick: this.delete}]}
         >
-          {`Are you sure you want to disconnect address "${this.state.name}"?`}
+          {`Are you sure you want to disconnect wallet "${this.state.name}"?`}
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
@@ -218,7 +216,7 @@ class AddrView extends React.Component {
             />}
           {this.state.edit &&
           <TopBar
-            midTitle='Address'
+            midTitle='Wallet'
             action={<Done />}
             onClick={this.save}
             onClickLeft={() => this.setState({edit: false})}
@@ -228,7 +226,7 @@ class AddrView extends React.Component {
           />}
           {!this.state.edit &&
           <TopBar
-            midTitle='Address'
+            midTitle='Wallet'
             iconLeft={<ArrowBack />}
             onClickLeft={this.goBack}
             action={<Edit />}
@@ -248,35 +246,37 @@ class AddrView extends React.Component {
                 <Grid item xs={12} sm={10} md={8} lg={6}>
                   <CoinIcon coin={this.state.coin} size={100} />
                   {!addrUrl &&
-                  <Typography
-                    type='title'
-                    color='default'
-                    className={this.props.classes.titleStyle}
-                    noWrap
-                  >
-                    {this.state.addr.name}
-                  </Typography>
-                }
+                    <Typography
+                      type='title'
+                      color='default'
+                      className={this.props.classes.titleStyle}
+                      noWrap
+                      gutterBottom
+                    >
+                      {this.state.addr.name}
+                    </Typography>
+                  }
                   {addrUrl &&
-                  <ExtLink
-                    to={addrUrl}
-                    className={this.props.classes.noTxtDeco}
-                    txt={
-                      <Typography
-                        type='title'
-                        color='default'
-                        className={this.props.classes.titleStyle}
-                        noWrap
-                      >
-                        {this.state.addr.name}
-                        <Launch color='grey' />
-                      </Typography>}
-                  />
-                }
+                    <ExtLink
+                      to={addrUrl}
+                      className={this.props.classes.noTxtDeco}
+                      txt={
+                        <Typography
+                          type='title'
+                          color='default'
+                          className={this.props.classes.titleStyle}
+                          noWrap
+                          gutterBottom
+                        >
+                          {this.state.addr.name}
+                          <Launch color='grey' />
+                        </Typography>}
+                    />
+                  }
                   <Typography
                     type='display3'
                     className={this.props.classes.display3}
-                >
+                  >
                     <TransitiveNumber>
                       {__.formatNumber(this.state.blc1, this.state.coin)}
                     </TransitiveNumber>
@@ -323,12 +323,13 @@ class AddrView extends React.Component {
                     />
                   </Typography>}
                   {!this.state.show &&
-                  <IconButton onClick={this.show}>
-                    <ArrowDropDown style={{
-                      height: '50px',
-                      width: '50px'
-                    }} />
-                  </IconButton>}
+                    <Button
+                      raised
+                      onClick={this.show}
+                      style={{marginTop: '50px'}}
+                    >
+                      Show infos
+                    </Button>}
                   {this.state.show &&
                   <div>
                     <Divider light />
@@ -495,15 +496,15 @@ class AddrView extends React.Component {
                           <RemoveCircleOutline
                             className={this.props.classes.deleteIcon}
                           />&nbsp;
-                          Disconnect address
+                          Disconnect wallet
                         </Button>
                       </div>}
-                    <IconButton onClick={this.show}>
-                      <ArrowDropUp style={{
-                        height: '50px',
-                        width: '50px'
-                      }} />
-                    </IconButton>
+                    <Button
+                      raised
+                      onClick={this.show}
+                    >
+                      Hide infos
+                    </Button>
                   </div>
                 }
                 </Grid>
@@ -534,7 +535,7 @@ class AddrView extends React.Component {
                 {this.state.addr.hsh &&
                   'No transactions'}
                 {!this.state.addr.hsh &&
-                  'No transactions (manually added address)'}
+                  'No transactions (manually added wallet)'}
               </Typography>
             </Paper>}
 

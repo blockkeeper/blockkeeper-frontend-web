@@ -73,7 +73,8 @@ export default class Depot extends ApiBase {
     } catch (e) {}
   }
 
-  watchBxp () {
+  watchBxp (sts) {
+    if (sts) this.setBxpSts(sts)
     const bxp = this.getBxpSto()
     if (bxp && bxp !== 'run') {  // bxp is an iso date
       let lbl = `[watchBxp_${__.uuid().slice(0, 5)}]`
@@ -97,10 +98,13 @@ export default class Depot extends ApiBase {
     try {
       addrs = await this.loadAddrs(addrIds, {hshOnly: true, skipStruc: true})
     } catch (e) {
-      this.watchBxp()
+      this.watchBxp('blocked')
       throw this.err('Bxp failed for all addrs: Loading addrs failed', {e})
     }
-    if (addrs.length < 1) return d
+    if (addrs.length < 1) {
+      this.watchBxp('blocked')
+      return d
+    }
     try {
       this.cx.rate.clear()
       await this.cx.rate.load()
@@ -158,8 +162,7 @@ export default class Depot extends ApiBase {
       }
     }
     this.info('Bxp finished')
-    this.setBxpSts('blocked')
-    this.watchBxp()
+    this.watchBxp('blocked')
     try {
       this.cx.tmp.bxp()
     } catch (e) { /* function can be undefined (race condition) */ }

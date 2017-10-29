@@ -22,7 +22,8 @@ Object.assign(d, {
   bxpBlockedSec: 15,
   maxTscCnt: 50,
   maxAddrCnt: 5,
-  newAddrNotice: 'New address ',
+  newAddrNotice: 'New wallet',
+  newTscNotice: 'New transaction',
   bip44IxGap: d.isDev ? 5 : 20, // BIP44 gap is 20, sync with bckinfo's tscs
   xtcHdAddrTypes: ['lgcy', 'sgwt'],  // order matters: first has precedence
   hdBasePaths: [                     // order matters: first has precedence
@@ -44,9 +45,9 @@ Object.assign(d, {
       MYR: {dec: 2}
     },
     cryp: {
-      BTC: {dec: 4},
+      BTC: {dec: 5},
       LTC: {dec: 3},
-      ETH: {dec: 3, minAddrSize: 40, maxAddrSize: 42},
+      ETH: {dec: 3},
       DASH: {dec: 3, minAddrSize: 26, maxAddrSize: 35}
     },
     dflt: {dec: 4, minAddrSize: 1, maxAddrSize: 100}
@@ -79,10 +80,10 @@ Object.assign(d, {
     ETH: {
       dflt: 'ethscan',
       addr: {
-        ethscan: hsh => `https://etherscan.io/address/0x${hsh}`
+        ethscan: hsh => `https://etherscan.io/address/${hsh}`
       },
       tsc: {
-        ethscan: hsh => `https://etherscan.io/tx/0x${hsh}`
+        ethscan: hsh => `https://etherscan.io/tx/${hsh}`
       }
     },
     DASH: {

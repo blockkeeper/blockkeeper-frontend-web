@@ -12,7 +12,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import QrReader from 'react-qr-reader'
 import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
-        gridWrap, gridGutter, gridSpacer, actnBtnClr} from './Style'
+        gridWrap, gridGutter, gridSpacer, actnBtnClr, cnctBtn} from './Style'
 import {addrLimitReached, TopBar, Modal, CoinIcon} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
@@ -25,10 +25,7 @@ const styles = {
   dividerStyle,
   qrReaderStyle,
   actnBtnClr,
-  saveStyle: {
-    width: '50%',
-    margin: theme.spacing.unit * 4
-  },
+  cnctBtn,
   radios: {
     paddingLeft: theme.spacing.unit
   },
@@ -99,8 +96,8 @@ class AddAddrView extends React.Component {
         desc: this.state.desc,
         name: this.state.name
       })
-      this.setSnack('Address added')
-      this.props.history.replace(`/addr/${addr._id}`)
+      this.setSnack('Wallet added')
+      this.props.history.replace(`/wallet/${addr._id}`)
       this.cx.depot.bxp([addr._id])
     } catch (e) {
       if (__.cfg('isDev')) throw e
@@ -125,6 +122,7 @@ class AddAddrView extends React.Component {
         descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')})
       }
       if (this.state.noHshMode) {
+        d.hsh = undefined
         d.amntEmsg = __.vldFloat(this.state.amnt)
         const name = this.state.name.trim()
         if (name && this.state.coin &&
@@ -134,7 +132,7 @@ class AddAddrView extends React.Component {
       } else {
         let hsh = this.state.hsh.trim()
         let coinObj = this.cx.depot.coinObjs[this.state.coin]
-        if (hsh && coinObj) d.hshEmsg = coinObj.vldHsh(hsh)
+        if (hsh && coinObj) d.hshEmsg = coinObj.vldAddrHsh(hsh)
         if (hsh && coinObj && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) {
           d.upd = true
         }
@@ -155,9 +153,9 @@ class AddAddrView extends React.Component {
       )
     } else if (this.state.coin !== undefined) {
       return (
-        <div className={this.props.classes.themeBgStyle}>
+        <div>
           <TopBar
-            midTitle='Address'
+            midTitle='Wallet'
             action={<Clear />}
             onClick={this.goBack}
             className={this.props.classes.gridWrap}
@@ -167,6 +165,7 @@ class AddAddrView extends React.Component {
           <LinearProgress />}
           <Paper
             square
+            elevation={0}
             className={this.props.classes.gridSpacer}
           >
             <div className={this.props.classes.gridWrap}>
@@ -178,7 +177,7 @@ class AddAddrView extends React.Component {
                   <TextField
                     required
                     fullWidth
-                    label={`${this.state.coin} Address (Public Key)`}
+                    label={`${this.state.coin} Wallet (Public Key)`}
                     margin='normal'
                     value={this.state.hsh}
                     error={Boolean(this.state.hshEmsg)}
@@ -287,7 +286,7 @@ class AddAddrView extends React.Component {
                   <Button
                     raised
                     color={'accent'}
-                    className={this.props.classes.saveStyle}
+                    className={this.props.classes.cnctBtn}
                     onClick={this.save}
                     disabled={!this.state.upd || this.state.busy}
                     classes={{
@@ -295,7 +294,7 @@ class AddAddrView extends React.Component {
                     }}
                   >
                     <Add />
-                    Connect address
+                    Connect wallet
                   </Button>
                 </div>
               </div>
