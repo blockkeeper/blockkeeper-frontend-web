@@ -1,5 +1,4 @@
 import React from 'react'
-import {UserAgentProvider, UserAgent} from '@quentin-sommer/react-useragent'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
@@ -9,7 +8,7 @@ import { withStyles } from 'material-ui/styles'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
 import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} from './Style'
-import {Modal} from './Lib'
+import {Modal, BrowserGate, NtAllwd} from './Lib'
 import __ from '../util'
 
 const styles = {
@@ -172,47 +171,36 @@ class RgstrView extends React.Component {
                     login</b> credentials, all your <b>data will be lost</b> and you need
                     to setup a new account from the scratch.
                   </Typography>
-                  <UserAgentProvider ua={window.navigator.userAgent}>
-                    <UserAgent returnfullParser>
-                      {parser => (
-                        <Typography type='body1' gutterBottom className={this.props.classes.body1}>
-                          Your Browser is not supported
-                          I see you, {parser.getOS().name} {parser.getCPU().architecture}
-                          edge 16
-                          safari 11
-                          ff 55
-                          chrome 60
-                          opera 48
-
-                        </Typography>
-                      )}
-                    </UserAgent>
-                  </UserAgentProvider>
-                  {!this.state.busy &&
-                    <div>
-                      <Button
-                        raised
-                        color={'accent'}
-                        className={this.props.classes.btnRg}
-                        onClick={this.save}
-                        disabled={!this.state.upd}
-                        classes={{
-                          raisedAccent: this.props.classes.actnBtnClr
-                        }}
-                      >
-                        <PersonAdd
-                          className={this.props.classes.person}
-                        />
-                        Register
-                      </Button>
-                      <br />
-                      <Button
-                        className={this.props.classes.fullWidth}
-                        onClick={this.goBack}
-                      >
-                        Cancel
-                      </Button>
-                    </div>}
+                  {!this.busy &&
+                    <BrowserGate
+                      allwd={
+                        <div>
+                          <Button
+                            raised
+                            color={'accent'}
+                            className={this.props.classes.btnRg}
+                            onClick={this.save}
+                            disabled={!this.state.upd}
+                            classes={{
+                              raisedAccent: this.props.classes.actnBtnClr
+                            }}
+                          >
+                            <PersonAdd
+                              className={this.props.classes.person}
+                            />
+                            Register
+                          </Button>
+                          <Button
+                            className={this.props.classes.fullWidth}
+                            onClick={this.goBack}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      }
+                      ntAll={<NtAllwd />}
+                    />
+                  }
                 </Paper>
               </Grid>
             </Grid>

@@ -23,6 +23,7 @@ import getSymbolFromCurrency from 'currency-symbol-map'
 import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
+import {UserAgentProvider, UserAgent} from '@quentin-sommer/react-useragent'
 import {LinearProgress} from 'material-ui/Progress'
 import {Add, Close, Autorenew, AccountCircle, InfoOutline,
        Error, KeyboardArrowUp, Feedback, BugReport} from 'material-ui-icons'
@@ -557,6 +558,54 @@ class Modal extends React.Component {
   }
 }
 
+class BrowserGate extends React.Component {
+  /* TODO pass parser to props
+  ? <div>
+    test
+    {console.log(parser.getBrowser())}
+  </div>
+  //: <div>
+  //  test
+  // {console.log(parser.getBrowser())}
+  // </div>} */
+
+  render () {
+    return (
+      <UserAgentProvider ua={window.navigator.userAgent}>
+        <UserAgent returnfullParser>
+          {parser => (
+            <div>
+              {(
+                (parser.getBrowser().name === 'Chrome' && Number(parser.getBrowser().major) >= 60) ||
+                (parser.getBrowser().name === 'Edge' && Number(parser.getBrowser().major) >= 16) ||
+                (parser.getBrowser().name === 'Safari' && Number(parser.getBrowser().major) >= 11) ||
+                (parser.getBrowser().name === 'Mobile Safari' && Number(parser.getBrowser().major) >= 9) ||
+                (parser.getBrowser().name === 'Opera' && Number(parser.getBrowser().major) >= 48) ||
+                (parser.getBrowser().name === 'Firefox' && Number(parser.getBrowser().major) >= 55)
+               )
+              ? this.props.allwd
+              : this.props.ntAll}
+            </div>
+          )}
+        </UserAgent>
+      </UserAgentProvider>
+    )
+  }
+}
+
+const NtAllwd = () => {
+  return <div>
+    <Typography type='title' align='center' gutterBottom style={{marginTop: '40px', marginBottom: '40px'}}>
+      Your Browser is not supported!
+      <br />
+      <b>Please upgrade your browser to access <nobr>Block Keeper</nobr></b>.
+    </Typography>
+    <Typography type='body1' align='center' gutterBottom>
+      Required: Chrome > 60, Edge > 16, Safari > 11, Opera > 48, Firefox > 55
+    </Typography>
+  </div>
+}
+
 const CoinIcon = ({coin, alt, color, size, style}) => {
   color = theme.palette.text[color] || color || CryptoColors[coin.toUpperCase()]
   coin = __.cap(coin.toLowerCase())
@@ -867,6 +916,8 @@ export {
   PaperGrid,
   SubBar,
   Jumbo,
+  BrowserGate,
+  NtAllwd,
   CoinIcon,
   Snack,
   Modal,
