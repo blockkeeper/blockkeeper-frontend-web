@@ -8,7 +8,7 @@ import { withStyles } from 'material-ui/styles'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
 import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} from './Style'
-import {Modal} from './Lib'
+import {Modal, BrowserGate, NtAllwd} from './Lib'
 import __ from '../util'
 
 const styles = {
@@ -171,31 +171,36 @@ class RgstrView extends React.Component {
                     login</b> credentials, all your <b>data will be lost</b> and you need
                     to setup a new account from the scratch.
                   </Typography>
-                  {!this.state.busy &&
-                    <div>
-                      <Button
-                        raised
-                        color={'accent'}
-                        className={this.props.classes.btnRg}
-                        onClick={this.save}
-                        disabled={!this.state.upd}
-                        classes={{
-                          raisedAccent: this.props.classes.actnBtnClr
-                        }}
-                      >
-                        <PersonAdd
-                          className={this.props.classes.person}
-                        />
-                        Register
-                      </Button>
-                      <br />
-                      <Button
-                        className={this.props.classes.fullWidth}
-                        onClick={this.goBack}
-                      >
-                        Cancel
-                      </Button>
-                    </div>}
+                  {!this.busy &&
+                    <BrowserGate
+                      allwd={
+                        <div>
+                          <Button
+                            raised
+                            color={'accent'}
+                            className={this.props.classes.btnRg}
+                            onClick={this.save}
+                            disabled={!this.state.upd}
+                            classes={{
+                              raisedAccent: this.props.classes.actnBtnClr
+                            }}
+                          >
+                            <PersonAdd
+                              className={this.props.classes.person}
+                            />
+                            Register
+                          </Button>
+                          <Button
+                            className={this.props.classes.fullWidth}
+                            onClick={this.goBack}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      }
+                      ntAll={<NtAllwd />}
+                    />
+                  }
                 </Paper>
               </Grid>
             </Grid>
