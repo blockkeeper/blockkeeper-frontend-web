@@ -24,7 +24,7 @@ import Snackbar from 'material-ui/Snackbar'
 import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
-import {Add, Close, Autorenew, HourglassEmpty, AccountCircle, InfoOutline,
+import {Add, Close, Autorenew, AccountCircle, InfoOutline,
        Error, KeyboardArrowUp, Feedback, BugReport} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
        DialogTitle } from 'material-ui/Dialog'

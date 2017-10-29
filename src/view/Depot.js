@@ -55,6 +55,11 @@ class DepotView extends React.Component {
   async componentDidMount () {
     Object.assign(this, __.initView(this, 'depot'))
     await this.load()
+
+    // style body bg for empty depot view (without connected addresses)
+    if (this.state.addrs.length === 0) {
+      document.body.style.backgroundColor = 'white'
+    }
   }
 
   componentWillUnmount () {

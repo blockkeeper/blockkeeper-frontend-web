@@ -229,7 +229,8 @@ const gridWrap = {
 
 const gridWrapPaper = {
   ...gridWrap,
-  paddingTop: theme.spacing.unit * 2
+  paddingTop: theme.spacing.unit * 2,
+  backgroundColor: theme.palette.background.light
 }
 
 const gridItem = {
