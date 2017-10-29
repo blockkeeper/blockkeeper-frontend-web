@@ -158,6 +158,7 @@ class AddAddrView extends React.Component {
             midTitle='Wallet'
             action={<Clear />}
             onClick={this.goBack}
+            className={this.props.classes.gridWrap}
             noUser
           />
           {this.state.busy &&
