@@ -8,7 +8,7 @@ const styleGuide = {
   backgroundDark: '#1e003c',
   text: '#210045',
   textSecondary: '#907FA2',
-  spacertop: '100px',
+  spacertop: '80px',
   fontWeightBold: '700'
 }
 
