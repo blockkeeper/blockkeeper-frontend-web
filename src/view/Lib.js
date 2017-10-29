@@ -241,10 +241,10 @@ const FloatBtn = ({onClick, key, actnBtnClrClassName}) => {
 const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
-    lbl = 'Blocked'
+    /* lbl = 'Blocked'
     icon = <HourglassEmpty />
-    dsbld = true
-    /* return null */
+    dsbld = true */
+    return null
   } else if (bxpSts === 'run') {
     lbl = 'Updating'
     icon = <Autorenew style={{animation: 'spin 1s linear infinite'}} />

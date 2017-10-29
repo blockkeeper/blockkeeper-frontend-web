@@ -116,7 +116,6 @@ class DepotView extends React.Component {
         </Modal>
       )
     } else if (this.state.addrs) {
-      console.log('this.state.blc1', this.state.blc1)
       return (
         <div>
           {this.state.snack &&
