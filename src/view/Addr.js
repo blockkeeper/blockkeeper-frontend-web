@@ -58,7 +58,14 @@ const styles = {
     marginBottom: theme.spacing.unit * 2
   },
   addrStyle: {
-    fontSize: '13px'
+    fontSize: '13px',
+    overflowX: 'auto'
+  },
+  unvlBtn: {
+    marginBottom: theme.spacing.unit,
+    [theme.breakpoints.up('md')]: {
+      marginRight: theme.spacing.unit
+    }
   }
 }
 
@@ -68,14 +75,15 @@ class AddrView extends React.Component {
     this.cx = props.cx
     this.addrId = props.match.params.addrId
     this.addrObj = new Addr(this.cx, this.addrId)
-    this.state = {show: false, toggleCoins: false, edit: false}
+    this.state = {show: false, toggleCoins: false, edit: false, unveil: false}
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
     this.save = this.save.bind(this)
     this.delete = this.delete.bind(this)
     this.set = this.set.bind(this)
     this.close = () => this.setState({ask: null})
-    this.show = () => this.setState({show: !this.state.show, edit: false})
+    this.show = () => this.setState({show: !this.state.show, edit: false, unveil: false})
+    this.unveil = () => this.setState({unveil: !this.state.unveil})
     this.edit = edit => this.setState({edit: !this.state.edit, show: true})
     this.toggleCoins = () => {
       this.setState({toggleCoins: !this.state.toggleCoins})
@@ -152,7 +160,7 @@ class AddrView extends React.Component {
       await this.addrObj.delete()
       this.setSnack('Wallet disconnected')
     } catch (e) {
-      this.setState({err: e.message, show: false})
+      this.setState({err: e.message, show: false, unveil: false})
       if (__.cfg('isDev')) throw e
     }
     this.props.history.push('/depot')
@@ -207,7 +215,6 @@ class AddrView extends React.Component {
           this.state.addr.bxp
         )
       }
-      console.log(this.state)
       return (
         <div className={this.props.classes.themeBgStyle}>
           {this.state.snack &&
@@ -334,7 +341,7 @@ class AddrView extends React.Component {
                   {this.state.show &&
                   <div>
                     <Divider light />
-                    {this.state.addr.type === 'std' &&
+                    {(this.state.addr.type === 'std' || this.state.unveil) &&
                     <div className={this.props.classes.qrCodeWrap}>
                       <QRCode value={this.state.addr.hsh} />
                       <Typography className={this.props.classes.addrStyle}>
@@ -383,6 +390,17 @@ class AddrView extends React.Component {
                               }
                             </TableCell>
                           </TableRow>
+                          {(this.state.addr.hd || {}).baseAbsPath &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                HD base path
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {this.state.addr.hd.baseAbsPath}
+                                {/* this.state.addr.hd.isMstr &&
+                                  ' (HD address is master)' */}
+                              </TableCell>
+                            </TableRow>}
                           <TableRow>
                             <TableCell width={'10%'} padding='none'>
                               Notes
@@ -467,18 +485,7 @@ class AddrView extends React.Component {
                                 {this.state.addr.sndAmnt} {this.state.coin}
                               </TableCell>
                             </TableRow>}
-                          {(this.state.addr.hd || {}).baseAbsPath &&
-                            <TableRow>
-                              <TableCell width={'10%'} padding='none'>
-                                HD base path
-                              </TableCell>
-                              <TableCell numeric padding='none'>
-                                {this.state.addr.hd.baseAbsPath}
-                                {/* this.state.addr.hd.isMstr &&
-                                  ' (HD address is master)' */}
-                              </TableCell>
-                            </TableRow>}
-                          {(this.state.addr.hd || {}).nxAddrHsh &&
+                          {/* (this.state.addr.hd || {}).nxAddrHsh &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
                                 Next address (HD path)
@@ -488,7 +495,7 @@ class AddrView extends React.Component {
                                 <br />
                                 ({this.state.addr.hd.nxAbsPath})
                               </TableCell>
-                            </TableRow>}
+                            </TableRow> */}
                         </TableBody>
                       </Table>
                     </div>
@@ -501,6 +508,14 @@ class AddrView extends React.Component {
                           Disconnect wallet
                         </Button>
                       </div>}
+                    {((this.state.addr.hd || {}).nxAddrHsh) && !this.state.unveil &&
+                    <Button
+                      raised
+                      onClick={this.unveil}
+                      className={this.props.classes.unvlBtn}
+                    >
+                      Unveil xpub key
+                    </Button>}
                     <Button
                       raised
                       onClick={this.show}
