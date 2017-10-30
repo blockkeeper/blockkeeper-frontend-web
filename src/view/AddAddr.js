@@ -4,7 +4,7 @@ import TextField from 'material-ui/TextField'
 import {FormControlLabel} from 'material-ui/Form'
 import Switch from 'material-ui/Switch'
 import Radio from 'material-ui/Radio'
-import { withStyles } from 'material-ui/styles'
+import {withStyles} from 'material-ui/styles'
 import {Add, Clear} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import Divider from 'material-ui/Divider'
@@ -13,7 +13,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import QrReader from 'react-qr-reader'
 import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
         gridWrap, gridGutter, gridSpacer, actnBtnClr, cnctBtn} from './Style'
-import {addrLimitReached, TopBar, Modal, CoinIcon} from './Lib'
+import {addrLimitReached, TopBar, Modal, CoinIcon, Snack} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -51,10 +51,20 @@ class AddAddrView extends React.Component {
     }
     this.coins = []
     this.goBack = props.history.goBack
+    this.disableQrMode = (evt, checked) => {
+      this.set('noHshMode', checked)
+      this.set('qrMode', false)
+    }
+    this.handleQrScan = data => {
+      if (data !== null) {
+        // remove URI format + remove ?strings
+        this.set('hsh', data.trim().replace(/(\w*:)|((\?.*$))/g, ''))
+        this.set('qrMode', false)
+      }
+    }
     this.load = this.load.bind(this)
     this.save = this.save.bind(this)
     this.set = this.set.bind(this)
-    this.handleQRScan = this.handleQRScan.bind(this)
   }
 
   async componentDidMount () {
@@ -101,15 +111,6 @@ class AddAddrView extends React.Component {
     }
   }
 
-  handleQRScan (data) {
-    if (data !== null) {
-      this.setState({   // remove URI format + remove ?strings
-        hsh: data.trim().replace(/(\w*:)|((\?.*$))/g, ''),
-        qrMode: false
-      })
-    }
-  }
-
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
       let d = {
@@ -126,7 +127,7 @@ class AddAddrView extends React.Component {
           d.upd = true
         }
       } else {
-        let hsh = this.state.hsh.trim()
+        let hsh = (this.state.hsh || '').trim()
         let coinObj = this.cx.depot.coinObjs[this.state.coin]
         if (hsh && coinObj) {
           d.hshEmsg = coinObj.vldAddrHsh(hsh)
@@ -161,6 +162,12 @@ class AddAddrView extends React.Component {
     } else if (this.state.coin !== undefined) {
       return (
         <div>
+          {this.state.snack &&
+            <Snack
+              msg={this.state.snack}
+              onClose={() => this.setState({snack: null})}
+            />
+          }
           <TopBar
             midTitle='Connect wallet'
             action={<Clear />}
@@ -186,10 +193,11 @@ class AddAddrView extends React.Component {
                     fullWidth
                     label={`${this.state.coin} Wallet (Public Key)`}
                     margin='normal'
-                    value={this.state.hsh}
+                    value={this.state.hsh || ''}
                     error={Boolean(this.state.hshEmsg)}
                     helperText={this.state.hshEmsg}
                     onChange={evt => this.set('hsh', evt.target.value)}
+                    disabled={this.state.qrMode}
                   />}
                 {this.state.noHshMode &&
                   <TextField
@@ -207,28 +215,26 @@ class AddAddrView extends React.Component {
                     <Switch
                       checked={this.state.qrMode}
                       onChange={(evt, checked) => {
+                        this.set('hsh', '')
                         this.set('qrMode', checked)
                         this.set('noHshMode', false)
                       }}
                     />}
-                  label='Scan QR Code'
+                  label='Scan QR code'
                 />
                 <FormControlLabel
                   control={
                     <Switch
                       checked={this.state.noHshMode}
-                      onChange={(evt, checked) => {
-                        this.set('noHshMode', checked)
-                        this.set('qrMode', false)
-                      }}
+                      onChange={this.disableQrMode}
                     />}
                   label='Manage manually (no public key)'
                 />
                 {this.state.qrMode &&
                   <div onClick={() => this.setState({
                     facingMode: this.state.facingMode === 'front'
-                          ? 'rear'
-                          : 'front'
+                      ? 'rear'
+                      : 'front'
                   })}>
                     <QrReader
                       facingMode={this.state.facingMode}
@@ -239,12 +245,18 @@ class AddAddrView extends React.Component {
                         width: '100%',
                         maxHeight: '400px'
                       }}
-                      onError={err => this.warn(err)}
-                      onScan={this.handleQRScan}
-                        />
+                      onError={err => {
+                        this.warn(`Accessing camera failed: ${err}`)
+                        this.setSnack('Accessing camera failed: Please ' +
+                                      'check your browser settings')
+                        this.setState({snack: this.getSnack()})
+                        this.disableQrMode(undefined, this.state.noHshMode)
+                      }}
+                      onScan={this.handleQrScan}
+                    />
                     <Typography type='caption' align='center'>
                       {__.cap(this.state.facingMode)} camera
-                        </Typography>
+                    </Typography>
                   </div>}
                 <Divider className={this.props.classes.dividerStyle} light />
                 <Typography type='title' gutterBottom>
