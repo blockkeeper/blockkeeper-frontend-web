@@ -50,7 +50,7 @@ Object.assign(d, {
       ETH: {dec: 3},
       DASH: {dec: 3}
     },
-    dflt: {dec: 4, minAddrSize: 1, maxAddrSize: 100}
+    dflt: {dec: 4, minAddrSize: 1, maxAddrSize: 150}
   }
 })
 
