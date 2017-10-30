@@ -176,7 +176,7 @@ class Ltc extends Coin {
       return 'ltub addresses are not supported ' +
              '(but xpub will be in the near future)'
     } else if (hshLo.startsWith('xpub')) {
-      return 'xpub addresses are not YET supported ' +
+      return 'xpub addresses are not yet supported ' +
              '(but will be in the near future)'
     } else {
       try {
@@ -224,7 +224,10 @@ class Dash extends Coin {
     if (hshLo.startsWith('xpriv') || hshLo.startsWith('drkp')) {
       return 'xpriv / drkp addresses are not supported'
     } else if (hshLo.startsWith('xpub') || hshLo.startsWith('drkv')) {
-      return 'xpub / drkv addresses are not (yet) supported'
+      // https://gist.github.com/moocowmoo/4eb3763efb7d8aef5356
+      // https://www.dash.org/forum/threads/dash-bip32-serialization-values-
+      //   dev-discussion-wont-apply-to-most.8092/
+      return 'xpub / drkv addresses are not yet supported'
     } else {
       try {
         bjsAddress.toOutputScript(hsh, this.net)
@@ -264,7 +267,7 @@ class Eth extends Coin {
     if (emsg) return emsg
     hsh = hsh.toLowerCase().trim()
     if (!hsh.startsWith('0x')) {
-      return 'Invalid address: Address must start with "0x"'
+      return 'Invalid address: Must start with "0x"'
     }
     try {
       this.toAddrHsh(hsh)
