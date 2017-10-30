@@ -28,8 +28,8 @@ Object.assign(d, {
   xtcHdAddrTypes: ['lgcy', 'sgwt'],  // order matters: first has precedence
   hdBasePaths: [                     // order matters: first has precedence
     '0/0',    // change, index
-    '0/0/0',  // account, change, index
-    '0'       // index
+    '0',      // index
+    '0/0/0'  // account, change, index
   ]
 })
 
@@ -48,9 +48,9 @@ Object.assign(d, {
       BTC: {dec: 5},
       LTC: {dec: 3},
       ETH: {dec: 3},
-      DASH: {dec: 3, minAddrSize: 26, maxAddrSize: 35}
+      DASH: {dec: 3}
     },
-    dflt: {dec: 4, minAddrSize: 1, maxAddrSize: 100}
+    dflt: {dec: 4, minAddrSize: 1, maxAddrSize: 150}
   }
 })
 
