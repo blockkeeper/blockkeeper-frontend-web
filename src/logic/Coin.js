@@ -30,21 +30,17 @@ class Coin extends Base {
   }
 
   vldAddrHsh (hsh) {
-    const cfg = __.cfg('coins').cryp[this.coin] || __.cfg('coins').dflt
-    return __.vldAlphNum(hsh, {
-      strict: true,
-      min: cfg.minAddrSize,
-      max: cfg.maxAddrSize
-    })
+    const cfg = __.cfg('coins').cryp[this.coin] || {}
+    const min = cfg.minAddrSize || __.cfg('coins').dflt.minAddrSize
+    const max = cfg.maxAddrSize || __.cfg('coins').dflt.maxAddrSize
+    const emsg = __.vldAlphNum(hsh.trim(), {strict: true, min, max})
+    return emsg ? 'Invalid address' : ''
   }
 }
 
 class XtcCoin extends Coin {
   constructor (coin, pa) {
     super(coin, pa)
-    // https://github.com/bitcoinjs/bitcoinjs-lib/blob/master/src/networks.js
-    //   https://github.com/bitcoinjs/bitcoinjs-lib/issues/389
-    this.net = bjsNetworks[this.coin === 'LTC' ? 'litecoin' : 'bitcoin']
     this.conv = val => val / 1e8   // satoshi to btc/ltc/...
     this.isHdAddr = hsh => hsh.startsWith('xpub')
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
@@ -58,6 +54,8 @@ class XtcCoin extends Coin {
   }
 
   vldAddrHsh (hsh) {
+    const emsg = super.vldAddrHsh(hsh)
+    if (emsg) return emsg
     hsh = hsh.trim()
     let hshLo = hsh.toLowerCase()
     if (hshLo.startsWith('xpriv')) {
@@ -154,25 +152,32 @@ class XtcCoin extends Coin {
 class Btc extends XtcCoin {
   constructor (pa) {
     super('BTC', pa)
+    this.net = bjsNetworks.bitcoin
   }
 }
 
-class Ltc extends XtcCoin {
+class Ltc extends Coin {
   constructor (pa) {
     super('LTC', pa)
+    this.net = bjsNetworks.litecoin
+    this.conv = val => val / 1e8   // satoshi to ltc
+    this.vldAddrHsh = this.vldAddrHsh.bind(this)
   }
 
   vldAddrHsh (hsh) {
+    const emsg = super.vldAddrHsh(hsh)
+    if (emsg) return emsg
     hsh = hsh.trim()
     let hshLo = hsh.toLowerCase()
     if (hshLo.startsWith('xpriv') || hshLo.startsWith('ltpv')) {
-      return 'xpriv and ltpv are not supported ' +
-             '(but xpub addresses will be in the near future)'
+      return 'xpriv / ltpv addresses are not supported ' +
+             '(but xpub will be in the near future)'
     } else if (hshLo.startsWith('ltub')) {
-      return 'ltub is not supported ' +
-             '(but xpub addresses will be in the near future)'
+      return 'ltub addresses are not supported ' +
+             '(but xpub will be in the near future)'
     } else if (hshLo.startsWith('xpub')) {
-      return 'xpub is not YET supported (but will be in the near future)'
+      return 'xpub addresses are not YET supported ' +
+             '(but will be in the near future)'
     } else {
       try {
         bjsAddress.toOutputScript(hsh, this.net)
@@ -195,6 +200,45 @@ class Dash extends Coin {
   constructor (pa) {
     super('DASH', pa)
     this.conv = val => val / 1e8
+    // https://github.com/UdjinM6/bitcoinjs-lib-dash/blob/master/src/networks.js
+    // https://github.com/bitcoinjs/bitcoinjs-lib/pull/518
+    this.net = {
+      messagePrefix: '\x19DarkCoin Signed Message:\n',
+      bip32: {
+        public: 0x02fe52f8,
+        private: 0x02fe52cc
+      },
+      pubKeyHash: 0x4c,
+      scriptHash: 0x10,
+      wif: 0xcc,
+      dustThreshold: 5460
+    }
+    this.vldAddrHsh = this.vldAddrHsh.bind(this)
+  }
+
+  vldAddrHsh (hsh) {
+    const emsg = super.vldAddrHsh(hsh)
+    if (emsg) return emsg
+    hsh = hsh.trim()
+    let hshLo = hsh.toLowerCase()
+    if (hshLo.startsWith('xpriv') || hshLo.startsWith('drkp')) {
+      return 'xpriv / drkp addresses are not supported'
+    } else if (hshLo.startsWith('xpub') || hshLo.startsWith('drkv')) {
+      return 'xpub / drkv addresses are not (yet) supported'
+    } else {
+      try {
+        bjsAddress.toOutputScript(hsh, this.net)
+      } catch (e) {
+        if (!hsh.startsWith('3')) return 'Invalid address'
+        try {
+          // fix me: workaround to prevent 'has no matching script' error:
+          //   validate against bitcoin instead of dash network
+          bjsAddress.toOutputScript(hsh, bjsNetworks.bitcoin)
+        } catch (e) {
+          return 'Invalid address'
+        }
+      }
+    }
   }
 }
 
@@ -216,6 +260,8 @@ class Eth extends Coin {
   }
 
   vldAddrHsh (hsh) {
+    const emsg = super.vldAddrHsh(hsh)
+    if (emsg) return emsg
     hsh = hsh.toLowerCase().trim()
     if (!hsh.startsWith('0x')) {
       return 'Invalid address: Address must start with "0x"'
