@@ -64,9 +64,16 @@ class AddAddrView extends React.Component {
 
   async load () {
     try {
-      this.coins = (await this.cx.rate.getCoins()).filter((c) => {
-        return !__.isFiat(c)
-      })
+      const [addrs, coins] = await Promise.all([
+        this.cx.depot.loadAddrs(),
+        this.cx.rate.getCoins()
+      ])
+      if (addrLimitReached(this, addrs)) {
+        this.props.history.replace('/depot')
+        return
+      }
+      this.addrs = addrs
+      this.coins = coins.filter(c => !__.isFiat(c))
       this.setState({coin: ''})
     } catch (e) {
       if (__.cfg('isDev')) throw e
@@ -75,17 +82,6 @@ class AddAddrView extends React.Component {
   }
 
   async save () {
-    try {
-      const addrs = await this.cx.depot.loadAddrs()
-      if (addrLimitReached(this, addrs)) {
-        this.props.history.replace('/depot')
-        return
-      }
-    } catch (e) {
-      if (__.cfg('isDev')) throw e
-      this.setState({err: e.message})
-      return
-    }
     this.setState({busy: true})
     const addrObj = new Addr(this.cx)
     try {
@@ -107,8 +103,8 @@ class AddAddrView extends React.Component {
 
   handleQRScan (data) {
     if (data !== null) {
-      this.setState({
-        hsh: data.trim().replace(/(\w*:)|((\?.*$))/g, ''), // remove URI format + remove ?strings
+      this.setState({   // remove URI format + remove ?strings
+        hsh: data.trim().replace(/(\w*:)|((\?.*$))/g, ''),
         qrMode: false
       })
     }
@@ -132,7 +128,18 @@ class AddAddrView extends React.Component {
       } else {
         let hsh = this.state.hsh.trim()
         let coinObj = this.cx.depot.coinObjs[this.state.coin]
-        if (hsh && coinObj) d.hshEmsg = coinObj.vldAddrHsh(hsh)
+        if (hsh && coinObj) {
+          d.hshEmsg = coinObj.vldAddrHsh(hsh)
+          if (!d.hshEmsg) {
+            hsh = coinObj.toAddrHsh(hsh)
+            for (let addr of this.addrs) {
+              if (addr.hsh === hsh && addr.coin === this.state.coin) {
+                d.hshEmsg = 'Address already exists'
+                break
+              }
+            }
+          }
+        }
         if (hsh && coinObj && !d.hshEmsg && !d.nameEmsg && !d.descEmsg) {
           d.upd = true
         }
@@ -251,7 +258,11 @@ class AddAddrView extends React.Component {
                       <Radio
                         checked={this.state.coin === coin}
                         checkedIcon={<CoinIcon coin={coin} size={40} />}
-                        icon={<CoinIcon coin={coin} size={40} style={{opacity: 0.3}} />}
+                        icon={<CoinIcon
+                          coin={coin}
+                          size={40}
+                          style={{opacity: 0.5}}
+                        />}
                         onChange={() => this.set('coin', coin)}
                         value={coin}
                         name={coin}
