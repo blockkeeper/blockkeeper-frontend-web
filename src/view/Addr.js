@@ -13,8 +13,7 @@ import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
         actnBtnClr, topBtnClass} from './Style'
-import {ArrowBack, ArrowForward,
-        Launch, RemoveCircleOutline} from 'material-ui-icons'
+import {ArrowBack, Launch, RemoveCircleOutline} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
         CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
         Edit} from './Lib'
@@ -55,7 +54,8 @@ const styles = {
     height: theme.spacing.unit * 2
   },
   tableWrap: {
-    overflowX: 'auto'
+    overflowX: 'auto',
+    marginBottom: theme.spacing.unit * 2
   },
   addrStyle: {
     fontSize: '13px'
@@ -207,6 +207,7 @@ class AddrView extends React.Component {
           this.state.addr.bxp
         )
       }
+      console.log(this.state)
       return (
         <div className={this.props.classes.themeBgStyle}>
           {this.state.snack &&
@@ -333,7 +334,7 @@ class AddrView extends React.Component {
                   {this.state.show &&
                   <div>
                     <Divider light />
-                    {this.state.addr.hsh &&
+                    {this.state.addr.type === 'std' &&
                     <div className={this.props.classes.qrCodeWrap}>
                       <QRCode value={this.state.addr.hsh} />
                       <Typography className={this.props.classes.addrStyle}>
@@ -364,6 +365,22 @@ class AddrView extends React.Component {
                               />}
                               {!this.state.edit &&
                                 this.state.addr.name}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell width={'10%'} padding='none'>
+                              Type
+                            </TableCell>
+                            <TableCell numeric padding='none'>
+                              {this.state.addr.type === 'hd' &&
+                                <span>HD wallet (xpub key)</span>
+                              }
+                              {this.state.addr.type === 'std' &&
+                                <span>Simple wallet (public key)</span>
+                              }
+                              {this.state.addr.type === 'man' &&
+                                <span>Manual wallet</span>
+                              }
                             </TableCell>
                           </TableRow>
                           <TableRow>
@@ -450,31 +467,6 @@ class AddrView extends React.Component {
                                 {this.state.addr.sndAmnt} {this.state.coin}
                               </TableCell>
                             </TableRow>}
-                          {false &&
-                            <TableRow>
-                              <TableCell width={'10%'} padding='none'>
-                                Balance
-                              </TableCell>
-                              <TableCell numeric padding='none'>
-                                {__.formatNumber(
-                                  this.state.blc1, this.state.coin
-                                )}
-                                {this.state.coin}
-                              </TableCell>
-                            </TableRow>
-                          }
-                          {(this.state.addr.hd || {}).nxAddrHsh &&
-                            <TableRow>
-                              <TableCell width={'10%'} padding='none'>
-                                Next HD path/address
-                              </TableCell>
-                              <TableCell numeric padding='none'>
-                                {this.state.addr.hd.nxAbsPath}
-                                <ArrowForward />
-                                {this.state.addr.hd.nxAddrHsh}
-                              </TableCell>
-                            </TableRow>
-                          }
                           {(this.state.addr.hd || {}).baseAbsPath &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
@@ -485,8 +477,18 @@ class AddrView extends React.Component {
                                 {/* this.state.addr.hd.isMstr &&
                                   ' (HD address is master)' */}
                               </TableCell>
-                            </TableRow>
-                          }
+                            </TableRow>}
+                          {(this.state.addr.hd || {}).nxAddrHsh &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                Next address (HD path)
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {this.state.addr.hd.nxAddrHsh}
+                                <br />
+                                ({this.state.addr.hd.nxAbsPath})
+                              </TableCell>
+                            </TableRow>}
                         </TableBody>
                       </Table>
                     </div>
