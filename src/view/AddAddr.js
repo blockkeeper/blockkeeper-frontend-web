@@ -169,7 +169,7 @@ class AddAddrView extends React.Component {
             />
           }
           <TopBar
-            midTitle='Connect wallet'
+            midTitle='Wallet'
             action={<Clear />}
             onClick={this.goBack}
             className={this.props.classes.gridWrap}
