@@ -33,7 +33,7 @@ class Coin extends Base {
     const cfg = __.cfg('coins').cryp[this.coin] || {}
     const min = cfg.minAddrSize || __.cfg('coins').dflt.minAddrSize
     const max = cfg.maxAddrSize || __.cfg('coins').dflt.maxAddrSize
-    const emsg = __.vldAlphNum(hsh.trim(), {strict: true, min, max})
+    const emsg = __.vldAlphNum((hsh || '').trim(), {strict: true, min, max})
     return emsg ? 'Invalid address' : ''
   }
 }
