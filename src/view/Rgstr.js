@@ -38,7 +38,7 @@ class RgstrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.browserLocale = browserLocale()
+    this.browserLocale = browserLocale() || 'en-US'
     this.state = {username: '', pw: '', rpw: '', coin0: 'USD', coin1: 'BTC', locale: this.browserLocale}
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')

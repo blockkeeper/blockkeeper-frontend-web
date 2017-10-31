@@ -777,6 +777,7 @@ class DropDown extends React.Component {
     this.data = props.data
     this.title = props.title
     this.action = props.action
+    this.renderValue = props.renderValue || (value => value)
     this.state = {slctd: props.slctd, disabled: props.disabled}
     this.handleChange = name => event => {
       this.setState({ [name]: event.target.value })
@@ -798,6 +799,7 @@ class DropDown extends React.Component {
           onChange={this.handleChange('slctd')}
           input={<Input id={this._id} />}
           disabled={this.state.disabled}
+          renderValue={this.renderValue}
           >
           {this.data.map(d =>
             <MenuItem key={d.key} value={d.lbl}>

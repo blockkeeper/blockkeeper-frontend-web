@@ -26,9 +26,20 @@ class UserView extends React.Component {
       askLogout: false,
       askDelete: false
     }
+    this.locales = [
+      {lbl: 'en-US', key: 'en-US', ilk: 'locale'},
+      {lbl: 'en-AU', key: 'en-AU', ilk: 'locale'},
+      {lbl: 'en-CA', key: 'en-CA', ilk: 'locale'},
+      {lbl: 'es-ES', key: 'es-ES', ilk: 'locale'},
+      {lbl: 'fr-FR', key: 'fr-FR', ilk: 'locale'},
+      {lbl: 'it-IT', key: 'it-IT', ilk: 'locale'},
+      {lbl: 'de-DE', key: 'de-DE', ilk: 'locale'},
+      {lbl: 'at-AT', key: 'at-AT', ilk: 'locale'},
+      {lbl: 'en-GB', key: 'en-GB', ilk: 'locale'}
+    ]
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
-    this.setCoin = this.setCoin.bind(this)
+    this.setAction = this.setAction.bind(this)
     this.save = this.save.bind(this)
     this.edit = this.edit.bind(this)
     this.set = this.set.bind(this)
@@ -138,8 +149,7 @@ class UserView extends React.Component {
     })
   }
 
-  setCoin (coinData) {
-    this.info('Setting %s to %s', coinData.ilk, coinData.lbl)
+  setAction (coinData) {
     this.setState({[coinData.ilk]: coinData.key, upd: true})
   }
 
@@ -227,7 +237,7 @@ class UserView extends React.Component {
                   title={'Primary coin'}
                   data={this.state.coins.coin0}
                   slctd={this.state.coin0}
-                  action={this.setCoin}
+                  action={this.setAction}
                   disabled={!this.state.edit}
                  />
                 <DropDown
@@ -235,7 +245,16 @@ class UserView extends React.Component {
                   title={'Secondary coin'}
                   data={this.state.coins.coin1}
                   slctd={this.state.coin1}
-                  action={this.setCoin}
+                  action={this.setAction}
+                  disabled={!this.state.edit}
+                 />
+                <DropDown
+                  _id='localeDropDown'
+                  renderValue={value => `${value} (${__.formatNumber(10000.99, 'USD', value)})`}
+                  title={'Locale'}
+                  data={this.locales}
+                  slctd={this.state.locale}
+                  action={this.setAction}
                   disabled={!this.state.edit}
                  />
               </div>
