@@ -118,7 +118,7 @@ export default class Core extends StoBase {
     this.init(userHsh, secret, user._id, user.depotId, user)
   }
 
-  async register (username, pw) {
+  async register (username, pw, coin0, coin1, locale) {
     const userHsh = this.toUserHsh(username)
     const secret = this.toSecret(userHsh, pw)
     const userId = __.uuid()
@@ -130,8 +130,8 @@ export default class Core extends StoBase {
         _id: userId,
         _t: __.getTme(),
         username: username,
-        locale: 'en',
-        coins: ['USD', 'BTC'],
+        locale: locale,
+        coins: [coin0, coin1],
         depotId
       }, secret)
     }

@@ -1,4 +1,5 @@
 import React from 'react'
+import * as browserLocale from 'browser-locale'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
@@ -8,7 +9,8 @@ import { withStyles } from 'material-ui/styles'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
 import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} from './Style'
-import {Modal, BrowserGate, NtAllwd} from './Lib'
+import {Modal, BrowserGate, NtAllwd, DropDown} from './Lib'
+import Rate from '../logic/Rate'
 import __ from '../util'
 
 const styles = {
@@ -36,17 +38,44 @@ class RgstrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.state = {username: '', pw: '', rpw: ''}
+    this.browserLocale = browserLocale()
+    this.state = {username: '', pw: '', rpw: '', coin0: 'USD', coin1: 'BTC', locale: this.browserLocale}
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')
     this.save = this.save.bind(this)
+    this.load = this.load.bind(this)
     this.logout = this.logout.bind(this)
     this.set = this.set.bind(this)
+    this.setAction = this.setAction.bind(this)
   }
 
   async componentDidMount () {
     Object.assign(this, __.initView(this, 'rgstr'))
     if (this.cx.core.isActive()) this.setState({loggedIn: true})
+    await this.load()
+  }
+
+  async load () {
+    try {
+      const [rateCoins] = await Promise.all([
+        new Rate(this.cx).getCoins()
+      ])
+      const coins = {coin0: [], coin1: []}
+      for (let coin of rateCoins) {
+        coins.coin0.push({lbl: coin, key: coin, ilk: 'coin0'})
+        coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
+      }
+      this.setState({
+        coins: coins
+      })
+    } catch (e) {
+      if (__.cfg('isDev')) throw e
+      this.setState({err: e.message})
+    }
+  }
+
+  setAction (coinData) {
+    this.setState({[coinData.ilk]: coinData.key})
   }
 
   logout () {
@@ -57,7 +86,13 @@ class RgstrView extends React.Component {
   async save () {
     this.setState({busy: true})
     try {
-      await this.cx.core.register(this.state.username, this.state.pw)
+      await this.cx.core.register(
+        this.state.username,
+        this.state.pw,
+        this.state.coin0,
+        this.state.coin1,
+        this.state.locale
+      )
       this.props.history.replace(`/depot`)
     } catch (e) {
       this.setState({err: e.message, busy: false})
@@ -171,6 +206,28 @@ class RgstrView extends React.Component {
                     login</b> credentials, all your <b>data will be lost</b> and you need
                     to setup a new account from the scratch.
                   </Typography>
+                  <Grid container spacing={16}>
+                    <Grid item xs={6}>
+                      {this.state.coins &&
+                        <DropDown
+                          _id='coin0DropDown'
+                          title={'Primary coin'}
+                          data={this.state.coins.coin0}
+                          slctd={this.state.coin0}
+                          action={this.setAction}
+                         />}
+                    </Grid>
+                    <Grid item xs={6}>
+                      {this.state.coins &&
+                      <DropDown
+                        _id='coin1DropDown'
+                        title={'Secondary coin'}
+                        data={this.state.coins.coin0}
+                        slctd={this.state.coin1}
+                        action={this.setAction}
+                      />}
+                    </Grid>
+                  </Grid>
                   {!this.busy &&
                     <BrowserGate
                       allwd={
