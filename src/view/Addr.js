@@ -286,7 +286,7 @@ class AddrView extends React.Component {
                     className={this.props.classes.display3}
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc1, this.state.coin)}
+                      {__.formatNumber(this.state.blc1, this.state.coin, this.user.locale)}
                     </TransitiveNumber>
                   &nbsp;
                     <CoinIcon
@@ -306,7 +306,7 @@ class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc2, this.state.coin0)}
+                      {__.formatNumber(this.state.blc2, this.state.coin0, this.user.locale)}
                     </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin0}
@@ -322,7 +322,7 @@ class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc3, this.state.coin1)}
+                      {__.formatNumber(this.state.blc3, this.state.coin1, this.user.locale)}
                     </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin1}
@@ -541,6 +541,7 @@ class AddrView extends React.Component {
               display1ClassName={this.props.classes.display1}
               body2ClassName={this.props.classes.body2}
               tscAmntClassName={this.props.classes.tscAmnt}
+              locale={this.user.locale}
             />}
           {this.state.tscs.length <= 0 &&
             <Paper

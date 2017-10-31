@@ -132,6 +132,7 @@ class DepotView extends React.Component {
                 coin0={this.state.coin0}
                 coin1={this.state.coin1}
                 display3ClassName={this.props.classes.display3}
+                locale={this.user.locale}
                />
             }
           </div>
@@ -173,6 +174,7 @@ class DepotView extends React.Component {
               amntClassName={this.props.classes.amnt}
               display1ClassName={this.props.classes.display1}
               body2ClassName={this.props.classes.body2}
+              locale={this.user.locale}
             />}
           {this.state.tabIx === 1 && this.state.addrTscs.length > 0 &&
             <TscListAddresses
@@ -186,6 +188,7 @@ class DepotView extends React.Component {
               body2ClassName={this.props.classes.body2}
               tscAmntClassName={this.props.classes.tscAmnt}
               tscIconClassname={this.props.classes.tscIcon}
+              locale={this.user.locale}
               addrIcon
             />}
           <ToTopBtn

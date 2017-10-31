@@ -166,7 +166,7 @@ const SubBar = ({tabs, ix, onClick, rootClassName}) =>
     </Tabs>
   </AppBar>
 
-const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
+const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
   <div style={jumboStyle}>
     <div>
       <Typography
@@ -176,7 +176,7 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
         className={display3ClassName}
       >
         <TransitiveNumber>
-          {title ? __.formatNumber(title, coin0) : __.formatNumber(0, coin0)}
+          {title ? __.formatNumber(title, coin0, locale) : __.formatNumber(0, coin0, locale)}
         </TransitiveNumber>&nbsp;
         <Hidden xsDown>
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
@@ -188,8 +188,8 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
       <Typography align='center' type='headline' color='inherit'>
         <TransitiveNumber>
           {subTitle
-            ? __.formatNumber(subTitle, coin1)
-            : __.formatNumber(0, coin1)}
+            ? __.formatNumber(subTitle, coin1, locale)
+            : __.formatNumber(0, coin1, locale)}
         </TransitiveNumber>&nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
@@ -273,7 +273,8 @@ const tscRow = (
   display1ClassName,
   body2ClassName,
   tscAmntClassName,
-  tscIconClassname
+  tscIconClassname,
+  locale
 ) => {
   const mx = 40
   let modeColor = tsc.mode === 'snd'
@@ -343,7 +344,7 @@ const tscRow = (
                 }}
                 className={display1ClassName}
               >
-                {modeSign} {__.formatNumber(tsc.amnt, addr.coin)}&nbsp;
+                {modeSign} {__.formatNumber(tsc.amnt, addr.coin, locale)}&nbsp;
                 <Hidden xsDown>
                   <CoinIcon
                     coin={addr.coin}
@@ -367,7 +368,7 @@ const tscRow = (
                 gutterBottom
               >
                 {modeSign}
-                {__.formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
+                {__.formatNumber(tsc.amnt * addr.rates[coin0], coin0, locale)}
                 <Hidden xsDown>
                   <CoinIcon
                     coin={coin0}
@@ -641,7 +642,8 @@ const PaperGrid = ({
   addrClassName,
   amntClassName,
   display1ClassName,
-  body2ClassName
+  body2ClassName,
+  locale
 }) => {
   return (
     <Paper
@@ -713,7 +715,7 @@ const PaperGrid = ({
                   color='primary'
                   className={display1ClassName}
                 >
-                  {__.formatNumber(addr.amnt, addr.coin)}&nbsp;
+                  {__.formatNumber(addr.amnt, addr.coin, locale)}&nbsp;
                   <Hidden xsDown>
                     <CoinIcon
                       coin={addr.coin}
@@ -735,7 +737,7 @@ const PaperGrid = ({
                   className={body2ClassName}
                   style={{color: theme.palette.text.secondary}}
                 >
-                  {__.formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
+                  {__.formatNumber(addr.amnt * addr.rates[coin0], coin0, locale)}&nbsp;
                   <Hidden xsDown>
                     <CoinIcon
                       coin={coin0}
