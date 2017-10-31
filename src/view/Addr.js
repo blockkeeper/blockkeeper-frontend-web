@@ -13,7 +13,7 @@ import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
         actnBtnClr, topBtnClass} from './Style'
-import {ArrowBack, Launch, RemoveCircleOutline} from 'material-ui-icons'
+import {ArrowBack, Launch} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
         CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
         Edit} from './Lib'
@@ -63,9 +63,7 @@ const styles = {
   },
   unvlBtn: {
     marginBottom: theme.spacing.unit,
-    [theme.breakpoints.up('md')]: {
-      marginRight: theme.spacing.unit
-    }
+    marginRight: theme.spacing.unit
   }
 }
 
@@ -499,16 +497,7 @@ class AddrView extends React.Component {
                         </TableBody>
                       </Table>
                     </div>
-                    {this.state.edit &&
-                      <div className={this.props.classes.qrCodeWrap}>
-                        <Button onClick={() => this.setState({ask: true})}>
-                          <RemoveCircleOutline
-                            className={this.props.classes.deleteIcon}
-                          />&nbsp;
-                          Disconnect wallet
-                        </Button>
-                      </div>}
-                    {((this.state.addr.hd || {}).nxAddrHsh) && !this.state.unveil &&
+                    {((this.state.addr.hd || {}).nxAddrHsh) && !this.state.unveil && !this.state.edit &&
                     <Button
                       raised
                       onClick={this.unveil}
@@ -516,10 +505,16 @@ class AddrView extends React.Component {
                     >
                       Unveil xpub key
                     </Button>}
+                    {this.state.edit &&
+                    <Button
+                      onClick={() => this.setState({ask: true})}
+                      className={this.props.classes.unvlBtn}
+                      raised>
+                          Disconnect wallet
+                        </Button>}
                     <Button
                       raised
-                      onClick={this.show}
-                    >
+                      onClick={this.show}>
                       Hide infos
                     </Button>
                   </div>
