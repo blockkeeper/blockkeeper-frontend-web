@@ -367,6 +367,7 @@ const cnctBtn = {
 }
 
 export {
+  styleGuide,
   theme,
   themeBgStyle,
   loginStyle,

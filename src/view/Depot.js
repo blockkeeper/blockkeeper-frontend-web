@@ -8,7 +8,7 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn} from './Lib'
 import __ from '../util'
-import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
+import {styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
         actnBtnClr, topBtnClass, depotEmpty, cnctBtn} from './Style'
 
@@ -51,6 +51,8 @@ class DepotView extends React.Component {
     // style body bg for empty depot view (without connected addresses)
     if (this.state.addrs.length === 0) {
       document.body.style.backgroundColor = 'white'
+    } else {
+      document.body.style.backgroundColor = styleGuide.backgroundLight
     }
   }
 
