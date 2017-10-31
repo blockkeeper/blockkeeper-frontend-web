@@ -331,6 +331,7 @@ class AddrView extends React.Component {
                   {!this.state.show &&
                     <Button
                       raised
+                      color='contrast'
                       onClick={this.show}
                       style={{marginTop: '50px'}}
                     >
@@ -500,6 +501,7 @@ class AddrView extends React.Component {
                     {((this.state.addr.hd || {}).nxAddrHsh) && !this.state.unveil && !this.state.edit &&
                     <Button
                       raised
+                      color='contrast'
                       onClick={this.unveil}
                       className={this.props.classes.unvlBtn}
                     >
@@ -509,11 +511,13 @@ class AddrView extends React.Component {
                     <Button
                       onClick={() => this.setState({ask: true})}
                       className={this.props.classes.unvlBtn}
+                      color='contrast'
                       raised>
                           Disconnect wallet
                         </Button>}
                     <Button
                       raised
+                      color='contrast'
                       onClick={this.show}>
                       Hide infos
                     </Button>

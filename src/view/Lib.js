@@ -639,17 +639,18 @@ const SoonMsg = ({className}) =>
         type='display2'
         gutterBottom
         style={{
-          color: theme.palette.text.primary,
-          marginTop: '50px'
+          marginTop: '80px'
         }}>
-        Soon
+        Soon™
       </Typography>
       <a
         href='https://wantoo.io/blockkeeper-feedback/'
         target='_blank'
         style={{textDecoration: 'none'}}
         rel='noopener noreferrer'>
-        <Button raised>
+        <Button
+          color='contrast'
+          raised>
           Tell us your Ideas
         </Button>
       </a>
