@@ -49,15 +49,6 @@ const unsetBxpTrigger = view => {
   delete view.cx.tmp.bxpSts
 }
 
-const addrLimitReached = (cmp, addrs) => {
-  if (addrs.length >= __.cfg('maxAddrCnt')) {
-    cmp.setSnack('Maximum number of wallets reached: ' +
-                 'Please disconnect a wallet first')
-    return true
-  }
-  return false
-}
-
 const TopBar = ({
   title,
   midTitle,
@@ -908,7 +899,6 @@ const UserList = ({askLogout, askDelete}) =>
 export {
   setBxpTrigger,
   unsetBxpTrigger,
-  addrLimitReached,
   TopBar,
   TscListAddr,
   TscListAddresses,

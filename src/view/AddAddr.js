@@ -13,7 +13,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import QrReader from 'react-qr-reader'
 import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
         gridWrap, gridGutter, gridSpacer, actnBtnClr, cnctBtn} from './Style'
-import {addrLimitReached, TopBar, Modal, CoinIcon, Snack} from './Lib'
+import {TopBar, Modal, CoinIcon, Snack} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -78,7 +78,9 @@ class AddAddrView extends React.Component {
         this.cx.depot.loadAddrs(),
         this.cx.rate.getCoins()
       ])
-      if (addrLimitReached(this, addrs)) {
+      if (addrs.length >= __.cfg('maxAddrCnt')) {
+        this.setSnack('Maximum number of wallets reached: ' +
+                      'Please disconnect a wallet first')
         this.props.history.replace('/depot')
         return
       }

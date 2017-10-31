@@ -6,7 +6,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import {withStyles} from 'material-ui/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
-        DepotEmpty, ToTopBtn, addrLimitReached} from './Lib'
+        DepotEmpty, ToTopBtn} from './Lib'
 import __ from '../util'
 import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
@@ -41,15 +41,7 @@ class DepotView extends React.Component {
     this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
     this.load = this.load.bind(this)
     this.tab = this.tab.bind(this)
-    this.goAddAddr = this.goAddAddr.bind(this)
-  }
-
-  goAddAddr () {
-    if (addrLimitReached(this, this.state.addrs)) {
-      this.setState({snack: this.getSnack()})
-    } else {
-      this.props.history.push('/wallet/add')
-    }
+    this.goAddAddr = () => this.props.history.push('/wallet/add')
   }
 
   async componentDidMount () {
