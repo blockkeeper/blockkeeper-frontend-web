@@ -182,8 +182,8 @@ class AddAddrView extends React.Component {
           {this.state.busy &&
           <LinearProgress />}
           <Paper
+            elevation={5}
             square
-            elevation={0}
             className={this.props.classes.gridSpacer}
           >
             <div className={this.props.classes.gridWrap}>
