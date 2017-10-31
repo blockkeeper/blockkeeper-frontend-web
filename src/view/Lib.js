@@ -230,7 +230,7 @@ const FloatBtn = ({onClick, key, actnBtnClrClassName}) => {
   )
 }
 
-const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
+const BxpFloatBtn = ({onClick, bxpSts, style}) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
     /* lbl = 'Blocked'
@@ -251,7 +251,7 @@ const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
       fab
       aria-label={lbl}
       color='contrast'
-      style={{...floatBtnStyle, bottom: first ? theme.spacing.unit * 2 : theme.spacing.unit * 10}}
+      style={{...floatBtnStyle, bottom: theme.spacing.unit * 2}}
       onClick={onClick}
       key='bxpFloatBtn'
       disabled={dsbld}
@@ -632,6 +632,30 @@ const DepotEmpty = ({className}) =>
     </Grid>
   </div>
 
+const SoonMsg = ({className}) =>
+  <Grid container spacing={0} justify='center'>
+    <Grid item xs={6} className={className}>
+      <Typography
+        type='display2'
+        gutterBottom
+        style={{
+          color: theme.palette.text.primary,
+          marginTop: '50px'
+        }}>
+        Soon
+      </Typography>
+      <a
+        href='https://wantoo.io/blockkeeper-feedback/'
+        target='_blank'
+        style={{textDecoration: 'none'}}
+        rel='noopener noreferrer'>
+        <Button raised>
+          Tell us your Ideas
+        </Button>
+      </a>
+    </Grid>
+  </Grid>
+
 const PaperGrid = ({
   addrs,
   coin0,
@@ -907,6 +931,7 @@ export {
   TscListAddr,
   TscListAddresses,
   DepotEmpty,
+  SoonMsg,
   PaperGrid,
   SubBar,
   Jumbo,

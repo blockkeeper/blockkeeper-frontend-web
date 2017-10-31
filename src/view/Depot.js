@@ -6,7 +6,7 @@ import {LinearProgress} from 'material-ui/Progress'
 import {withStyles} from 'material-ui/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
-        DepotEmpty, ToTopBtn} from './Lib'
+        DepotEmpty, ToTopBtn, SoonMsg} from './Lib'
 import __ from '../util'
 import {styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
@@ -158,7 +158,7 @@ class DepotView extends React.Component {
           }
           {this.state.addrs.length > 0 &&
             <SubBar
-              tabs={['Wallets', 'Transactions']}
+              tabs={['Wallets', 'Transactions', 'Portfolio']}
               ix={this.state.tabIx}
               onClick={this.tab}
               rootClassName={this.props.classes.tab}
@@ -193,14 +193,15 @@ class DepotView extends React.Component {
               locale={this.user.locale}
               addrIcon
             />}
+          {this.state.tabIx === 2 && this.state.addrTscs.length > 0 &&
+            <SoonMsg className={this.props.classes.depotEmpty} />}
           <ToTopBtn
             className={this.props.classes.topBtnClass}
           />
-          {this.state.addrs.length > 0 &&
+          {this.state.tabIx === 1 &&
             <BxpFloatBtn
               onClick={() => this.cx.depot.bxp([])}
               bxpSts={this.state.bxpSts}
-              first={this.state.tabIx === 1}
             />}
           {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
             <FloatBtn
