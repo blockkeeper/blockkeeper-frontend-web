@@ -46,7 +46,7 @@ class LoginView extends React.Component {
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
-      let d = {upd: false, identifierEmsg: __.vldAlphNum(this.state.identifier, {min: 20, max: 20})}
+      let d = {upd: false, identifierEmsg: __.vldAlphNum(this.state.identifier, {min: 30, max: 30})}
       if (this.state.pw) {
         d.pwEmsg = __.vldPw(this.state.pw)
       }
