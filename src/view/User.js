@@ -229,8 +229,7 @@ class UserView extends React.Component {
                   }
                   helperText={this.state.emsg || this.state.usernameEmsg}
                   onChange={evt => this.set('username', evt.target.value)}
-                  // disabled={!this.state.edit}
-                  disabled
+                  disabled={!this.state.edit}
                   />
                 <DropDown
                   _id='coin0DropDown'
