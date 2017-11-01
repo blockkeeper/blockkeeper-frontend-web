@@ -219,8 +219,7 @@ class TscView extends React.Component {
               align='center'
               style={{color: modeColor}}
             >
-              {modeSign}
-              {__.formatNumber(this.state.tsc.amnt, this.state.addr.coin)}&nbsp;
+              {modeSign} {__.formatNumber(this.state.tsc.amnt, this.state.addr.coin, this.user.locale)}&nbsp;
               <CoinIcon coin={this.state.addr.coin} alt color={modeColor} />
             </Typography>
             {!this.state.toggleCoins &&
@@ -232,7 +231,7 @@ class TscView extends React.Component {
               gutterBottom
             >
               {modeSign}
-              {__.formatNumber(this.state.blc1, this.state.coin0)}&nbsp;
+              {__.formatNumber(this.state.blc1, this.state.coin0, this.user.locale)}&nbsp;
               <CoinIcon
                 coin={this.state.coin0}
                 color={theme.palette.text.secondary}
@@ -248,7 +247,7 @@ class TscView extends React.Component {
               onClick={this.toggleCoins}
               gutterBottom
             >
-              {modeSign} {__.formatNumber(this.state.blc2, this.state.coin1)}
+              {modeSign} {__.formatNumber(this.state.blc2, this.state.coin1, this.user.locale)}
               <CoinIcon
                 coin={this.state.coin1}
                 color={theme.palette.text.secondary}
@@ -479,7 +478,6 @@ class TscView extends React.Component {
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([])}
             bxpSts={this.state.bxpSts}
-            first
           />
         </div>
       )

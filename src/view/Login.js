@@ -33,7 +33,7 @@ class LoginView extends React.Component {
     super(props)
     this.cx = props.cx
     this.goBack = props.history.goBack
-    this.reset = () => ({busy: undefined, username: '', pw: ''})
+    this.reset = () => ({busy: undefined, identifier: '', pw: ''})
     this.reload = () => this.setState(this.reset())
     this.login = this.login.bind(this)
     this.state = this.reset()
@@ -46,12 +46,12 @@ class LoginView extends React.Component {
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
-      let d = {upd: false, usernameEmsg: __.vldAlphNum(this.state.username, {min: __.cfg('minUser'), max: __.cfg('maxUser')})}
+      let d = {upd: false, identifierEmsg: __.vldAlphNum(this.state.identifier, {min: 30, max: 30})}
       if (this.state.pw) {
         d.pwEmsg = __.vldPw(this.state.pw)
       }
-      if (this.state.username && this.state.pw &&
-          !d.usernameEmsg && !d.pwEmsg) {
+      if (this.state.identifier && this.state.pw &&
+          !d.identifierEmsg && !d.pwEmsg) {
         d.upd = true
       }
       this.setState(d)
@@ -61,7 +61,7 @@ class LoginView extends React.Component {
   async login () {
     this.setState({err: undefined, busy: true})
     try {
-      await this.cx.core.login(this.state.username, this.state.pw)
+      await this.cx.core.login(this.state.identifier, this.state.pw)
       this.props.history.push('/depot')  // redirect
     } catch (e) {
       (e.sts === 404)
@@ -99,15 +99,15 @@ class LoginView extends React.Component {
                   <TextField
                     autoFocus
                     fullWidth
-                    label='Username'
+                    label='Identifier'
                     margin='normal'
-                    value={this.state.username}
+                    value={this.state.identifier}
                     error={
                       Boolean(this.state.emsg) ||
-                      Boolean(this.state.usernameEmsg)
+                      Boolean(this.state.identifierEmsg)
                     }
-                    helperText={this.state.emsg || this.state.usernameEmsg}
-                    onChange={evt => this.set('username', evt.target.value)}
+                    helperText={this.state.emsg || this.state.identifierEmsg}
+                    onChange={evt => this.set('identifier', evt.target.value)}
                     />
                   <TextField
                     fullWidth

@@ -13,7 +13,7 @@ import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
         actnBtnClr, topBtnClass} from './Style'
-import {ArrowBack, Launch, RemoveCircleOutline} from 'material-ui-icons'
+import {ArrowBack, Launch} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
         CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
         Edit} from './Lib'
@@ -63,9 +63,7 @@ const styles = {
   },
   unvlBtn: {
     marginBottom: theme.spacing.unit,
-    [theme.breakpoints.up('md')]: {
-      marginRight: theme.spacing.unit
-    }
+    marginRight: theme.spacing.unit
   }
 }
 
@@ -286,7 +284,7 @@ class AddrView extends React.Component {
                     className={this.props.classes.display3}
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc1, this.state.coin)}
+                      {__.formatNumber(this.state.blc1, this.state.coin, this.user.locale)}
                     </TransitiveNumber>
                   &nbsp;
                     <CoinIcon
@@ -306,7 +304,7 @@ class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc2, this.state.coin0)}
+                      {__.formatNumber(this.state.blc2, this.state.coin0, this.user.locale)}
                     </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin0}
@@ -322,7 +320,7 @@ class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc3, this.state.coin1)}
+                      {__.formatNumber(this.state.blc3, this.state.coin1, this.user.locale)}
                     </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin1}
@@ -333,6 +331,7 @@ class AddrView extends React.Component {
                   {!this.state.show &&
                     <Button
                       raised
+                      color='contrast'
                       onClick={this.show}
                       style={{marginTop: '50px'}}
                     >
@@ -499,27 +498,27 @@ class AddrView extends React.Component {
                         </TableBody>
                       </Table>
                     </div>
-                    {this.state.edit &&
-                      <div className={this.props.classes.qrCodeWrap}>
-                        <Button onClick={() => this.setState({ask: true})}>
-                          <RemoveCircleOutline
-                            className={this.props.classes.deleteIcon}
-                          />&nbsp;
-                          Disconnect wallet
-                        </Button>
-                      </div>}
-                    {((this.state.addr.hd || {}).nxAddrHsh) && !this.state.unveil &&
+                    {((this.state.addr.hd || {}).nxAddrHsh) && !this.state.unveil && !this.state.edit &&
                     <Button
                       raised
+                      color='contrast'
                       onClick={this.unveil}
                       className={this.props.classes.unvlBtn}
                     >
                       Unveil xpub key
                     </Button>}
+                    {this.state.edit &&
+                    <Button
+                      onClick={() => this.setState({ask: true})}
+                      className={this.props.classes.unvlBtn}
+                      color='contrast'
+                      raised>
+                          Disconnect wallet
+                        </Button>}
                     <Button
                       raised
-                      onClick={this.show}
-                    >
+                      color='contrast'
+                      onClick={this.show}>
                       Hide infos
                     </Button>
                   </div>
@@ -541,6 +540,7 @@ class AddrView extends React.Component {
               display1ClassName={this.props.classes.display1}
               body2ClassName={this.props.classes.body2}
               tscAmntClassName={this.props.classes.tscAmnt}
+              locale={this.user.locale}
             />}
           {this.state.tscs.length <= 0 &&
             <Paper
@@ -559,7 +559,6 @@ class AddrView extends React.Component {
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([this.addrId])}
             bxpSts={this.state.bxpSts}
-            first
           />
           <ToTopBtn
             className={this.props.classes.topBtnClass}

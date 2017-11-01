@@ -256,9 +256,9 @@ const ppTme = _t => {
     : tme.fromNow()
 }
 
-const formatNumber = (n, coin) => {
+const formatNumber = (n, coin, locale = 'en-US') => {
   // TODO use user locale
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: dec(coin)
   }).format(n)
@@ -287,7 +287,7 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
 }
 
 const vldPw = (pw) => {
-  let pat = 'a-zA-Z0-9:,.\\-_'
+  let pat = 'a-zA-Z0-9:,.\\-_!%@#^$*%&'
   if (!validator.matches(pw, `^[${pat}]*$`)) {
     return `Allowed characters: ${pat.replace('\\', '')}`
   }

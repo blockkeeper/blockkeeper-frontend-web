@@ -166,7 +166,7 @@ const SubBar = ({tabs, ix, onClick, rootClassName}) =>
     </Tabs>
   </AppBar>
 
-const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
+const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
   <div style={jumboStyle}>
     <div>
       <Typography
@@ -176,7 +176,7 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
         className={display3ClassName}
       >
         <TransitiveNumber>
-          {title ? __.formatNumber(title, coin0) : __.formatNumber(0, coin0)}
+          {title ? __.formatNumber(title, coin0, locale) : __.formatNumber(0, coin0, locale)}
         </TransitiveNumber>&nbsp;
         <Hidden xsDown>
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
@@ -188,8 +188,8 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName}) =>
       <Typography align='center' type='headline' color='inherit'>
         <TransitiveNumber>
           {subTitle
-            ? __.formatNumber(subTitle, coin1)
-            : __.formatNumber(0, coin1)}
+            ? __.formatNumber(subTitle, coin1, locale)
+            : __.formatNumber(0, coin1, locale)}
         </TransitiveNumber>&nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
@@ -230,7 +230,7 @@ const FloatBtn = ({onClick, key, actnBtnClrClassName}) => {
   )
 }
 
-const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
+const BxpFloatBtn = ({onClick, bxpSts, style}) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
     /* lbl = 'Blocked'
@@ -251,7 +251,7 @@ const BxpFloatBtn = ({onClick, bxpSts, style, first}) => {
       fab
       aria-label={lbl}
       color='contrast'
-      style={{...floatBtnStyle, bottom: first ? theme.spacing.unit * 2 : theme.spacing.unit * 10}}
+      style={{...floatBtnStyle, bottom: theme.spacing.unit * 2}}
       onClick={onClick}
       key='bxpFloatBtn'
       disabled={dsbld}
@@ -273,7 +273,8 @@ const tscRow = (
   display1ClassName,
   body2ClassName,
   tscAmntClassName,
-  tscIconClassname
+  tscIconClassname,
+  locale
 ) => {
   const mx = 40
   let modeColor = tsc.mode === 'snd'
@@ -343,7 +344,7 @@ const tscRow = (
                 }}
                 className={display1ClassName}
               >
-                {modeSign} {__.formatNumber(tsc.amnt, addr.coin)}&nbsp;
+                {modeSign} {__.formatNumber(tsc.amnt, addr.coin, locale)}&nbsp;
                 <Hidden xsDown>
                   <CoinIcon
                     coin={addr.coin}
@@ -367,7 +368,7 @@ const tscRow = (
                 gutterBottom
               >
                 {modeSign}
-                {__.formatNumber(tsc.amnt * addr.rates[coin0], coin0)}
+                {__.formatNumber(tsc.amnt * addr.rates[coin0], coin0, locale)}
                 <Hidden xsDown>
                   <CoinIcon
                     coin={coin0}
@@ -631,6 +632,31 @@ const DepotEmpty = ({className}) =>
     </Grid>
   </div>
 
+const SoonMsg = ({className}) =>
+  <Grid container spacing={0} justify='center'>
+    <Grid item xs={6} className={className}>
+      <Typography
+        type='display2'
+        gutterBottom
+        style={{
+          marginTop: '80px'
+        }}>
+        Soon™
+      </Typography>
+      <a
+        href='https://wantoo.io/blockkeeper-feedback/'
+        target='_blank'
+        style={{textDecoration: 'none'}}
+        rel='noopener noreferrer'>
+        <Button
+          color='contrast'
+          raised>
+          Tell us your Ideas
+        </Button>
+      </a>
+    </Grid>
+  </Grid>
+
 const PaperGrid = ({
   addrs,
   coin0,
@@ -641,7 +667,8 @@ const PaperGrid = ({
   addrClassName,
   amntClassName,
   display1ClassName,
-  body2ClassName
+  body2ClassName,
+  locale
 }) => {
   return (
     <Paper
@@ -704,7 +731,7 @@ const PaperGrid = ({
                       <b>Wallet</b>&nbsp;
                     </span>
                   </Hidden>}
-                  {addr.hsh || addr.desc || 'manual'}
+                  {(addr.type === 'hd' ? __.shortn(addr.hsh, 7) : addr.hsh) || addr.desc || 'manual'}
                 </Typography>
               </div>
               <div className={amntClassName}>
@@ -713,7 +740,7 @@ const PaperGrid = ({
                   color='primary'
                   className={display1ClassName}
                 >
-                  {__.formatNumber(addr.amnt, addr.coin)}&nbsp;
+                  {__.formatNumber(addr.amnt, addr.coin, locale)}&nbsp;
                   <Hidden xsDown>
                     <CoinIcon
                       coin={addr.coin}
@@ -735,7 +762,7 @@ const PaperGrid = ({
                   className={body2ClassName}
                   style={{color: theme.palette.text.secondary}}
                 >
-                  {__.formatNumber(addr.amnt * addr.rates[coin0], coin0)}&nbsp;
+                  {__.formatNumber(addr.amnt * addr.rates[coin0], coin0, locale)}&nbsp;
                   <Hidden xsDown>
                     <CoinIcon
                       coin={coin0}
@@ -777,6 +804,7 @@ class DropDown extends React.Component {
     this.data = props.data
     this.title = props.title
     this.action = props.action
+    this.renderValue = props.renderValue || (value => value)
     this.state = {slctd: props.slctd, disabled: props.disabled}
     this.handleChange = name => event => {
       this.setState({ [name]: event.target.value })
@@ -798,6 +826,7 @@ class DropDown extends React.Component {
           onChange={this.handleChange('slctd')}
           input={<Input id={this._id} />}
           disabled={this.state.disabled}
+          renderValue={this.renderValue}
           >
           {this.data.map(d =>
             <MenuItem key={d.key} value={d.lbl}>
@@ -903,6 +932,7 @@ export {
   TscListAddr,
   TscListAddresses,
   DepotEmpty,
+  SoonMsg,
   PaperGrid,
   SubBar,
   Jumbo,

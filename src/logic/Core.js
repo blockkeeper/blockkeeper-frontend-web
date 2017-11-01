@@ -1,3 +1,5 @@
+/* global TextEncoder */
+
 import {StoBase} from './Lib'
 import User from './User'
 import Depot from './Depot'
@@ -35,9 +37,9 @@ export default class Core extends StoBase {
     return val
   }
 
-  toUserHsh (username) {
-    // TODO: add crypto
-    return username
+  async toUserHsh (identifier) {
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', new TextEncoder('utf-8').encode(identifier))
+    return Array.from(new Uint8Array(hashBuffer)).map(b => ('00' + b.toString(16)).slice(-2)).join('')
   }
 
   toSecret (username, pw) {
@@ -87,9 +89,10 @@ export default class Core extends StoBase {
     return true
   }
 
-  async login (username, pw) {
+  async login (identifier, pw) {
     this.clear()
-    const userHsh = this.toUserHsh(username)
+    const userHsh = await this.toUserHsh(identifier)
+
     let pld
     try {
       pld = await __.rqst({url: `${__.cfg('apiUrl')}/login/${userHsh}`})
@@ -118,8 +121,8 @@ export default class Core extends StoBase {
     this.init(userHsh, secret, user._id, user.depotId, user)
   }
 
-  async register (username, pw) {
-    const userHsh = this.toUserHsh(username)
+  async register (identifier, username, pw, coin0, coin1, locale) {
+    const userHsh = await this.toUserHsh(identifier)
     const secret = this.toSecret(userHsh, pw)
     const userId = __.uuid()
     const depotId = __.uuid()
@@ -130,8 +133,8 @@ export default class Core extends StoBase {
         _id: userId,
         _t: __.getTme(),
         username: username,
-        locale: 'en',
-        coins: ['USD', 'BTC'],
+        locale: locale,
+        coins: [coin0, coin1],
         depotId
       }, secret)
     }

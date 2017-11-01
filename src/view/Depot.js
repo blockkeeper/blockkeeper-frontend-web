@@ -6,9 +6,9 @@ import {LinearProgress} from 'material-ui/Progress'
 import {withStyles} from 'material-ui/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
-        DepotEmpty, ToTopBtn} from './Lib'
+        DepotEmpty, ToTopBtn, SoonMsg} from './Lib'
 import __ from '../util'
-import {themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
+import {styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
         actnBtnClr, topBtnClass, depotEmpty, cnctBtn} from './Style'
 
@@ -51,6 +51,8 @@ class DepotView extends React.Component {
     // style body bg for empty depot view (without connected addresses)
     if (this.state.addrs.length === 0) {
       document.body.style.backgroundColor = 'white'
+    } else {
+      document.body.style.backgroundColor = styleGuide.backgroundLight
     }
   }
 
@@ -132,6 +134,7 @@ class DepotView extends React.Component {
                 coin0={this.state.coin0}
                 coin1={this.state.coin1}
                 display3ClassName={this.props.classes.display3}
+                locale={this.user.locale}
                />
             }
           </div>
@@ -155,7 +158,7 @@ class DepotView extends React.Component {
           }
           {this.state.addrs.length > 0 &&
             <SubBar
-              tabs={['Wallets', 'Transactions']}
+              tabs={['Wallets', 'Transactions', 'Portfolio']}
               ix={this.state.tabIx}
               onClick={this.tab}
               rootClassName={this.props.classes.tab}
@@ -173,6 +176,7 @@ class DepotView extends React.Component {
               amntClassName={this.props.classes.amnt}
               display1ClassName={this.props.classes.display1}
               body2ClassName={this.props.classes.body2}
+              locale={this.user.locale}
             />}
           {this.state.tabIx === 1 && this.state.addrTscs.length > 0 &&
             <TscListAddresses
@@ -186,16 +190,18 @@ class DepotView extends React.Component {
               body2ClassName={this.props.classes.body2}
               tscAmntClassName={this.props.classes.tscAmnt}
               tscIconClassname={this.props.classes.tscIcon}
+              locale={this.user.locale}
               addrIcon
             />}
+          {this.state.tabIx === 2 && this.state.addrTscs.length > 0 &&
+            <SoonMsg className={this.props.classes.depotEmpty} />}
           <ToTopBtn
             className={this.props.classes.topBtnClass}
           />
-          {this.state.addrs.length > 0 &&
+          {this.state.tabIx === 1 &&
             <BxpFloatBtn
               onClick={() => this.cx.depot.bxp([])}
               bxpSts={this.state.bxpSts}
-              first={this.state.tabIx === 1}
             />}
           {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
             <FloatBtn

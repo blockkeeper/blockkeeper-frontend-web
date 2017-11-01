@@ -170,18 +170,20 @@ class AddAddrView extends React.Component {
               onClose={() => this.setState({snack: null})}
             />
           }
-          <TopBar
-            midTitle='Wallet'
-            action={<Clear />}
-            onClick={this.goBack}
-            className={this.props.classes.gridWrap}
-            noUser
-          />
+          <div className={this.props.classes.themeBgStyle}>
+            <TopBar
+              midTitle='Wallet'
+              action={<Clear />}
+              onClick={this.goBack}
+              className={this.props.classes.gridWrap}
+              noUser
+            />
+          </div>
           {this.state.busy &&
           <LinearProgress />}
           <Paper
+            elevation={5}
             square
-            elevation={0}
             className={this.props.classes.gridSpacer}
           >
             <div className={this.props.classes.gridWrap}>
