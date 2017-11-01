@@ -184,6 +184,7 @@ class RgstrView extends React.Component {
                     margin='normal'
                     value={this.identifier.join('')}
                     helperText='your account login identifier'
+                    disabled={this.state.writeDown}
                   />
                   {false && <TextField
                     autoFocus
@@ -206,6 +207,7 @@ class RgstrView extends React.Component {
                     error={Boolean(this.state.pwEmsg)}
                     helperText={this.state.pwEmsg}
                     onChange={evt => this.set('pw', evt.target.value)}
+                    disabled={this.state.writeDown}
                   />
                   <TextField
                     fullWidth
@@ -217,6 +219,7 @@ class RgstrView extends React.Component {
                     error={Boolean(this.state.rpwEmsg)}
                     helperText={this.state.rpwEmsg}
                     onChange={evt => this.set('rpw', evt.target.value)}
+                    disabled={this.state.writeDown}
                   />
                   <Grid container spacing={16}>
                     <Grid item xs={6}>
