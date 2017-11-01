@@ -214,6 +214,12 @@ const struc = (lst, {toBeg, max, byTme, noSort}) => {
   return lst
 }
 
+const lstToObj = lst_ => {
+  const lst = {}
+  for (let item of lst_) lst[item] = true
+  return lst
+}
+
 const deepClone = d => {
   if (d == null) return d
   if (is('Function', d)) throw Error(`Cannot clone function '${d}'`)
@@ -377,6 +383,7 @@ export default {
   toMoPro,
   mergeMaps,
   sleep,
+  lstToObj,
   clone,
   deepClone,
   vldAlphNum,
