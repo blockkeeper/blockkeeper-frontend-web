@@ -35,7 +35,11 @@ const styles = {
     height: theme.spacing.unit * 2
   },
   switch: {
-    color: theme.palette.error[500],
+    color: theme.palette.error[500]
+  },
+  bar: {
+  },
+  checked: {
     '& + $bar': {
       backgroundColor: theme.palette.error[500]
     }
@@ -257,7 +261,12 @@ class RgstrView extends React.Component {
                       control={
                         <Switch
                           checkedClassName={this.props.classes.switch}
+                          classes={{
+                            bar: this.props.classes.bar,
+                            checked: this.props.classes.checked
+                          }}
                           checked={this.state.writeDown}
+                          disabled={this.state.pw === '' || Boolean(this.state.rpwEmsg)}
                           onChange={evt => this.set('writeDown', !this.state.writeDown)} />}
                       label='I wrote down my identifier and password' />
                   </FormGroup>
