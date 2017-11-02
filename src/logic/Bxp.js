@@ -141,184 +141,253 @@ class BckcyphBxp extends Bxp {
 class BckinfoBxp extends Bxp {
   constructor (pa) {
     super('bckinfo', pa)
-    this.addTxs = this.addTxs.bind(this)
-    this.prepareHdAddrs = this.prepareHdAddrs.bind(this)
-    this.updateHdAddrs = this.updateHdAddrs.bind(this)
-    this.finishHdAddrs = this.finishHdAddrs.bind(this)
-    this.apiGetHdAddrs = this.apiGetHdAddrs.bind(this)
+    this.processHdAddrs = this.processHdAddrs.bind(this)
+    this.fetchHdExtAddr = this.fetchHdExtAddr.bind(this)
+    this.fetchHdChgAddr = this.fetchHdChgAddr.bind(this)
+    this.addHdRcvTsc = this.addHdRcvTsc.bind(this)
+    this.addHdSndTsc = this.addHdSndTsc.bind(this)
+    this.getHdTsc = this.getHdTsc.bind(this)
+    this.getHdPath = this.getHdPath.bind(this)
+    this.apiGetHdAddr = this.apiGetHdAddr.bind(this)
     this.apiScanHdAddr = this.apiScanHdAddr.bind(this)
   }
 
-  addTxs (drvAddrs, txs) {
-    let addTx = (drvAddr, tx, mode) => {
-      if (!drvAddr) return
-      tx._mode = mode
-      tx._amnt = this.coinObj.conv(tx.result)
-      if (tx._amnt < 0) tx._amnt = tx._amnt * -1
-      if (!drvAddr._txs) drvAddr._txs = {}
-      drvAddr._txs[tx.hash] = tx
-    }
-    for (let tx of (txs || [])) {
-      // order matters: 'rcv' beats 'snd'
-      for (let inpt of tx.inputs) {
-        let drvAddr = drvAddrs[inpt.prev_out.addr]
-        addTx(drvAddr, tx, 'snd')
-      }
-      for (let oupt of tx.out) {
-        let drvAddr = drvAddrs[oupt.addr]
-        addTx(drvAddr, tx, 'rcv')
-      }
-    }
-  }
-
-  async prepareHdAddrs (hdAddrs_) {
-    let hdAddrs = {upd: {}, noUpd: {}, cur: {}}
-    // scan hd-addrs if necessary (set base path etc.)
+  async processHdAddrs (hdAddrs_) {
+    const hdAddrs = {upd: {}, noUpd: {}}
     for (let hdAddr of Object.values(hdAddrs_)) {
+      this.debug(`===> Processing hd ${hdAddr.hsh}`)
+      hdAddr.bxp = 'bckinfo'
       if (!hdAddr.hd.basePath) await this.apiScanHdAddr(hdAddr)
-      if (hdAddr.hd.basePath) {
-        Object.assign(hdAddr, {
-          amnt: 0,
-          _txs: {},
-          _txAddrs: {},
-          _path: hdAddr.hd.basePath
-        })
-        hdAddrs.cur[hdAddr.hsh] = hdAddr
-      } else {
+      if (!hdAddr.hd.basePath) {
         hdAddrs.noUpd[hdAddr.hsh] = hdAddr
+      } else {
+        const {
+          extTscs, extDrvAddrs, chgAccPaths
+        } = await this.fetchHdExtAddr(hdAddr)
+        const {
+          chgTscs, chgDrvAddrs
+        } = await this.fetchHdChgAddr(hdAddr, chgAccPaths)
+        hdAddr.amnt = this.coinObj.conv(hdAddr.amnt)
+        Object.assign(extTscs, chgTscs)
+        const tscs = []
+        for (let hsh of Object.keys(extTscs)) {
+          this.addHdRcvTsc(hsh, tscs, extTscs[hsh], extDrvAddrs, chgDrvAddrs)
+          this.addHdSndTsc(hsh, tscs, extTscs[hsh], extDrvAddrs, chgDrvAddrs)
+        }
+        hdAddr.tscCnt = tscs.length
+        hdAddr.tscs = __.struc(tscs, {byTme: true, max: __.cfg('maxTscCnt')})
+        hdAddrs[hdAddr.tscs.length > 0 ? 'upd' : 'noUpd'][hdAddr.hsh] = hdAddr
       }
+      this.debug(`===> Processing hd ${hdAddr.hsh} finished:`, hdAddr)
     }
     return hdAddrs
   }
 
-  updateHdAddrs (hdAddrs, drvAddrs) {
-    for (let addr of Object.values(hdAddrs.cur)) {
-      let hsh = addr.hsh
-      if (addr._paths.length > 0) {
-        hdAddrs.upd[hsh] = addr
-        addr._fndIx = true
-        let path = addr._paths.sort().pop()
-        addr._path = this.coinObj.walkHdPath('ixAcc', path)
-        addr._nxPath = addr._path
-        if (!addr._path) delete hdAddrs.cur[hsh]
-      } else {
-        let end = true
-        if (addr._fndIx) {
-          delete addr._fndIx
-          addr._path = this.coinObj.walkHdPath('acc', addr._path)
-          if (addr._path) end = false
-        }
-        if (end) {
-          let nxAddrs = this.coinObj.getHdDrvAddrs(addr, addr._nxPath, {gap: 1})
-          let nxAddr = Object.values(nxAddrs)[0]
-          Object.assign(addr.hd, {
-            nxAddrHsh: nxAddr.hsh,
-            nxAbsPath: nxAddr.startAbsPath,
-            nxPath: nxAddr.startPath
-          })
-          if (!hdAddrs.upd[hsh]) hdAddrs.noUpd[hsh] = addr
-          delete hdAddrs.cur[hsh]
+  async fetchHdExtAddr (hdAddr) {
+    this.debug(`Fetching hd-ext:`, hdAddr)
+    hdAddr.amnt = 0
+    const extTscs = {}
+    const extDrvAddrs = {}
+    const chgAccPaths = []
+    let extAccPath = hdAddr.hd.basePath
+    while (extAccPath) {
+      let chgAccPath = this.coinObj.walkHdPath('chg', extAccPath)
+      if (chgAccPath) chgAccPaths.push(chgAccPath)
+      let {amnt, tscs, drvAddrs} = await this.apiGetHdAddr(hdAddr, extAccPath)
+      if (Object.keys(drvAddrs).length < 1) break
+      Object.assign(extDrvAddrs, drvAddrs)
+      Object.assign(extTscs, tscs)
+      hdAddr.amnt += amnt
+      extAccPath = this.coinObj.walkHdPath('acc', extAccPath)
+    }
+    return {extTscs, extDrvAddrs, chgAccPaths}
+  }
+
+  async fetchHdChgAddr (hdAddr, chgAccPaths) {
+    this.debug(`Fetching hd-chg:`, hdAddr)
+    const chgTscs = {}
+    const chgDrvAddrs = {}
+    const doneChgAccPaths = {}
+    while (true) {
+      let chgAccPath = chgAccPaths.sort().shift()
+      if (!chgAccPath) break
+      if (doneChgAccPaths[chgAccPath]) continue
+      doneChgAccPaths[chgAccPath] = true
+      let {amnt, tscs, drvAddrs} = await this.apiGetHdAddr(hdAddr, chgAccPath)
+      if (Object.keys(drvAddrs).length < 1) continue
+      Object.assign(chgDrvAddrs, drvAddrs)
+      Object.assign(chgTscs, tscs)
+      hdAddr.amnt += amnt
+      chgAccPath = this.coinObj.walkHdPath('acc', chgAccPath)
+      if (chgAccPath) chgAccPaths.push(chgAccPath)
+    }
+    return {chgTscs, chgDrvAddrs}
+  }
+
+  addHdRcvTsc (tscHsh, tscs, extTsc, extDrvAddrs, chgDrvAddrs) {
+    let amnt = 0
+    let inptAmnt = 0
+    let addrHshs = new Set()
+    for (let inpt of extTsc.inpt) {
+      if (!extDrvAddrs[inpt.addrHsh] && !chgDrvAddrs[inpt.addrHsh]) {
+        inptAmnt += inpt.amnt
+      }
+      if (extDrvAddrs[inpt.addrHsh] || chgDrvAddrs[inpt.addrHsh]) {
+        addrHshs.add(inpt.addrHsh)
+      }
+    }
+    if (inptAmnt > 0) {
+      for (let oupt of extTsc.oupt) {
+        if (extDrvAddrs[oupt.addrHsh]) amnt += oupt.amnt
+        if (extDrvAddrs[oupt.addrHsh] || chgDrvAddrs[oupt.addrHsh]) {
+          addrHshs.add(oupt.addrHsh)
         }
       }
     }
+    if (amnt > 0) {
+      this.debug(`Tsc found: ${this.coinObj.conv(amnt)} received`)
+      tscs.push(this.getHdTsc(tscHsh, extTsc.tme, 'rcv', amnt, addrHshs))
+    }
+  }
+
+  addHdSndTsc (tscHsh, tscs, extTsc, extDrvAddrs, chgDrvAddrs) {
+    let amnt = 0
+    let inptAmnt = 0
+    let addrHshs = new Set()
+    for (let inpt of extTsc.inpt) {
+      if (extDrvAddrs[inpt.addrHsh] || chgDrvAddrs[inpt.addrHsh]) {
+        inptAmnt += inpt.amnt
+      }
+      if (extDrvAddrs[inpt.addrHsh] || chgDrvAddrs[inpt.addrHsh]) {
+        addrHshs.add(inpt.addrHsh)
+      }
+    }
+    if (inptAmnt > 0) {  // we need to consider the tsc fee
+      amnt = inptAmnt
+      let ouptAmnt = 0
+      for (let oupt of extTsc.oupt) {
+        if (!extDrvAddrs[oupt.addrHsh]) ouptAmnt += oupt.amnt
+        if (extDrvAddrs[oupt.addrHsh] || chgDrvAddrs[oupt.addrHsh]) {
+          amnt -= oupt.amnt
+        }
+        if (extDrvAddrs[oupt.addrHsh] || chgDrvAddrs[oupt.addrHsh]) {
+          addrHshs.add(oupt.addrHsh)
+        }
+      }
+      if (ouptAmnt <= 0) amnt = 0
+    }
+    if (amnt > 0) {
+      this.debug(`Tsc found: ${this.coinObj.conv(amnt)} sent ` +
+                 `from ${Array.from(addrHshs).join(',')}`)
+      tscs.push(this.getHdTsc(tscHsh, extTsc.tme, 'snd', amnt, addrHshs))
+    }
+  }
+
+  getHdTsc (hsh, tme, mode, amnt, addrHshs) {
+    return {
+      hsh: this.coinObj.toTscHsh(hsh),
+      _t: mo.unix(tme).format(),
+      mode,
+      amnt: this.coinObj.conv(amnt),
+      hd: {
+        addrHshs: Array.from(addrHshs).sort().slice(0, __.cfg('lstMax'))
+                       .map(addr => this.coinObj.toAddrHsh(addr))
+      }
+    }
+  }
+
+  getHdPath (path, fnds, notFnds) {
+    if (Object.keys(fnds).length > 0) {
+      let paths = []
+      for (let drvAddr of Object.values(fnds)) paths.push(drvAddr.path)
+      path = this.coinObj.walkHdPath('ix', paths.sort().pop())
+      if (path) {
+        // check bip44 gap: do we need an additional request?
+        let ixs = {min: undefined, max: undefined, notFnd: {}, notFndCnt: 0}
+        for (let drvAddr of Object.values(fnds)) {
+          let ix = __.toInt(drvAddr.path.split('/').pop())
+          if (ixs.min === undefined || ix < ixs.min) ixs.min = ix
+          if (ixs.max === undefined || ix > ixs.max) ixs.max = ix
+        }
+        for (let drvAddr of Object.values(notFnds)) {
+          let ix = __.toInt(drvAddr.path.split('/').pop())
+          if (ixs.min === undefined || ix < ixs.min) ixs.min = ix
+          if (ixs.max === undefined || ix > ixs.max) ixs.max = ix
+          ixs.notFnd[ix] = true
+        }
+        for (let ix = ixs.max; ix >= ixs.min; ix -= 1) {
+          if (!ixs.notFnd[ix]) break
+          ixs.notFndCnt += 1
+        }
+        if (ixs.notFndCnt >= __.cfg('bip44IxGap')) path = undefined
+      }
+    } else {
+      path = undefined
+    }
     if (__.cfg('isDev')) {
-      for (let drvAddr of Object.values(drvAddrs)) {
+      for (let drvAddr of Object.values(fnds)) {
+        this.debug(`Found: ${drvAddr.path} (${drvAddr.hsh})`)
+      }
+      for (let drvAddr of Object.values(notFnds)) {
         this.debug(`Not found: ${drvAddr.path} (${drvAddr.hsh})`)
       }
     }
-    return hdAddrs
+    return path
   }
 
-  finishHdAddrs (hdAddrs) {
-    let addrs = Object.values(hdAddrs.upd).concat(Object.values(hdAddrs.noUpd))
-    for (let addr of addrs) {
-      addr.bxp = 'bckinfo'
-      if (addr._txs) {
-        let tscs = []
-        for (let tx of Object.values(addr._txs)) {
-          addr.tscCnt += 1
-          // addr[`${tx._mode}Amnt`] += tx._amnt // untested
-          tscs.push({
-            _t: mo.unix(tx.time).format(),
-            hsh: this.coinObj.toTscHsh(tx.hash),
-            mode: tx._mode,
-            amnt: tx._amnt,
-            hd: {
-              addrHshs: Array.from(addr._txAddrs[tx.hash])
-                        .sort()
-                        .slice(0, __.cfg('lstMax'))
-                        .map(addr => this.coinObj.toAddrHsh(addr))
-            }
-          })
-        }
-        addr.tscs = __.struc(tscs, {byTme: true, max: __.cfg('maxTscCnt')})
-      }
-      delete addr._txs
-      delete addr._txAddrs
-      delete addr._path
-      delete addr._paths
-      delete addr._fndIx
-      delete addr._nxPath
-    }
-    delete hdAddrs.cur
-    return hdAddrs
-  }
-
-  async apiGetHdAddrs (hdAddrs) {
-    // scan hd-addrs if necessary (set base path etc.)
-    hdAddrs = await this.prepareHdAddrs(hdAddrs)
-    // fetch hd-addr data
+  async apiGetHdAddr (hdAddr, startPath) {
     const cfg = __.cfg('bxp').bckinfo
+    const allFndDrvAddrs = {}
+    const tscs = {}
     let sleepSec
-    while (Object.keys(hdAddrs.cur).length > 0) {
-      this.debug('--- Fetching: Loop iteration started:', hdAddrs)
-      let drvAddrs = {}
-      for (let addr of Object.values(hdAddrs.cur)) {
-        addr._paths = []
-        Object.assign(drvAddrs, this.coinObj.getHdDrvAddrs(addr, addr._path))
-      }
-      let chunks = __.toChunks(Object.keys(drvAddrs), cfg.maxAddrCnt)
-      for (let chunk of chunks) {
+    let amnt = 0
+    let path = startPath
+    while (path) {
+      let drvAddrs = this.coinObj.getHdDrvAddrs(hdAddr, path)
+      let fndDrvAddrs = {}
+      for (let chunk of __.toChunks(Object.keys(drvAddrs), cfg.maxAddrCnt)) {
         sleepSec = await this.sleep(sleepSec, cfg.sleepSec)
         let req = {
           url: cfg.url,
           params: {cors: true, active: chunk.join('|'), limit: cfg.maxTscCnt}
         }
-        this.debug(`Requesting this hd-drv-addrs: ${chunk.join(', ')}`)
-        let pld = await __.rqst(req, 'bckinfo-hd-addrs-tscs')
-        this.addTxs(drvAddrs, pld.txs)
+        this.debug(`Requesting this hd-ext-drv-addrs: ${chunk.join(', ')}`)
+        let pld = await __.rqst(req, 'bckinfo-hd-ext-drv-addrs')
+        for (let tx of (pld.txs || [])) {
+          let tscHsh = this.coinObj.toTscHsh(tx.hash)
+          if (tscs[tscHsh]) continue
+          let tsc = {tme: tx.time, inpt: [], oupt: []}
+          for (let inpt of tx.inputs) {
+            tsc.inpt.push({
+              addrHsh: inpt.prev_out.addr,
+              amnt: inpt.prev_out.value
+            })
+          }
+          for (let oupt of tx.out) {
+            tsc.oupt.push({addrHsh: oupt.addr, amnt: oupt.value})
+          }
+          tscs[tscHsh] = tsc
+        }
         for (let addrPld of pld.addresses) {
           if (addrPld.n_tx > 0 && drvAddrs[addrPld.address]) {
             const addrPldHsh = this.coinObj.toAddrHsh(addrPld.address)
             let drvAddr = drvAddrs[addrPldHsh]
-            delete drvAddrs[addrPldHsh]
-            let hsh = drvAddr.hdAddr.hsh
-            let hdAddr = hdAddrs.cur[hsh]
-            hdAddr.amnt += this.coinObj.conv(addrPld.final_balance)
-            for (let tx of Object.values(drvAddr._txs)) {
-              if (!hdAddr._txAddrs[tx.hash]) {
-                hdAddr._txAddrs[tx.hash] = new Set()
-              }
-              hdAddr._txAddrs[tx.hash].add(drvAddr.hsh)
-            }
-            Object.assign(hdAddr._txs, drvAddr._txs || {})
-            hdAddr._paths.push(drvAddr.path)
-            this.debug(`Found: ${drvAddr.path} (${drvAddr.hsh})`)
+            delete drvAddrs[drvAddr.hsh]
+            fndDrvAddrs[drvAddr.hsh] = drvAddr
+            allFndDrvAddrs[drvAddr.hsh] = drvAddr
+            amnt += addrPld.final_balance
           }
         }
       }
-      hdAddrs = this.updateHdAddrs(hdAddrs, drvAddrs)
-      this.debug('--- Fetching: Loop iteration finished:', hdAddrs)
+      path = this.getHdPath(path, fndDrvAddrs, drvAddrs)
     }
-    hdAddrs = this.finishHdAddrs(hdAddrs)
-    this.debug('Fetching hd-addrs finished:', hdAddrs)
-    return hdAddrs
+    return {amnt, tscs, drvAddrs: allFndDrvAddrs}
   }
 
   async apiScanHdAddr (hdAddr) {
     const cfg = __.cfg('bxp').bckinfo
     let sleepSec
-    this.debug('--- Scanning:', hdAddr)
+    this.debug('Scanning:', hdAddr)
     for (let basePath of __.cfg('hdBasePaths')) {
       for (let addrType of __.cfg('xtcHdAddrTypes')) {
         this.debug(`Checking ${basePath} -> ${addrType}`)
@@ -335,19 +404,21 @@ class BckinfoBxp extends Bxp {
           for (let addrPld of pld.addresses) {
             if (addrPld.n_tx > 0 && drvAddrs[addrPld.address]) {
               let drvAddr = drvAddrs[addrPld.address]
+              let hsh = drvAddr.hdAddr.hsh
               Object.assign(hdAddr.hd, {
+                addrType,
                 basePath,
-                baseAbsPath: drvAddr.startAbsPath,
+                baseAbsPath: this.coinObj.toAbsHdPathByHsh(hsh, basePath),
                 isMstr: drvAddr.isMstr
               })
-              this.debug(`--- Scanning finished: ${hdAddr.hd.basePath} found`)
+              this.debug(`Scanning finished: ${basePath} found`)
               return
             }
           }
         }
       }
     }
-    this.debug('--- Scanning finished: No path found')
+    this.debug('Scanning finished: No path found')
   }
 }
 

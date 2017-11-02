@@ -74,7 +74,7 @@ const getLogger = (ilk, lbl) => {
     if (ilk === 'DEBUG') {
       // prevent Chrome console.log's inconsistency with objects/arrays
       //   https://stackoverflow.com/a/24176305
-      args = args.map(arg => deepClone(arg))
+      args = args.map(arg => cloneDeep(arg))
     }
     func.apply(console, args)
   }
@@ -220,7 +220,7 @@ const lstToObj = lst_ => {
   return lst
 }
 
-const deepClone = d => {
+const cloneDeep = d => {
   if (d == null) return d
   if (is('Function', d)) throw Error(`Cannot clone function '${d}'`)
   return JSON.parse(JSON.stringify(d))
@@ -385,7 +385,7 @@ export default {
   sleep,
   lstToObj,
   clone,
-  deepClone,
+  cloneDeep,
   vldAlphNum,
   vldFloat,
   vldPw,

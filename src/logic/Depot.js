@@ -115,7 +115,7 @@ export default class Depot extends ApiBase {
       let addrsByCoin = d.addrsByType[addr.type]
       if (!addrsByCoin[addr.coin]) addrsByCoin[addr.coin] = {}
       addrsByCoin[addr.coin][addr.hsh] = addr
-      d.curAddrs[addr._id] = addr
+      d.curAddrs[addr._id] = __.cloneDeep(addr)
     }
     return d
   }
@@ -131,8 +131,8 @@ export default class Depot extends ApiBase {
         try {
           if (addrType === 'hd') {
             let bxp = this.coinObjs[coin].bxp.bckinfo
-            let d = await bxp.apiGetHdAddrs(addrsByCoin[coin])
-            updAddrs = d.upd
+            let hdAddrs = await bxp.processHdAddrs(addrsByCoin[coin])
+            updAddrs = hdAddrs.upd
           } else if (addrType === 'std') {
             let bxp = this.coinObjs[coin].bxp.bckcyph
             updAddrs = await bxp.apiGetAddrs(addrsByCoin[coin])

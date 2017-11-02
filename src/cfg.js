@@ -1,6 +1,7 @@
 
 const d = {
-  isDev: process.env.NODE_ENV === 'development'
+  isDev: process.env.NODE_ENV === 'development',
+  bip44IxGap: 20
 }
 
 Object.assign(d, {
@@ -24,12 +25,24 @@ Object.assign(d, {
   maxAddrCnt: 5,
   newAddrNotice: 'New wallet',
   newTscNotice: 'New transaction',
-  bip44IxGap: d.isDev ? 5 : 20, // BIP44 gap is 20, sync with bckinfo's tscs
-  xtcHdAddrTypes: ['lgcy', 'sgwt'],  // order matters: first has precedence
-  hdBasePaths: [                     // order matters: first has precedence
-    '0/0',    // change, index
-    '0',      // index
-    '0/0/0'  // account, change, index
+  // add some spare to d.bip44IxGap because we expect to find some used
+  // addresses at beginning and want to run as few as possible fetch requests
+  //   fetching stops when:
+  //     d.bip44IxGap <= #not-used-serial-addresses
+  //   small number of fetch requests is achieved by:
+  //     d.hdIxGap > #used-addresses + #not-used-serial-addresses
+  // don't set d.hdIxGap to high:
+  //   handle small number ("limit" parameter) of tscs returned by api:
+  //     => derived HD addrs should have a small number of tscs
+  //     => requesting only d.hdIxGap addrs should return all related tscs
+  hdIxGap: d.bip44IxGap + 10,  // MUST be >= d.bip44IxGap
+  // order matters: first has precedence
+  xtcHdAddrTypes: ['lgcy', 'sgwt'],
+  // order matters: first has precedence
+  hdBasePaths: [ // account = acc, change = chg, index = ix
+    '0/0',    // chg/ix
+    '0',      // ix
+    '0/0/0'   // acc/chg/ix
   ]
 })
 
@@ -115,21 +128,16 @@ Object.assign(d, {
       //   => use a multiplier (x) because bckcyph splits _one_ tsc in
       //      _multiple_ "txrefs" items:
       //   => x * d['maxTscCnt']
-      maxTscCnt: (5 * d['maxTscCnt']) > 2000
+      maxTscCnt: (5 * d.maxTscCnt) > 2000
           ? 2000
-          : (5 * d['maxTscCnt'])
+          : (5 * d.maxTscCnt)
     },
     bckinfo: {  // https://blockchain.info/api/blockchain_api
       sleepSec: 1,
       // -------------------- multi-address endpoint --------------------
       url: 'https://blockchain.info/de/multiaddr',
-      // handle small number ("limit" parameter) of tscs returned by api:
-      //   => derived HD addrs should have a small number of tscs
-      //   => requesting only d['bip44IxGap'] addrs should return all
-      //      related tscs
-      maxAddrCnt: d['bip44IxGap'],   // max = 200
-      // number of returned tscs for _all_ requested addresses
-      maxTscCnt: 100                 // max = 100
+      maxAddrCnt: d.isDev ? 50 : 200,
+      maxTscCnt: d.isDev ? 10 : 100  // returned tscs for _all_ requested addrs
       // ----------------------------------------------------------------
     }
   }

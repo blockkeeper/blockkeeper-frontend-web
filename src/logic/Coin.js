@@ -46,7 +46,8 @@ class XtcCoin extends Coin {
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
     this.toSegWitAddr = this.toSegWitAddr.bind(this)
     this.walkHdPath = this.walkHdPath.bind(this)
-    this.toAbsHdPath = this.toAbsHdPath.bind(this)
+    this.toAbsHdPathByNode = this.toAbsHdPathByNode.bind(this)
+    this.toAbsHdPathByHsh = this.toAbsHdPathByHsh.bind(this)
     this.getHdDrvAddrs = this.getHdDrvAddrs.bind(this)
     Object.assign(this.bxp, {
       bckinfo: new BckinfoBxp(this)
@@ -86,7 +87,7 @@ class XtcCoin extends Coin {
   }
 
   walkHdPath (ilk, path) {
-    // ilk = 'ixAcc' or 'ix' or 'acc'
+    // ilk = 'ixAcc' or 'ix' or 'acc' or 'chg'
     const MAX = 0x80000000  // 32 bit, non hardened
     let [ix, ...rest] = path.split('/').reverse()
     if (ilk === 'acc') {
@@ -97,6 +98,14 @@ class XtcCoin extends Coin {
       rest[1] = acc
       return [0].concat(rest).reverse().join('/')
     }
+    if (ilk === 'chg') {
+      // ix = index, rest[0] = change
+      if (rest[0] == null || rest[0] === 'm') return
+      let chg = __.toInt(rest[0]) + 1
+      if (chg >= MAX) return
+      rest[0] = chg
+      return [0].concat(rest).reverse().join('/')
+    }
     ix = __.toInt(ix) + 1
     if (ix >= MAX) {
       if (ilk === 'ixAcc') return this.walkHdPath('acc', path)
@@ -105,22 +114,26 @@ class XtcCoin extends Coin {
     return [ix].concat(rest).reverse().join('/')
   }
 
-  toAbsHdPath (node, path) {
+  toAbsHdPathByNode (rootNode, path) {
     if (path.startsWith('m')) return path
     path = path.split('/')
     let absPath = ['m']
-    for (let cnt = 0; cnt <= (node.depth - path.length); cnt++) {
-      absPath.push('x')
-    }
+    for (let cnt = 0; cnt < rootNode.depth; cnt++) absPath.push('x')
     return absPath.concat(path).join('/')
+  }
+
+  toAbsHdPathByHsh (hsh, path) {
+    if (path.startsWith('m')) return path
+    const rootNode = bjsHDNode.fromBase58(hsh, this.net)
+    return this.toAbsHdPathByNode(rootNode, path)
   }
 
   getHdDrvAddrs (hdAddr, startPath, {addrType, gap} = {}) {
     addrType = addrType || hdAddr.hd.addrType
-    let drvAddrs = {}
-    let rootNode = bjsHDNode.fromBase58(hdAddr.hsh, this.net)
+    const drvAddrs = {}
+    const rootNode = bjsHDNode.fromBase58(hdAddr.hsh, this.net)
     let path = startPath
-    if (gap == null) gap = __.cfg('bip44IxGap')
+    if (gap == null) gap = __.cfg('hdIxGap')
     let ixTries = 0
     while (path && ixTries < gap) {
       let node
@@ -136,9 +149,7 @@ class XtcCoin extends Coin {
           : this.toAddrHsh(node.getAddress()),
         isMstr: !rootNode.parentFingerprint,
         addrType,
-        startAbsPath: this.toAbsHdPath(rootNode, startPath),
         startPath,
-        absPath: this.toAbsHdPath(rootNode, path),
         path
       }
       drvAddrs[drvAddr.hsh] = drvAddr

@@ -84,9 +84,6 @@ export default class Addr extends ApiBase {
       type: upd.type || cur.type || 'std',
       desc: (upd.desc || cur.desc || '').trim(),
       amnt: __.getAmnt(upd.amnt, cur.amnt),
-      // don't enable: untested with HD addrs
-      //   rcvAmnt: __.getAmnt(upd.rcvAmnt, cur.rcvAmnt),
-      //   sndAmnt: __.getAmnt(upd.sndAmnt, cur.sndAmnt),
       tscCnt: upd.tscCnt || cur.tscCnt || 0,
       coin: upd.coin || cur.coin,
       rates: upd.rates || cur.rates || {},
@@ -97,7 +94,8 @@ export default class Addr extends ApiBase {
     const bxp = upd.bxp || cur.bxp
     if (bxp) addr.bxp = bxp
     const hsh = upd.hsh || cur.hsh
-    addr.name = (addr.name || `${__.cfg('newAddrNotice')} ${__.shortn(hsh, 7).trim()}`)
+    addr.name = addr.name ||
+                `${__.cfg('newAddrNotice')} ${__.shortn(hsh, 7).trim()}`
     if (hsh) {
       addr.hsh = coinObj.toAddrHsh(hsh)
       addr.type = coinObj.isHdAddr(addr.hsh) ? 'hd' : 'std'
@@ -110,26 +108,17 @@ export default class Addr extends ApiBase {
       addr.hd = {
         isMstr: upd.hd.isMstr != null ? upd.hd.isMstr : cur.hd.isMstr,
         addrType: upd.hd.addrType || cur.hd.addrType,
-        baseAbsPath: upd.hd.baseAbsPath || cur.hd.baseAbsPath,
         basePath: upd.hd.basePath || cur.hd.basePath,
-        nxAbsPath: upd.hd.nxAbsPath || cur.hd.nxAbsPath,
-        nxPath: upd.hd.nxPath || cur.hd.nxPath,
-        nxAddrHsh: upd.hd.nxAddrHsh || cur.hd.nxAddrHsh
+        baseAbsPath: upd.hd.baseAbsPath || cur.hd.baseAbsPath
       }
     }
-    upd.tscs = upd.tscs || []
-    const updTscs = new Map(
-      upd.tscs.map(upd => [coinObj.toTscHsh(upd.hsh), upd])
+    const curTscs = new Map(
+      (cur.tscs || []).map(cur => [coinObj.toTscHsh(cur.hsh), cur])
     )
     const tscs = new Map()
-    for (let tsc of (cur.tscs || [])) {
-      tsc = this.toTsc(addr.coin, updTscs.get(tsc.hsh), tsc)
-      updTscs.delete(tsc.hsh)
-      tscs.set(tsc.hsh, tsc)
-    }
-    for (let tsc of updTscs.values()) {
-      tsc._id = __.uuid()
-      tsc = this.toTsc(addr.coin, tsc)
+    for (let tsc of (upd.tscs || [])) {
+      tsc.hsh = coinObj.toTscHsh(tsc.hsh)
+      tsc = this.toTsc(addr.coin, tsc, curTscs.get(tsc.hsh))
       tscs.set(tsc.hsh, tsc)
     }
     addr.tscs = __.struc(tscs, {byTme: true, max: __.cfg('maxTscCnt')})
@@ -147,36 +136,16 @@ export default class Addr extends ApiBase {
       amnt: __.getAmnt(upd.amnt, cur.amnt),
       cfmCnt: upd.cfmCnt || cur.cfmCnt || -1,
       mode: upd.mode || cur.mode,
-      name: upd.name || cur.name || `${__.cfg('newTscNotice')} ${__.shortn(hsh, 7).trim()}`,
+      name: upd.name || cur.name ||
+            `${__.cfg('newTscNotice')} ${__.shortn(hsh, 7).trim()}`,
       desc: upd.desc || cur.desc || '',
       tags: upd.tags || cur.tags || []
-      // rcvAmnt: __.getAmnt(upd.rcvAmnt, cur.rcvAmnt),
-      // sndAmnt: __.getAmnt(upd.sndAmnt, cur.sndAmnt)
     }
     if (upd.hd || cur.hd) {
       cur.hd = cur.hd || {}
       upd.hd = upd.hd || {}
       tsc.hd = {addrHshs: upd.hd.addrHshs || cur.hd.addrHshs}
     }
-    // const toDesc = (action, tsc) => {
-    //   let desc = [{
-    //     [action]: tsc.amnt
-    //   }]
-    //   // if (tsc.sndAmnt && tsc.rcvAmnt) {
-    //   //   desc.push({
-    //   //     snd: tsc.sndAmnt,
-    //   //     rcv: tsc.rcvAmnt
-    //   //   })
-    //   // }
-    //   return desc
-    // }
-    // if (tsc.mode === 'rcv') {
-    //   tsc.amntDesc = toDesc(tsc.mode, tsc, coin)
-    // } else if (tsc.mode === 'snd') {
-    //   tsc.amntDesc = toDesc(tsc.mode, tsc, coin)
-    // } else {
-    //   tsc.amntDesc = ['Unknown (not yet fetched)']
-    // }
     return tsc
   }
 }
