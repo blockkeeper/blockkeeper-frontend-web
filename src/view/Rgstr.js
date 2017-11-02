@@ -170,10 +170,10 @@ class RgstrView extends React.Component {
           <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={6} lg={4} xl={4}>
-                <Typography type='display3' color='inherit'>
+                <Typography type='display3' color='inherit' align='center'>
                   Block Keeper
                 </Typography>
-                <Typography type='display1' color='inherit' gutterBottom>
+                <Typography type='display1' color='inherit' align='center' gutterBottom>
                   Please choose your account details
                 </Typography>
                 <Paper square className={this.props.classes.paperStyle} elevation={24}>
