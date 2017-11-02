@@ -86,6 +86,10 @@ class AddrView extends React.Component {
     this.toggleCoins = () => {
       this.setState({toggleCoins: !this.state.toggleCoins})
     }
+    this.getHdAddrType = () => {
+      if (!this.state.addr.hd.addrType) return ''
+      return this.state.addr.hd.addrType === 'sgwt' ? 'segwit' : 'legacy'
+    }
   }
 
   async componentDidMount () {
@@ -379,7 +383,9 @@ class AddrView extends React.Component {
                             </TableCell>
                             <TableCell numeric padding='none'>
                               {this.state.addr.type === 'hd' &&
-                                <span>HD wallet (xpub key)</span>
+                                <span>
+                                  HD {this.getHdAddrType()} wallet (xpub key)
+                                </span>
                               }
                               {this.state.addr.type === 'std' &&
                                 <span>Simple wallet (public key)</span>

@@ -81,17 +81,11 @@ class TscView extends React.Component {
   async load () {
     let addr, coin0, coin1, tsc, user
     try {
-      ;[
-        addr,
-        user
-      ] = await Promise.all([
+      ;[addr, user] = await Promise.all([
         this.addrObj.load(),
         this.cx.user.load()
       ])
-      ;[
-        tsc,
-        {coin0, coin1}
-      ] = await Promise.all([
+      ;[tsc, {coin0, coin1}] = await Promise.all([
         this.addrObj.getTsc(this.tscId, addr),
         this.cx.user.getCoins(this.state.coin, user)
       ])
@@ -219,7 +213,10 @@ class TscView extends React.Component {
               align='center'
               style={{color: modeColor}}
             >
-              {modeSign} {__.formatNumber(this.state.tsc.amnt, this.state.addr.coin, this.user.locale)}&nbsp;
+              {modeSign}
+              {__.formatNumber(this.state.tsc.amnt, this.state.addr.coin,
+                               this.user.locale)}
+              &nbsp;
               <CoinIcon coin={this.state.addr.coin} alt color={modeColor} />
             </Typography>
             {!this.state.toggleCoins &&
@@ -231,7 +228,9 @@ class TscView extends React.Component {
               gutterBottom
             >
               {modeSign}
-              {__.formatNumber(this.state.blc1, this.state.coin0, this.user.locale)}&nbsp;
+              {__.formatNumber(this.state.blc1, this.state.coin0,
+                               this.user.locale)}
+              &nbsp;
               <CoinIcon
                 coin={this.state.coin0}
                 color={theme.palette.text.secondary}
@@ -247,7 +246,9 @@ class TscView extends React.Component {
               onClick={this.toggleCoins}
               gutterBottom
             >
-              {modeSign} {__.formatNumber(this.state.blc2, this.state.coin1, this.user.locale)}
+              {modeSign}
+              {__.formatNumber(this.state.blc2, this.state.coin1,
+                               this.user.locale)}
               <CoinIcon
                 coin={this.state.coin1}
                 color={theme.palette.text.secondary}
@@ -293,51 +294,6 @@ class TscView extends React.Component {
                       </Typography>}
                   </div>
                 </div>
-                {this.state.tsc.amntDesc &&
-                  <div className={this.props.classes.flexStyle}>
-                    <div className={this.props.classes.labelStyle}>
-                      <Typography type='body1' noWrap color='inherit'>
-                        Amount
-                      </Typography>
-                    </div>
-                    <div className={this.props.classes.valueStyle}>
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.amntDesc[0][this.state.tsc.mode]} {this.state.addr.coin}
-                      </Typography>
-                    </div>
-                  </div>
-                }
-                {this.state.tsc.amntDesc &&
-                  this.state.tsc.amntDesc.length > 1 &&
-                  <div className={this.props.classes.flexStyle}>
-                    <div className={this.props.classes.labelStyle}>
-                      <Typography type='body1' noWrap color='inherit'>
-                        Amount Details
-                      </Typography>
-                    </div>
-                    <div className={this.props.classes.valueStyle}>
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.amntDesc[1]['snd']}
-                        <CoinIcon
-                          coin={this.state.addr.coin}
-                          size={12}
-                          color='primary'
-                          alt
-                        />&nbsp;
-                        send
-                        <br />
-                        {this.state.tsc.amntDesc[1]['rcv']}
-                        <CoinIcon
-                          coin={this.state.addr.coin}
-                          size={12}
-                          color='primary'
-                          alt
-                        />&nbsp;
-                        received
-                      </Typography>
-                    </div>
-                  </div>
-                }
                 {this.state.tsc.cfmCnt >= 0 &&
                   <div className={this.props.classes.flexStyle}>
                     <div className={this.props.classes.labelStyle}>
@@ -437,7 +393,7 @@ class TscView extends React.Component {
                   <div className={this.props.classes.flexStyle}>
                     <div className={this.props.classes.labelStyle}>
                       <Typography type='body1' noWrap color='inherit'>
-                        Used addresses
+                        Involved addresses
                       </Typography>
                     </div>
                     <div className={this.props.classes.valueStyle}>
