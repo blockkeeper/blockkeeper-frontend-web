@@ -157,7 +157,6 @@ const themeBgStyle = {
 
 const loginStyle = {
   paddingTop: styleGuide.spacertop,
-  textAlign: 'center',
   color: common.white
 }
 
