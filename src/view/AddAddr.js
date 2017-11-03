@@ -41,7 +41,7 @@ class AddAddrView extends React.Component {
     this.state = {
       delay: 250,
       facingMode: 'front',
-      noHshMode: false,
+      manAddrMode: false,
       qrMode: false,
       coin: '',
       amnt: '0.00',
@@ -52,7 +52,7 @@ class AddAddrView extends React.Component {
     this.coins = []
     this.goBack = props.history.goBack
     this.disableQrMode = (evt, checked) => {
-      this.set('noHshMode', checked)
+      this.set('manAddrMode', checked)
       this.set('qrMode', false)
     }
     this.handleQrScan = data => {
@@ -120,7 +120,7 @@ class AddAddrView extends React.Component {
         nameEmsg: __.vldAlphNum(this.state.name),
         descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')})
       }
-      if (this.state.noHshMode) {
+      if (this.state.manAddrMode) {
         d.hsh = undefined
         d.amntEmsg = __.vldFloat(this.state.amnt)
         const name = this.state.name.trim()
@@ -191,7 +191,7 @@ class AddAddrView extends React.Component {
                 <Typography type='title'>
                   Details
                 </Typography>
-                {!this.state.noHshMode &&
+                {!this.state.manAddrMode &&
                   <TextField
                     required
                     fullWidth
@@ -203,7 +203,7 @@ class AddAddrView extends React.Component {
                     onChange={evt => this.set('hsh', evt.target.value)}
                     disabled={this.state.qrMode}
                   />}
-                {this.state.noHshMode &&
+                {this.state.manAddrMode &&
                   <TextField
                     required
                     fullWidth
@@ -221,7 +221,7 @@ class AddAddrView extends React.Component {
                       onChange={(evt, checked) => {
                         this.set('hsh', '')
                         this.set('qrMode', checked)
-                        this.set('noHshMode', false)
+                        this.set('manAddrMode', false)
                       }}
                     />}
                   label='Scan QR code'
@@ -229,7 +229,7 @@ class AddAddrView extends React.Component {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={this.state.noHshMode}
+                      checked={this.state.manAddrMode}
                       onChange={this.disableQrMode}
                     />}
                   label='Manage manually (no public key)'
@@ -254,7 +254,7 @@ class AddAddrView extends React.Component {
                         this.setSnack('Accessing camera failed: Please ' +
                                       'check your browser settings')
                         this.setState({snack: this.getSnack()})
-                        this.disableQrMode(undefined, this.state.noHshMode)
+                        this.disableQrMode(undefined, this.state.manAddrMode)
                       }}
                       onScan={this.handleQrScan}
                     />
@@ -293,7 +293,7 @@ class AddAddrView extends React.Component {
                 <TextField
                   fullWidth
                   label={'Name'}
-                  required={this.state.noHshMode}
+                  required={this.state.manAddrMode}
                   margin='normal'
                   value={this.state.name}
                   error={Boolean(this.state.nameEmsg)}

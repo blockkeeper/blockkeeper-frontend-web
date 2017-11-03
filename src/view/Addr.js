@@ -129,7 +129,7 @@ class AddrView extends React.Component {
       desc: addr.desc,
       tscs: addr.tscs,
       coin: addr.coin,
-      hshMode: Boolean(addr.hsh),
+      manAddrAmnt: addr.amnt,
       blc1: `${addr.amnt}`,
       blc2: `${blc.get(coin0)}`,
       blc3: `${blc.get(coin1)}`,
@@ -146,13 +146,24 @@ class AddrView extends React.Component {
     }
     this.setState({edit: false, busy: true})
     try {
-      const addr = await this.addrObj.save({
+      const data = {
         name: this.state.name,
         desc: this.state.desc,
         tags: __.toTags(this.state.tagsJoin).split(' ')
-      })
+      }
+      if (this.state.addr.type === 'man') data.amnt = this.state.manAddrAmnt
+      await this.addrObj.save(data)
+      const addr = await this.addrObj.load() // need to (re)load to set rates
       this.setSnack('Wallet updated')
-      this.setState({addr, snack: this.getSnack(), busy: false, upd: false})
+      this.setState({upd: false, busy: false, addr, snack: this.getSnack()})
+      if (this.state.addr.type === 'man') {
+        const blc = this.cx.depot.getAddrBlc([addr])
+        this.setState({
+          blc1: String(addr.amnt),
+          blc2: String(blc.get(this.state.coin0)),
+          blc3: String(blc.get(this.state.coin1))
+        })
+      }
     } catch (e) {
       this.setState({err: e.message, busy: false})
       if (__.cfg('isDev')) throw e
@@ -178,13 +189,14 @@ class AddrView extends React.Component {
         descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')}),
         tagsEmsg: __.vldAlphNum(this.state.tagsJoin, {max: __.cfg('maxHigh')})
       }
-      if (this.state.hshMode) {
-        if (!d.nameEmsg && !d.descEmsg && !d.tagsEmsg) d.upd = true
-      } else {
+      if (this.state.addr.type === 'man') {
+        d.manAddrAmntEmsg = __.vldFloat(this.state.manAddrAmnt)
         if (this.state.name.trim() &&
-            !d.nameEmsg && !d.descEmsg && !d.tagsEmsg) {
+            !d.nameEmsg && !d.descEmsg && !d.tagsEmsg && !d.manAddrAmntEmsg) {
           d.upd = true
         }
+      } else {
+        if (!d.nameEmsg && !d.descEmsg && !d.tagsEmsg) d.upd = true
       }
       this.setState(d)
     })
@@ -290,15 +302,16 @@ class AddrView extends React.Component {
                     className={this.props.classes.display3}
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc1, this.state.coin, this.user.locale)}
+                      {__.formatNumber(
+                        this.state.blc1, this.state.coin, this.user.locale)}
                     </TransitiveNumber>
-                  &nbsp;
+                    &nbsp;
                     <CoinIcon
                       coin={this.state.coin}
                       size={35}
                       color={theme.palette.primary['500']}
                       alt
-                  />
+                    />
                     {this.state.addrUpdErrIds.has(this.state.addr._id) &&
                     <InfoUpdateFailed />}
                   </Typography>
@@ -310,8 +323,10 @@ class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc2, this.state.coin0, this.user.locale)}
+                      {__.formatNumber(
+                        this.state.blc2, this.state.coin0, this.user.locale)}
                     </TransitiveNumber>
+                    &nbsp;
                     <CoinIcon
                       coin={this.state.coin0}
                       color={theme.palette.primary['500']}
@@ -326,7 +341,8 @@ class AddrView extends React.Component {
                     gutterBottom
                   >
                     <TransitiveNumber>
-                      {__.formatNumber(this.state.blc3, this.state.coin1, this.user.locale)}
+                      {__.formatNumber(
+                        this.state.blc3, this.state.coin1, this.user.locale)}
                     </TransitiveNumber>
                     <CoinIcon
                       coin={this.state.coin1}
@@ -379,6 +395,37 @@ class AddrView extends React.Component {
                                 this.state.addr.name}
                             </TableCell>
                           </TableRow>
+                          {this.state.addr.type === 'man' &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                Amount
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {this.state.edit &&
+                                  <TextField
+                                    fullWidth
+                                    value={this.state.manAddrAmnt}
+                                    error={Boolean(this.state.manAddrAmntEmsg)}
+                                    helperText={this.state.manAddrAmntEmsg}
+                                    onChange={evt => {
+                                      this.set('manAddrAmnt', evt.target.value)
+                                    }}
+                                    inputProps={{style: {textAlign: 'right'}}}
+                                  />
+                                }
+                                {!this.state.edit &&
+                                  <span>
+                                    {__.formatNumber(
+                                      this.state.blc1,
+                                      this.state.coin,
+                                      this.user.locale
+                                    )}
+                                    &nbsp; {this.state.coin.toUpperCase()}
+                                  </span>
+                                }
+                              </TableCell>
+                            </TableRow>
+                          }
                           <TableRow>
                             <TableCell width={'10%'} padding='none'>
                               Type
@@ -404,8 +451,6 @@ class AddrView extends React.Component {
                               </TableCell>
                               <TableCell numeric padding='none'>
                                 {this.state.addr.hd.baseAbsPath}
-                                {/* this.state.addr.hd.isMstr &&
-                                  ' (HD address is master)' */}
                               </TableCell>
                             </TableRow>}
                           <TableRow>
