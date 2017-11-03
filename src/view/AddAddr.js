@@ -104,7 +104,7 @@ class AddAddrView extends React.Component {
         desc: this.state.desc,
         name: this.state.name
       })
-      this.setSnack('Wallet added')
+      this.setSnack('Wallet added: Synchronizing...')
       this.props.history.replace(`/wallet/${addr._id}`)
       this.cx.depot.bxp([addr._id])
     } catch (e) {
