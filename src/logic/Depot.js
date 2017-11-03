@@ -174,7 +174,7 @@ export default class Depot extends ApiBase {
     return addrs
   }
 
-  async loadAddrs (addrIds, {hshOnly, skipStruc} = {}) {
+  async loadAddrs (addrIds, {ignManType, skipStruc} = {}) {
     let stoAddrIds = __.getStoIds('addr')
     try {
       stoAddrIds = (stoAddrIds.length > 0)
@@ -193,7 +193,8 @@ export default class Depot extends ApiBase {
     for (let addrId of addrIds) {
       try {
         let addr = await (new Addr(this.cx, addrId)).load()
-        if (!hshOnly || addr.hsh) addrs.push(addr)
+        if (ignManType && addr.type === 'man') continue
+        addrs.push(addr)
       } catch (e) {
         throw this.err(
           'Loading addresses failed',
