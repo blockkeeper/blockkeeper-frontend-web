@@ -80,9 +80,11 @@ class AddrView extends React.Component {
     this.delete = this.delete.bind(this)
     this.set = this.set.bind(this)
     this.close = () => this.setState({ask: null})
-    this.show = () => this.setState({show: !this.state.show, edit: false, unveil: false})
     this.unveil = () => this.setState({unveil: !this.state.unveil})
     this.edit = edit => this.setState({edit: !this.state.edit, show: true})
+    this.show = () => {
+      this.setState({show: !this.state.show, edit: false, unveil: false})
+    }
     this.toggleCoins = () => {
       this.setState({toggleCoins: !this.state.toggleCoins})
     }
@@ -490,43 +492,37 @@ class AddrView extends React.Component {
                                 {this.state.addr.sndAmnt} {this.state.coin}
                               </TableCell>
                             </TableRow>}
-                          {/* (this.state.addr.hd || {}).nxAddrHsh &&
-                            <TableRow>
-                              <TableCell width={'10%'} padding='none'>
-                                Next address (HD path)
-                              </TableCell>
-                              <TableCell numeric padding='none'>
-                                {this.state.addr.hd.nxAddrHsh}
-                                <br />
-                                ({this.state.addr.hd.nxAbsPath})
-                              </TableCell>
-                            </TableRow> */}
                         </TableBody>
                       </Table>
                     </div>
-                    {((this.state.addr.hd || {}).nxAddrHsh) && !this.state.unveil && !this.state.edit &&
-                    <Button
-                      raised
-                      color='contrast'
-                      onClick={this.unveil}
-                      className={this.props.classes.unvlBtn}
-                    >
-                      Unveil xpub key
-                    </Button>}
+                    {(!this.state.unveil && !this.state.edit) &&
+                      <Button
+                        raised
+                        color='contrast'
+                        onClick={this.unveil}
+                        className={this.props.classes.unvlBtn}
+                      >
+                        Unveil xpub key
+                      </Button>
+                    }
                     {this.state.edit &&
-                    <Button
-                      onClick={() => this.setState({ask: true})}
-                      className={this.props.classes.unvlBtn}
-                      color='contrast'
-                      raised>
+                      <Button
+                        onClick={() => this.setState({ask: true})}
+                        className={this.props.classes.unvlBtn}
+                        color='contrast'
+                        raised
+                      >
                           Disconnect wallet
-                        </Button>}
-                    <Button
-                      raised
-                      color='contrast'
-                      onClick={this.show}>
-                      Hide infos
-                    </Button>
+                      </Button>
+                    }
+                    {!this.state.edit &&
+                      <Button
+                        raised
+                        color='contrast'
+                        onClick={this.show}>
+                        Hide infos
+                      </Button>
+                    }
                   </div>
                 }
                 </Grid>
