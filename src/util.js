@@ -297,7 +297,7 @@ const vldPw = (pw) => {
 }
 
 const vldFloat = (val, max) => {
-  return validator.isFloat(val, {min: 0, max: max || 9999999999})
+  return validator.isFloat(String(val), {min: 0, max: max || 9999999999})
     ? ''
     : 'Not a float (e.g. 1.23) or value to small/big'
 }
