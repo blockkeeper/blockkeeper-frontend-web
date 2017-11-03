@@ -112,13 +112,19 @@ export default class Addr extends ApiBase {
         baseAbsPath: upd.hd.baseAbsPath || cur.hd.baseAbsPath
       }
     }
-    const curTscs = new Map(
-      (cur.tscs || []).map(cur => [coinObj.toTscHsh(cur.hsh), cur])
+    upd.tscs = upd.tscs || []
+    const updTscs = new Map(
+      upd.tscs.map(upd => [coinObj.toTscHsh(upd.hsh), upd])
     )
     const tscs = new Map()
-    for (let tsc of (upd.tscs || [])) {
-      tsc.hsh = coinObj.toTscHsh(tsc.hsh)
-      tsc = this.toTsc(addr.coin, tsc, curTscs.get(tsc.hsh))
+    for (let tsc of (cur.tscs || [])) {
+      tsc = this.toTsc(addr.coin, updTscs.get(tsc.hsh), tsc)
+      updTscs.delete(tsc.hsh)
+      tscs.set(tsc.hsh, tsc)
+    }
+    for (let tsc of updTscs.values()) {
+      tsc._id = __.uuid()
+      tsc = this.toTsc(addr.coin, tsc)
       tscs.set(tsc.hsh, tsc)
     }
     addr.tscs = __.struc(tscs, {byTme: true, max: __.cfg('maxTscCnt')})
