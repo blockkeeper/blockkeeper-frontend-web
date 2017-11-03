@@ -9,7 +9,8 @@ import Typography from 'material-ui/Typography'
 import withWidth from 'material-ui/utils/withWidth'
 import {withStyles} from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
-import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter, actnBtnClr} from './Style'
+import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter,
+        actnBtnClr} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
         Modal, CoinIcon, ExtLink, Done, Edit, BxpFloatBtn} from './Lib'
 import Addr from '../logic/Addr'
@@ -349,7 +350,7 @@ class TscView extends React.Component {
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
-                      Description
+                      Notes
                     </Typography>
                   </div>
                   <div className={this.props.classes.valueStyle}>
