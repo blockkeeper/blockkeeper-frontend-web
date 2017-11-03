@@ -2,15 +2,18 @@ import React from 'react'
 import Button from 'material-ui/Button'
 import withWidth from 'material-ui/utils/withWidth'
 import compose from 'recompose/compose'
+import Typography from 'material-ui/Typography'
+import Paper from 'material-ui/Paper'
 import {LinearProgress} from 'material-ui/Progress'
 import {withStyles} from 'material-ui/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn, SoonMsg} from './Lib'
 import __ from '../util'
-import {styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem, gridSpacer, gridGutter,
+import {theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
-        actnBtnClr, topBtnClass, depotEmpty, cnctBtn} from './Style'
+        actnBtnClr, topBtnClass, depotEmpty, cnctBtn, gridSpacer,
+        gridGutter} from './Style'
 
 const styles = {
   themeBgStyle,
@@ -31,7 +34,12 @@ const styles = {
   actnBtnClr,
   topBtnClass,
   depotEmpty,
-  cnctBtn
+  cnctBtn,
+  paperWrap: {
+    textAlign: 'center',
+    paddingTop: theme.spacing.unit * 3,
+    paddingBottom: theme.spacing.unit * 3
+  }
 }
 
 class DepotView extends React.Component {
@@ -193,21 +201,38 @@ class DepotView extends React.Component {
               locale={this.user.locale}
               addrIcon
             />}
-          {this.state.tabIx === 2 && this.state.addrTscs.length > 0 &&
-            <SoonMsg className={this.props.classes.depotEmpty} />}
+          {this.state.tabIx === 1 && this.state.addrTscs.length < 1 &&
+            <Paper
+              elevation={5}
+              square
+              className={this.props.classes.paperWrap}
+            >
+              <Typography align='center' type='body1'>
+                No transactions
+              </Typography>
+            </Paper>
+          }
+          {this.state.tabIx === 2 &&
+            <SoonMsg className={this.props.classes.depotEmpty} />
+          }
           <ToTopBtn
             className={this.props.classes.topBtnClass}
           />
-          {this.state.tabIx === 1 &&
+          {(
+            (this.state.tabIx === 0 || this.state.tabIx === 1) &&
+            this.state.addrTscs.length > 0
+          ) &&
             <BxpFloatBtn
               onClick={() => this.cx.depot.bxp([])}
               bxpSts={this.state.bxpSts}
-            />}
+            />
+          }
           {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
             <FloatBtn
               onClick={this.goAddAddr}
               actnBtnClrClassName={this.props.classes.actnBtnClr}
-            />}
+            />
+          }
         </div>
       )
     } else {

@@ -120,16 +120,16 @@ class AddrView extends React.Component {
     const blc = this.cx.depot.getAddrBlc([addr])
     const tagsJoin = (addr.tags || []).join(' ')
     this.setState({
+      addr,
+      tagsJoin,
+      coin0,
+      coin1,
       upd: false,
-      addr: addr,
       name: addr.name,
       desc: addr.desc,
-      tagsJoin,
       tscs: addr.tscs,
       coin: addr.coin,
       hshMode: Boolean(addr.hsh),
-      coin0,
-      coin1,
       blc1: `${addr.amnt}`,
       blc2: `${blc.get(coin0)}`,
       blc3: `${blc.get(coin1)}`,
@@ -546,7 +546,8 @@ class AddrView extends React.Component {
               body2ClassName={this.props.classes.body2}
               tscAmntClassName={this.props.classes.tscAmnt}
               locale={this.user.locale}
-            />}
+            />
+          }
           {this.state.tscs.length <= 0 &&
             <Paper
               elevation={5}
@@ -554,17 +555,19 @@ class AddrView extends React.Component {
               className={this.props.classes.paperWrap}
             >
               <Typography align='center' type='body1'>
-                {this.state.addr.hsh &&
+                {this.state.addr.type !== 'man' &&
                   'No transactions'}
-                {!this.state.addr.hsh &&
+                {this.state.addr.type === 'man' &&
                   'No transactions (manually added wallet)'}
               </Typography>
-            </Paper>}
-
-          <BxpFloatBtn
-            onClick={() => this.cx.depot.bxp([this.addrId])}
-            bxpSts={this.state.bxpSts}
-          />
+            </Paper>
+          }
+          {this.state.addr.type !== 'man' &&
+            <BxpFloatBtn
+              onClick={() => this.cx.depot.bxp([this.addrId])}
+              bxpSts={this.state.bxpSts}
+            />
+          }
           <ToTopBtn
             className={this.props.classes.topBtnClass}
           />

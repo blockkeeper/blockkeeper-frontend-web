@@ -96,7 +96,7 @@ export default class Depot extends ApiBase {
     let d = {addrsByType: undefined, curAddrs: {}}
     let addrs
     try {
-      addrs = await this.loadAddrs(addrIds, {hshOnly: true, skipStruc: true})
+      addrs = await this.loadAddrs(addrIds, {ignManType: true, skipStruc: true})
     } catch (e) {
       this.watchBxp('blocked')
       throw this.err('Bxp failed for all addrs: Loading addrs failed', {e})
