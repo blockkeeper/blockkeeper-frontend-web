@@ -247,7 +247,7 @@ class AddrView extends React.Component {
             noUser
           />}
           {this.state.busy &&
-          <LinearProgress />}
+            <LinearProgress />}
           <Paper
             elevation={0}
             square
@@ -495,7 +495,10 @@ class AddrView extends React.Component {
                         </TableBody>
                       </Table>
                     </div>
-                    {(!this.state.unveil && !this.state.edit) &&
+                    {(
+                        this.state.addr.type === 'hd' &&
+                        !this.state.unveil && !this.state.edit
+                      ) &&
                       <Button
                         raised
                         color='contrast'
