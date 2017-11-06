@@ -1,10 +1,9 @@
 import React from 'react'
 import compose from 'recompose/compose'
 import {LinearProgress} from 'material-ui/Progress'
-import {ArrowBack, Launch} from 'material-ui-icons'
+import {ArrowBack} from 'material-ui-icons'
 import Paper from 'material-ui/Paper'
 import {Link} from 'react-router-dom'
-import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import withWidth from 'material-ui/utils/withWidth'
 import {withStyles} from 'material-ui/styles'
@@ -15,42 +14,6 @@ import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
         Modal, CoinIcon, ExtLink, Done, Edit, BxpFloatBtn} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
-
-const styles = {
-  themeBgStyle,
-  noTxtDeco,
-  gridWrap,
-  gridGutter,
-  actnBtnClr,
-  spacer: {
-    paddingTop: theme.spacing.unit * 2,
-    paddingBottom: theme.spacing.unit * 2
-  },
-  flexStyle: {
-    display: 'flex',
-    marginBottom: theme.spacing.unit * 2
-  },
-  labelStyle: {
-    color: theme.palette.text.secondary,
-    width: '40%',
-    minWidth: theme.spacing.unit * 14,
-    textAlign: 'right',
-    [theme.breakpoints.down('sm')]: {
-      width: theme.spacing.unit * 14
-    }
-  },
-  valueStyle: {
-    width: '60%',
-    paddingLeft: theme.spacing.unit * 4
-  },
-  extBtn: {
-    width: '50%',
-    margin: theme.spacing.unit * 3
-  },
-  body2: {
-    color: theme.palette.text.secondary
-  }
-}
 
 class TscView extends React.Component {
   constructor (props) {
@@ -264,18 +227,6 @@ class TscView extends React.Component {
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
-                      Hash
-                    </Typography>
-                  </div>
-                  <div className={this.props.classes.valueStyle}>
-                    <Typography type='body1' noWrap>
-                      {this.state.tsc.hsh}
-                    </Typography>
-                  </div>
-                </div>
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
                       Name
                     </Typography>
                   </div>
@@ -293,6 +244,52 @@ class TscView extends React.Component {
                       <Typography type='body1' noWrap>
                         {this.state.tsc.name}
                       </Typography>}
+                  </div>
+                </div>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' noWrap color='inherit'>
+                      Notes
+                    </Typography>
+                  </div>
+                  <div className={this.props.classes.valueStyle}>
+                    {this.state.edit &&
+                      <TextField
+                        placeholder='Description'
+                        fullWidth
+                        value={this.state.desc}
+                        error={Boolean(this.state.descEmsg)}
+                        helperText={this.state.descEmsg}
+                        onChange={evt => this.set('desc', evt.target.value)}
+                      />}
+                    {!this.state.edit &&
+                      <Typography type='body1' noWrap>
+                        {this.state.tsc.desc}
+                      </Typography>}
+                  </div>
+                </div>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' noWrap color='inherit'>
+                      Tags
+                    </Typography>
+                  </div>
+                  <div className={this.props.classes.valueStyle}>
+                    {this.state.edit &&
+                      <TextField
+                        placeholder='Tags'
+                        fullWidth
+                        value={this.state.tagsJoin}
+                        error={Boolean(this.state.tagsEmsg)}
+                        helperText={this.state.tagsEmsg}
+                        onChange={evt => {
+                          this.set('tagsJoin', evt.target.value)
+                        }}
+                      />}
+                    {!this.state.edit &&
+                    <Typography type='body1' noWrap>
+                      {this.state.tagsJoin}
+                    </Typography>}
                   </div>
                 </div>
                 {this.state.tsc.cfmCnt >= 0 &&
@@ -321,52 +318,6 @@ class TscView extends React.Component {
                     <Typography type='body1' noWrap>
                       {__.ppTme(this.state.tsc._t)}
                     </Typography>
-                  </div>
-                </div>
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
-                      Tags
-                    </Typography>
-                  </div>
-                  <div className={this.props.classes.valueStyle}>
-                    {this.state.edit &&
-                      <TextField
-                        placeholder='Tags'
-                        fullWidth
-                        value={this.state.tagsJoin}
-                        error={Boolean(this.state.tagsEmsg)}
-                        helperText={this.state.tagsEmsg}
-                        onChange={evt => {
-                          this.set('tagsJoin', evt.target.value)
-                        }}
-                      />}
-                    {!this.state.edit &&
-                    <Typography type='body1' noWrap>
-                      {this.state.tagsJoin}
-                    </Typography>}
-                  </div>
-                </div>
-                <div className={this.props.classes.flexStyle}>
-                  <div className={this.props.classes.labelStyle}>
-                    <Typography type='body1' noWrap color='inherit'>
-                      Notes
-                    </Typography>
-                  </div>
-                  <div className={this.props.classes.valueStyle}>
-                    {this.state.edit &&
-                      <TextField
-                        placeholder='Description'
-                        fullWidth
-                        value={this.state.desc}
-                        error={Boolean(this.state.descEmsg)}
-                        helperText={this.state.descEmsg}
-                        onChange={evt => this.set('desc', evt.target.value)}
-                      />}
-                    {!this.state.edit &&
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.desc}
-                      </Typography>}
                   </div>
                 </div>
                 <div className={this.props.classes.flexStyle}>
@@ -417,17 +368,22 @@ class TscView extends React.Component {
                     </div>
                   </div>
                 }
-                <div style={{textAlign: 'center'}}>
-                  <ExtLink
-                    to={tscUrl}
-                    className={this.props.classes.noTxtDeco}
-                    txt={
-                      <Button className={this.props.classes.extBtn}>
-                        Detailed transaction
-                        <Launch />
-                      </Button>
-                    }
-                  />
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' noWrap color='inherit'>
+                      Hash
+                    </Typography>
+                  </div>
+                  <div className={this.props.classes.valueStyle}>
+                    <ExtLink
+                      to={tscUrl}
+                      txt={
+                        <Typography type='body1' noWrap>
+                          {this.state.tsc.hsh}
+                        </Typography>
+                      }
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -444,4 +400,34 @@ class TscView extends React.Component {
   }
 }
 
-export default compose(withStyles(styles), withWidth())(TscView)
+export default compose(withStyles({
+  themeBgStyle,
+  noTxtDeco,
+  gridWrap,
+  gridGutter,
+  actnBtnClr,
+  spacer: {
+    paddingTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2
+  },
+  flexStyle: {
+    display: 'flex',
+    marginBottom: theme.spacing.unit * 2
+  },
+  labelStyle: {
+    color: theme.palette.text.secondary,
+    width: '40%',
+    minWidth: theme.spacing.unit * 14,
+    textAlign: 'right',
+    [theme.breakpoints.down('sm')]: {
+      width: theme.spacing.unit * 14
+    }
+  },
+  valueStyle: {
+    width: '60%',
+    paddingLeft: theme.spacing.unit * 4
+  },
+  body2: {
+    color: theme.palette.text.secondary
+  }
+}), withWidth())(TscView)

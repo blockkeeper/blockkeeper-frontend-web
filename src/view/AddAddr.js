@@ -17,23 +17,6 @@ import {TopBar, Modal, CoinIcon, Snack} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
-const styles = {
-  themeBgStyle,
-  gridWrap,
-  gridGutter,
-  gridSpacer,
-  dividerStyle,
-  qrReaderStyle,
-  actnBtnClr,
-  cnctBtn,
-  radios: {
-    paddingLeft: theme.spacing.unit
-  },
-  center: {
-    textAlign: 'center'
-  }
-}
-
 class AddAddrView extends React.Component {
   constructor (props) {
     super(props)
@@ -335,4 +318,19 @@ class AddAddrView extends React.Component {
   }
 }
 
-export default withStyles(styles)(AddAddrView)
+export default withStyles({
+  themeBgStyle,
+  gridWrap,
+  gridGutter,
+  gridSpacer,
+  dividerStyle,
+  qrReaderStyle,
+  actnBtnClr,
+  cnctBtn,
+  radios: {
+    paddingLeft: theme.spacing.unit
+  },
+  center: {
+    textAlign: 'center'
+  }
+})(AddAddrView)

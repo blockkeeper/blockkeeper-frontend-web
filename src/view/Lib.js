@@ -26,7 +26,7 @@ import Typography from 'material-ui/Typography'
 import {UserAgentProvider, UserAgent} from '@quentin-sommer/react-useragent'
 import {LinearProgress} from 'material-ui/Progress'
 import {Add, Close, Autorenew, AccountCircle, InfoOutline,
-       Error, KeyboardArrowUp, Feedback, BugReport} from 'material-ui-icons'
+       Error, KeyboardArrowUp, Feedback, BugReport, Email} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
        DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, floatBtnStyle, CryptoColors} from './Style'
@@ -909,6 +909,19 @@ const UserList = ({askLogout, askDelete}) =>
           <BugReport />
         </ListItemIcon>
         <ListItemText primary='Report errors + bugs' />
+      </ListItem>
+    </a>
+    <a
+      href='https://eepurl.com/c-p1fr'
+      target='_blank'
+      style={{textDecoration: 'none'}}
+      rel='noopener noreferrer'
+    >
+      <ListItem divider button>
+        <ListItemIcon>
+          <Email />
+        </ListItemIcon>
+        <ListItemText primary='Newsletter' />
       </ListItem>
     </a>
     <ListItem divider button onClick={askLogout}>

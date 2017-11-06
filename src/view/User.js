@@ -8,14 +8,6 @@ import {themeBgStyle, gridWrap, gridSpacer, gridGutter, gridGutterFluid} from '.
 import Paper from 'material-ui/Paper'
 import __ from '../util'
 
-const styles = {
-  themeBgStyle,
-  gridWrap,
-  gridSpacer,
-  gridGutter,
-  gridGutterFluid
-}
-
 class UserView extends React.Component {
   constructor (props) {
     super(props)
@@ -220,7 +212,7 @@ class UserView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <TextField
                   fullWidth
-                  label='Username'
+                  label='Account name'
                   margin='normal'
                   value={this.state.username}
                   error={
@@ -273,4 +265,10 @@ class UserView extends React.Component {
   }
 }
 
-export default withStyles(styles)(UserView)
+export default withStyles({
+  themeBgStyle,
+  gridWrap,
+  gridSpacer,
+  gridGutter,
+  gridGutterFluid
+})(UserView)

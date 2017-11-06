@@ -15,43 +15,12 @@ import __ from '../util'
 import { FormControlLabel, FormGroup } from 'material-ui/Form'
 import Switch from 'material-ui/Switch'
 
-const styles = {
-  fullHeightRoot,
-  loginStyle,
-  paperStyle,
-  fullWidth,
-  actnBtnClr,
-  body1: {
-    textAlign: 'left',
-    marginTop: theme.spacing.unit * 2
-  },
-  btnRg: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit
-  },
-  person: {
-    width: theme.spacing.unit * 2,
-    height: theme.spacing.unit * 2
-  },
-  switch: {
-    color: theme.palette.error[500]
-  },
-  bar: {
-  },
-  checked: {
-    '& + $bar': {
-      backgroundColor: theme.palette.error[500]
-    }
-  }
-}
-
 class RgstrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
     this.browserLocale = browserLocale() || 'en-US'
-    this.state = {username: 'Username', pw: '', rpw: '', coin0: 'USD', coin1: 'BTC', locale: this.browserLocale, writeDown: false}
+    this.state = {username: 'Account name', pw: '', rpw: '', coin0: 'USD', coin1: 'BTC', locale: this.browserLocale, writeDown: false}
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')
     this.save = this.save.bind(this)
@@ -310,4 +279,33 @@ class RgstrView extends React.Component {
   }
 }
 
-export default withStyles(styles)(RgstrView)
+export default withStyles({
+  fullHeightRoot,
+  loginStyle,
+  paperStyle,
+  fullWidth,
+  actnBtnClr,
+  body1: {
+    textAlign: 'left',
+    marginTop: theme.spacing.unit * 2
+  },
+  btnRg: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit
+  },
+  person: {
+    width: theme.spacing.unit * 2,
+    height: theme.spacing.unit * 2
+  },
+  switch: {
+    color: theme.palette.error[500]
+  },
+  bar: {
+  },
+  checked: {
+    '& + $bar': {
+      backgroundColor: theme.palette.error[500]
+    }
+  }
+})(RgstrView)

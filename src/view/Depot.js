@@ -15,33 +15,6 @@ import {theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
         actnBtnClr, topBtnClass, depotEmpty, cnctBtn, gridSpacer,
         gridGutter} from './Style'
 
-const styles = {
-  themeBgStyle,
-  gridWrap,
-  gridWrapPaper,
-  gridItem,
-  gridSpacer,
-  gridGutter,
-  tscitem,
-  addr,
-  amnt,
-  tscIcon,
-  tscAmnt,
-  display1,
-  body2,
-  display3,
-  tab,
-  actnBtnClr,
-  topBtnClass,
-  depotEmpty,
-  cnctBtn,
-  paperWrap: {
-    textAlign: 'center',
-    paddingTop: theme.spacing.unit * 3,
-    paddingBottom: theme.spacing.unit * 3
-  }
-}
-
 class DepotView extends React.Component {
   constructor (props) {
     super(props)
@@ -241,4 +214,29 @@ class DepotView extends React.Component {
   }
 }
 
-export default compose(withStyles(styles), withWidth())(DepotView)
+export default compose(withStyles({
+  themeBgStyle,
+  gridWrap,
+  gridWrapPaper,
+  gridItem,
+  gridSpacer,
+  gridGutter,
+  tscitem,
+  addr,
+  amnt,
+  tscIcon,
+  tscAmnt,
+  display1,
+  body2,
+  display3,
+  tab,
+  actnBtnClr,
+  topBtnClass,
+  depotEmpty,
+  cnctBtn,
+  paperWrap: {
+    textAlign: 'center',
+    paddingTop: theme.spacing.unit * 3,
+    paddingBottom: theme.spacing.unit * 3
+  }
+}), withWidth())(DepotView)

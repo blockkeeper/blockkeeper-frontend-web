@@ -11,23 +11,6 @@ import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} fr
 import {Modal, BrowserGate, NtAllwd} from './Lib'
 import __ from '../util'
 
-const styles = {
-  fullHeightRoot,
-  loginStyle,
-  paperStyle,
-  fullWidth,
-  actnBtnClr,
-  loginButton: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit
-  },
-  lockIcon: {
-    width: theme.spacing.unit * 2,
-    height: theme.spacing.unit * 2
-  }
-}
-
 class LoginView extends React.Component {
   constructor (props) {
     super(props)
@@ -158,4 +141,19 @@ class LoginView extends React.Component {
   }
 }
 
-export default withStyles(styles)(LoginView)
+export default withStyles({
+  fullHeightRoot,
+  loginStyle,
+  paperStyle,
+  fullWidth,
+  actnBtnClr,
+  loginButton: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit
+  },
+  lockIcon: {
+    width: theme.spacing.unit * 2,
+    height: theme.spacing.unit * 2
+  }
+})(LoginView)

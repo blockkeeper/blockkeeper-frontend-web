@@ -20,53 +20,6 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
 import Addr from '../logic/Addr'
 import __ from '../util'
 
-const styles = {
-  themeBgStyle,
-  noTxtDeco,
-  qrCodeWrap,
-  gridWrap,
-  gridSpacer,
-  gridGutter,
-  tscitem,
-  addr,
-  amnt,
-  tscIcon,
-  tscAmnt,
-  display1,
-  body2,
-  actnBtnClr,
-  topBtnClass,
-  paperWrap: {
-    textAlign: 'center',
-    paddingTop: theme.spacing.unit * 3,
-    paddingBottom: theme.spacing.unit * 3
-  },
-  titleStyle: {
-    paddingTop: theme.spacing.unit * 2,
-    lineHeight: 1.5
-  },
-  display3: {
-    fontWeight: '400',
-    color: theme.palette.primary['500']
-  },
-  deleteIcon: {
-    width: theme.spacing.unit * 2,
-    height: theme.spacing.unit * 2
-  },
-  tableWrap: {
-    overflowX: 'auto',
-    marginBottom: theme.spacing.unit * 2
-  },
-  addrStyle: {
-    fontSize: '13px',
-    overflowX: 'auto'
-  },
-  unvlBtn: {
-    marginBottom: theme.spacing.unit,
-    marginRight: theme.spacing.unit
-  }
-}
-
 class AddrView extends React.Component {
   constructor (props) {
     super(props)
@@ -624,4 +577,49 @@ class AddrView extends React.Component {
   }
 }
 
-export default withStyles(styles)(AddrView)
+export default withStyles({
+  themeBgStyle,
+  noTxtDeco,
+  qrCodeWrap,
+  gridWrap,
+  gridSpacer,
+  gridGutter,
+  tscitem,
+  addr,
+  amnt,
+  tscIcon,
+  tscAmnt,
+  display1,
+  body2,
+  actnBtnClr,
+  topBtnClass,
+  paperWrap: {
+    textAlign: 'center',
+    paddingTop: theme.spacing.unit * 3,
+    paddingBottom: theme.spacing.unit * 3
+  },
+  titleStyle: {
+    paddingTop: theme.spacing.unit * 2,
+    lineHeight: 1.5
+  },
+  display3: {
+    fontWeight: '400',
+    color: theme.palette.primary['500']
+  },
+  deleteIcon: {
+    width: theme.spacing.unit * 2,
+    height: theme.spacing.unit * 2
+  },
+  tableWrap: {
+    overflowX: 'auto',
+    marginBottom: theme.spacing.unit * 2
+  },
+  addrStyle: {
+    fontSize: '13px',
+    overflowX: 'auto'
+  },
+  unvlBtn: {
+    marginBottom: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  }
+})(AddrView)
