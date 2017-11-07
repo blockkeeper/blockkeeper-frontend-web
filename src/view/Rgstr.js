@@ -1,5 +1,6 @@
 import React from 'react'
 import * as browserLocale from 'browser-locale'
+import * as fileDownload from 'js-file-download'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
@@ -8,7 +9,7 @@ import Grid from 'material-ui/Grid'
 import { withStyles } from 'material-ui/styles'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
-import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} from './Style'
+import {theme, paperStyle, loginStyle, fullWidth, actnBtnClr, styleGuide} from './Style'
 import {Modal, BrowserGate, NtAllwd, DropDown} from './Lib'
 import Rate from '../logic/Rate'
 import __ from '../util'
@@ -28,11 +29,14 @@ class RgstrView extends React.Component {
     this.logout = this.logout.bind(this)
     this.set = this.set.bind(this)
     this.setAction = this.setAction.bind(this)
-    this.identifier = new Uint32Array(3)
+    this.identifier = new Uint32Array(1)
     window.crypto.getRandomValues(this.identifier)
   }
 
   async componentDidMount () {
+    // set body bg
+    document.body.style.backgroundColor = styleGuide.backgroundDark
+
     Object.assign(this, __.initView(this, 'rgstr'))
     if (this.cx.core.isActive()) this.setState({loggedIn: true})
     await this.load()
@@ -66,7 +70,11 @@ class RgstrView extends React.Component {
     this.setState({loggedIn: null})
   }
 
-  async save () {
+  async save (e) {
+    if (e) {
+      e.preventDefault()
+    }
+
     this.setState({busy: true})
     try {
       await this.cx.core.register(
@@ -137,7 +145,7 @@ class RgstrView extends React.Component {
       )
     } else {
       return (
-        <div className={this.props.classes.fullHeightRoot}>
+        <div>
           {this.state.busy &&
           <LinearProgress />}
           <div className={this.props.classes.loginStyle}>
@@ -150,53 +158,58 @@ class RgstrView extends React.Component {
                   Please choose your account details
                 </Typography>
                 <Paper square className={this.props.classes.paperStyle} elevation={24}>
-                  <TextField
-                    autoFocus
-                    fullWidth
-                    label='Identifier'
-                    margin='normal'
-                    value={this.identifier.join('')}
-                    helperText='your account login identifier'
-                    disabled={this.state.writeDown}
-                  />
-                  {false && <TextField
-                    autoFocus
-                    fullWidth
-                    required
-                    label='Username'
-                    margin='normal'
-                    value={this.state.username}
-                    error={Boolean(this.state.usernameEmsg)}
-                    helperText={this.state.usernameEmsg}
-                    onChange={evt => this.set('username', evt.target.value)}
-                  />}
-                  <TextField
-                    fullWidth
-                    required
-                    label='Password'
-                    type='password'
-                    margin='normal'
-                    value={this.state.pw}
-                    error={Boolean(this.state.pwEmsg)}
-                    helperText={this.state.pwEmsg}
-                    onChange={evt => this.set('pw', evt.target.value)}
-                    disabled={this.state.writeDown}
-                  />
-                  <TextField
-                    fullWidth
-                    required
-                    label='Retype password'
-                    type='password'
-                    margin='normal'
-                    value={this.state.rpw}
-                    error={Boolean(this.state.rpwEmsg)}
-                    helperText={this.state.rpwEmsg}
-                    onChange={evt => this.set('rpw', evt.target.value)}
-                    disabled={this.state.writeDown}
-                  />
-                  <Grid container spacing={16}>
-                    <Grid item xs={6}>
-                      {this.state.coins &&
+                  <form autoComplete='on' onSubmit={this.save}>
+                    <TextField
+                      autoFocus
+                      fullWidth
+                      required
+                      label='Identifier'
+                      margin='normal'
+                      value={this.identifier.join('')}
+                      helperText='your account login identifier'
+                      disabled={this.state.writeDown}
+                      autoComplete='on'
+                    />
+                    {false && <TextField
+                      autoFocus
+                      fullWidth
+                      required
+                      label='Username'
+                      margin='normal'
+                      value={this.state.username}
+                      error={Boolean(this.state.usernameEmsg)}
+                      helperText={this.state.usernameEmsg}
+                      onChange={evt => this.set('username', evt.target.value)}
+                    />}
+                    <TextField
+                      fullWidth
+                      required
+                      label='Password'
+                      type='password'
+                      margin='normal'
+                      value={this.state.pw}
+                      error={Boolean(this.state.pwEmsg)}
+                      helperText={this.state.pwEmsg}
+                      onChange={evt => this.set('pw', evt.target.value)}
+                      disabled={this.state.writeDown}
+                      autoComplete='on'
+                    />
+                    <TextField
+                      fullWidth
+                      required
+                      label='Retype password'
+                      type='password'
+                      margin='normal'
+                      value={this.state.rpw}
+                      error={Boolean(this.state.rpwEmsg)}
+                      helperText={this.state.rpwEmsg}
+                      onChange={evt => this.set('rpw', evt.target.value)}
+                      disabled={this.state.writeDown}
+                      autoComplete='on'
+                    />
+                    <Grid container spacing={16}>
+                      <Grid item xs={6}>
+                        {this.state.coins &&
                         <DropDown
                           _id='coin0DropDown'
                           title={'Primary coin'}
@@ -205,49 +218,60 @@ class RgstrView extends React.Component {
                           action={this.setAction}
                           disabled={this.state.writeDown}
                          />}
-                    </Grid>
-                    <Grid item xs={6}>
-                      {this.state.coins &&
-                      <DropDown
-                        _id='coin1DropDown'
-                        title={'Secondary coin'}
-                        data={this.state.coins.coin0}
-                        slctd={this.state.coin1}
-                        action={this.setAction}
-                        disabled={this.state.writeDown}
+                      </Grid>
+                      <Grid item xs={6}>
+                        {this.state.coins &&
+                        <DropDown
+                          _id='coin1DropDown'
+                          title={'Secondary coin'}
+                          data={this.state.coins.coin0}
+                          slctd={this.state.coin1}
+                          action={this.setAction}
+                          disabled={this.state.writeDown}
                       />}
+                      </Grid>
                     </Grid>
-                  </Grid>
-                  <Typography type='body1' gutterBottom className={this.props.classes.body1}>
-                    Please make sure you store your identifier and password safely.
-                    Due to data privacy and security reasons, it is NOT possible
-                    to recover your identifier or password. If you <b>forget your
-                    login</b> credentials, all your <b>data will be lost</b> and you need
-                    to setup a new account from the scratch.
-                  </Typography>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checkedClassName={this.props.classes.switch}
-                          classes={{
-                            bar: this.props.classes.bar,
-                            checked: this.props.classes.checked
-                          }}
-                          checked={this.state.writeDown}
-                          disabled={this.state.pw === '' || Boolean(this.state.rpwEmsg)}
-                          onChange={evt => this.set('writeDown', !this.state.writeDown)} />}
-                      label='I wrote down my identifier and password' />
-                  </FormGroup>
-                  {!this.busy &&
+                    <Typography type='body1' gutterBottom className={this.props.classes.body1}>
+                      Please make sure you store your <b>identifier and password</b> safely.
+                      Due to data privacy and security reasons, it is NOT possible
+                      to recover your identifier or password. If you <b>forget your
+                      login</b> credentials, all your <b>data will be lost</b> and you need
+                      to setup a new account from the scratch.
+                    </Typography>
+                    {false && <Button
+                      onClick={() => { fileDownload(this.identifier.join(''), 'blockkeeper-identifier.txt') }}
+                    >
+                      Download identifier
+                    </Button>}
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checkedClassName={this.props.classes.switch}
+                            classes={{
+                              bar: this.props.classes.bar,
+                              checked: this.props.classes.checked
+                            }}
+                            checked={this.state.writeDown}
+                            disabled={this.state.pw === '' || Boolean(this.state.rpwEmsg)}
+                            onChange={evt => this.set('writeDown', !this.state.writeDown)} />}
+                        label='I stored my identifier and password' />
+                    </FormGroup>
+                    {!this.busy &&
                     <BrowserGate
                       allwd={
                         <div>
+                          {false && <input
+                            type='submit'
+                            value='test'
+                            className={this.props.classes.btnRg}
+                            disabled={!this.state.upd}
+                          />}
                           <Button
                             raised
+                            type='submit'
                             color={'accent'}
                             className={this.props.classes.btnRg}
-                            onClick={this.save}
                             disabled={!this.state.upd}
                             classes={{
                               raisedAccent: this.props.classes.actnBtnClr
@@ -269,6 +293,7 @@ class RgstrView extends React.Component {
                       ntAll={<NtAllwd />}
                     />
                   }
+                  </form>
                 </Paper>
               </Grid>
             </Grid>
@@ -280,7 +305,6 @@ class RgstrView extends React.Component {
 }
 
 export default withStyles({
-  fullHeightRoot,
   loginStyle,
   paperStyle,
   fullWidth,

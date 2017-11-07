@@ -8,8 +8,8 @@ Object.assign(d, {
   apiUrl: 'https://api.blockkeeper.io/v1',
   homeUrl: 'https://blockkeeper.io',
   lstMax: 50,
-  maxLow: 30,
-  maxHigh: 500,
+  maxLow: 10,
+  maxHigh: 100,
   minAddr: 26,
   maxAddr: 250,
   minPw: d.isDev ? 1 : 1, // TODO

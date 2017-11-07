@@ -7,7 +7,7 @@ import Grid from 'material-ui/Grid'
 import { withStyles } from 'material-ui/styles'
 import {LinearProgress} from 'material-ui/Progress'
 import {Lock} from 'material-ui-icons'
-import {theme, paperStyle, loginStyle, fullWidth, fullHeightRoot, actnBtnClr} from './Style'
+import {theme, paperStyle, loginStyle, fullWidth, actnBtnClr, styleGuide} from './Style'
 import {Modal, BrowserGate, NtAllwd} from './Lib'
 import __ from '../util'
 
@@ -25,11 +25,14 @@ class LoginView extends React.Component {
 
   componentDidMount () {
     Object.assign(this, __.initView(this, 'login'))
+
+    // set body bg
+    document.body.style.backgroundColor = styleGuide.backgroundDark
   }
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
-      let d = {upd: false, identifierEmsg: __.vldAlphNum(this.state.identifier, {min: 30, max: 30})}
+      let d = {upd: false, identifierEmsg: __.vldAlphNum(this.state.identifier, {min: 10, max: 10})}
       if (this.state.pw) {
         d.pwEmsg = __.vldPw(this.state.pw)
       }
@@ -65,7 +68,7 @@ class LoginView extends React.Component {
       )
     } else {
       return (
-        <div className={this.props.classes.fullHeightRoot}>
+        <div>
           {this.state.busy &&
           <LinearProgress />}
           {!this.state.busy &&
@@ -142,7 +145,6 @@ class LoginView extends React.Component {
 }
 
 export default withStyles({
-  fullHeightRoot,
   loginStyle,
   paperStyle,
   fullWidth,

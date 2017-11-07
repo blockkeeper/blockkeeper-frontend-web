@@ -157,6 +157,7 @@ const themeBgStyle = {
 
 const loginStyle = {
   paddingTop: styleGuide.spacertop,
+  paddingBottom: theme.spacing.unit * 2,
   color: common.white
 }
 
@@ -214,11 +215,6 @@ const qrCodeWrap = {
 
 const fullWidth = {
   width: '100%'
-}
-
-const fullHeightRoot = {
-  ...themeBgStyle,
-  height: '100vh'
 }
 
 const gridWrap = {
@@ -379,7 +375,6 @@ export {
   noTxtDeco,
   qrCodeWrap,
   fullWidth,
-  fullHeightRoot,
   gridWrap,
   gridWrapPaper,
   gridItem,
