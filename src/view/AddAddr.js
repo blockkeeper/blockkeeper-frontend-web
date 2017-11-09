@@ -291,7 +291,7 @@ class AddAddrView extends React.Component {
                 <div className={this.props.classes.center}>
                   <Button
                     raised
-                    color={'accent'}
+                    color='accent'
                     className={this.props.classes.cnctBtn}
                     onClick={this.save}
                     disabled={!this.state.upd || this.state.busy}

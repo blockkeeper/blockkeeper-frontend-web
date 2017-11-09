@@ -29,8 +29,9 @@ class RgstrView extends React.Component {
     this.logout = this.logout.bind(this)
     this.set = this.set.bind(this)
     this.setAction = this.setAction.bind(this)
-    this.identifier = new Uint32Array(1)
-    window.crypto.getRandomValues(this.identifier)
+    this.identifierSeed = new Uint16Array(4)
+    window.crypto.getRandomValues(this.identifierSeed)
+    this.identifier = this.identifierSeed.join('-')
   }
 
   async componentDidMount () {
@@ -78,7 +79,7 @@ class RgstrView extends React.Component {
     this.setState({busy: true})
     try {
       await this.cx.core.register(
-        this.identifier.join(''),
+        this.identifier,
         this.state.username,
         this.state.pw,
         this.state.coin0,
@@ -144,6 +145,7 @@ class RgstrView extends React.Component {
         </Modal>
       )
     } else {
+      const pdfFile = `Blockkeeper.io backup file\r\nIdentifier: ${this.identifier}\r\nPassword: ${this.state.pw}\r\n`
       return (
         <div>
           {this.state.busy &&
@@ -165,7 +167,7 @@ class RgstrView extends React.Component {
                       required
                       label='Identifier'
                       margin='normal'
-                      value={this.identifier.join('')}
+                      value={this.identifier}
                       helperText='your account login identifier'
                       disabled={this.state.writeDown}
                       autoComplete='on'
@@ -238,11 +240,19 @@ class RgstrView extends React.Component {
                       login</b> credentials, all your <b>data will be lost</b> and you need
                       to setup a new account from the scratch.
                     </Typography>
-                    {false && <Button
-                      onClick={() => { fileDownload(this.identifier.join(''), 'blockkeeper-identifier.txt') }}
-                    >
-                      Download identifier
-                    </Button>}
+                    <Button
+                      raised
+                      color='accent'
+                      disabled={(this.state.pw === '' || this.state.rpw === '' || this.state.rpwEmsg !== '' || this.state.upd)}
+                      className={this.props.classes.btnBackup}
+                      onClick={() => {
+                        fileDownload(pdfFile, 'blockkeeper-backup.txt')
+                      }}
+                      classes={{
+                        raisedAccent: this.props.classes.actnBtnClr
+                      }}>
+                      Download backup
+                    </Button>
                     <FormGroup>
                       <FormControlLabel
                         control={
@@ -253,9 +263,9 @@ class RgstrView extends React.Component {
                               checked: this.props.classes.checked
                             }}
                             checked={this.state.writeDown}
-                            disabled={this.state.pw === '' || Boolean(this.state.rpwEmsg)}
+                            disabled={this.state.pw === '' || this.state.rpw === '' || Boolean(this.state.rpwEmsg)}
                             onChange={evt => this.set('writeDown', !this.state.writeDown)} />}
-                        label='I stored my identifier and password' />
+                        label='I downloaded my backup or wrote down my identifier and password' />
                     </FormGroup>
                     {!this.busy &&
                     <BrowserGate
@@ -270,7 +280,7 @@ class RgstrView extends React.Component {
                           <Button
                             raised
                             type='submit'
-                            color={'accent'}
+                            color='accent'
                             className={this.props.classes.btnRg}
                             disabled={!this.state.upd}
                             classes={{
@@ -331,5 +341,10 @@ export default withStyles({
     '& + $bar': {
       backgroundColor: theme.palette.error[500]
     }
+  },
+  btnBackup: {
+    ...fullWidth,
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2
   }
 })(RgstrView)

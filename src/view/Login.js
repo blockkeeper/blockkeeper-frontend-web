@@ -32,7 +32,7 @@ class LoginView extends React.Component {
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
-      let d = {upd: false, identifierEmsg: __.vldAlphNum(this.state.identifier, {min: 10, max: 10})}
+      let d = {upd: false, identifierEmsg: __.vldAlphNum(this.state.identifier, {min: 23, max: 23})}
       if (this.state.pw) {
         d.pwEmsg = __.vldPw(this.state.pw)
       }
@@ -111,7 +111,7 @@ class LoginView extends React.Component {
                       <div>
                         <Button
                           raised
-                          color={'accent'}
+                          color='accent'
                           className={this.props.classes.loginButton}
                           onClick={(event) => this.login(event)}
                           disabled={!this.state.upd}
