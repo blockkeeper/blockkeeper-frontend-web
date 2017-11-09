@@ -230,7 +230,7 @@ const FloatBtn = ({onClick, key, actnBtnClrClassName}) => {
   )
 }
 
-const BxpFloatBtn = ({onClick, bxpSts, style}) => {
+const BxpFloatBtn = ({onClick, bxpSts, style, second}) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
     /* lbl = 'Blocked'
@@ -251,7 +251,7 @@ const BxpFloatBtn = ({onClick, bxpSts, style}) => {
       fab
       aria-label={lbl}
       color='contrast'
-      style={{...floatBtnStyle, bottom: theme.spacing.unit * 2}}
+      style={{...floatBtnStyle, bottom: second ? theme.spacing.unit * 10 : theme.spacing.unit * 2}}
       onClick={onClick}
       key='bxpFloatBtn'
       disabled={dsbld}
