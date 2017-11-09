@@ -551,16 +551,6 @@ class Modal extends React.Component {
 }
 
 class BrowserGate extends React.Component {
-  /* TODO pass parser to props
-  ? <div>
-    test
-    {console.log(parser.getBrowser())}
-  </div>
-  //: <div>
-  //  test
-  // {console.log(parser.getBrowser())}
-  // </div>} */
-
   render () {
     return (
       <UserAgentProvider ua={window.navigator.userAgent}>
@@ -577,6 +567,24 @@ class BrowserGate extends React.Component {
                )
               ? this.props.allwd
               : this.props.ntAll}
+            </div>
+          )}
+        </UserAgent>
+      </UserAgentProvider>
+    )
+  }
+}
+
+class BrowserGateSafarimobile extends React.Component {
+  render () {
+    return (
+      <UserAgentProvider ua={window.navigator.userAgent}>
+        <UserAgent returnfullParser>
+          {parser => (
+            <div>
+              {(parser.getBrowser().name === 'Mobile Safari')
+              ? this.props.safari
+              : this.props.rest}
             </div>
           )}
         </UserAgent>
@@ -950,6 +958,7 @@ export {
   SubBar,
   Jumbo,
   BrowserGate,
+  BrowserGateSafarimobile,
   NtAllwd,
   CoinIcon,
   Snack,

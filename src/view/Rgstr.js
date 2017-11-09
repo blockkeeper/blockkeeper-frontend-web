@@ -10,7 +10,7 @@ import { withStyles } from 'material-ui/styles'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
 import {theme, paperStyle, loginStyle, fullWidth, actnBtnClr, styleGuide} from './Style'
-import {Modal, BrowserGate, NtAllwd, DropDown} from './Lib'
+import {Modal, BrowserGate, BrowserGateSafarimobile, NtAllwd, DropDown} from './Lib'
 import Rate from '../logic/Rate'
 import __ from '../util'
 import { FormControlLabel, FormGroup } from 'material-ui/Form'
@@ -145,14 +145,14 @@ class RgstrView extends React.Component {
         </Modal>
       )
     } else {
-      const pdfFile = `Blockkeeper.io backup file\r\nIdentifier: ${this.identifier}\r\nPassword: ${this.state.pw}\r\n`
+      const backupfile = `Blockkeeper.io backup\r\nIdentifier: ${this.identifier}\r\nPassword: ${this.state.pw}\r\n`
       return (
         <div>
           {this.state.busy &&
           <LinearProgress />}
           <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
-              <Grid item xs={12} sm={8} md={6} lg={4} xl={4}>
+              <Grid item xs={12} sm={8} md={7} lg={5} xl={4}>
                 <Typography type='display3' color='inherit' align='center'>
                   Block Keeper
                 </Typography>
@@ -240,19 +240,34 @@ class RgstrView extends React.Component {
                       login</b> credentials, all your <b>data will be lost</b> and you need
                       to setup a new account from the scratch.
                     </Typography>
-                    <Button
-                      raised
-                      color='accent'
-                      disabled={(this.state.pw === '' || this.state.rpw === '' || this.state.rpwEmsg !== '' || this.state.upd)}
-                      className={this.props.classes.btnBackup}
-                      onClick={() => {
-                        fileDownload(pdfFile, 'blockkeeper-backup.txt')
-                      }}
-                      classes={{
-                        raisedAccent: this.props.classes.actnBtnClr
-                      }}>
-                      Download backup
-                    </Button>
+                    <BrowserGateSafarimobile
+                      safari={<Button
+                        raised
+                        color='accent'
+                        disabled={(this.state.pw === '' || this.state.rpw === '' || this.state.rpwEmsg !== '' || this.state.upd)}
+                        className={this.props.classes.btnBackup}
+                        onClick={() => {
+                          window.alert(backupfile + '\n Please do a screenshot, copy+paste or pen+paper')
+                        }}
+                        classes={{
+                          raisedAccent: this.props.classes.actnBtnClr
+                        }}>
+                        Show backup
+                      </Button>}
+                      rest={<Button
+                        raised
+                        color='accent'
+                        disabled={(this.state.pw === '' || this.state.rpw === '' || this.state.rpwEmsg !== '' || this.state.upd)}
+                        className={this.props.classes.btnBackup}
+                        onClick={() => {
+                          fileDownload(backupfile, 'blockkeeper-backup.txt')
+                        }}
+                        classes={{
+                          raisedAccent: this.props.classes.actnBtnClr
+                        }}>
+                        Download backup
+                      </Button>}
+                    />
                     <FormGroup>
                       <FormControlLabel
                         control={
