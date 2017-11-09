@@ -23,7 +23,7 @@ class AddAddrView extends React.Component {
     this.cx = props.cx
     this.state = {
       delay: 250,
-      facingMode: 'front',
+      facingMode: 'user',
       manAddrMode: false,
       qrMode: false,
       coin: '',
@@ -219,19 +219,15 @@ class AddAddrView extends React.Component {
                 />
                 {this.state.qrMode &&
                   <div onClick={() => this.setState({
-                    facingMode: this.state.facingMode === 'front'
-                      ? 'rear'
-                      : 'front'
+                    facingMode: this.state.facingMode === 'user'
+                      ? 'environment'
+                      : 'user'
                   })}>
                     <QrReader
                       facingMode={this.state.facingMode}
                       delay={this.state.delay}
+                      resolution={250}
                       className={this.props.classes.qrReaderStyle}
-                      style={{
-                        height: '100%',
-                        width: '100%',
-                        maxHeight: '400px'
-                      }}
                       onError={err => {
                         this.warn(`Accessing camera failed: ${err}`)
                         this.setSnack('Accessing camera failed: Please ' +

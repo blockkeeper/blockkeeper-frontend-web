@@ -197,11 +197,10 @@ const dividerStyle = {
 }
 
 const qrReaderStyle = {
-  height: '100%',
-  width: '100%',
-  maxHeight: '400px',
   marginTop: theme.spacing.unit * 2,
-  background: theme.palette.background.light
+  width: '100%',
+  maxWidth: '750px',
+  margin: '0 auto'
 }
 
 const noTxtDeco = {
