@@ -13,7 +13,7 @@ export default class Rate extends ApiBase {
   }
 
   async _apiGet () {
-    const rate = await __.rqst({url: `${__.cfg('apiUrl')}/rates`})
+    const rate = await this.rqst({url: 'rates'})
     const coins = new Set()
     for (let pair of Object.keys(rate.pairs)) {
       coins.add(pair.split('_')[0])  // base coin

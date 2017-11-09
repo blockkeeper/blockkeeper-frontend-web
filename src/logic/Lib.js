@@ -28,12 +28,24 @@ class ApiBase extends StoBase {
     this.apiDel = this.apiDel.bind(this)
     this.encrypt = this.cx.core.encrypt
     this.decrypt = this.cx.core.decrypt
+    this.rqst = this.rqst.bind(this)
     this.coinObjs = {
       BTC: new Btc(this),
       LTC: new Ltc(this),
       ETH: new Eth(this),
       DASH: new Dash(this)
     }
+  }
+
+  async rqst (req) {
+    req.baseURL = __.cfg('apiUrl')
+    if (req.method === 'put' || req.method === 'delete' || req.data != null) {
+      req.headers = req.headers || {}
+      // write operations need pseudo authentication
+      req.headers['X-User-Id'] = this.cx.user._id
+    }
+    const pld = await __.rqst(req)
+    return pld
   }
 
   async save (upd, data) {

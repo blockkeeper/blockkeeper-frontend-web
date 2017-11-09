@@ -209,9 +209,7 @@ export default class Depot extends ApiBase {
   async apiGetAddrs () {
     let pld
     try {
-      pld = await __.rqst({
-        url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}`
-      })
+      pld = await this.rqst({url: `address/${this.cx.user._id}`})
     } catch (e) {
       throw this.err(e.message, {e: e, dmsg: 'Api-Get addrs failed'})
     }
@@ -246,8 +244,8 @@ export default class Depot extends ApiBase {
       addr.tscs = tscs
     }
     try {
-      await __.rqst({
-        url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}`,
+      await this.rqst({
+        url: `address/${this.cx.user._id}`,
         data: pld
       })
       for (let addr of addrs) (new Addr(this.cx, addr._id)).setSto(addr)

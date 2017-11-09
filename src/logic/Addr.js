@@ -29,8 +29,8 @@ export default class Addr extends ApiBase {
   }
 
   async _apiGet () {
-    const pld = await __.rqst({
-      url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}/${this._id}`
+    const pld = await this.rqst({
+      url: `address/${this.cx.user._id}/${this._id}`
     })
     const addr = this.decrypt(pld.data)
     addr.tscs = []
@@ -43,8 +43,8 @@ export default class Addr extends ApiBase {
     let encTscs = []
     for (let tsc of tscs) encTscs.push(this.encrypt(tsc))
     delete addr.tscs  // pld needs separated addr and tscs
-    await __.rqst({
-      url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}/${addr._id}`,
+    await this.rqst({
+      url: `address/${this.cx.user._id}/${addr._id}`,
       data: {
         _id: addr._id,
         data: this.encrypt(addr),
@@ -56,9 +56,9 @@ export default class Addr extends ApiBase {
   }
 
   async _apiDel (addr) {
-    await __.rqst({
+    await this.rqst({
       method: 'delete',
-      url: `${__.cfg('apiUrl')}/address/${this.cx.user._id}/${addr._id}`
+      url: `address/${this.cx.user._id}/${addr._id}`
     })
   }
 

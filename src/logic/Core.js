@@ -1,5 +1,4 @@
 /* global TextEncoder */
-
 import {StoBase} from './Lib'
 import User from './User'
 import Depot from './Depot'
@@ -18,6 +17,13 @@ export default class Core extends StoBase {
     this.decrypt = this.decrypt.bind(this)
     this.init = this.init.bind(this)
     this.get = this.get.bind(this)
+    this.rqst = this.rqst.bind(this)
+  }
+
+  async rqst (req) {
+    req.baseURL = __.cfg('apiUrl')
+    const pld = await __.rqst(req)
+    return pld
   }
 
   clear () {
@@ -92,10 +98,9 @@ export default class Core extends StoBase {
   async login (identifier, pw) {
     this.clear()
     const userHsh = await this.toUserHsh(identifier)
-
     let pld
     try {
-      pld = await __.rqst({url: `${__.cfg('apiUrl')}/login/${userHsh}`})
+      pld = await this.rqst({url: `login/${userHsh}`})
     } catch (e) {
       let emsg
       let sts
@@ -139,7 +144,7 @@ export default class Core extends StoBase {
       }, secret)
     }
     try {
-      await __.rqst({url: `${__.cfg('apiUrl')}/user/${userId}`, data: pld})
+      await this.rqst({url: `user/${userId}`, data: pld})
     } catch (e) {
       let emsg
       let sts

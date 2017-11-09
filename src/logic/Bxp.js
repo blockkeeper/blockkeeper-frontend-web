@@ -12,7 +12,13 @@ class Bxp extends Base {
     super(name + 'Bxp', pa)
     this.coinObj = pa
     this.coin = this.coinObj.coin
+    this.rqst = this.rqst.bind(this)
     this.sleep = this.sleep.bind(this)
+  }
+
+  async rqst (req) {
+    const pld = await __.rqst(req)
+    return pld
   }
 
   async sleep (sec, nxSec) {
@@ -106,12 +112,11 @@ class BckcyphBxp extends Bxp {
       let updAddrs = {}
       for (let addr of chunk) updAddrs[addr.hsh] = {_id: addr._id}
       let addrHshs = Object.keys(updAddrs)
-      let req = {
+      this.debug(`Requesting this std-addrs: ${addrHshs.join(', ')}`)
+      let pld = await this.rqst({
         url: `${cfg.getUrl(this.coin)}/addrs/` + addrHshs.join(';'),
         params: {limit: cfg.maxTscCnt}
-      }
-      this.debug(`Requesting this std-addrs: ${addrHshs.join(', ')}`)
-      let pld = await __.rqst(req, 'bckcyph-addr-tscs')
+      })
       for (let addr of (__.is('Array', pld) ? pld : [pld])) {
         let addrHsh = addr.address
         if (!addrHsh) continue
@@ -347,12 +352,11 @@ class BckinfoBxp extends Bxp {
       let fndDrvAddrs = {}
       for (let chunk of __.toChunks(Object.keys(drvAddrs), cfg.maxAddrCnt)) {
         sleepSec = await this.sleep(sleepSec, cfg.sleepSec)
-        let req = {
+        this.debug(`Requesting this hd-ext-drv-addrs: ${chunk.join(', ')}`)
+        let pld = await this.rqst({
           url: cfg.url,
           params: {cors: true, active: chunk.join('|'), limit: cfg.maxTscCnt}
-        }
-        this.debug(`Requesting this hd-ext-drv-addrs: ${chunk.join(', ')}`)
-        let pld = await __.rqst(req, 'bckinfo-hd-ext-drv-addrs')
+        })
         for (let tx of (pld.txs || [])) {
           let tscHsh = this.coinObj.toTscHsh(tx.hash)
           if (tscs[tscHsh]) continue
@@ -395,12 +399,11 @@ class BckinfoBxp extends Bxp {
         let chunks = __.toChunks(Object.keys(drvAddrs), cfg.maxAddrCnt)
         for (let chunk of chunks) {
           sleepSec = await this.sleep(sleepSec, cfg.sleepSec)
-          let req = {
+          this.debug(`Requesting this hd-drv-addrs: ${chunk.join(', ')}`)
+          let pld = await this.rqst({
             url: cfg.url,
             params: {cors: true, active: chunk.join('|'), limit: 0}
-          }
-          this.debug(`Requesting this hd-drv-addrs: ${chunk.join(', ')}`)
-          let pld = await __.rqst(req, 'bckinfo-scan-hd-addrs')
+          })
           for (let addrPld of pld.addresses) {
             if (addrPld.n_tx > 0 && drvAddrs[addrPld.address]) {
               let drvAddr = drvAddrs[addrPld.address]

@@ -13,22 +13,22 @@ export default class User extends ApiBase {
   }
 
   async _apiGet () {
-    const pld = await __.rqst({url: `${__.cfg('apiUrl')}/user/${this._id}`})
+    const pld = await this.rqst({url: `user/${this._id}`})
     const user = this.decrypt(pld.data)
     return user
   }
 
   async _apiSet (user) {
-    await __.rqst({
-      url: `${__.cfg('apiUrl')}/user/${user._id}`,
+    await this.rqst({
+      url: `user/${user._id}`,
       data: {_id: user._id, data: this.encrypt(user)}
     })
   }
 
   async _apiDel (user) {
-    await __.rqst({
+    await this.rqst({
       method: 'delete',
-      url: `${__.cfg('apiUrl')}/user/${user._id}`,
+      url: `user/${user._id}`,
       data: {_id: user._id, userhash: this.cx.core.get('userHsh')}
     })
   }
