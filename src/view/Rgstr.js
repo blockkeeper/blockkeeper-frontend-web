@@ -24,7 +24,6 @@ class RgstrView extends React.Component {
     this.cx = props.cx
     this.browserLocale = browserLocale() || 'en-US'
     this.state = {
-      username: 'Account name',
       pw: '',
       rpw: '',
       coin0: 'USD',
@@ -32,22 +31,22 @@ class RgstrView extends React.Component {
       locale: this.browserLocale,
       writeDown: false
     }
+    this.userId = __.uuid()
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
-    this.logout = this.logout.bind(this)
     this.set = this.set.bind(this)
-    this.setAction = this.setAction.bind(this)
-    this.identifierSeed = new Uint16Array(4)
-    window.crypto.getRandomValues(this.identifierSeed)
-    this.identifier = this.identifierSeed.join('-')
+    this.setAction = d => this.setState({[d.ilk]: d.key})
+    this.logout = () => {
+      this.cx.core.clear()
+      this.setState({loggedIn: undefined})
+    }
   }
 
   async componentDidMount () {
     // set body bg
     document.body.style.backgroundColor = styleGuide.backgroundDark
-
     Object.assign(this, __.initView(this, 'rgstr'))
     if (this.cx.core.isActive()) this.setState({loggedIn: true})
     await this.load()
@@ -72,25 +71,12 @@ class RgstrView extends React.Component {
     }
   }
 
-  setAction (coinData) {
-    this.setState({[coinData.ilk]: coinData.key})
-  }
-
-  logout () {
-    this.cx.core.clear()
-    this.setState({loggedIn: null})
-  }
-
   async save (e) {
-    if (e) {
-      e.preventDefault()
-    }
-
+    if (e) e.preventDefault()
     this.setState({busy: true})
     try {
       await this.cx.core.register(
-        this.identifier,
-        this.state.username,
+        this.userId,
         this.state.pw,
         this.state.coin0,
         this.state.coin1,
@@ -105,13 +91,7 @@ class RgstrView extends React.Component {
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
-      let d = {
-        upd: false,
-        usernameEmsg: __.vldAlphNum(this.state.username, {
-          min: __.cfg('minUser'),
-          max: __.cfg('maxUser')
-        })
-      }
+      let d = {upd: false}
       if (this.state.pw) {
         this.setState({pw_: true})
         d.pwEmsg = __.vldPw(this.state.pw)
@@ -123,8 +103,8 @@ class RgstrView extends React.Component {
           ? d.rpwEmsg = ''
           : d.rpwEmsg = 'Password does not match'
       }
-      if (this.state.username && this.state.pw && this.state.rpw &&
-        !d.usernameEmsg && !d.pwEmsg && !d.rpwEmsg && this.state.writeDown) {
+      if (this.state.pw && this.state.rpw && !d.pwEmsg && !d.rpwEmsg &&
+          this.state.writeDown) {
         d.upd = true
       }
       this.setState(d)
@@ -156,11 +136,11 @@ class RgstrView extends React.Component {
       )
     } else {
       const backupfile = 'Blockkeeper.io backup\r\nIdentifier: ' +
-                         `${this.identifier}\r\nPassword: ${this.state.pw}\r\n`
+                         `${this.userId}\r\nPassword: ${this.state.pw}\r\n`
       return (
         <div>
           {this.state.busy &&
-          <LinearProgress />}
+            <LinearProgress />}
           <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={7} lg={5} xl={4}>
@@ -187,22 +167,11 @@ class RgstrView extends React.Component {
                       required
                       label='Identifier'
                       margin='normal'
-                      value={this.identifier}
+                      value={this.userId}
                       helperText='your account login identifier'
                       disabled={this.state.writeDown}
                       autoComplete='on'
                     />
-                    {false && <TextField
-                      autoFocus
-                      fullWidth
-                      required
-                      label='Username'
-                      margin='normal'
-                      value={this.state.username}
-                      error={Boolean(this.state.usernameEmsg)}
-                      helperText={this.state.usernameEmsg}
-                      onChange={evt => this.set('username', evt.target.value)}
-                    />}
                     <TextField
                       fullWidth
                       required
@@ -331,41 +300,41 @@ class RgstrView extends React.Component {
                       />
                     </FormGroup>
                     {!this.busy &&
-                    <BrowserGate
-                      allwd={
-                        <div>
-                          {false && <input
-                            type='submit'
-                            value='test'
-                            className={this.props.classes.btnRg}
-                            disabled={!this.state.upd}
-                          />}
-                          <Button
-                            raised
-                            type='submit'
-                            color='accent'
-                            className={this.props.classes.btnRg}
-                            disabled={!this.state.upd}
-                            classes={{
-                              raisedAccent: this.props.classes.actnBtnClr
-                            }}
-                          >
-                            <PersonAdd
-                              className={this.props.classes.person}
-                            />
-                            Register
-                          </Button>
-                          <Button
-                            className={this.props.classes.fullWidth}
-                            onClick={this.goBack}
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      }
-                      ntAll={<NtAllwd />}
-                    />
-                  }
+                      <BrowserGate
+                        allwd={
+                          <div>
+                            {false && <input
+                              type='submit'
+                              value='test'
+                              className={this.props.classes.btnRg}
+                              disabled={!this.state.upd}
+                            />}
+                            <Button
+                              raised
+                              type='submit'
+                              color='accent'
+                              className={this.props.classes.btnRg}
+                              disabled={!this.state.upd}
+                              classes={{
+                                raisedAccent: this.props.classes.actnBtnClr
+                              }}
+                            >
+                              <PersonAdd
+                                className={this.props.classes.person}
+                              />
+                              Register
+                            </Button>
+                            <Button
+                              className={this.props.classes.fullWidth}
+                              onClick={this.goBack}
+                            >
+                              Cancel
+                            </Button>
+                          </div>
+                        }
+                        ntAll={<NtAllwd />}
+                      />
+                    }
                   </form>
                 </Paper>
               </Grid>

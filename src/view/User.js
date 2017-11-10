@@ -1,10 +1,10 @@
 import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
-import TextField from 'material-ui/TextField'
-import { withStyles } from 'material-ui/styles'
+import {withStyles} from 'material-ui/styles'
 import {TopBar, Modal, DropDown, UserList, Done, Edit} from './Lib'
 import {ArrowBack} from 'material-ui-icons'
-import {themeBgStyle, gridWrap, gridSpacer, gridGutter, gridGutterFluid} from './Style'
+import {themeBgStyle, gridWrap, gridSpacer, gridGutter,
+        gridGutterFluid} from './Style'
 import Paper from 'material-ui/Paper'
 import __ from '../util'
 
@@ -31,14 +31,16 @@ class UserView extends React.Component {
     ]
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
-    this.setAction = this.setAction.bind(this)
     this.save = this.save.bind(this)
-    this.edit = this.edit.bind(this)
-    this.set = this.set.bind(this)
-    this.logout = this.logout.bind(this)
     this.delete = this.delete.bind(this)
-    this.askLogout = this.askLogout.bind(this)
-    this.askDelete = this.askDelete.bind(this)
+    this.askLogout = () => this.setState({logout: !this.state.logout})
+    this.askDelete = () => this.setState({delAcc: !this.state.delAcc})
+    this.edit = () => this.setState({edit: !this.state.edit})
+    this.setAction = d => this.setState({[d.ilk]: d.key, upd: true})
+    this.logout = () => {
+      this.cx.core.clear()
+      this.props.history.push('/login')
+    }
   }
 
   async componentDidMount () {
@@ -48,10 +50,7 @@ class UserView extends React.Component {
 
   async load () {
     try {
-      const [
-        user,
-        rateCoins
-      ] = await Promise.all([
+      const [user, rateCoins] = await Promise.all([
         this.cx.user.load(),
         this.cx.rate.getCoins()
       ])
@@ -61,12 +60,11 @@ class UserView extends React.Component {
         coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
       }
       this.setState({
-        username: user.username,
+        userId: user._id,
+        depotId: user.depotId,
         coin0: user.coins[0],
         coin1: user.coins[1],
-        _id: user._id,
         locale: user.locale,
-        depotId: user.depotId,
         coins
       })
     } catch (e) {
@@ -83,12 +81,11 @@ class UserView extends React.Component {
     this.setState({busy: true})
     try {
       await this.cx.user.save({
+        _id: this.state.userId,
+        _t: __.getTme(),
         coins: [this.state.coin0, this.state.coin1],
-        _id: this.state._id,
-        username: this.state.username,
         locale: this.state.locale,
-        depotId: this.state.depotId,
-        _t: new Date().toISOString()
+        depotId: this.state.depotId
       })
     } catch (e) {
       this.setState({err: e.message})
@@ -106,43 +103,6 @@ class UserView extends React.Component {
       this.setState({err: e.message, show: false})
       if (process.env.NODE_ENV === 'development') throw e
     }
-  }
-
-  logout () {
-    this.cx.core.clear()
-    this.props.history.push('/login')
-  }
-
-  askLogout () {
-    this.setState({logout: !this.state.logout})
-  }
-
-  askDelete () {
-    this.setState({delAcc: !this.state.delAcc})
-  }
-
-  edit () {
-    this.setState({edit: !this.state.edit})
-  }
-
-  set (ilk, val) {
-    this.setState({[ilk]: val}, () => {
-      let d = {
-        upd: false,
-        usernameEmsg: __.vldAlphNum(this.state.username, {
-          min: __.cfg('minUser'),
-          max: __.cfg('maxUser')
-        })
-      }
-      if (this.state.username && !d.usernameEmsg) {
-        d.upd = true
-      }
-      this.setState(d)
-    })
-  }
-
-  setAction (coinData) {
-    this.setState({[coinData.ilk]: coinData.key, upd: true})
   }
 
   render () {
@@ -179,29 +139,31 @@ class UserView extends React.Component {
           {'Delete account and all related data?'}
         </Modal>
       )
-    } else if (this.state.username !== undefined) {
+    } else if (this.state.userId) {
       return (
         <div className={this.props.classes.themeBgStyle}>
           {this.state.edit &&
-          <TopBar
-            midTitle='User'
-            action={<Done />}
-            onClick={this.save}
-            onClickLeft={() => this.setState({edit: false})}
-            className={this.props.classes.gridWrap}
-            modeCancel
-            noUser
-          />}
+            <TopBar
+              midTitle='User'
+              action={<Done />}
+              onClick={this.save}
+              onClickLeft={() => this.setState({edit: false})}
+              className={this.props.classes.gridWrap}
+              modeCancel
+              noUser
+            />
+          }
           {!this.state.edit &&
-          <TopBar
-            midTitle='User'
-            action={<Edit />}
-            onClick={this.edit}
-            iconLeft={<ArrowBack />}
-            onClickLeft={this.goBack}
-            className={this.props.classes.gridWrap}
-            noUser
-          />}
+            <TopBar
+              midTitle='User'
+              action={<Edit />}
+              onClick={this.edit}
+              iconLeft={<ArrowBack />}
+              onClickLeft={this.goBack}
+              className={this.props.classes.gridWrap}
+              noUser
+            />
+          }
           {this.state.busy &&
             <LinearProgress />}
           <Paper
@@ -210,19 +172,6 @@ class UserView extends React.Component {
           >
             <div className={this.props.classes.gridWrap}>
               <div className={this.props.classes.gridGutter}>
-                <TextField
-                  fullWidth
-                  label='Account name'
-                  margin='normal'
-                  value={this.state.username}
-                  error={
-                    Boolean(this.state.emsg) ||
-                    Boolean(this.state.usernameEmsg)
-                  }
-                  helperText={this.state.emsg || this.state.usernameEmsg}
-                  onChange={evt => this.set('username', evt.target.value)}
-                  disabled={!this.state.edit}
-                  />
                 <DropDown
                   _id='coin0DropDown'
                   title={'Primary coin'}
@@ -230,7 +179,7 @@ class UserView extends React.Component {
                   slctd={this.state.coin0}
                   action={this.setAction}
                   disabled={!this.state.edit}
-                 />
+                />
                 <DropDown
                   _id='coin1DropDown'
                   title={'Secondary coin'}
@@ -238,22 +187,24 @@ class UserView extends React.Component {
                   slctd={this.state.coin1}
                   action={this.setAction}
                   disabled={!this.state.edit}
-                 />
+                />
                 <DropDown
                   _id='localeDropDown'
-                  renderValue={value => `${value} (${__.formatNumber(10000.99, 'USD', value)})`}
+                  renderValue={val => {
+                    return `${val} (${__.formatNumber(10000.99, 'USD', val)})`
+                  }}
                   title={'Locale'}
                   data={this.locales}
                   slctd={this.state.locale}
                   action={this.setAction}
                   disabled={!this.state.edit}
-                 />
+                />
               </div>
               <div className={this.props.classes.gridGutterFluid}>
                 <UserList
                   askLogout={this.askLogout}
                   askDelete={this.askDelete}
-                 />
+                />
               </div>
             </div>
           </Paper>

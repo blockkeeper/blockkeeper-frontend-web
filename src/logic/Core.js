@@ -11,19 +11,11 @@ export default class Core extends StoBase {
     this._store = 'core'
     this.isActive = () => Boolean(this.getSto())
     this.clear = this.clear.bind(this)
-    this.toUserHsh = this.toUserHsh.bind(this)
     this.toSecret = this.toSecret.bind(this)
     this.encrypt = this.encrypt.bind(this)
     this.decrypt = this.decrypt.bind(this)
     this.init = this.init.bind(this)
     this.get = this.get.bind(this)
-    this.rqst = this.rqst.bind(this)
-  }
-
-  async rqst (req) {
-    req.baseURL = __.cfg('apiUrl')
-    const pld = await __.rqst(req)
-    return pld
   }
 
   clear () {
@@ -43,14 +35,9 @@ export default class Core extends StoBase {
     return val
   }
 
-  async toUserHsh (identifier) {
-    const hashBuffer = await window.crypto.subtle.digest('SHA-256', new TextEncoder('utf-8').encode(identifier))
-    return Array.from(new Uint8Array(hashBuffer)).map(b => ('00' + b.toString(16)).slice(-2)).join('')
-  }
-
-  toSecret (username, pw) {
+  toSecret (userId, pw) {
     // TODO: add crypto
-    return username + ':' + pw
+    return userId + ':' + pw
   }
 
   encrypt (pld, secret, noFatal) {
@@ -75,8 +62,8 @@ export default class Core extends StoBase {
     }
   }
 
-  init (userHsh, secret, userId, depotId, user) {
-    if (userHsh) this.setSto({userHsh, secret, userId, depotId})
+  init (userId, secret, depotId, user) {
+    if (userId) this.setSto({userId, secret, depotId})
     const core = this.getSto()
     if (!core) return false
     if (!this.cx.user) {
@@ -95,75 +82,66 @@ export default class Core extends StoBase {
     return true
   }
 
-  async login (identifier, pw) {
+  async login (userId, pw) {
     this.clear()
-    const userHsh = await this.toUserHsh(identifier)
     let pld
     try {
-      pld = await this.rqst({url: `login/${userHsh}`})
+      pld = await this.rqst({url: 'user'}, userId)
     } catch (e) {
-      let emsg
-      let sts
+      let emsg, sts
       if (e.sts === 404) {
-        emsg = 'Invalid user/password'
+        emsg = 'Invalid identifier/password'
         sts = 404
       } else if (e.sts >= 400 && e.sts < 500) {
-        emsg = 'Invalid input: Please check username/password'
+        emsg = 'Invalid identifier/password'
         sts = 400
       } else {
-        emsg = 'API error: Getting user failed. Please try again later'
+        emsg = 'API Error: Login failed. Please try again later'
         sts = e.sts
       }
       throw this.err(emsg, {e, sts})
     }
-    const secret = this.toSecret(userHsh, pw)
+    const secret = this.toSecret(userId, pw)
     let user
     try {
       user = this.decrypt(pld.data, secret, true)
     } catch (e) {
-      throw this.err('Invalid user/password', {e, sts: 404})
+      throw this.err('Invalid identifier/password', {e, sts: 400})
     }
-    this.init(userHsh, secret, user._id, user.depotId, user)
+    this.init(user._id, secret, user.depotId, user)
   }
 
-  async register (identifier, username, pw, coin0, coin1, locale) {
-    const userHsh = await this.toUserHsh(identifier)
-    const secret = this.toSecret(userHsh, pw)
-    const userId = __.uuid()
+  async register (userId, pw, coin0, coin1, locale) {
+    const secret = this.toSecret(userId, pw)
     const depotId = __.uuid()
     const pld = {
       _id: userId,
-      userhash: userHsh,
+      userhash: userId + 'ObsoleteRemoveMe',
       data: this.encrypt({
         _id: userId,
         _t: __.getTme(),
-        username: username,
-        locale: locale,
         coins: [coin0, coin1],
+        locale,
         depotId
       }, secret)
     }
     try {
-      await this.rqst({
-        url: 'user',
-        headers: {'X-User-Id': userId},
-        data: pld
-      })
+      await this.rqst({url: 'user', data: pld}, userId)
     } catch (e) {
       let emsg
       let sts
-      if (e.sts === 409) {
-        emsg = 'Username already exists'
-        sts = 409
+      if (e.sts === 409) {  // userId already exists: should never happen
+        emsg = 'Registering failed: Please reload page and try again'
+        sts = e.sts
       } else if (e.sts >= 400 && e.sts < 500) {
-        emsg = 'Invalid input: Please check username/password'
+        emsg = 'Invalid password: Please change the password'
         sts = 400
       } else {
-        emsg = 'API error: Registering failed. Please try again later'
+        emsg = 'API Error: Registering failed. Please try again later'
         sts = e.sts
       }
       throw this.err(emsg, {e, sts})
     }
-    this.init(userHsh, secret, userId, depotId)
+    this.init(userId, secret, depotId)
   }
 }

@@ -7,7 +7,8 @@ import Grid from 'material-ui/Grid'
 import { withStyles } from 'material-ui/styles'
 import {LinearProgress} from 'material-ui/Progress'
 import {Lock} from 'material-ui-icons'
-import {theme, paperStyle, loginStyle, fullWidth, actnBtnClr, styleGuide} from './Style'
+import {theme, paperStyle, loginStyle, fullWidth,
+        actnBtnClr, styleGuide} from './Style'
 import {Modal, BrowserGate, NtAllwd} from './Lib'
 import __ from '../util'
 
@@ -16,7 +17,7 @@ class LoginView extends React.Component {
     super(props)
     this.cx = props.cx
     this.goBack = props.history.goBack
-    this.reset = () => ({busy: undefined, identifier: '', pw: ''})
+    this.reset = () => ({busy: undefined, userId: '', pw: ''})
     this.reload = () => this.setState(this.reset())
     this.login = this.login.bind(this)
     this.state = this.reset()
@@ -24,20 +25,21 @@ class LoginView extends React.Component {
   }
 
   componentDidMount () {
-    Object.assign(this, __.initView(this, 'login'))
-
     // set body bg
     document.body.style.backgroundColor = styleGuide.backgroundDark
+    Object.assign(this, __.initView(this, 'login'))
   }
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
-      let d = {upd: false, identifierEmsg: __.vldAlphNum(this.state.identifier, {min: 23, max: 23})}
-      if (this.state.pw) {
-        d.pwEmsg = __.vldPw(this.state.pw)
+      let d = {upd: false}
+      if (this.state.userId) {
+        d.userIdEmsg = __.vld.isUUID(this.state.userId, 4)
+          ? ''
+          : 'Invalid identifier'
       }
-      if (this.state.identifier && this.state.pw &&
-          !d.identifierEmsg && !d.pwEmsg) {
+      if (this.state.pw) d.pwEmsg = __.vldPw(this.state.pw)
+      if (this.state.userId && this.state.pw && !d.userIdEmsg && !d.pwEmsg) {
         d.upd = true
       }
       this.setState(d)
@@ -47,8 +49,8 @@ class LoginView extends React.Component {
   async login () {
     this.setState({err: undefined, busy: true})
     try {
-      await this.cx.core.login(this.state.identifier, this.state.pw)
-      this.props.history.push('/depot')  // redirect
+      await this.cx.core.login(this.state.userId, this.state.pw)
+      this.props.history.push('/depot')
     } catch (e) {
       (e.sts === 404)
         ? this.setState({...this.reset(), emsg: e.message})
@@ -78,22 +80,31 @@ class LoginView extends React.Component {
                 <Typography type='display3' color='inherit' align='center'>
                   Block Keeper
                 </Typography>
-                <Typography type='display1' color='inherit' align='center' gutterBottom>
+                <Typography
+                  type='display1'
+                  color='inherit'
+                  align='center'
+                  gutterBottom
+                >
                   Please enter your login credentials
                 </Typography>
-                <Paper square className={this.props.classes.paperStyle} elevation={24}>
+                <Paper
+                  square
+                  className={this.props.classes.paperStyle}
+                  elevation={24}
+                >
                   <TextField
                     autoFocus
                     fullWidth
                     label='Identifier'
                     margin='normal'
-                    value={this.state.identifier}
+                    value={this.state.userId}
                     error={
                       Boolean(this.state.emsg) ||
-                      Boolean(this.state.identifierEmsg)
+                      Boolean(this.state.userIdEmsg)
                     }
-                    helperText={this.state.emsg || this.state.identifierEmsg}
-                    onChange={evt => this.set('identifier', evt.target.value)}
+                    helperText={this.state.emsg || this.state.userIdEmsg}
+                    onChange={evt => this.set('userId', evt.target.value)}
                     />
                   <TextField
                     fullWidth

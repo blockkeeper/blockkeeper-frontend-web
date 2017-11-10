@@ -26,11 +26,7 @@ export default class User extends ApiBase {
   }
 
   async _apiDel (user) {
-    await this.rqst({
-      method: 'delete',
-      url: 'user',
-      data: {_id: user._id, userhash: this.cx.core.get('userHsh')}
-    })
+    await this.rqst({method: 'delete', url: 'user', data: {_id: user._id}})
   }
 
   async getCoins (curCoin, user) {

@@ -15,6 +15,17 @@ class StoBase extends Base {
     this.getSto = () => __.getJsonSto(this._store)
     this.setSto = pld => __.setJsonSto(this._store, pld)
     this.delSto = () => __.delSto(this._store)
+    this.rqst = this.rqst.bind(this)
+  }
+
+  async rqst (req, userId) {
+    userId = userId || (this.cx.user || {})._id
+    req.baseURL = __.cfg('apiUrl')
+    req.headers = req.headers || {}
+    // some operations need pseudo authentication
+    if (userId) req.headers['X-User-Id'] = userId
+    const pld = await __.rqst(req)
+    return pld
   }
 }
 
@@ -28,26 +39,12 @@ class ApiBase extends StoBase {
     this.apiDel = this.apiDel.bind(this)
     this.encrypt = this.cx.core.encrypt
     this.decrypt = this.cx.core.decrypt
-    this.rqst = this.rqst.bind(this)
     this.coinObjs = {
       BTC: new Btc(this),
       LTC: new Ltc(this),
       ETH: new Eth(this),
       DASH: new Dash(this)
     }
-  }
-
-  async rqst (req) {
-    req.baseURL = __.cfg('apiUrl')
-    req.headers = req.headers || {}
-
-    // some operations need pseudo authentication
-    if (this.cx.user && this.cx.user._id) {
-      req.headers['X-User-Id'] = this.cx.user._id
-    }
-
-    const pld = await __.rqst(req)
-    return pld
   }
 
   async save (upd, data) {
