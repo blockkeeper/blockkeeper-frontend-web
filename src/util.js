@@ -113,13 +113,11 @@ const initView = (cmp, name) => {
   return cmp
 }
 
-async function rqst (req, lbl) {
-  lbl = lbl || 'resource'
+async function rqst (req) {
   if (!req.timeout) req.timeout = cfg('tmoMsec')
   if (!req.method) req.method = (req.data == null) ? 'get' : 'put'
-  let err
+  let err, dmsg, umsg
   let rsp = {}
-  let dmsg
   try {
     rsp = await axios(req)
     return rsp.data
@@ -134,12 +132,11 @@ async function rqst (req, lbl) {
       rsp = {}
     }
   }
-  let umsg
   let sts = rsp.status || 600
   if (sts === 404) {
-    umsg = cap(lbl) + ' not found'
+    umsg = 'Resource not found'
   } else {
-    umsg = `${req.method.toUpperCase()} ${lbl} failed: ` +
+    umsg = `${req.method.toUpperCase()} resource failed: ` +
       ((sts >= 400 && sts < 500) ? 'Invalid input' : 'API error')
   }
   throw getErr(umsg, {err, dmsg, sts, rsp, req})
