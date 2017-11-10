@@ -144,7 +144,11 @@ export default class Core extends StoBase {
       }, secret)
     }
     try {
-      await this.rqst({url: `user/${userId}`, data: pld})
+      await this.rqst({
+        url: `user/${userId}`,
+        headers: {'X-User-Id': userId},
+        data: pld
+      })
     } catch (e) {
       let emsg
       let sts
