@@ -357,10 +357,12 @@ class TscView extends React.Component {
                             <span key={__.uuid()}>
                               <ExtLink
                                 to={to}
-                                className={this.props.classes.noTxtDeco}
-                                txt={hsh}
+                                txt={
+                                  <Typography type='body1' noWrap>
+                                    {hsh}
+                                  </Typography>
+                                }
                               />
-                              <br />
                             </span>
                           )
                         })}

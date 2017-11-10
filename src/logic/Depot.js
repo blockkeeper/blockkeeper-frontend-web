@@ -142,6 +142,7 @@ export default class Depot extends ApiBase {
             addrs.push(addrObj.toAddr(updAddr, curAddrs[updAddr._id]))
           }
         } catch (e) {
+          console.log(e)
           this.warn(`Bxp failed for ${addrType} addrs: ${e.message}`)
           for (let addr of Object.values(addrsByCoin[coin])) {
             this.addrUpdErrIds.add(addr._id)
