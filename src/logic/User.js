@@ -1,5 +1,5 @@
 import {ApiBase} from './Lib'
-import __ from '../util'
+// import __ from '../util'
 
 export default class User extends ApiBase {
   constructor (cx, _id, pld) {
