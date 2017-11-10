@@ -22,7 +22,7 @@ class RgstrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.browserLocale = browserLocale() || 'en-US'
+    this.browserLocale = browserLocale() || __.cfg('dfltLocale')
     this.state = {
       pw: '',
       rpw: '',

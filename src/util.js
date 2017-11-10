@@ -253,8 +253,8 @@ const ppTme = _t => {
     : tme.fromNow()
 }
 
-const formatNumber = (n, coin, locale = 'en-US') => {
-  // TODO use user locale
+const formatNumber = (n, coin, locale) => {
+  locale = locale || cfg('dfltLocale')
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: dec(coin)

@@ -143,5 +143,20 @@ Object.assign(d, {
   }
 })
 
+Object.assign(d, {
+  locales: [
+    {lbl: 'en-US', key: 'en-US', ilk: 'locale'},
+    {lbl: 'en-AU', key: 'en-AU', ilk: 'locale'},
+    {lbl: 'en-CA', key: 'en-CA', ilk: 'locale'},
+    {lbl: 'es-ES', key: 'es-ES', ilk: 'locale'},
+    {lbl: 'fr-FR', key: 'fr-FR', ilk: 'locale'},
+    {lbl: 'it-IT', key: 'it-IT', ilk: 'locale'},
+    {lbl: 'de-DE', key: 'de-DE', ilk: 'locale'},
+    {lbl: 'at-AT', key: 'at-AT', ilk: 'locale'},
+    {lbl: 'en-GB', key: 'en-GB', ilk: 'locale'}
+  ],
+  dfltLocale: 'en-US'
+})
+
 const cfg = (key) => key == null ? d : d[key]
 export default cfg

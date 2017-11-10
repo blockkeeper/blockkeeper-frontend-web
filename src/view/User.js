@@ -18,17 +18,6 @@ class UserView extends React.Component {
       askLogout: false,
       askDelete: false
     }
-    this.locales = [
-      {lbl: 'en-US', key: 'en-US', ilk: 'locale'},
-      {lbl: 'en-AU', key: 'en-AU', ilk: 'locale'},
-      {lbl: 'en-CA', key: 'en-CA', ilk: 'locale'},
-      {lbl: 'es-ES', key: 'es-ES', ilk: 'locale'},
-      {lbl: 'fr-FR', key: 'fr-FR', ilk: 'locale'},
-      {lbl: 'it-IT', key: 'it-IT', ilk: 'locale'},
-      {lbl: 'de-DE', key: 'de-DE', ilk: 'locale'},
-      {lbl: 'at-AT', key: 'at-AT', ilk: 'locale'},
-      {lbl: 'en-GB', key: 'en-GB', ilk: 'locale'}
-    ]
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
     this.save = this.save.bind(this)
@@ -194,7 +183,7 @@ class UserView extends React.Component {
                     return `${val} (${__.formatNumber(10000.99, 'USD', val)})`
                   }}
                   title={'Locale'}
-                  data={this.locales}
+                  data={__.cfg('locales')}
                   slctd={this.state.locale}
                   action={this.setAction}
                   disabled={!this.state.edit}
