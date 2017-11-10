@@ -6,22 +6,32 @@ import Typography from 'material-ui/Typography'
 import TextField from 'material-ui/TextField'
 import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
-import { withStyles } from 'material-ui/styles'
+import {FormControlLabel, FormGroup} from 'material-ui/Form'
+import Switch from 'material-ui/Switch'
+import {withStyles} from 'material-ui/styles'
 import {PersonAdd} from 'material-ui-icons'
 import {LinearProgress} from 'material-ui/Progress'
-import {theme, paperStyle, loginStyle, fullWidth, actnBtnClr, styleGuide} from './Style'
-import {Modal, BrowserGate, BrowserGateSafarimobile, NtAllwd, DropDown} from './Lib'
+import {theme, paperStyle, loginStyle, fullWidth,
+        actnBtnClr, styleGuide} from './Style'
+import {Modal, BrowserGate, BrowserGateSafarimobile,
+        NtAllwd, DropDown} from './Lib'
 import Rate from '../logic/Rate'
 import __ from '../util'
-import { FormControlLabel, FormGroup } from 'material-ui/Form'
-import Switch from 'material-ui/Switch'
 
 class RgstrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
     this.browserLocale = browserLocale() || 'en-US'
-    this.state = {username: 'Account name', pw: '', rpw: '', coin0: 'USD', coin1: 'BTC', locale: this.browserLocale, writeDown: false}
+    this.state = {
+      username: 'Account name',
+      pw: '',
+      rpw: '',
+      coin0: 'USD',
+      coin1: 'BTC',
+      locale: this.browserLocale,
+      writeDown: false
+    }
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')
     this.save = this.save.bind(this)
@@ -145,7 +155,8 @@ class RgstrView extends React.Component {
         </Modal>
       )
     } else {
-      const backupfile = `Blockkeeper.io backup\r\nIdentifier: ${this.identifier}\r\nPassword: ${this.state.pw}\r\n`
+      const backupfile = 'Blockkeeper.io backup\r\nIdentifier: ' +
+                         `${this.identifier}\r\nPassword: ${this.state.pw}\r\n`
       return (
         <div>
           {this.state.busy &&
@@ -156,10 +167,19 @@ class RgstrView extends React.Component {
                 <Typography type='display3' color='inherit' align='center'>
                   Block Keeper
                 </Typography>
-                <Typography type='display1' color='inherit' align='center' gutterBottom>
+                <Typography
+                  type='display1'
+                  color='inherit'
+                  align='center'
+                  gutterBottom
+                >
                   Please choose your account details
                 </Typography>
-                <Paper square className={this.props.classes.paperStyle} elevation={24}>
+                <Paper
+                  square
+                  className={this.props.classes.paperStyle}
+                  elevation={24}
+                >
                   <form autoComplete='on' onSubmit={this.save}>
                     <TextField
                       autoFocus
@@ -233,21 +253,34 @@ class RgstrView extends React.Component {
                       />}
                       </Grid>
                     </Grid>
-                    <Typography type='body1' gutterBottom className={this.props.classes.body1}>
-                      Please make sure you store your <b>identifier and password</b> safely.
-                      Due to data privacy and security reasons, it is NOT possible
-                      to recover your identifier or password. If you <b>forget your
-                      login</b> credentials, all your <b>data will be lost</b> and you need
+                    <Typography
+                      type='body1'
+                      gutterBottom
+                      className={this.props.classes.body1}
+                    >
+                      Please make sure you store your <b>identifier and
+                      password</b> safely. Due to data privacy and security
+                      reasons, it is NOT possible to recover your identifier
+                      or password. If you <b>forget your login</b> credentials,
+                      all your <b>data will be lost</b> and you need
                       to setup a new account from the scratch.
                     </Typography>
                     <BrowserGateSafarimobile
                       safari={<Button
                         raised
                         color='accent'
-                        disabled={(this.state.pw === '' || this.state.rpw === '' || this.state.rpwEmsg !== '' || this.state.upd)}
+                        disabled={
+                          this.state.pw === '' ||
+                          this.state.rpw === '' ||
+                          this.state.rpwEmsg !== '' ||
+                          this.state.upd
+                        }
                         className={this.props.classes.btnBackup}
                         onClick={() => {
-                          window.alert(backupfile + '\n Please do a screenshot, copy+paste or pen+paper')
+                          window.alert(
+                            backupfile +
+                            '\n Please do a screenshot, copy+paste or pen+paper'
+                          )
                         }}
                         classes={{
                           raisedAccent: this.props.classes.actnBtnClr
@@ -257,7 +290,12 @@ class RgstrView extends React.Component {
                       rest={<Button
                         raised
                         color='accent'
-                        disabled={(this.state.pw === '' || this.state.rpw === '' || this.state.rpwEmsg !== '' || this.state.upd)}
+                        disabled={
+                          this.state.pw === '' ||
+                          this.state.rpw === '' ||
+                          this.state.rpwEmsg !== '' ||
+                          this.state.upd
+                        }
                         className={this.props.classes.btnBackup}
                         onClick={() => {
                           fileDownload(backupfile, 'blockkeeper-backup.txt')
@@ -270,6 +308,8 @@ class RgstrView extends React.Component {
                     />
                     <FormGroup>
                       <FormControlLabel
+                        label={'I downloaded my backup or wrote down my ' +
+                               'identifier and password'}
                         control={
                           <Switch
                             checkedClassName={this.props.classes.switch}
@@ -278,9 +318,17 @@ class RgstrView extends React.Component {
                               checked: this.props.classes.checked
                             }}
                             checked={this.state.writeDown}
-                            disabled={this.state.pw === '' || this.state.rpw === '' || Boolean(this.state.rpwEmsg)}
-                            onChange={evt => this.set('writeDown', !this.state.writeDown)} />}
-                        label='I downloaded my backup or wrote down my identifier and password' />
+                            disabled={
+                              this.state.pw === '' ||
+                              this.state.rpw === '' ||
+                              Boolean(this.state.rpwEmsg)
+                            }
+                            onChange={evt => {
+                              this.set('writeDown', !this.state.writeDown)
+                            }}
+                          />
+                        }
+                      />
                     </FormGroup>
                     {!this.busy &&
                     <BrowserGate
