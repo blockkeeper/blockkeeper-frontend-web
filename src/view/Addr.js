@@ -332,18 +332,19 @@ class AddrView extends React.Component {
                             </TableCell>
                             <TableCell numeric padding='none'>
                               {this.state.edit &&
-                              <TextField
-                                fullWidth
-                                value={this.state.name}
-                                error={Boolean(this.state.nameEmsg)}
-                                helperText={this.state.nameEmsg}
-                                onChange={evt => {
-                                  this.set('name', evt.target.value)
-                                }}
-                                inputProps={{
-                                  style: {textAlign: 'right'}
-                                }}
-                              />}
+                                <TextField
+                                  fullWidth
+                                  value={this.state.name}
+                                  error={Boolean(this.state.nameEmsg)}
+                                  helperText={this.state.nameEmsg}
+                                  onChange={evt => {
+                                    this.set('name', evt.target.value)
+                                  }}
+                                  inputProps={{
+                                    style: {textAlign: 'right'}
+                                  }}
+                                />
+                              }
                               {!this.state.edit &&
                                 this.state.addr.name}
                             </TableCell>
