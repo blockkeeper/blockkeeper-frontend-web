@@ -39,11 +39,13 @@ class ApiBase extends StoBase {
 
   async rqst (req) {
     req.baseURL = __.cfg('apiUrl')
-    if (req.method === 'put' || req.method === 'delete' || req.data != null) {
-      req.headers = req.headers || {}
-      // write operations need pseudo authentication
+    req.headers = req.headers || {}
+
+    // some operations need pseudo authentication
+    if (this.cx.user && this.cx.user._id) {
       req.headers['X-User-Id'] = this.cx.user._id
     }
+
     const pld = await __.rqst(req)
     return pld
   }

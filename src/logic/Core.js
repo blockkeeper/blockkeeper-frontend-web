@@ -145,7 +145,7 @@ export default class Core extends StoBase {
     }
     try {
       await this.rqst({
-        url: `user/${userId}`,
+        url: 'user',
         headers: {'X-User-Id': userId},
         data: pld
       })

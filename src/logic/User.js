@@ -13,14 +13,14 @@ export default class User extends ApiBase {
   }
 
   async _apiGet () {
-    const pld = await this.rqst({url: `user/${this._id}`})
+    const pld = await this.rqst({url: 'user'})
     const user = this.decrypt(pld.data)
     return user
   }
 
   async _apiSet (user) {
     await this.rqst({
-      url: `user/${user._id}`,
+      url: 'user',
       data: {_id: user._id, data: this.encrypt(user)}
     })
   }
@@ -28,7 +28,7 @@ export default class User extends ApiBase {
   async _apiDel (user) {
     await this.rqst({
       method: 'delete',
-      url: `user/${user._id}`,
+      url: 'user',
       data: {_id: user._id, userhash: this.cx.core.get('userHsh')}
     })
   }
