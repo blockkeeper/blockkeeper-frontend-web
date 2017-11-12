@@ -116,7 +116,6 @@ export default class Core extends StoBase {
     const depotId = __.uuid()
     const pld = {
       _id: userId,
-      userhash: userId + 'ObsoleteRemoveMe',
       data: this.encrypt({
         _id: userId,
         _t: __.getTme(),
