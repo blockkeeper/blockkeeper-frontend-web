@@ -93,11 +93,11 @@ export default class Addr extends ApiBase {
     const bxp = upd.bxp || cur.bxp
     if (bxp) addr.bxp = bxp
     const hsh = upd.hsh || cur.hsh
-    addr.name = addr.name ||
-                `${__.cfg('newAddrNotice')} ${__.shortn(hsh, 7).trim()}`
     if (hsh) {
       addr.hsh = coinObj.toAddrHsh(hsh)
       addr.type = coinObj.isHdAddr(addr.hsh) ? 'hd' : 'std'
+      addr.name = addr.name ||
+                  `${__.cfg('newAddrNotice')} ${__.shortn(hsh, 5).trim()}`
     } else {
       addr.type = 'man'
     }
@@ -141,10 +141,10 @@ export default class Addr extends ApiBase {
       amnt: __.getAmnt(upd.amnt, cur.amnt),
       cfmCnt: upd.cfmCnt || cur.cfmCnt || -1,
       mode: upd.mode || cur.mode,
-      name: upd.name || cur.name ||
-            `${__.cfg('newTscNotice')} ${__.shortn(hsh, 7).trim()}`,
       desc: upd.desc || cur.desc || '',
-      tags: upd.tags || cur.tags || []
+      tags: upd.tags || cur.tags || [],
+      name: upd.name || cur.name ||
+            `${__.cfg('newTscNotice')} ${__.shortn(hsh, 5).trim()}`,
     }
     if (upd.hd || cur.hd) {
       cur.hd = cur.hd || {}

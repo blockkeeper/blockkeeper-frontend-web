@@ -760,9 +760,12 @@ const PaperGrid = ({
                       <b>Wallet</b>&nbsp;
                     </span>
                   </Hidden>}
-                  {(addr.type === 'hd' ? __.shortn(addr.hsh, 7) : addr.hsh) ||
-                   addr.desc ||
-                   'manual'
+                  {
+                    (
+                      addr.type === 'hd'
+                        ? `${__.shortn(addr.hsh, 7)}...`
+                        : addr.hsh
+                    ) || addr.desc || 'manual'
                   }
                 </Typography>
               </div>

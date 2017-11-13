@@ -442,6 +442,6 @@ export default {
   getTme: () => mo.utc().format(),
   getAmnt: (ua, ca) => toFloat(ua != null ? ua : (ca || 0)),
   clearObj: obj => { for (let prop of Object.keys(obj)) delete obj[prop] },
-  shortn: (val, maxLow) => `${val.trim().slice(0, maxLow || cfg('maxLow'))}...`,
+  shortn: (val, maxLow) => (val || '').trim().slice(0, maxLow || cfg('maxLow')),
   isFiat: coin => Boolean(cfg('coins').fiat[coin.toUpperCase()])
 }
