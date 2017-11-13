@@ -233,11 +233,10 @@ export default class Core extends StoBase {
       await this.rqst({url: 'user', data: pld}, userId)
     } catch (e) {
       let emsg, sts
-      if (e.sts === 409) {  // userId already exists: should never happen
-        emsg = 'Registering failed: Please reload page and try again'
-        sts = e.sts
-      } else if (e.sts >= 400 && e.sts < 500) {
-        emsg = 'Invalid password: Please change the password'
+      if (e.sts >= 400 && e.sts < 500) {
+        emsg = 'Registering failed temporary: Please press OK and try ' +
+               'again with the new assigned identifier. If the problem ' +
+               'persists, try another password please.'
         sts = 400
       } else {
         emsg = 'API Error: Registering failed. Please try again later'

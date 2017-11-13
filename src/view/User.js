@@ -111,7 +111,9 @@ class UserView extends React.Component {
             onClick: () => this.logout()
           }]}
         >
-          {"Clear browser's local app storage and logout?"}
+          Logout and clear browser's local app storage?
+          Please note: After logout you need your identifier and password
+          to login again.
         </Modal>
       )
     } else if (this.state.delAcc) {
@@ -125,7 +127,7 @@ class UserView extends React.Component {
             onClick: () => this.delete()
           }]}
         >
-          {'Delete account and all related data?'}
+          Delete account and all related data?
         </Modal>
       )
     } else if (this.state.userId) {

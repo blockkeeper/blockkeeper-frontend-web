@@ -21,9 +21,8 @@ class LoginView extends React.Component {
     this.set = this.set.bind(this)
     this.reload = () => this.setState(this.reset())
     this.reset = () => ({
-      busy: undefined,
-      loginBusy: undefined,
-      upd: undefined,
+      loginBusy: false,
+      upd: false,
       userId: '',
       pw: '',
       err: undefined
@@ -38,7 +37,7 @@ class LoginView extends React.Component {
   }
 
   set (ilk, val) {
-    this.setState({[ilk]: val}, () => {
+    this.setState({[ilk]: val, emsg: undefined}, () => {
       let d = {upd: false}
       if (this.state.userId) {
         d.userIdEmsg = __.vld.isUUID(this.state.userId, 4)
@@ -54,7 +53,7 @@ class LoginView extends React.Component {
   }
 
   async login () {
-    this.setState({err: undefined, busy: false, loginBusy: true})
+    this.setState({err: undefined, loginBusy: true})
     try {
       await this.cx.core.login(this.state.userId, this.state.pw)
       this.props.history.push('/depot')
@@ -66,7 +65,7 @@ class LoginView extends React.Component {
           emsg: e.message
         })
       } else {
-        this.setState({...this.reset(), err: e.message})
+        this.setState({err: e.message})
       }
     }
   }
@@ -84,89 +83,85 @@ class LoginView extends React.Component {
     } else {
       return (
         <div>
-          {this.state.busy &&
-            <LinearProgress />}
-          {!this.state.busy &&
-            <div className={this.props.classes.loginStyle}>
-              <Grid container spacing={0} justify='center'>
-                <Grid item xs={12} sm={8} md={6} lg={4} xl={4}>
-                  <Typography type='display3' color='inherit' align='center'>
-                    Block Keeper
-                  </Typography>
-                  <Typography
-                    type='display1'
-                    color='inherit'
-                    align='center'
-                    gutterBottom
-                  >
-                    Please enter your login credentials
-                  </Typography>
-                  <Paper
-                    square
-                    className={this.props.classes.paperStyle}
-                    elevation={24}
-                  >
-                    <TextField
-                      autoFocus
-                      fullWidth
-                      label='Identifier'
-                      margin='normal'
-                      value={this.state.userId}
-                      error={
-                        Boolean(this.state.emsg) ||
-                        Boolean(this.state.userIdEmsg)
-                      }
-                      helperText={this.state.emsg || this.state.userIdEmsg}
-                      onChange={evt => this.set('userId', evt.target.value)}
-                      />
-                    <TextField
-                      fullWidth
-                      label='Password'
-                      type='password'
-                      margin='normal'
-                      autoComplete='current-password'
-                      value={this.state.pw}
-                      error={
-                        Boolean(this.state.emsg) ||
-                        Boolean(this.state.pwEmsg)
-                      }
-                      helperText={this.state.emsg || this.state.pwEmsg}
-                      onChange={evt => this.set('pw', evt.target.value)}
-                      />
-                    <BrowserGate
-                      allwd={
-                        <div>
-                          <Button
-                            raised
-                            color='accent'
-                            className={this.props.classes.loginButton}
-                            onClick={(event) => this.login(event)}
-                            disabled={!this.state.upd || this.state.loginBusy}
-                            classes={{
-                              raisedAccent: this.props.classes.actnBtnClr
-                            }}
-                            >
-                            <Lock
-                              className={this.props.classes.lockIcon} />
-                              Login
-                          </Button>
-                          {this.state.loginBusy && <LinearProgress />}
-                          <br />
-                          <Button
-                            href='/rgstr'
-                            className={this.props.classes.fullWidth}
-                          >
-                            Register
-                          </Button>
-                        </div>
-                      }
-                      ntAll={<NtAllwd />}
+          <div className={this.props.classes.loginStyle}>
+            <Grid container spacing={0} justify='center'>
+              <Grid item xs={12} sm={8} md={6} lg={4} xl={4}>
+                <Typography type='display3' color='inherit' align='center'>
+                  Block Keeper
+                </Typography>
+                <Typography
+                  type='display1'
+                  color='inherit'
+                  align='center'
+                  gutterBottom
+                >
+                  Please enter your login credentials
+                </Typography>
+                <Paper
+                  square
+                  className={this.props.classes.paperStyle}
+                  elevation={24}
+                >
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    label='Identifier'
+                    margin='normal'
+                    value={this.state.userId}
+                    error={
+                      Boolean(this.state.emsg) ||
+                      Boolean(this.state.userIdEmsg)
+                    }
+                    helperText={this.state.emsg || this.state.userIdEmsg}
+                    onChange={evt => this.set('userId', evt.target.value)}
                     />
-                  </Paper>
-                </Grid>
+                  <TextField
+                    fullWidth
+                    label='Password'
+                    type='password'
+                    margin='normal'
+                    autoComplete='current-password'
+                    value={this.state.pw}
+                    error={
+                      Boolean(this.state.emsg) ||
+                      Boolean(this.state.pwEmsg)
+                    }
+                    helperText={this.state.emsg || this.state.pwEmsg}
+                    onChange={evt => this.set('pw', evt.target.value)}
+                    />
+                  <BrowserGate
+                    allwd={
+                      <div>
+                        <Button
+                          raised
+                          color='accent'
+                          className={this.props.classes.loginButton}
+                          onClick={async (event) => this.login(event)}
+                          disabled={!this.state.upd || this.state.loginBusy}
+                          classes={{
+                            raisedAccent: this.props.classes.actnBtnClr
+                          }}
+                          >
+                          <Lock
+                            className={this.props.classes.lockIcon} />
+                            Login
+                        </Button>
+                        {this.state.loginBusy && <LinearProgress />}
+                        <br />
+                        <Button
+                          href='/rgstr'
+                          className={this.props.classes.fullWidth}
+                        >
+                          Register
+                        </Button>
+                      </div>
+                    }
+                    ntAll={<NtAllwd />}
+                  />
+                </Paper>
               </Grid>
-            </div>
-          }
+            </Grid>
+          </div>
         </div>
       )
     }

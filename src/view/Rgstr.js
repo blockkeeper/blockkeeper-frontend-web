@@ -22,15 +22,6 @@ class RgstrView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.browserLocale = browserLocale() || __.cfg('dfltLocale')
-    this.state = {
-      pw: '',
-      rpw: '',
-      coin0: 'USD',
-      coin1: 'BTC',
-      locale: this.browserLocale,
-      writeDown: false
-    }
     this.userId = __.uuid()
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')
@@ -40,7 +31,27 @@ class RgstrView extends React.Component {
     this.setAction = d => this.setState({[d.ilk]: d.key})
     this.logout = () => {
       this.cx.core.clear()
-      this.setState({loggedIn: undefined})
+      this.setState({loggedIn: false})
+    }
+    this.reload = () => {
+      this.userId = __.uuid()
+      this.setState(this.reset())
+    }
+    this.reset = () => ({
+      busy: false,
+      saveBusy: false,
+      upd: false,
+      writeDown: false,
+      pw_: undefined,
+      pw: '',
+      rpw: '',
+      err: undefined
+    })
+    this.state = {
+      ...this.reset(),
+      coin0: 'USD',
+      coin1: 'BTC',
+      locale: browserLocale() || __.cfg('dfltLocale')
     }
   }
 
@@ -53,6 +64,7 @@ class RgstrView extends React.Component {
   }
 
   async load () {
+    this.setState({busy: true})
     try {
       const rateCoins = await new Rate(this.cx).getCoins()
       const coins = {coin0: [], coin1: []}
@@ -60,7 +72,7 @@ class RgstrView extends React.Component {
         coins.coin0.push({lbl: coin, key: coin, ilk: 'coin0'})
         coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
       }
-      this.setState({coins})
+      this.setState({coins, busy: false})
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
@@ -69,7 +81,7 @@ class RgstrView extends React.Component {
 
   async save (e) {
     if (e) e.preventDefault()
-    this.setState({busy: true})
+    this.setState({saveBusy: true})
     try {
       await this.cx.core.register(
         this.userId,
@@ -80,8 +92,8 @@ class RgstrView extends React.Component {
       )
       this.props.history.replace(`/depot`)
     } catch (e) {
-      this.setState({err: e.message, busy: false})
       if (__.cfg('isDev')) throw e
+      this.setState({err: e.message})
     }
   }
 
@@ -111,8 +123,8 @@ class RgstrView extends React.Component {
     if (this.state.err) {
       return (
         <Modal
-          onClose={() => this.setState({err: null})}
-          actions={[{onClick: () => this.setState({err: null}), lbl: 'OK'}]}
+          onClose={this.reload}
+          actions={[{lbl: 'OK', onClick: this.reload}]}
         >
           {this.state.err}
         </Modal>
@@ -121,22 +133,20 @@ class RgstrView extends React.Component {
       return (
         <Modal
           lbl='Note'
+          noCncl
           onClose={this.goUser}
-          actions={[{
-            onClick: this.logout,
-            lbl: 'Logout and clear local app storage?'
-          }]}
+          actions={[{onClick: this.goUser, lbl: 'OK'}]}
         >
           Please logout before creating a new user
         </Modal>
       )
+    } else if (this.state.busy) {
+      return <LinearProgress />
     } else {
       const backupfile = 'Blockkeeper.io backup\r\nIdentifier: ' +
                          `${this.userId}\r\nPassword: ${this.state.pw}\r\n`
       return (
         <div>
-          {this.state.busy &&
-            <LinearProgress />}
           <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={7} lg={5} xl={4}>
@@ -156,7 +166,10 @@ class RgstrView extends React.Component {
                   className={this.props.classes.paperStyle}
                   elevation={24}
                 >
-                  <form autoComplete='on' onSubmit={this.save}>
+                  <form
+                    autoComplete='on'
+                    onSubmit={async (...args) => await this.save(...args)}
+                  >
                     <TextField
                       autoFocus
                       fullWidth
@@ -228,7 +241,7 @@ class RgstrView extends React.Component {
                       reasons, it is NOT possible to recover your identifier
                       or password. If you <b>forget your login</b> credentials,
                       all your <b>data will be lost</b> and you need
-                      to setup a new account from the scratch.
+                      to setup a new account from scratch.
                     </Typography>
                     <BrowserGateSafarimobile
                       safari={<Button
@@ -274,7 +287,7 @@ class RgstrView extends React.Component {
                     <FormGroup>
                       <FormControlLabel
                         label={'I downloaded my backup or wrote down my ' +
-                               'identifier and password'}
+                               'identifier and password.'}
                         control={
                           <Switch
                             checkedClassName={this.props.classes.switch}
@@ -320,6 +333,8 @@ class RgstrView extends React.Component {
                               />
                               Register
                             </Button>
+                            {this.state.saveBusy && <LinearProgress />}
+                            <br />
                             <Button
                               className={this.props.classes.fullWidth}
                               onClick={this.goBack}
