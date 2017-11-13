@@ -45,7 +45,8 @@ class RgstrView extends React.Component {
       pw_: undefined,
       pw: '',
       rpw: '',
-      err: undefined
+      err: undefined,
+      userAckDl: false
     })
     this.state = {
       ...this.reset(),
@@ -140,7 +141,7 @@ class RgstrView extends React.Component {
           Please logout before creating a new user
         </Modal>
       )
-    } else if (this.state.busy) {
+    } else if (this.state.busy || this.state.saveBusy) {
       return <LinearProgress />
     } else {
       const backupfile = 'Blockkeeper.io backup\r\nIdentifier: ' +
@@ -178,7 +179,7 @@ class RgstrView extends React.Component {
                       margin='normal'
                       value={this.userId}
                       helperText='your account login identifier'
-                      disabled={this.state.writeDown}
+                      disabled={this.state.writeDown || this.state.userAckDl}
                       autoComplete='on'
                     />
                     <TextField
@@ -191,7 +192,7 @@ class RgstrView extends React.Component {
                       error={Boolean(this.state.pwEmsg)}
                       helperText={this.state.pwEmsg}
                       onChange={evt => this.set('pw', evt.target.value)}
-                      disabled={this.state.writeDown}
+                      disabled={this.state.writeDown || this.state.userAckDl}
                       autoComplete='on'
                     />
                     <TextField
@@ -204,7 +205,7 @@ class RgstrView extends React.Component {
                       error={Boolean(this.state.rpwEmsg)}
                       helperText={this.state.rpwEmsg}
                       onChange={evt => this.set('rpw', evt.target.value)}
-                      disabled={this.state.writeDown}
+                      disabled={this.state.writeDown || this.state.userAckDl}
                       autoComplete='on'
                     />
                     <Grid container spacing={16}>
@@ -216,7 +217,7 @@ class RgstrView extends React.Component {
                           data={this.state.coins.coin0}
                           slctd={this.state.coin0}
                           action={this.setAction}
-                          disabled={this.state.writeDown}
+                          disabled={this.state.writeDown || this.state.userAckDl}
                          />}
                       </Grid>
                       <Grid item xs={6}>
@@ -227,7 +228,7 @@ class RgstrView extends React.Component {
                           data={this.state.coins.coin0}
                           slctd={this.state.coin1}
                           action={this.setAction}
-                          disabled={this.state.writeDown}
+                          disabled={this.state.writeDown || this.state.userAckDl}
                       />}
                       </Grid>
                     </Grid>
@@ -255,6 +256,7 @@ class RgstrView extends React.Component {
                         }
                         className={this.props.classes.btnBackup}
                         onClick={() => {
+                          this.setState({userAckDl: true})
                           window.alert(
                             backupfile +
                             '\n Please do a screenshot, copy+paste or pen+paper'
@@ -276,6 +278,7 @@ class RgstrView extends React.Component {
                         }
                         className={this.props.classes.btnBackup}
                         onClick={() => {
+                          this.setState({userAckDl: true})
                           fileDownload(backupfile, 'blockkeeper-backup.txt')
                         }}
                         classes={{
@@ -333,7 +336,6 @@ class RgstrView extends React.Component {
                               />
                               Register
                             </Button>
-                            {this.state.saveBusy && <LinearProgress />}
                             <br />
                             <Button
                               className={this.props.classes.fullWidth}
