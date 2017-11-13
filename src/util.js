@@ -212,14 +212,18 @@ const struc = (lst, {toBeg, max, byTme, noSort}) => {
 }
 
 const uuid = rnd => {
-  if (rnd) return uuidv4({random: rnd})
-  const rng = () => {
-    // https://github.com/kelektiv/node-uuid/blob/master/lib/rng-browser.js
-    const rnds8 = new Uint8Array(16)
-    crypto.getRandomValues(rnds8)
-    return rnds8
+  try {
+    if (rnd) return uuidv4({random: rnd})
+    const rng = () => {
+      // https://github.com/kelektiv/node-uuid/blob/master/lib/rng-browser.js
+      const rnds8 = new Uint8Array(16)
+      crypto.getRandomValues(rnds8)
+      return rnds8
+    }
+    return uuidv4({rng})  // force usage of webcrypto's RNG
+  } catch (e) {
+    throw getErr('Creating new UUID failed', {e, sts: 900})
   }
-  return uuidv4({rng})   // force usage of webcrypto's RNG
 }
 
 const lstToObj = lst_ => {
@@ -417,7 +421,7 @@ export default {
   debug: getLogger('debug', 'main'),
   info: getLogger('info', 'main'),
   warn: getLogger('warn', 'main'),
-  strToArrBuff: val => new TextEncoder('utf-8').encode(val),
+  strToArrBuf: val => new TextEncoder('utf-8').encode(val),
   toInt: val => validator.toInt(String(val)),
   toTags: tags => tags.trim().split(' ').filter(item => item !== '').join(' '),
   getCoinPair: (baseCoin, quoteCoin) => `${baseCoin}_${quoteCoin}`,
