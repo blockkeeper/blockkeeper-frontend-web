@@ -25,8 +25,8 @@ import IconButton from 'material-ui/IconButton'
 import Typography from 'material-ui/Typography'
 import {UserAgentProvider, UserAgent} from '@quentin-sommer/react-useragent'
 import {LinearProgress} from 'material-ui/Progress'
-import {Add, Close, Autorenew, AccountCircle, InfoOutline,
-       Error, KeyboardArrowUp, Feedback, BugReport, Email} from 'material-ui-icons'
+import {Add, Close, Autorenew, AccountCircle, InfoOutline, KeyboardArrowUp,
+       Error, Feedback, BugReport, Email} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
        DialogTitle } from 'material-ui/Dialog'
 import {theme, jumboStyle, floatBtnStyle, CryptoColors} from './Style'
@@ -61,7 +61,12 @@ const TopBar = ({
   modeCancel,
   className
 }) =>
-  <AppBar position='static' color={color || 'default'} elevation={0} className={className}>
+  <AppBar
+    position='static'
+    color={color || 'default'}
+    elevation={0}
+    className={className}
+  >
     <Toolbar style={{minHeight: '50px'}}>
       <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
         <div style={{marginRight: 'auto'}}>
@@ -176,7 +181,10 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
         className={display3ClassName}
       >
         <TransitiveNumber>
-          {title ? __.formatNumber(title, coin0, locale) : __.formatNumber(0, coin0, locale)}
+          {title
+            ? __.formatNumber(title, coin0, locale)
+            : __.formatNumber(0, coin0, locale)
+          }
         </TransitiveNumber>&nbsp;
         <Hidden xsDown>
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
@@ -199,7 +207,10 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
   </div>
 
 const ToTopBtn = ({className}) =>
-  <ScrollToTop showUnder={200} style={{right: '50%', bottom: theme.spacing.unit * 2}}>
+  <ScrollToTop
+    showUnder={200}
+    style={{right: '50%', bottom: theme.spacing.unit * 2}}
+  >
     <Button
       fab
       aria-label='top'
@@ -212,23 +223,18 @@ const ToTopBtn = ({className}) =>
     </Button>
   </ScrollToTop>
 
-const FloatBtn = ({onClick, key, actnBtnClrClassName}) => {
-  return (
-    <Button
-      fab
-      aria-label='add'
-      color='primary'
-      style={floatBtnStyle}
-      onClick={onClick}
-      key={key || __.uuid()}
-      classes={{
-        raisedPrimary: actnBtnClrClassName
-      }}
-    >
-      <Add />
-    </Button>
-  )
-}
+const FloatBtn = ({onClick, key, actnBtnClrClassName}) =>
+  <Button
+    fab
+    aria-label='add'
+    color='primary'
+    style={floatBtnStyle}
+    onClick={onClick}
+    key={key || __.uuid()}
+    classes={{raisedPrimary: actnBtnClrClassName}}
+  >
+    <Add />
+  </Button>
 
 const BxpFloatBtn = ({onClick, bxpSts, style, second}) => {
   let icon, lbl, dsbld
@@ -251,10 +257,13 @@ const BxpFloatBtn = ({onClick, bxpSts, style, second}) => {
       fab
       aria-label={lbl}
       color='contrast'
-      style={{...floatBtnStyle, bottom: second ? theme.spacing.unit * 10 : theme.spacing.unit * 2}}
       onClick={onClick}
       key='bxpFloatBtn'
       disabled={dsbld}
+      style={{
+        ...floatBtnStyle,
+        bottom: second ? theme.spacing.unit * 10 : theme.spacing.unit * 2
+      }}
     >
       {icon}
     </Button>
@@ -558,12 +567,18 @@ class BrowserGate extends React.Component {
           {parser => (
             <div>
               {(
-                (parser.getBrowser().name === 'Chrome' && Number(parser.getBrowser().major) >= 60) ||
-                (parser.getBrowser().name === 'Edge' && Number(parser.getBrowser().major) >= 16) ||
-                (parser.getBrowser().name === 'Safari' && Number(parser.getBrowser().major) >= 11) ||
-                (parser.getBrowser().name === 'Mobile Safari' && Number(parser.getBrowser().major) >= 9) ||
-                (parser.getBrowser().name === 'Opera' && Number(parser.getBrowser().major) >= 48) ||
-                (parser.getBrowser().name === 'Firefox' && Number(parser.getBrowser().major) >= 55)
+                (parser.getBrowser().name === 'Chrome' &&
+                  Number(parser.getBrowser().major) >= 60) ||
+                (parser.getBrowser().name === 'Edge' &&
+                  Number(parser.getBrowser().major) >= 16) ||
+                (parser.getBrowser().name === 'Safari' &&
+                  Number(parser.getBrowser().major) >= 11) ||
+                (parser.getBrowser().name === 'Mobile Safari' &&
+                  Number(parser.getBrowser().major) >= 9) ||
+                (parser.getBrowser().name === 'Opera' &&
+                  Number(parser.getBrowser().major) >= 48) ||
+                (parser.getBrowser().name === 'Firefox' &&
+                  Number(parser.getBrowser().major) >= 55)
                )
               ? this.props.allwd
               : this.props.ntAll}
@@ -595,7 +610,12 @@ class BrowserGateSafarimobile extends React.Component {
 
 const NtAllwd = () => {
   return <div>
-    <Typography type='title' align='center' gutterBottom style={{marginTop: '40px', marginBottom: '40px'}}>
+    <Typography
+      type='title'
+      align='center'
+      gutterBottom
+      style={{marginTop: '40px', marginBottom: '40px'}}
+    >
       Your Browser is not supported!
       <br />
       <b>Please upgrade your browser to access <nobr>Block Keeper</nobr></b>.
@@ -634,7 +654,8 @@ const DepotEmpty = ({className}) =>
           Welcome to Block Keeper
         </Typography>
         <Typography type='subheading' gutterBottom>
-          In order to start using our app, please go ahead and connect your first wallet.
+          In order to start using our app,
+          please go ahead and connect your first wallet.
         </Typography>
       </Grid>
     </Grid>
@@ -739,7 +760,10 @@ const PaperGrid = ({
                       <b>Wallet</b>&nbsp;
                     </span>
                   </Hidden>}
-                  {(addr.type === 'hd' ? __.shortn(addr.hsh, 7) : addr.hsh) || addr.desc || 'manual'}
+                  {(addr.type === 'hd' ? __.shortn(addr.hsh, 7) : addr.hsh) ||
+                   addr.desc ||
+                   'manual'
+                  }
                 </Typography>
               </div>
               <div className={amntClassName}>
@@ -770,7 +794,10 @@ const PaperGrid = ({
                   className={body2ClassName}
                   style={{color: theme.palette.text.secondary}}
                 >
-                  {__.formatNumber(addr.amnt * addr.rates[coin0], coin0, locale)}&nbsp;
+                  {__.formatNumber(
+                    addr.amnt * addr.rates[coin0], coin0, locale
+                  )}
+                  &nbsp;
                   <Hidden xsDown>
                     <CoinIcon
                       coin={coin0}
