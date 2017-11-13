@@ -8,6 +8,7 @@ Object.assign(d, {
   apiUrl: 'https://api.blockkeeper.io/v1',
   homeUrl: 'https://blockkeeper.io',
   lstMax: 50,
+  maxName: 35,   // related to newXNotice
   maxLow: 25,
   maxHigh: 100,
   minAddr: 26,

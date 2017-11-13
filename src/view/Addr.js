@@ -133,7 +133,7 @@ class AddrView extends React.Component {
     this.setState({[ilk]: val}, () => {
       let d = {
         upd: false,
-        nameEmsg: __.vldAlphNum(this.state.name),
+        nameEmsg: __.vldAlphNum(this.state.name, {max: __.cfg('maxName')}),
         descEmsg: __.vldAlphNum(this.state.desc, {max: __.cfg('maxHigh')}),
         tagsEmsg: __.vldAlphNum(this.state.tagsJoin, {max: __.cfg('maxHigh')})
       }
