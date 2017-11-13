@@ -80,6 +80,8 @@ class LoginView extends React.Component {
           {this.state.err}
         </Modal>
       )
+    } else if (this.state.loginBusy) {
+      return <LinearProgress />
     } else {
       return (
         <div>
@@ -146,7 +148,6 @@ class LoginView extends React.Component {
                             className={this.props.classes.lockIcon} />
                             Login
                         </Button>
-                        {this.state.loginBusy && <LinearProgress />}
                         <br />
                         <Button
                           href='/rgstr'
