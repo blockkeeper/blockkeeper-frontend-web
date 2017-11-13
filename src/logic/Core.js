@@ -185,10 +185,10 @@ export default class Core extends StoBase {
     } catch (e) {
       let emsg, sts
       if (e.sts === 404) {
-        emsg = 'Invalid identifier/password'
+        emsg = 'Invalid identifier/password combination'
         sts = 404
       } else if (e.sts >= 400 && e.sts < 500) {
-        emsg = 'Invalid identifier/password'
+        emsg = 'Invalid identifier/password combination'
         sts = 400
       } else {
         emsg = 'API Error: Login failed. Please try again later'
@@ -205,7 +205,7 @@ export default class Core extends StoBase {
     try {
       user = await this.decrypt(pld.data, secrets)
     } catch (e) {
-      throw this.err('Invalid identifier/password', {e, sts: 400})
+      throw this.err('Invalid identifier/password combination', {e, sts: 400})
     }
     this.init(secrets, user.depotId, user)
   }
