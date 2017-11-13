@@ -217,7 +217,9 @@ class RgstrView extends React.Component {
                           data={this.state.coins.coin0}
                           slctd={this.state.coin0}
                           action={this.setAction}
-                          disabled={this.state.writeDown || this.state.userAckDl}
+                          disabled={
+                            this.state.writeDown || this.state.userAckDl
+                          }
                          />}
                       </Grid>
                       <Grid item xs={6}>
@@ -225,10 +227,12 @@ class RgstrView extends React.Component {
                         <DropDown
                           _id='coin1DropDown'
                           title={'Secondary coin'}
-                          data={this.state.coins.coin0}
+                          data={this.state.coins.coin1}
                           slctd={this.state.coin1}
                           action={this.setAction}
-                          disabled={this.state.writeDown || this.state.userAckDl}
+                          disabled={
+                            this.state.writeDown || this.state.userAckDl
+                          }
                       />}
                       </Grid>
                     </Grid>
