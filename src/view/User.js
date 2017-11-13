@@ -58,7 +58,7 @@ class UserView extends React.Component {
       })
     } catch (e) {
       this.setState({err: e.message})
-      if (process.env.NODE_ENV === 'development') throw e
+      if (__.cfg('isDev')) throw e
     }
   }
 
@@ -78,7 +78,7 @@ class UserView extends React.Component {
       })
     } catch (e) {
       this.setState({err: e.message})
-      if (process.env.NODE_ENV === 'development') throw e
+      if (__.cfg('isDev')) throw e
     } finally {
       this.setState({busy: false, upd: false, edit: false})
     }
@@ -90,7 +90,7 @@ class UserView extends React.Component {
       this.logout()
     } catch (e) {
       this.setState({err: e.message, show: false})
-      if (process.env.NODE_ENV === 'development') throw e
+      if (__.cfg('isDev')) throw e
     }
   }
 

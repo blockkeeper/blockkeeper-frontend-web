@@ -54,17 +54,13 @@ class RgstrView extends React.Component {
 
   async load () {
     try {
-      const [rateCoins] = await Promise.all([
-        new Rate(this.cx).getCoins()
-      ])
+      const rateCoins = await new Rate(this.cx).getCoins()
       const coins = {coin0: [], coin1: []}
       for (let coin of rateCoins) {
         coins.coin0.push({lbl: coin, key: coin, ilk: 'coin0'})
         coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
       }
-      this.setState({
-        coins: coins
-      })
+      this.setState({coins})
     } catch (e) {
       if (__.cfg('isDev')) throw e
       this.setState({err: e.message})
@@ -85,7 +81,7 @@ class RgstrView extends React.Component {
       this.props.history.replace(`/depot`)
     } catch (e) {
       this.setState({err: e.message, busy: false})
-      if (process.env.NODE_ENV === 'development') throw e
+      if (__.cfg('isDev')) throw e
     }
   }
 
