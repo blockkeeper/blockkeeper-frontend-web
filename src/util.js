@@ -299,7 +299,7 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
 }
 
 const vldPw = (pw) => {
-  let pat = 'a-zA-Z0-9:,.\\-_!%@#^$*%&=?`{}\\[\\]<>/~\'"'
+  let pat = 'a-zA-Z0-9:;,.\\-_!%@#^$*%&=?`(){}\\[\\]<>/~\'"\\\\'
   if (!validator.matches(pw, `^[${pat}]*$`)) {
     return `Allowed characters: ${pat.replace(/\\/g, '')}`
   }
