@@ -1,7 +1,7 @@
 import React from 'react'
 import {LinearProgress} from 'material-ui/Progress'
 import {withStyles} from 'material-ui/styles'
-import {TopBar, Modal, DropDown, UserList, Done, Edit} from './Lib'
+import {TopBar, Modal, DropDown, UserList, Done, Edit, Snack} from './Lib'
 import {ArrowBack} from 'material-ui-icons'
 import {themeBgStyle, gridWrap, gridSpacer, gridGutter,
         gridGutterFluid} from './Style'
@@ -38,36 +38,34 @@ class UserView extends React.Component {
   }
 
   async load () {
+    let user, rateCoins, coins
     try {
-      const [user, rateCoins] = await Promise.all([
+      [user, rateCoins] = await Promise.all([
         this.cx.user.load(),
         this.cx.rate.getCoins()
       ])
-      const coins = {coin0: [], coin1: []}
+      coins = {coin0: [], coin1: []}
       for (let coin of rateCoins) {
         coins.coin0.push({lbl: coin, key: coin, ilk: 'coin0'})
         coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
       }
-      this.setState({
-        userId: user._id,
-        depotId: user.depotId,
-        coin0: user.coins[0],
-        coin1: user.coins[1],
-        locale: user.locale,
-        coins
-      })
     } catch (e) {
-      this.setState({err: e.message})
-      if (__.cfg('isDev')) throw e
+      return this.errGo(`Loading user failed: ${e.message}`, e, '/depot')
     }
+    this.setState({
+      snack: this.getSnack(),
+      userId: user._id,
+      depotId: user.depotId,
+      coin0: user.coins[0],
+      coin1: user.coins[1],
+      locale: user.locale,
+      coins
+    })
   }
 
   async save () {
-    if (this.state.upd === false) {
-      this.setState({edit: false})
-      return
-    }
-    this.setState({busy: true})
+    if (this.state.upd === false) return this.setState({edit: false})
+    this.setState({edit: false, busy: true})
     try {
       await this.cx.user.save({
         _id: this.state.userId,
@@ -77,8 +75,7 @@ class UserView extends React.Component {
         depotId: this.state.depotId
       })
     } catch (e) {
-      this.setState({err: e.message})
-      if (__.cfg('isDev')) throw e
+      this.err(`Updating user failed: ${e.message}`, e)
     } finally {
       this.setState({busy: false, upd: false, edit: false})
     }
@@ -89,8 +86,7 @@ class UserView extends React.Component {
       await this.cx.user.delete()
       this.logout()
     } catch (e) {
-      this.setState({err: e.message, show: false})
-      if (__.cfg('isDev')) throw e
+      return this.err(`Deleting user failed: ${e.message}`, e, {delAcc: false})
     }
   }
 
@@ -104,7 +100,7 @@ class UserView extends React.Component {
     } else if (this.state.logout) {
       return (
         <Modal
-          onClose={() => this.setState({logout: null})}
+          onClose={() => this.setState({logout: false})}
           lbl='Logout'
           actions={[{
             lbl: 'Clear and logout?',
@@ -120,11 +116,11 @@ class UserView extends React.Component {
       return (
         <Modal
           withBusy
-          onClose={() => this.setState({delAcc: null})}
+          onClose={() => this.setState({delAcc: false})}
           lbl='Delete account'
           actions={[{
             lbl: 'Delete',
-            onClick: () => this.delete()
+            onClick: async () => await this.delete()
           }]}
         >
           Delete account and all related data?
@@ -133,11 +129,17 @@ class UserView extends React.Component {
     } else if (this.state.userId) {
       return (
         <div className={this.props.classes.themeBgStyle}>
+          {this.state.snack &&
+            <Snack
+              msg={this.state.snack}
+              onClose={() => this.setState({snack: null})}
+            />
+          }
           {this.state.edit &&
             <TopBar
               midTitle='User'
               action={<Done />}
-              onClick={this.save}
+              onClick={async () => { if (this.state.upd) await this.save() }}
               onClickLeft={() => this.setState({edit: false})}
               className={this.props.classes.gridWrap}
               modeCancel

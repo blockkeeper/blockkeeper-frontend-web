@@ -29,22 +29,14 @@ class AppError extends Error {
     if (moreKeys.length > 0) {
       for (let key of moreKeys) this[`_${key}`] = more[key]
     }
-    if (sts >= 900) {
+    if (paSts >= 900) {
       this.dmsg = this.dmsg ? `${this.dmsg}. ` : '' +
-                  'Clearing environment cause of fatal error'
-      this.message = `A fatal error occured: ${this.message}. ` +
-                     'Environment cleared. Please login again'
-      clearSto()
-    } else {
-      if (paSts >= 900) {
-        this.dmsg = this.dmsg ? `${this.dmsg}. ` : '' +
                     'Parent error status is equal/greater 900 (fatal ' +
                     'error): Overwriting user message and status. ' +
                     `Original user message: "${this.message}". ` +
                     `Original status: "${this.sts}"`
-        this.message = paErr.message
-        this.sts = paSts
-      }
+      this.message = paErr.message
+      this.sts = paSts
     }
   }
 }
@@ -109,7 +101,23 @@ const initView = (cmp, name) => {
     delete cmp.cx.tmp.snack
     return msg
   }
-  cmp.setSnack = msg => { cmp.cx.tmp.snack = msg }
+  cmp.setSnack = msg => cmp.cx.tmp.snack = msg
+  cmp.err = (emsg, e, state) => {
+    cmp.warn(emsg)
+    cmp.setSnack(`ERROR: ${emsg}`)
+    cmp.setState({snack: cmp.getSnack(), ...(state || {})})
+    if (e && cfg('isDev')) throw e
+  }
+  cmp.errGo = (emsg, e, urlPath) => {
+    cmp.warn(emsg)
+    cmp.setSnack(`ERROR: ${emsg}`)
+    if (urlPath) {
+      cmp.props.history.push(urlPath)
+    } else {
+      cmp.props.history.goBack()
+    }
+    if (e && cfg('isDev')) throw e
+  }
   return cmp
 }
 

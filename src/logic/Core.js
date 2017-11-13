@@ -32,7 +32,7 @@ export default class Core extends StoBase {
     const val = core[key]
     if (val === undefined) {
       this.clear()
-      throw __.err(`Getting core data "${key}" failed`, {sts: 900})
+      throw this.err(`Getting core data "${key}" failed`, {sts: 900})
     }
     return val
   }
@@ -85,7 +85,7 @@ export default class Core extends StoBase {
       )
     }
     if (!userId || !pldKeyObj) {
-      throw __.err('Getting user ID and/or payload key failed', {sts: 900})
+      throw this.err('Getting user ID and/or payload key failed', {sts: 900})
     }
     return Object.assign(secrets, {userId, pldKeyObj})
   }
@@ -96,7 +96,7 @@ export default class Core extends StoBase {
       try {
         rawPld = LZUTF8.compress(JSON.stringify(pld))
       } catch (e) {
-        throw __.err('Packing process failed', {e})
+        throw this.err('Packing process failed', {e})
       }
       try {
         secrets = await this.loadSecrets(['encrypt'], secrets)
@@ -116,10 +116,10 @@ export default class Core extends StoBase {
         cypher = Array.from(new Uint8Array(cypher))
         return {iv: Array.from(iv), cypher, tagSize, addData: secrets.userId}
       } catch (e) {
-        throw __.err('Encryption process failed', {e})
+        throw this.err('Encryption process failed', {e})
       }
     } catch (e) {
-      throw __.err('Encrypting payload failed', {e, sts: 900})
+      throw this.err('Encrypting payload failed', {e, sts: 900})
     }
   }
 
@@ -140,18 +140,18 @@ export default class Core extends StoBase {
           new Uint8Array(data.cypher)
         )
       } catch (e) {
-        throw __.err('Decryption process failed: Possible reason: ' +
-                     'tagLength or iv or additionalData are not ' +
-                     'congruent with related encryption values', {e})
+        throw this.err('Decryption process failed: Possible reason: ' +
+                       'tagLength or iv or additionalData are not ' +
+                       'congruent with related encryption values', {e})
       }
       try {
         return JSON.parse(LZUTF8.decompress(new Uint8Array(rawPld)))
       } catch (e) {
-        throw __.err('Unpacking process failed', {e})
+        throw this.err('Unpacking process failed', {e})
       }
     } catch (e) {
-      if (isLogin) throw __.err('Decrypting data failed', {e})
-      throw __.err('Decrypting data failed', {e, sts: 900})
+      if (isLogin) throw this.err('Decrypting data failed', {e})
+      throw this.err('Decrypting data failed', {e, sts: 900})
     }
   }
 

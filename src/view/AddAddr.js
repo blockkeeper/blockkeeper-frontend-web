@@ -34,6 +34,9 @@ class AddAddrView extends React.Component {
     }
     this.coins = []
     this.goBack = props.history.goBack
+    this.load = this.load.bind(this)
+    this.save = this.save.bind(this)
+    this.set = this.set.bind(this)
     this.disableQrMode = (evt, checked) => {
       this.set('manAddrMode', checked)
       this.set('qrMode', false)
@@ -45,9 +48,6 @@ class AddAddrView extends React.Component {
         this.set('qrMode', false)
       }
     }
-    this.load = this.load.bind(this)
-    this.save = this.save.bind(this)
-    this.set = this.set.bind(this)
   }
 
   async componentDidMount () {
@@ -71,8 +71,7 @@ class AddAddrView extends React.Component {
       this.coins = coins.filter(c => !__.isFiat(c))
       this.setState({coin: ''})
     } catch (e) {
-      if (__.cfg('isDev')) throw e
-      this.setState({err: e.message})
+      return this.errGo(`Cannot connect new wallet: ${e.message}`, e, '/depot')
     }
   }
 
@@ -88,11 +87,10 @@ class AddAddrView extends React.Component {
         name: this.state.name
       })
       this.setSnack('Wallet connected, synchronizing...')
-      this.props.history.replace(`/wallet/${addr._id}`)
       this.cx.depot.bxp([addr._id])
+      this.props.history.replace(`/wallet/${addr._id}`)
     } catch (e) {
-      if (__.cfg('isDev')) throw e
-      this.setState({err: e.message, busy: false})
+      return this.errGo(`Connecting wallet failed: ${e.message}`, e)
     }
   }
 
@@ -229,9 +227,9 @@ class AddAddrView extends React.Component {
                       resolution={250}
                       className={this.props.classes.qrReaderStyle}
                       onError={err => {
-                        this.warn(`Accessing camera failed: ${err}`)
-                        this.setSnack('Accessing camera failed: Please ' +
-                                      'check your browser settings')
+                        this.warn(`Accessing camera failed/denied: ${err}`)
+                        this.setSnack('Accessing camera failed/denied: ' +
+                                      'Please check your browser settings')
                         this.setState({snack: this.getSnack()})
                         this.disableQrMode(undefined, this.state.manAddrMode)
                       }}
@@ -293,7 +291,7 @@ class AddAddrView extends React.Component {
                     raised
                     color='accent'
                     className={this.props.classes.cnctBtn}
-                    onClick={this.save}
+                    onClick={async () => await this.save()}
                     disabled={!this.state.upd || this.state.busy}
                     classes={{
                       raisedAccent: this.props.classes.actnBtnClr

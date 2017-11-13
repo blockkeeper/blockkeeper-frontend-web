@@ -26,7 +26,6 @@ class TscView extends React.Component {
     this.goBack = props.history.goBack
     this.load = this.load.bind(this)
     this.save = this.save.bind(this)
-    this.edit = this.edit.bind(this)
     this.set = this.set.bind(this)
     this.toggleCoins = () => {
       this.setState({toggleCoins: !this.state.toggleCoins})
@@ -54,8 +53,7 @@ class TscView extends React.Component {
         this.cx.user.getCoins(this.state.coin, user)
       ])
     } catch (e) {
-      if (__.cfg('isDev')) throw e
-      this.setState({err: e.message})
+      return this.errGo(`Loading transaction failed: ${e.message}`, e, '/depot')
     }
     this.addr = addr
     this.user = user
@@ -78,10 +76,6 @@ class TscView extends React.Component {
     })
   }
 
-  edit () {
-    this.setState({edit: !this.state.edit})
-  }
-
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
       let d = {
@@ -96,11 +90,8 @@ class TscView extends React.Component {
   }
 
   async save () {
-    if (this.state.upd === false) {
-      this.setState({edit: false})
-      return
-    }
-    this.setState({busy: true})
+    if (this.state.upd === false) return this.setState({edit: false})
+    this.setState({edit: false, busy: true})
     const tsc = this.state.tsc
     try {
       const updTsc = {
@@ -119,8 +110,9 @@ class TscView extends React.Component {
         busy: false
       })
     } catch (e) {
-      if (__.cfg('isDev')) throw e
-      this.setState({err: e.message, busy: false})
+      this.err(`Updating transaction failed: ${e.message}`, e)
+    } finally {
+      this.setState({busy: false, upd: false, edit: false})
     }
   }
 
@@ -148,12 +140,13 @@ class TscView extends React.Component {
             <Snack
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
-            />}
+            />
+          }
           {this.state.edit &&
             <TopBar
               midTitle='Transaction'
               action={<Done />}
-              onClick={this.save}
+              onClick={async () => { if (this.state.upd) await this.save() }}
               onClickLeft={() => this.setState({edit: false})}
               className={this.props.classes.gridWrap}
               modeCancel
@@ -165,12 +158,12 @@ class TscView extends React.Component {
               iconLeft={<ArrowBack />}
               onClickLeft={this.goBack}
               action={<Edit />}
-              onClick={this.edit}
+              onClick={() => this.setState({edit: !this.state.edit})}
               className={this.props.classes.gridWrap}
               noUser
             />}
           {this.state.busy &&
-          <LinearProgress />}
+            <LinearProgress />}
           <Paper square className={this.props.classes.spacer}>
             <Typography
               type='headline'

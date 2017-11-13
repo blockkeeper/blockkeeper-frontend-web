@@ -32,9 +32,6 @@ class AddrView extends React.Component {
     this.save = this.save.bind(this)
     this.delete = this.delete.bind(this)
     this.set = this.set.bind(this)
-    this.close = () => this.setState({ask: null})
-    this.unveil = () => this.setState({unveil: !this.state.unveil})
-    this.edit = edit => this.setState({edit: !this.state.edit, show: true})
     this.show = () => {
       this.setState({show: !this.state.show, edit: false, unveil: false})
     }
@@ -64,8 +61,7 @@ class AddrView extends React.Component {
         this.cx.user.load()
       ])
     } catch (e) {
-      if (__.cfg('isDev')) throw e
-      this.setState({err: e.message})
+      return this.errGo(`Loading wallet failed: ${e.message}`, e, '/depot')
     }
     this.user = user
     const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
@@ -93,10 +89,7 @@ class AddrView extends React.Component {
   }
 
   async save () {
-    if (this.state.upd === false) {
-      this.setState({edit: false})
-      return
-    }
+    if (this.state.upd === false) return this.setState({edit: false})
     this.setState({edit: false, busy: true})
     try {
       const data = {
@@ -118,8 +111,9 @@ class AddrView extends React.Component {
         })
       }
     } catch (e) {
-      this.setState({err: e.message, busy: false})
-      if (__.cfg('isDev')) throw e
+      this.err(`Updating wallet failed: ${e.message}`, e)
+    } finally {
+      this.setState({busy: false, upd: false, edit: false})
     }
   }
 
@@ -127,11 +121,12 @@ class AddrView extends React.Component {
     try {
       await this.addrObj.delete()
       this.setSnack('Wallet disconnected')
+      this.props.history.push('/depot')
     } catch (e) {
-      this.setState({err: e.message, show: false, unveil: false})
-      if (__.cfg('isDev')) throw e
+      return this.err(
+        `Disconnecting wallet failed: ${e.message}`, e, {ask: false}
+      )
     }
-    this.props.history.push('/depot')
   }
 
   set (ilk, val) {
@@ -166,11 +161,14 @@ class AddrView extends React.Component {
       return (
         <Modal
           withBusy
-          onClose={this.close}
+          onClose={() => this.setState({ask: false})}
           lbl='Disconnect wallet'
-          actions={[{lbl: 'Disconnect wallet', onClick: this.delete}]}
+          actions={[{
+            lbl: 'Disconnect',
+            onClick: async () => await this.delete()
+          }]}
         >
-          {`Are you sure you want to disconnect wallet "${this.state.name}"?`}
+          {`Disconnect wallet "${this.state.name}"?`}
         </Modal>
       )
     } else if (this.state.addr && this.state.tscs) {
@@ -190,27 +188,30 @@ class AddrView extends React.Component {
             <Snack
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
-            />}
+            />
+          }
           {this.state.edit &&
-          <TopBar
-            midTitle='Wallet'
-            action={<Done />}
-            onClick={this.save}
-            onClickLeft={() => this.setState({edit: false})}
-            className={this.props.classes.gridWrap}
-            modeCancel
-            noUser
-          />}
+            <TopBar
+              midTitle='Wallet'
+              action={<Done />}
+              onClick={async () => { if (this.state.upd) await this.save() }}
+              onClickLeft={() => this.setState({edit: false})}
+              className={this.props.classes.gridWrap}
+              modeCancel
+              noUser
+            />
+          }
           {!this.state.edit &&
-          <TopBar
-            midTitle='Wallet'
-            iconLeft={<ArrowBack />}
-            onClickLeft={this.goBack}
-            action={<Edit />}
-            onClick={this.edit}
-            className={this.props.classes.gridWrap}
-            noUser
-          />}
+            <TopBar
+              midTitle='Wallet'
+              iconLeft={<ArrowBack />}
+              onClickLeft={this.goBack}
+              action={<Edit />}
+              onClick={() => this.setState({edit: !this.state.edit, show: true})}
+              className={this.props.classes.gridWrap}
+              noUser
+            />
+          }
           {this.state.busy &&
             <LinearProgress />}
           <Paper
@@ -501,7 +502,9 @@ class AddrView extends React.Component {
                       <Button
                         raised
                         color='contrast'
-                        onClick={this.unveil}
+                        onClick={() => {
+                          this.setState({unveil: !this.state.unveil})
+                        }}
                         className={this.props.classes.unvlBtn}
                       >
                         Unveil xpub key

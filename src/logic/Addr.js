@@ -65,7 +65,7 @@ export default class Addr extends ApiBase {
     addr = addr || await this.load()
     const tscs = addr.tscs.filter(tsc => tsc._id === tscId)
     if (tscs.length !== 1) {
-      throw __.err('Transaction not found', {
+      throw this.err('Transaction not found', {
         dmsg: `Tsc ${tscId} not found in addr ${addr._id}`,
         sts: 404,
         addr

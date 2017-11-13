@@ -9,11 +9,11 @@ import {withStyles} from 'material-ui/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn, SoonMsg} from './Lib'
-import __ from '../util'
 import {theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
         actnBtnClr, topBtnClass, depotEmpty, cnctBtn, gridSpacer,
         gridGutter} from './Style'
+import __ from '../util'
 
 class DepotView extends React.Component {
   constructor (props) {
@@ -22,19 +22,19 @@ class DepotView extends React.Component {
     this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
     this.load = this.load.bind(this)
     this.tab = this.tab.bind(this)
-    this.goAddAddr = () => this.props.history.push('/wallet/add')
   }
 
   async componentDidMount () {
     Object.assign(this, __.initView(this, 'depot'))
-    await this.load()
-
-    // style body bg for empty depot view (without connected addresses)
-    if (this.state.addrs.length === 0) {
-      document.body.style.backgroundColor = 'white'
-    } else {
-      document.body.style.backgroundColor = styleGuide.backgroundLight
-    }
+    try {
+      await this.load()
+      // style body bg for empty depot view (without connected addresses)
+      if (this.state.addrs.length === 0) {
+        document.body.style.backgroundColor = 'white'
+      } else {
+        document.body.style.backgroundColor = styleGuide.backgroundLight
+      }
+    } catch (e) { /* error already handled */ }
   }
 
   componentWillUnmount () {
@@ -44,17 +44,20 @@ class DepotView extends React.Component {
   async load () {
     let addrs, user
     try {
-      ;[
-        addrs,
-        user
-      ] = await Promise.all([
+      ;[addrs, user] = await Promise.all([
         this.cx.depot.loadAddrs(),
         this.cx.user.load()
       ])
     } catch (e) {
       if (__.cfg('isDev')) throw e
-      this.setState({err: e.message})
-      return
+      let emsg = e.message
+      if ((e.sts || 0) >= 900) {
+        __.clearSto()
+        emsg = `A fatal error occured: ${emsg}. ` +
+               'Environment cleared: Please login again'
+      }
+      this.setState({err: emsg})
+      throw e
     }
     this.user = user
     const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
@@ -68,9 +71,7 @@ class DepotView extends React.Component {
       addrs,
       coin0,
       coin1,
-      addrTscs: addrTscs.sort((x, y) => {
-        return new Date(y[1]._t) - new Date(x[1]._t)
-      }),
+      addrTscs: addrTscs.sort((x, y) => new Date(y[1]._t) - new Date(x[1]._t)),
       blc1: `${blc.get(coin0)}`,
       blc2: `${blc.get(coin1)}`,
       snack: this.getSnack(),
@@ -90,7 +91,10 @@ class DepotView extends React.Component {
       return (
         <Modal
           onClose={this.load}
-          actions={[{lbl: 'Reload', onClick: this.load}]}
+          actions={[{
+            lbl: 'Go to login',
+            onClick: () => this.props.history.push('/login')}
+          ]}
         >
           {this.state.err}
         </Modal>
@@ -99,10 +103,11 @@ class DepotView extends React.Component {
       return (
         <div>
           {this.state.snack &&
-          <Snack
-            msg={this.state.snack}
-            onClose={() => this.setState({snack: null})}
-          />}
+            <Snack
+              msg={this.state.snack}
+              onClose={() => this.setState({snack: null})}
+            />
+          }
           <div className={this.props.classes.themeBgStyle}>
             <TopBar
               title
@@ -122,12 +127,17 @@ class DepotView extends React.Component {
           {this.state.addrs.length === 0 &&
             <div>
               <DepotEmpty className={this.props.classes.depotEmpty} />
-              <div style={{position: 'absolute', bottom: '40px', width: '100%', textAlign: 'center'}}>
+              <div style={{
+                position: 'absolute',
+                bottom: '40px',
+                width: '100%',
+                textAlign: 'center'
+              }}>
                 <Button
                   raised
                   color={'accent'}
                   className={this.props.classes.cnctBtn}
-                  onClick={this.goAddAddr}
+                  onClick={() => this.props.history.push('/wallet/add')}
                   classes={{
                     raisedAccent: this.props.classes.actnBtnClr
                   }}
