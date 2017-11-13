@@ -14,15 +14,13 @@ export default class User extends ApiBase {
 
   async _apiGet () {
     const pld = await this.rqst({url: 'user'})
-    const user = this.decrypt(pld.data)
+    const user = await this.decrypt(pld.data)
     return user
   }
 
   async _apiSet (user) {
-    await this.rqst({
-      url: 'user',
-      data: {_id: user._id, data: this.encrypt(user)}
-    })
+    const data = await this.encrypt(user)
+    await this.rqst({url: 'user', data: {_id: user._id, data}})
   }
 
   async _apiDel (user) {

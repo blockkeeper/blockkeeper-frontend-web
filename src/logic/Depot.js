@@ -215,10 +215,10 @@ export default class Depot extends ApiBase {
     }
     const addrIds = []
     for (let item of pld.addresses) {
-      let addr = this.decrypt(item.data)
+      let addr = await this.decrypt(item.data)
       addr.tscs = []
       for (let tsc of item.tscs) {
-        addr.tscs.push(this.decrypt(tsc))
+        addr.tscs.push(await this.decrypt(tsc))
       }
       (new Addr(this.cx, addr._id)).setSto(addr)
       addrIds.push(addr._id)
@@ -233,11 +233,11 @@ export default class Depot extends ApiBase {
     for (let addr of addrs) {
       let tscs = addr.tscs || []
       let encTscs = []
-      for (let tsc of tscs) encTscs.push(this.encrypt(tsc))
+      for (let tsc of tscs) encTscs.push(await this.encrypt(tsc))
       delete addr.tscs  // pld needs separated addr and tscs
       pld.addresses.push({
         _id: addr._id,
-        data: this.encrypt(addr),
+        data: await this.encrypt(addr),
         type: addr.type,
         tscs: encTscs
       })

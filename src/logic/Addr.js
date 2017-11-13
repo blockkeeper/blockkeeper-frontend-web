@@ -29,27 +29,26 @@ export default class Addr extends ApiBase {
   }
 
   async _apiGet () {
-    const pld = await this.rqst({
-      url: `address/${this._id}`
-    })
-    const addr = this.decrypt(pld.data)
+    const pld = await this.rqst({url: `address/${this._id}`})
+    const addr = await this.decrypt(pld.data)
     addr.tscs = []
-    for (let tscPld of pld.tscs) addr.tscs.push(this.decrypt(tscPld))
+    for (let tscPld of pld.tscs) addr.tscs.push(await this.decrypt(tscPld))
     return addr
   }
 
   async _apiSet (addr) {
     const tscs = addr.tscs || []
     let encTscs = []
-    for (let tsc of tscs) encTscs.push(this.encrypt(tsc))
+    for (let tsc of tscs) encTscs.push(await this.encrypt(tsc))
     delete addr.tscs  // pld needs separated addr and tscs
+    const data = await this.encrypt(addr)
     await this.rqst({
       url: `address/${addr._id}`,
       data: {
         _id: addr._id,
-        data: this.encrypt(addr),
         type: addr.type,
-        tscs: encTscs
+        tscs: encTscs,
+        data
       }
     })
     addr.tscs = tscs

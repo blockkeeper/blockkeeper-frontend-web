@@ -1,4 +1,5 @@
 /* global TextEncoder */
+import * as LZUTF8 from 'lzutf8'
 import {StoBase} from './Lib'
 import User from './User'
 import Depot from './Depot'
@@ -11,7 +12,8 @@ export default class Core extends StoBase {
     this._store = 'core'
     this.isActive = () => Boolean(this.getSto())
     this.clear = this.clear.bind(this)
-    this.toSecret = this.toSecret.bind(this)
+    this.toSecrets = this.toSecrets.bind(this)
+    this.loadSecrets = this.loadSecrets.bind(this)
     this.encrypt = this.encrypt.bind(this)
     this.decrypt = this.decrypt.bind(this)
     this.init = this.init.bind(this)
@@ -35,35 +37,128 @@ export default class Core extends StoBase {
     return val
   }
 
-  toSecret (userId, pw) {
-    // TODO: add crypto
-    return userId + ':' + pw
+  async toSecrets (userId, pw) {
+    // derive a CryptoKey (base-key) from password
+    const baseKeyObj = await crypto.subtle.importKey(
+      'raw',
+      __.strToArrBuf(userId),
+      {name: 'PBKDF2'},
+      false,
+      ['deriveKey']
+    )
+    // use PBKDF2 to derive payload-key from base-key
+    //   salt isn't very helpful: we don't store the password on the server
+    //   it is only misused as a kind of "HKDF info" parameter
+    const pldKeyObj = await crypto.subtle.deriveKey(
+      {
+        name: 'PBKDF2',
+        hash: 'SHA-256',
+        salt: __.strToArrBuf('pldKey:' + userId),
+        // only modern devices are supported, they should have enough
+        // power to handle a high number of PBKDF2 iterations
+        iterations: 100000
+      },
+      baseKeyObj,
+      {name: 'AES-GCM', length: 256},
+      true,
+      ['encrypt', 'decrypt']
+    )
+    // user-friendly operations are very important
+    //   - user should not always have to enter his secrets
+    //   - secrets should be remembered across browser sessions
+    // => export the payload-key (hashed password) for keeping in localStorage
+    const pldKeyJwk = await crypto.subtle.exportKey('jwk', pldKeyObj)
+    return {userId, pldKeyObj, pldKeyJson: JSON.stringify(pldKeyJwk)}
   }
 
-  encrypt (pld, secret, noFatal) {
-    // TODO: add crypto
+  async loadSecrets (usage, secrets = {}) {
+    const sto = this.getSto() || {}
+    const userId = secrets.userId || sto.userId
+    let pldKeyObj = secrets.pldKeyObj
+    if (!pldKeyObj) {
+      pldKeyObj = await crypto.subtle.importKey(
+        'jwk',
+        JSON.parse(sto.pldKey),
+        {name: 'AES-GCM', length: 256},
+        false,
+        usage
+      )
+    }
+    if (!userId || !pldKeyObj) {
+      throw __.err('Getting user ID and/or payload key failed', {sts: 900})
+    }
+    return Object.assign(secrets, {userId, pldKeyObj})
+  }
+
+  async encrypt (pld, secrets) {
     try {
-      secret = secret || this.getSto().secret
-      return JSON.stringify(pld)
+      let rawPld
+      try {
+        rawPld = LZUTF8.compress(JSON.stringify(pld))
+      } catch (e) {
+        throw __.err('Packing process failed', {e})
+      }
+      try {
+        secrets = await this.loadSecrets(['encrypt'], secrets)
+        const tagSize = 128            // bits
+        const iv = new Uint8Array(12)  // bytes
+        crypto.getRandomValues(iv)
+        let cypher = await crypto.subtle.encrypt(
+          {
+            name: 'AES-GCM',
+            iv,
+            tagLength: tagSize,
+            additionalData: __.strToArrBuf(secrets.userId)
+          },
+          secrets.pldKeyObj,
+          rawPld
+        )
+        cypher = Array.from(new Uint8Array(cypher))
+        return {iv: Array.from(iv), cypher, tagSize, addData: secrets.userId}
+      } catch (e) {
+        throw __.err('Encryption process failed', {e})
+      }
     } catch (e) {
-      if (noFatal) throw __.err('Encrypting data failed', {e, sts: 801})
-      throw __.err('Encrypting data failed', {e, sts: 901})
+      throw __.err('Encrypting payload failed', {e, sts: 900})
     }
   }
 
-  decrypt (pld, secret, noFatal) {
-    // TODO: add crypto
+  async decrypt (data, secrets) {
+    const isLogin = Boolean(secrets)
     try {
-      secret = secret || this.getSto().secret
-      return JSON.parse(pld)
+      secrets = await this.loadSecrets(['decrypt'], secrets)
+      let rawPld
+      try {
+        rawPld = await crypto.subtle.decrypt(
+          {
+            name: 'AES-GCM',
+            tagLength: 128,   // bits
+            iv: new Uint8Array(data.iv),
+            additionalData: __.strToArrBuf(secrets.userId)
+          },
+          secrets.pldKeyObj,
+          new Uint8Array(data.cypher)
+        )
+      } catch (e) {
+        throw __.err('Decryption process failed: Possible reason: ' +
+                     'tagLength or iv or additionalData are not ' +
+                     'congruent with related encryption values', {e})
+      }
+      try {
+        return JSON.parse(LZUTF8.decompress(new Uint8Array(rawPld)))
+      } catch (e) {
+        throw __.err('Unpacking process failed', {e})
+      }
     } catch (e) {
-      if (noFatal) throw __.err('Decrypting data failed', {e, sts: 802})
-      throw __.err('Decrypting data failed', {e, sts: 902})
+      if (isLogin) throw __.err('Decrypting data failed', {e})
+      throw __.err('Decrypting data failed', {e, sts: 900})
     }
   }
 
-  init (userId, secret, depotId, user) {
-    if (userId) this.setSto({userId, secret, depotId})
+  init (secrets, depotId, user) {
+    if (secrets) {
+      this.setSto({userId: secrets.userId, pldKey: secrets.pldKeyJson, depotId})
+    }
     const core = this.getSto()
     if (!core) return false
     if (!this.cx.user) {
@@ -101,34 +196,43 @@ export default class Core extends StoBase {
       }
       throw this.err(emsg, {e, sts})
     }
-    const secret = this.toSecret(userId, pw)
-    let user
+    let user, secrets
     try {
-      user = this.decrypt(pld.data, secret, true)
+      secrets = await this.toSecrets(userId, pw)
+    } catch (e) {
+      throw this.err('Login failed. Please try again later', {e, sts: 900})
+    }
+    try {
+      user = await this.decrypt(pld.data, secrets)
     } catch (e) {
       throw this.err('Invalid identifier/password', {e, sts: 400})
     }
-    this.init(user._id, secret, user.depotId, user)
+    this.init(secrets, user.depotId, user)
   }
 
   async register (userId, pw, coin0, coin1, locale) {
-    const secret = this.toSecret(userId, pw)
+    let secrets
+    try {
+      secrets = await this.toSecrets(userId, pw)
+    } catch (e) {
+      let emsg = 'Registering failed: Please reload page and try again'
+      throw this.err(emsg, {e})
+    }
     const depotId = __.uuid()
     const pld = {
       _id: userId,
-      data: this.encrypt({
+      data: await this.encrypt({
         _id: userId,
         _t: __.getTme(),
         coins: [coin0, coin1],
         locale,
         depotId
-      }, secret)
+      }, secrets)
     }
     try {
       await this.rqst({url: 'user', data: pld}, userId)
     } catch (e) {
-      let emsg
-      let sts
+      let emsg, sts
       if (e.sts === 409) {  // userId already exists: should never happen
         emsg = 'Registering failed: Please reload page and try again'
         sts = e.sts
@@ -141,6 +245,6 @@ export default class Core extends StoBase {
       }
       throw this.err(emsg, {e, sts})
     }
-    this.init(userId, secret, depotId)
+    this.init(secrets, depotId)
   }
 }
