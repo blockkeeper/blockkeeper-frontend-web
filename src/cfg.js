@@ -12,9 +12,9 @@ Object.assign(d, {
   maxHigh: 100,
   minAddr: 26,
   maxAddr: 250,
-  minPw: d.isDev ? 1 : 1, // TODO
-  maxPw: 30,
-  minUser: d.isDev ? 1 : 1, // TODO
+  minPw: 6,
+  maxPw: 35,
+  minUser: d.isDev ? 1 : 1, // TODO remove ?
   maxUser: 20,
   tmoMsec: 15000,
   outdSec: 60,

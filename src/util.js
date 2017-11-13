@@ -299,12 +299,17 @@ const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
 }
 
 const vldPw = (pw) => {
-  let pat = 'a-zA-Z0-9:;,.\\-_!%@#^$*%&=?`(){}\\[\\]<>/~\'"\\\\'
+  let pat = 'a-zA-Z0-9:;,.\\-_!%@#^$*%&§=?`(){}\\[\\]<>/~\'"\\\\'
+
   if (!validator.matches(pw, `^[${pat}]*$`)) {
     return `Allowed characters: ${pat.replace(/\\/g, '')}`
   }
   if (pw.length < cfg('minPw')) return `Min length: ${cfg('minPw')} characters`
   if (pw.length > cfg('maxPw')) return `Max length: ${cfg('maxPw')} characters`
+  if (!validator.matches(pw, /\d/)) return 'Include at least one number'
+  if (!validator.matches(pw, /[a-z]/)) return 'Include at least one lower case letter'
+  if (!validator.matches(pw, /[A-Z]/)) return 'Include at least one upper case letter'
+  if (!validator.matches(pw, /\W/)) return 'Include at least one special character like $%@'
 
   return ''
 }
