@@ -139,6 +139,12 @@ class BckcyphBxp extends Bxp {
       Object.assign(updStdAddrs, updAddrs)
     }
     this.debug('Fetching std-addrs finished:', updStdAddrs)
+    // ---------- workaround: remove me --------------------------------------
+    // ETH-api delivers wrong balance values (2017-11-14)
+    if (this.coinObj.apiGetAddrs) {
+      await this.coinObj.apiGetAddrs(updStdAddrs)
+    }
+    // -----------------------------------------------------------------------
     return updStdAddrs
   }
 }

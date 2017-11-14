@@ -19,7 +19,7 @@ Object.assign(d, {
   outdSec: 60,
   prec: 1e10,
   chunkSize: 3,
-  bxpBlockedSec: 120,
+  bxpBlockedSec: d.isDev ? 10 : 90,
   maxTscCnt: 50,
   maxAddrCnt: 5,
   newAddrNotice: 'New wallet',

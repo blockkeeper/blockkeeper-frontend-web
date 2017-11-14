@@ -259,6 +259,7 @@ class Dash extends Coin {
 class Eth extends Coin {
   constructor (pa) {
     super('ETH', pa)
+    this.apiGetAddrs = this.apiGetAddrs.bind(this)
     this.conv = val => val / 1e18   // wei to eth
     this.toAddrHsh = hsh => {
       hsh = hsh.toLowerCase().trim()
@@ -287,6 +288,32 @@ class Eth extends Coin {
     }
     return ''
   }
+
+  // ---------- workaround: remove me -----------------------------------------
+  // see comment in Bxp.js -> BckcyphBxp.apiGetAddrs()
+  async apiGetAddrs (updStdAddrs) {
+    this.debug('ETH-workaround: Fetching balances of std-addrs')
+    for (let chunk of __.toChunks(Object.keys(updStdAddrs), 20)) {
+      this.debug(`Gentle polling: Sleeping 1s`)
+      await __.sleep(1000)
+      this.debug(`Requesting this std-addrs: ${chunk.join(',')}`)
+      let pld = await __.rqst({
+        url: 'https://api.etherscan.io/api',
+        params: {
+          module: 'account',
+          action: 'balancemulti',
+          address: chunk.join(',')
+        }
+      })
+      if (pld.message !== 'OK') continue
+      for (let addr of (pld.result || [])) {
+        let hsh = this.toAddrHsh(addr.account)
+        if (updStdAddrs[hsh]) updStdAddrs[hsh].amnt = this.conv(addr.balance)
+      }
+    }
+    this.debug('ETH-workaround: Fetching std-addrs finished:', updStdAddrs)
+  }
+  // --------------------------------------------------------------------------
 }
 
 export {
