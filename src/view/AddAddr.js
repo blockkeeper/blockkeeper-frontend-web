@@ -247,7 +247,7 @@ class AddAddrView extends React.Component {
                 <Typography type='title' gutterBottom>
                   Blockchain / Type
                 </Typography>
-                {this.coins.map(coin =>
+                {this.coins.filter(coin => coin !== 'ETH').map(coin =>
                   <FormControlLabel
                     key={coin}
                     label={coin}
