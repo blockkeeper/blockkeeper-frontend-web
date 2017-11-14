@@ -150,7 +150,8 @@ class RgstrView extends React.Component {
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={7} lg={5} xl={4}>
                 <Typography type='display3' color='inherit' align='center'>
-                  Block Keeper
+                  BlockKeeper
+                  <span style={{'font-size': '14px'}}>[BETA]</span>
                 </Typography>
                 <Typography
                   type='display1'

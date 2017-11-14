@@ -97,7 +97,7 @@ const TopBar = ({
           {title &&
             <Typography type='headline' color='inherit'>
               <Hidden xsDown>
-                <span>Block Keeper</span>
+                <span>BlockKeeper</span>
               </Hidden>
               <Hidden smUp>
                 <span>BK</span>
@@ -618,7 +618,7 @@ const NtAllwd = () => {
     >
       Your Browser is not supported!
       <br />
-      <b>Please upgrade your browser to access <nobr>Block Keeper</nobr></b>.
+      <b>Please upgrade your browser to access <nobr>BlockKeeper</nobr></b>.
     </Typography>
     <Typography type='body1' align='center' gutterBottom>
       Required: Chrome > 60, Edge > 16, Safari > 11, Opera > 48, Firefox > 55
@@ -651,7 +651,7 @@ const DepotEmpty = ({className}) =>
             marginTop: '130px'
           }}
         >
-          Welcome to Block Keeper
+          Welcome to BlockKeeper
         </Typography>
         <Typography type='subheading' gutterBottom>
           In order to start using our app,
