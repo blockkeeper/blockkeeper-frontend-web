@@ -86,8 +86,12 @@ class AddAddrView extends React.Component {
         desc: this.state.desc,
         name: this.state.name
       })
-      this.setSnack('Wallet connected, synchronizing...')
-      this.cx.depot.bxp([addr._id])
+      if (this.state.manAddrMode) {
+        this.setSnack('Wallet connected')
+      } else {
+        this.setSnack('Wallet connected, synchronizing...')
+        this.cx.depot.bxp([addr._id])
+      }
       this.props.history.replace(`/wallet/${addr._id}`)
     } catch (e) {
       return this.errGo(`Connecting wallet failed: ${e.message}`, e)
