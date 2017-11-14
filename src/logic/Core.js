@@ -41,7 +41,7 @@ export default class Core extends StoBase {
     // derive a CryptoKey (base-key) from password
     const baseKeyObj = await crypto.subtle.importKey(
       'raw',
-      __.strToArrBuf(userId),
+      __.strToArrBuf(pw),
       {name: 'PBKDF2'},
       false,
       ['deriveKey']
@@ -56,7 +56,7 @@ export default class Core extends StoBase {
         salt: __.strToArrBuf('pldKey:' + userId),
         // only modern devices are supported, they should have enough
         // power to handle a high number of PBKDF2 iterations
-        iterations: 100000
+        iterations: 125000
       },
       baseKeyObj,
       {name: 'AES-GCM', length: 256},
@@ -233,7 +233,7 @@ export default class Core extends StoBase {
       await this.rqst({url: 'user', data: pld}, userId)
     } catch (e) {
       let emsg, sts
-      if (e.sts >= 400 && e.sts < 500) {
+      if (e.sts >= 400 && e.sts < 500) { // shouldn't occur
         emsg = 'Registering failed temporary: Please press OK and try ' +
                'again with the new assigned identifier. If the problem ' +
                'persists, try another password please.'
