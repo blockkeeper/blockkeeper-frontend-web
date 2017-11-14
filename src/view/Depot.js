@@ -22,6 +22,7 @@ class DepotView extends React.Component {
     this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
     this.load = this.load.bind(this)
     this.tab = this.tab.bind(this)
+    this.goAddAddr = () => this.props.history.push('/wallet/add')
   }
 
   async componentDidMount () {
