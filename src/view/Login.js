@@ -16,18 +16,19 @@ class LoginView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.goBack = props.history.goBack
-    this.login = this.login.bind(this)
-    this.set = this.set.bind(this)
-    this.reload = () => this.setState(this.reset())
-    this.reset = () => ({
+    this._pw = false
+    this.reset = {
       loginBusy: false,
       upd: false,
       userId: '',
       pw: '',
       err: undefined
-    })
-    this.state = this.reset()
+    }
+    this.state = {...this.reset}
+    this.goBack = props.history.goBack
+    this.login = this.login.bind(this)
+    this.set = this.set.bind(this)
+    this.reload = () => this.setState(this.reset)
   }
 
   componentDidMount () {
@@ -37,14 +38,19 @@ class LoginView extends React.Component {
   }
 
   set (ilk, val) {
+    const vldUserId = userId => {
+      return __.vld.isUUID(userId, 4) ? '' : 'Invalid identifier'
+    }
     this.setState({[ilk]: val, emsg: undefined}, () => {
       let d = {upd: false}
-      if (this.state.userId) {
-        d.userIdEmsg = __.vld.isUUID(this.state.userId, 4)
-          ? ''
-          : 'Invalid identifier'
+      if (this.state.userId && this._pw) {
+        d.userIdEmsg = vldUserId(this.state.userId)
       }
-      if (this.state.pw) d.pwEmsg = __.vldPw(this.state.pw)
+      if (this.state.pw) {
+        this._pw = true
+        d.userIdEmsg = vldUserId(this.state.userId)
+        d.pwEmsg = __.vldPw(this.state.pw, true)
+      }
       if (this.state.userId && this.state.pw && !d.userIdEmsg && !d.pwEmsg) {
         d.upd = true
       }
@@ -60,12 +66,13 @@ class LoginView extends React.Component {
     } catch (e) {
       if (e.sts >= 400 && e.sts < 500) {
         this.setState({
-          ...this.reset(),
+          ...this.reset,
           userId: this.state.userId,
           emsg: e.message
         })
       } else {
-        this.setState({err: e.message})
+        if (__.cfg('isDev')) throw e
+        return this.setState({err: e.message})
       }
     }
   }
@@ -74,14 +81,12 @@ class LoginView extends React.Component {
     if (this.state.err) {
       return (
         <Modal
-          onClose={this.reload}
-          actions={[{lbl: 'Back to login', onClick: this.reload}]}
+          onClose={async () => await this.reload()}
+          actions={[{lbl: 'OK', onClick: async () => await this.reload()}]}
         >
           {this.state.err}
         </Modal>
       )
-    } else if (this.state.loginBusy) {
-      return <LinearProgress />
     } else {
       return (
         <div>
@@ -99,6 +104,9 @@ class LoginView extends React.Component {
                 >
                   Please enter your login credentials
                 </Typography>
+                {this.state.loginBusy &&
+                  <LinearProgress />
+                }
                 <Paper
                   square
                   className={this.props.classes.paperStyle}
@@ -144,13 +152,13 @@ class LoginView extends React.Component {
                             raisedAccent: this.props.classes.actnBtnClr
                           }}
                           >
-                          <Lock
-                            className={this.props.classes.lockIcon} />
-                            Login
+                          <Lock className={this.props.classes.lockIcon} />
+                          Login
                         </Button>
                         <br />
                         <Button
                           href='/rgstr'
+                          disabled={this.state.loginBusy}
                           className={this.props.classes.fullWidth}
                         >
                           Register

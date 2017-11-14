@@ -23,33 +23,29 @@ class RgstrView extends React.Component {
     super(props)
     this.cx = props.cx
     this.userId = __.uuid()
+    this._rpw = false
+    this.reset = {
+      busy: false,
+      upd: false,
+      writeDown: false,
+      pw: '',
+      rpw: '',
+      err: undefined,
+      userAckDl: false
+    }
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
     this.set = this.set.bind(this)
+    this.reload = this.reload.bind(this)
     this.setAction = d => this.setState({[d.ilk]: d.key})
     this.logout = () => {
       this.cx.core.clear()
       this.setState({loggedIn: false})
     }
-    this.reload = () => {
-      this.userId = __.uuid()
-      this.setState(this.reset())
-    }
-    this.reset = () => ({
-      busy: false,
-      saveBusy: false,
-      upd: false,
-      writeDown: false,
-      pw_: undefined,
-      pw: '',
-      rpw: '',
-      err: undefined,
-      userAckDl: false
-    })
     this.state = {
-      ...this.reset(),
+      ...this.reset,
       coin0: 'USD',
       coin1: 'BTC',
       locale: browserLocale() || __.cfg('dfltLocale')
@@ -76,13 +72,19 @@ class RgstrView extends React.Component {
       this.setState({coins, busy: false})
     } catch (e) {
       if (__.cfg('isDev')) throw e
-      this.setState({err: e.message})
+      return this.setState({err: 'An error occurred: Please try again later'})
     }
+  }
+
+  async reload () {
+    this.userId = __.uuid()
+    this.setState(this.reset)
+    await this.load()
   }
 
   async save (e) {
     if (e) e.preventDefault()
-    this.setState({saveBusy: true})
+    this.setState({busy: true})
     try {
       await this.cx.core.register(
         this.userId,
@@ -94,26 +96,22 @@ class RgstrView extends React.Component {
       this.props.history.replace(`/depot`)
     } catch (e) {
       if (__.cfg('isDev')) throw e
-      this.setState({err: e.message})
+      return this.setState({err: e.message})
     }
   }
 
   set (ilk, val) {
     this.setState({[ilk]: val}, () => {
       let d = {upd: false}
-      if (this.state.pw) {
-        this.setState({pw_: true})
-        d.pwEmsg = __.vldPw(this.state.pw)
-      } else {
-        if (this.state.pw_) d.pwEmsg = __.vldPw(this.state.pw)
-      }
+      if (this._rpw) d.pwEmsg = __.vldPw(this.state.pw)
       if (this.state.pw && this.state.rpw) {
-        (this.state.pw === this.state.rpw)
+        this._rpw = true
+        d.pwEmsg = __.vldPw(this.state.pw)
+        ;(this.state.pw === this.state.rpw)
           ? d.rpwEmsg = ''
           : d.rpwEmsg = 'Password does not match'
       }
-      if (this.state.pw && this.state.rpw && !d.pwEmsg && !d.rpwEmsg &&
-          this.state.writeDown) {
+      if (this.state.pw && this.state.rpw && !d.pwEmsg && !d.rpwEmsg) {
         d.upd = true
       }
       this.setState(d)
@@ -124,8 +122,8 @@ class RgstrView extends React.Component {
     if (this.state.err) {
       return (
         <Modal
-          onClose={this.reload}
-          actions={[{lbl: 'OK', onClick: this.reload}]}
+          onClose={async () => await this.reload()}
+          actions={[{lbl: 'OK', onClick: async () => await this.reload()}]}
         >
           {this.state.err}
         </Modal>
@@ -141,7 +139,7 @@ class RgstrView extends React.Component {
           Please logout before creating a new user
         </Modal>
       )
-    } else if (this.state.busy || this.state.saveBusy) {
+    } else if (this.state.busy) {
       return <LinearProgress />
     } else {
       const backupfile = 'Blockkeeper.io backup\r\nIdentifier: ' +
@@ -252,12 +250,7 @@ class RgstrView extends React.Component {
                       safari={<Button
                         raised
                         color='accent'
-                        disabled={
-                          this.state.pw === '' ||
-                          this.state.rpw === '' ||
-                          this.state.rpwEmsg !== '' ||
-                          this.state.upd
-                        }
+                        disabled={!this.state.upd}
                         className={this.props.classes.btnBackup}
                         onClick={() => {
                           this.setState({userAckDl: true})
@@ -274,12 +267,7 @@ class RgstrView extends React.Component {
                       rest={<Button
                         raised
                         color='accent'
-                        disabled={
-                          this.state.pw === '' ||
-                          this.state.rpw === '' ||
-                          this.state.rpwEmsg !== '' ||
-                          this.state.upd
-                        }
+                        disabled={!this.state.upd || this.state.writeDown}
                         className={this.props.classes.btnBackup}
                         onClick={() => {
                           this.setState({userAckDl: true})
@@ -303,11 +291,7 @@ class RgstrView extends React.Component {
                               checked: this.props.classes.checked
                             }}
                             checked={this.state.writeDown}
-                            disabled={
-                              this.state.pw === '' ||
-                              this.state.rpw === '' ||
-                              Boolean(this.state.rpwEmsg)
-                            }
+                            disabled={!this.state.upd}
                             onChange={evt => {
                               this.set('writeDown', !this.state.writeDown)
                             }}
@@ -330,7 +314,10 @@ class RgstrView extends React.Component {
                               type='submit'
                               color='accent'
                               className={this.props.classes.btnRg}
-                              disabled={!this.state.upd}
+                              disabled={
+                                !this.state.upd ||
+                                !this.state.writeDown
+                              }
                               classes={{
                                 raisedAccent: this.props.classes.actnBtnClr
                               }}
