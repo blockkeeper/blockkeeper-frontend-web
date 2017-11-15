@@ -339,10 +339,8 @@ const tscRow = (
                 style={{color: theme.palette.text.secondary}}
                 noWrap
               >
-                {showAddrInfos &&
-                (tsc.name || tsc.desc)}
-                {!showAddrInfos &&
-                (tsc.desc || 'Empty description')}
+                {showAddrInfos && (tsc.name || tsc.desc)}
+                {!showAddrInfos && (tsc.desc || 'No description')}
               </Typography>
             </div>
             <div className={tscAmntClassName}>

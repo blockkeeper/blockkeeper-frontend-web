@@ -81,13 +81,15 @@ export default class Addr extends ApiBase {
       _id: this._id,
       _t: __.getTme(),
       type: upd.type || cur.type || 'std',
-      desc: (upd.desc || cur.desc || '').trim(),
       amnt: __.getAmnt(upd.amnt, cur.amnt),
       tscCnt: upd.tscCnt || cur.tscCnt || 0,
       coin: upd.coin || cur.coin,
       rates: upd.rates || cur.rates || {},
       name: upd.name || cur.name,
-      tags: upd.tags || cur.tags || []
+      tags: upd.tags || cur.tags || [],
+      desc: (
+        upd.desc != null ? upd.desc : (cur.desc != null ? cur.desc : '')
+      ).trim()
     }
     const coinObj = this.coinObjs[addr.coin]
     const bxp = upd.bxp || cur.bxp
@@ -141,10 +143,12 @@ export default class Addr extends ApiBase {
       amnt: __.getAmnt(upd.amnt, cur.amnt),
       cfmCnt: upd.cfmCnt || cur.cfmCnt || -1,
       mode: upd.mode || cur.mode,
-      desc: upd.desc || cur.desc || '',
       tags: upd.tags || cur.tags || [],
       name: upd.name || cur.name ||
             `${__.cfg('newTscNotice')} ${__.shortn(hsh, 5).trim()}`,
+      desc: (
+        upd.desc != null ? upd.desc : (cur.desc != null ? cur.desc : '')
+      ).trim()
     }
     if (upd.hd || cur.hd) {
       cur.hd = cur.hd || {}
