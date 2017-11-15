@@ -742,30 +742,29 @@ const PaperGrid = ({
                   className={body2ClassName}
                   noWrap
                 >
-                  {addr.hsh &&
-                  <Hidden smDown>
-                    <span>
-                      <b>Wallet</b>&nbsp;
-                    </span>
-                  </Hidden>}
-                  {!addr.hsh && addr.desc &&
-                  <Hidden smDown>
-                    <span>
-                      <b>Note</b>&nbsp;
-                    </span>
-                  </Hidden>}
-                  {!addr.hsh && !addr.desc &&
-                  <Hidden smDown>
-                    <span>
-                      <b>Wallet</b>&nbsp;
-                    </span>
-                  </Hidden>}
-                  {
-                    (
-                      addr.type === 'hd'
-                        ? `${__.shortn(addr.hsh, 7)}...`
-                        : addr.hsh
-                    ) || addr.desc || 'manual'
+                  {addr.desc &&
+                    <Hidden smDown>
+                      <span>{/* }<b>Note</b>&nbsp; */}</span>
+                    </Hidden>
+                  }
+                  {!addr.desc && addr.hsh &&
+                    <Hidden smDown>
+                      <span><b>Wallet</b>&nbsp;</span>
+                    </Hidden>
+                  }
+                  {!addr.desc && !addr.hsh &&
+                    <Hidden smDown>
+                      <span><b>Manual wallet</b>&nbsp;</span>
+                    </Hidden>
+                  }
+                  {addr.desc ||
+                    (addr.hsh
+                      ? (addr.type === 'hd'
+                          ? `${__.shortn(addr.hsh, 7)}...`
+                          : addr.hsh
+                        )
+                      : ''
+                    )
                   }
                 </Typography>
               </div>
