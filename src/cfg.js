@@ -21,7 +21,7 @@ Object.assign(d, {
   chunkSize: 3,
   bxpBlockedSec: d.isDev ? 10 : 90,
   maxTscCnt: 50,
-  maxAddrCnt: 5,
+  maxAddrCnt: 10,
   newAddrNotice: 'New wallet',
   newTscNotice: 'New transaction',
   // add some spare to d.bip44IxGap because we expect to find some used
