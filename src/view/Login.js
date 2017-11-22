@@ -16,12 +16,12 @@ class LoginView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this._pw = false
+    this._cryptId = false
     this.reset = {
       loginBusy: false,
       upd: false,
       userId: '',
-      pw: '',
+      cryptId: '',
       err: undefined
     }
     this.state = {...this.reset}
@@ -38,20 +38,23 @@ class LoginView extends React.Component {
   }
 
   set (ilk, val) {
-    const vldUserId = userId => {
-      return __.vld.isUUID(userId, 4) ? '' : 'Invalid identifier'
-    }
+    const vldUuid = (uuid, emsg) => __.vld.isUUID(uuid, 4) ? '' : emsg
     this.setState({[ilk]: val, emsg: undefined}, () => {
       let d = {upd: false}
-      if (this.state.userId && this._pw) {
-        d.userIdEmsg = vldUserId(this.state.userId)
+      if (this.state.userId && this._cryptId) {
+        d.userIdEmsg = vldUuid(this.state.userId, 'Invalid identifier')
       }
-      if (this.state.pw) {
-        this._pw = true
-        d.userIdEmsg = vldUserId(this.state.userId)
-        d.pwEmsg = __.vldPw(this.state.pw, true)
+      if (this.state.cryptId) {
+        this._cryptId = true
+        d.userIdEmsg = vldUuid(this.state.userId, 'Invalid identifier')
+        // ensure compatibility: use password- instead of uuid-check
+        //   this should also be a vldUuid() check, but first (beta) generation
+        //   users have passwords instead of uuids as cryptIds
+        d.cryptIdEmsg = __.vldPw(this.state.cryptId, true)
+        if (d.cryptIdEmsg) d.cryptIdEmsg = 'Invalid crypto-key'
       }
-      if (this.state.userId && this.state.pw && !d.userIdEmsg && !d.pwEmsg) {
+      if (this.state.userId && this.state.cryptId &&
+          !d.userIdEmsg && !d.cryptIdEmsg) {
         d.upd = true
       }
       this.setState(d)
@@ -61,13 +64,14 @@ class LoginView extends React.Component {
   async login () {
     this.setState({err: undefined, loginBusy: true})
     try {
-      await this.cx.core.login(this.state.userId, this.state.pw)
+      await this.cx.core.login(this.state.userId, this.state.cryptId)
       this.props.history.push('/depot')
     } catch (e) {
       if (e.sts >= 400 && e.sts < 500) {
         this.setState({
           ...this.reset,
           userId: this.state.userId,
+          cryptId: this.state.cryptId,
           emsg: e.message
         })
       } else {
@@ -128,17 +132,17 @@ class LoginView extends React.Component {
                     />
                   <TextField
                     fullWidth
-                    label='Password'
+                    label='Crypto-Key'
                     type='password'
                     margin='normal'
-                    autoComplete='current-password'
-                    value={this.state.pw}
+                    autoComplete='current-crypto-key'
+                    value={this.state.cryptId}
                     error={
                       Boolean(this.state.emsg) ||
-                      Boolean(this.state.pwEmsg)
+                      Boolean(this.state.cryptIdEmsg)
                     }
-                    helperText={this.state.emsg || this.state.pwEmsg}
-                    onChange={evt => this.set('pw', evt.target.value)}
+                    helperText={this.state.emsg || this.state.cryptIdEmsg}
+                    onChange={evt => this.set('cryptId', evt.target.value)}
                     />
                   <BrowserGate
                     allwd={

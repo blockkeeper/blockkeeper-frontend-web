@@ -13,8 +13,6 @@ Object.assign(d, {
   maxHigh: 100,
   minAddr: 26,
   maxAddr: 250,
-  minPw: 8,
-  maxPw: 35,
   tmoMsec: 15000,
   outdSec: 60,
   prec: 1e10,
@@ -24,6 +22,10 @@ Object.assign(d, {
   maxAddrCnt: 10,
   newAddrNotice: 'New wallet',
   newTscNotice: 'New transaction',
+  // password settings are only needed for compatibility reasons: see
+  // comment in Login.set()
+  minPw: 8,
+  maxPw: 36,  // don't change: must be the length of an uuid string = 36
   // add some spare to d.bip44IxGap because we expect to find some used
   // addresses at beginning and want to run as few as possible fetch requests
   //   fetching stops when:

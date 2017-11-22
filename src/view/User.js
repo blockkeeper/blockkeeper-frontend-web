@@ -108,7 +108,7 @@ class UserView extends React.Component {
           }]}
         >
           Logout and clear browser’s local app storage?
-          Please note: After logout you need your identifier and password
+          Please note: After logout you need your identifier and crypto-key
           to login again.
         </Modal>
       )

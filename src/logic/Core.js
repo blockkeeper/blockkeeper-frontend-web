@@ -1,4 +1,4 @@
-/* global TextEncoder */
+/* global crypto */
 import * as LZUTF8 from 'lzutf8'
 import {StoBase} from './Lib'
 import User from './User'
@@ -37,22 +37,33 @@ export default class Core extends StoBase {
     return val
   }
 
-  async toSecrets (userId, pw) {
-    // derive a CryptoKey (base-key) from password
+  async toSecrets (userId, cryptId) {
+    // create a CryptoKey object (baseKey) from cryptId
+    // - the cryptId is a random value with enough entropy, so it is not
+    //   necessary to stretch it
+    // - but we need a CryptoKey object and have only importKey() to create
+    //   it from cryptId
+    // - WebCrypto API's HKDF is not (yet) supported by browsers (2017-11),
+    //   so we use PBKDF2
     const baseKeyObj = await crypto.subtle.importKey(
       'raw',
-      __.strToArrBuf(pw),
+      __.strToArrBuf(cryptId),
       {name: 'PBKDF2'},
       false,
       ['deriveKey']
     )
-    // use PBKDF2 to derive payload-key from base-key
-    //   salt isn't very helpful: we don't store the password on the server
-    //   it is only misused as a kind of "HKDF info" parameter
-    const pldKeyObj = await crypto.subtle.deriveKey(
+    // derive cryptKey from baseKey
+    // - same situation: stretching is not needed, but it's not possible to
+    //   use exportKey() without deriveKey()
+    // - if we need PBKDF2 anyway: lets do iterations and salting :)
+    // - but salt is also not very helpful: we don't store the cryptKey
+    //   on the server
+    const cryptKeyObj = await crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
         hash: 'SHA-256',
+        // the "pldKey" naming doesn't make sense, but cannot be changed for
+        // compatibility reasons (it's a relict from the past)
         salt: __.strToArrBuf('pldKey:' + userId),
         // only modern devices are supported, they should have enough
         // power to handle a high number of PBKDF2 iterations
@@ -63,20 +74,20 @@ export default class Core extends StoBase {
       true,
       ['encrypt', 'decrypt']
     )
-    // user-friendly operations are very important
-    //   - user should not always have to enter his secrets
-    //   - secrets should be remembered across browser sessions
-    // => export the payload-key (hashed password) for keeping in localStorage
-    const pldKeyJwk = await crypto.subtle.exportKey('jwk', pldKeyObj)
-    return {userId, pldKeyObj, pldKeyJson: JSON.stringify(pldKeyJwk)}
+    // user friendly operations are very important
+    // - user should not always have to enter his secrets
+    // - secrets should be remembered across browser sessions
+    // => export the cryptKey for keeping in localStorage
+    const cryptKeyJwk = await crypto.subtle.exportKey('jwk', cryptKeyObj)
+    return {userId, cryptKeyObj, cryptKeyJson: JSON.stringify(cryptKeyJwk)}
   }
 
   async loadSecrets (usage, secrets = {}) {
     const sto = this.getSto() || {}
     const userId = secrets.userId || sto.userId
-    let pldKeyObj = secrets.pldKeyObj
-    if (!pldKeyObj) {
-      pldKeyObj = await crypto.subtle.importKey(
+    let cryptKeyObj = secrets.cryptKeyObj
+    if (!cryptKeyObj) {
+      cryptKeyObj = await crypto.subtle.importKey(
         'jwk',
         JSON.parse(sto.pldKey),
         {name: 'AES-GCM', length: 256},
@@ -84,10 +95,10 @@ export default class Core extends StoBase {
         usage
       )
     }
-    if (!userId || !pldKeyObj) {
-      throw this.err('Getting user ID and/or payload key failed', {sts: 900})
+    if (!userId || !cryptKeyObj) {
+      throw this.err('Getting user-id and/or crypto-key failed', {sts: 900})
     }
-    return Object.assign(secrets, {userId, pldKeyObj})
+    return Object.assign(secrets, {userId, cryptKeyObj})
   }
 
   async encrypt (pld, secrets) {
@@ -100,8 +111,8 @@ export default class Core extends StoBase {
       }
       try {
         secrets = await this.loadSecrets(['encrypt'], secrets)
-        const tagSize = 128            // bits
-        const iv = new Uint8Array(12)  // bytes
+        const tagSize = 128            // 128 bits
+        const iv = new Uint8Array(12)  // 12 bytes
         crypto.getRandomValues(iv)
         let cypher = await crypto.subtle.encrypt(
           {
@@ -110,7 +121,7 @@ export default class Core extends StoBase {
             tagLength: tagSize,
             additionalData: __.strToArrBuf(secrets.userId)
           },
-          secrets.pldKeyObj,
+          secrets.cryptKeyObj,
           rawPld
         )
         cypher = Array.from(new Uint8Array(cypher))
@@ -132,15 +143,16 @@ export default class Core extends StoBase {
         rawPld = await crypto.subtle.decrypt(
           {
             name: 'AES-GCM',
-            tagLength: 128,   // bits
-            iv: new Uint8Array(data.iv),
+            tagLength: 128,                // 128 bits
+            iv: new Uint8Array(data.iv),   // 12 bytes
             additionalData: __.strToArrBuf(secrets.userId)
           },
-          secrets.pldKeyObj,
+          secrets.cryptKeyObj,
           new Uint8Array(data.cypher)
         )
       } catch (e) {
-        throw this.err('Decryption process failed: Possible reason: ' +
+        throw this.err('Decryption process failed. Most likely reason: ' +
+                       'Wrong crypto-key. Other (very unlikely) reasons: ' +
                        'tagLength or iv or additionalData are not ' +
                        'congruent with related encryption values', {e})
       }
@@ -157,7 +169,13 @@ export default class Core extends StoBase {
 
   init (secrets, depotId, user) {
     if (secrets) {
-      this.setSto({userId: secrets.userId, pldKey: secrets.pldKeyJson, depotId})
+      this.setSto({
+        depotId,
+        userId: secrets.userId,
+        // the "pldKey" naming doesn't make sense, but cannot be changed for
+        // compatibility reasons (it's a relict from the past)
+        pldKey: secrets.cryptKeyJson
+      })
     }
     const core = this.getSto()
     if (!core) return false
@@ -177,7 +195,7 @@ export default class Core extends StoBase {
     return true
   }
 
-  async login (userId, pw) {
+  async login (userId, cryptId) {
     this.clear()
     let pld
     try {
@@ -185,35 +203,35 @@ export default class Core extends StoBase {
     } catch (e) {
       let emsg, sts
       if (e.sts === 404) {
-        emsg = 'Invalid identifier/password combination'
+        emsg = 'Invalid identifier/crypto-key combination'
         sts = 404
       } else if (e.sts >= 400 && e.sts < 500) {
-        emsg = 'Invalid identifier/password combination'
+        emsg = 'Invalid identifier/crypto-key combination'
         sts = 400
       } else {
-        emsg = 'API Error: Login failed. Please try again later'
+        emsg = 'Login failed temporary: Please try again later'
         sts = e.sts
       }
       throw this.err(emsg, {e, sts})
     }
     let user, secrets
     try {
-      secrets = await this.toSecrets(userId, pw)
+      secrets = await this.toSecrets(userId, cryptId)
     } catch (e) {
       throw this.err('Login failed. Please try again later', {e, sts: 900})
     }
     try {
       user = await this.decrypt(pld.data, secrets)
     } catch (e) {
-      throw this.err('Invalid identifier/password combination', {e, sts: 400})
+      throw this.err('Invalid identifier/crypto-key combination', {e, sts: 400})
     }
     this.init(secrets, user.depotId, user)
   }
 
-  async register (userId, pw, coin0, coin1, locale) {
+  async register (userId, cryptId, coin0, coin1, locale) {
     let secrets
     try {
-      secrets = await this.toSecrets(userId, pw)
+      secrets = await this.toSecrets(userId, cryptId)
     } catch (e) {
       let emsg = 'Registering failed: Please reload page and try again'
       throw this.err(emsg, {e})
@@ -232,16 +250,14 @@ export default class Core extends StoBase {
     try {
       await this.rqst({url: 'user', data: pld}, userId)
     } catch (e) {
-      let emsg, sts
-      if (e.sts >= 400 && e.sts < 500) { // shouldn't occur
-        emsg = 'Registering failed temporary: Please press OK and try ' +
-               'again with the new assigned identifier. If the problem ' +
-               'persists, try another password please.'
-        sts = 400
-      } else {
-        emsg = 'API Error: Registering failed. Please try again later'
-        sts = e.sts
-      }
+      const emsg = 'Registering failed temporary: Please press OK and try ' +
+                   'again with the new assigned identifier and crypto-key. ' +
+                   'Please note: This error is almost always caused by a ' +
+                   'missing network connection - If you have currently a ' +
+                   'mobile connection: Please repeat the registration ' +
+                   'process at home while beeing connected to your WLAN ' +
+                   'network. Thank you.'
+      const sts = (e.sts >= 400 && e.sts < 500) ? 400 : e.sts
       throw this.err(emsg, {e, sts})
     }
     this.init(secrets, depotId)

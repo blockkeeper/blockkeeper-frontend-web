@@ -23,21 +23,12 @@ class RgstrView extends React.Component {
     super(props)
     this.cx = props.cx
     this.userId = __.uuid()
-    this._rpw = false
-    this.reset = {
-      busy: false,
-      upd: false,
-      writeDown: false,
-      pw: '',
-      rpw: '',
-      err: undefined,
-      userAckDl: false
-    }
+    this.cryptId = __.uuid()
+    this.reset = {busy: false, writeDown: false, err: undefined}
     this.goBack = () => props.history.goBack()
     this.goUser = () => props.history.replace('/user/edit')
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
-    this.set = this.set.bind(this)
     this.reload = this.reload.bind(this)
     this.setAction = d => this.setState({[d.ilk]: d.key})
     this.logout = () => {
@@ -78,6 +69,7 @@ class RgstrView extends React.Component {
 
   async reload () {
     this.userId = __.uuid()
+    this.cryptId = __.uuid()
     this.setState(this.reset)
     await this.load()
   }
@@ -88,7 +80,7 @@ class RgstrView extends React.Component {
     try {
       await this.cx.core.register(
         this.userId,
-        this.state.pw,
+        this.cryptId,
         this.state.coin0,
         this.state.coin1,
         this.state.locale
@@ -98,24 +90,6 @@ class RgstrView extends React.Component {
       if (__.cfg('isDev')) throw e
       return this.setState({err: e.message})
     }
-  }
-
-  set (ilk, val) {
-    this.setState({[ilk]: val}, () => {
-      let d = {upd: false}
-      if (this._rpw) d.pwEmsg = __.vldPw(this.state.pw)
-      if (this.state.pw && this.state.rpw) {
-        this._rpw = true
-        d.pwEmsg = __.vldPw(this.state.pw)
-        ;(this.state.pw === this.state.rpw)
-          ? d.rpwEmsg = ''
-          : d.rpwEmsg = 'Password does not match'
-      }
-      if (this.state.pw && this.state.rpw && !d.pwEmsg && !d.rpwEmsg) {
-        d.upd = true
-      }
-      this.setState(d)
-    })
   }
 
   render () {
@@ -143,7 +117,8 @@ class RgstrView extends React.Component {
       return <LinearProgress />
     } else {
       const backupfile = 'Blockkeeper.io backup\r\nIdentifier: ' +
-                         `${this.userId}\r\nPassword: ${this.state.pw}\r\n`
+                         `${this.userId}\r\nCrypto-Key: ${this.cryptId}\r\n` +
+                         'Please keep this credentials secret.\r\n'
       return (
         <div>
           <div className={this.props.classes.loginStyle}>
@@ -177,62 +152,43 @@ class RgstrView extends React.Component {
                       label='Identifier'
                       margin='normal'
                       value={this.userId}
-                      helperText='your account login identifier'
-                      disabled={this.state.writeDown || this.state.userAckDl}
+                      helperText='your account identifier'
+                      disabled
                       autoComplete='on'
                     />
                     <TextField
                       fullWidth
                       required
-                      label='Password'
+                      label='Crypto-Key'
                       type='password'
                       margin='normal'
-                      value={this.state.pw}
-                      error={Boolean(this.state.pwEmsg)}
-                      helperText={this.state.pwEmsg}
-                      onChange={evt => this.set('pw', evt.target.value)}
-                      disabled={this.state.writeDown || this.state.userAckDl}
-                      autoComplete='on'
-                    />
-                    <TextField
-                      fullWidth
-                      required
-                      label='Retype password'
-                      type='password'
-                      margin='normal'
-                      value={this.state.rpw}
-                      error={Boolean(this.state.rpwEmsg)}
-                      helperText={this.state.rpwEmsg}
-                      onChange={evt => this.set('rpw', evt.target.value)}
-                      disabled={this.state.writeDown || this.state.userAckDl}
+                      value={this.cryptId}
+                      helperText='your crypto key'
+                      disabled
                       autoComplete='on'
                     />
                     <Grid container spacing={16}>
                       <Grid item xs={6}>
                         {this.state.coins &&
-                        <DropDown
-                          _id='coin0DropDown'
-                          title={'Primary coin'}
-                          data={this.state.coins.coin0}
-                          slctd={this.state.coin0}
-                          action={this.setAction}
-                          disabled={
-                            this.state.writeDown || this.state.userAckDl
-                          }
-                         />}
+                          <DropDown
+                            _id='coin0DropDown'
+                            title={'Primary coin'}
+                            data={this.state.coins.coin0}
+                            slctd={this.state.coin0}
+                            action={this.setAction}
+                           />
+                        }
                       </Grid>
                       <Grid item xs={6}>
                         {this.state.coins &&
-                        <DropDown
-                          _id='coin1DropDown'
-                          title={'Secondary coin'}
-                          data={this.state.coins.coin1}
-                          slctd={this.state.coin1}
-                          action={this.setAction}
-                          disabled={
-                            this.state.writeDown || this.state.userAckDl
-                          }
-                      />}
+                          <DropDown
+                            _id='coin1DropDown'
+                            title={'Secondary coin'}
+                            data={this.state.coins.coin1}
+                            slctd={this.state.coin1}
+                            action={this.setAction}
+                          />
+                        }
                       </Grid>
                     </Grid>
                     <Typography
@@ -241,9 +197,9 @@ class RgstrView extends React.Component {
                       className={this.props.classes.body1}
                     >
                       Please make sure you store your <b>identifier and
-                      password</b> safely. Due to data privacy and security
+                      crypto-key</b> safely. Due to data privacy and security
                       reasons, it is NOT possible to recover your identifier
-                      or password. If you <b>forget your login</b> credentials,
+                      or crypto-key. If you <b>forget this credentials</b>,
                       all your <b>data will be lost</b> and you need
                       to setup a new account from scratch.
                     </Typography>
@@ -251,10 +207,8 @@ class RgstrView extends React.Component {
                       safari={<Button
                         raised
                         color='accent'
-                        disabled={!this.state.upd}
                         className={this.props.classes.btnBackup}
                         onClick={() => {
-                          this.setState({userAckDl: true})
                           window.alert(
                             backupfile +
                             '\n Please do a screenshot, copy+paste or pen+paper'
@@ -268,10 +222,8 @@ class RgstrView extends React.Component {
                       rest={<Button
                         raised
                         color='accent'
-                        disabled={!this.state.upd || this.state.writeDown}
                         className={this.props.classes.btnBackup}
                         onClick={() => {
-                          this.setState({userAckDl: true})
                           fileDownload(backupfile, 'blockkeeper-backup.txt')
                         }}
                         classes={{
@@ -283,7 +235,7 @@ class RgstrView extends React.Component {
                     <FormGroup>
                       <FormControlLabel
                         label={'I downloaded my backup or wrote down my ' +
-                               'identifier and password.'}
+                               'identifier and crypto-key.'}
                         control={
                           <Switch
                             checkedClassName={this.props.classes.switch}
@@ -292,9 +244,8 @@ class RgstrView extends React.Component {
                               checked: this.props.classes.checked
                             }}
                             checked={this.state.writeDown}
-                            disabled={!this.state.upd}
                             onChange={evt => {
-                              this.set('writeDown', !this.state.writeDown)
+                              this.setState({writeDown: !this.state.writeDown})
                             }}
                           />
                         }
@@ -304,21 +255,12 @@ class RgstrView extends React.Component {
                       <BrowserGate
                         allwd={
                           <div>
-                            {false && <input
-                              type='submit'
-                              value='test'
-                              className={this.props.classes.btnRg}
-                              disabled={!this.state.upd}
-                            />}
                             <Button
                               raised
                               type='submit'
                               color='accent'
                               className={this.props.classes.btnRg}
-                              disabled={
-                                !this.state.upd ||
-                                !this.state.writeDown
-                              }
+                              disabled={!this.state.writeDown}
                               classes={{
                                 raisedAccent: this.props.classes.actnBtnClr
                               }}
