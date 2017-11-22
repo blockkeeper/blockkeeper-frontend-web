@@ -409,7 +409,10 @@ export default compose(withStyles({
   },
   valueStyle: {
     width: '60%',
-    paddingLeft: theme.spacing.unit * 4
+    paddingLeft: theme.spacing.unit * 4,
+    [theme.breakpoints.down('sm')]: {
+      paddingLeft: theme.spacing.unit * 2
+    }
   },
   body2: {
     color: theme.palette.text.secondary
