@@ -1,4 +1,6 @@
 /* global localStorage */
+/* global crypto */
+/* global TextEncoder */
 import uuidv4 from 'uuid/v4'
 import * as mo from 'moment'
 import validator from 'validator'
@@ -101,7 +103,7 @@ const initView = (cmp, name) => {
     delete cmp.cx.tmp.snack
     return msg
   }
-  cmp.setSnack = msg => cmp.cx.tmp.snack = msg
+  cmp.setSnack = msg => { cmp.cx.tmp.snack = msg }
   cmp.err = (emsg, e, state) => {
     cmp.warn(emsg)
     cmp.setSnack(`ERROR: ${emsg}`)
