@@ -29,7 +29,7 @@ import {Add, Close, Autorenew, AccountCircle, InfoOutline, KeyboardArrowUp,
        Error, Feedback, BugReport, Email} from 'material-ui-icons'
 import Dialog, {DialogActions, DialogContent, DialogContentText,
        DialogTitle } from 'material-ui/Dialog'
-import {theme, jumboStyle, floatBtnStyle, CryptoColors} from './Style'
+import {theme, jumboStyle, floatBtnStyle, CryptoColors, gridWrap} from './Style'
 import __ from '../util'
 
 const setBxpTrigger = view => {
@@ -58,19 +58,18 @@ const TopBar = ({
   onClickLeft,
   color,
   noUser,
-  modeCancel,
-  className
+  modeCancel
 }) =>
   <AppBar
-    position='static'
+    position='fixed'
     color={color || 'default'}
     elevation={0}
-    className={className}
   >
-    <Toolbar style={{minHeight: '50px'}}>
-      <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
-        <div style={{marginRight: 'auto'}}>
-          {modeCancel &&
+    <div style={{...gridWrap, width: '100%'}}>
+      <Toolbar style={{minHeight: '50px'}}>
+        <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
+          <div style={{marginRight: 'auto'}}>
+            {modeCancel &&
             <Typography
               type='headline'
               color='inherit'
@@ -82,7 +81,7 @@ const TopBar = ({
             >
               Cancel
             </Typography>}
-          {iconLeft &&
+            {iconLeft &&
             <IconButton
               aria-label='Menu'
               onClick={onClickLeft}
@@ -94,7 +93,7 @@ const TopBar = ({
             >
               {iconLeft}
             </IconButton>}
-          {title &&
+            {title &&
             <Typography type='headline' color='inherit'>
               <Hidden xsDown>
                 <span>BlockKeeper</span>
@@ -103,25 +102,25 @@ const TopBar = ({
                 <span>BK</span>
               </Hidden>
             </Typography>}
+          </div>
         </div>
-      </div>
-      <div>
-        <Typography
-          type='headline'
-          color='inherit'
-          align='center'
-          style={{
-            flex: 1,
-            fontSize: '16px',
-            fontWeight: '700'
-          }}
+        <div>
+          <Typography
+            type='headline'
+            color='inherit'
+            align='center'
+            style={{
+              flex: 1,
+              fontSize: '16px',
+              fontWeight: '700'
+            }}
         >
-          {midTitle || ''}
-        </Typography>
-      </div>
-      <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
-        <div style={{marginLeft: 'auto'}}>
-          {action &&
+            {midTitle || ''}
+          </Typography>
+        </div>
+        <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
+          <div style={{marginLeft: 'auto'}}>
+            {action &&
             <Typography
               type='headline'
               color='inherit'
@@ -133,25 +132,26 @@ const TopBar = ({
             >
               {action}
             </Typography>}
-          {!noUser &&
-          <Link to={'/user/edit'}>
-            <IconButton
-              aria-label='Menu'
-              color='contrast'
-              style={{
-                left: theme.spacing.unit * 2
-              }}
+            {!noUser &&
+            <Link to={'/user/edit'}>
+              <IconButton
+                aria-label='Menu'
+                color='contrast'
+                style={{
+                  left: theme.spacing.unit * 2
+                }}
             >
-              <AccountCircle />
-            </IconButton>
-          </Link>}
+                <AccountCircle />
+              </IconButton>
+            </Link>}
+          </div>
         </div>
-      </div>
-    </Toolbar>
+      </Toolbar>
+    </div>
   </AppBar>
 
 const SubBar = ({tabs, ix, onClick, rootClassName}) =>
-  <AppBar style={{position: 'relative', backgroundColor: 'white'}}>
+  <AppBar position='static' style={{position: 'relative', backgroundColor: 'white'}}>
     <Tabs
       centered
       value={ix}

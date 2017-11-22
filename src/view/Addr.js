@@ -12,7 +12,7 @@ import Divider from 'material-ui/Divider'
 import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
-        actnBtnClr, topBtnClass} from './Style'
+        actnBtnClr, topBtnClass, topBarSpacer} from './Style'
 import {ArrowBack, Launch} from 'material-ui-icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
         CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
@@ -183,35 +183,35 @@ class AddrView extends React.Component {
         )
       }
       return (
-        <div className={this.props.classes.themeBgStyle}>
-          {this.state.snack &&
-            <Snack
-              msg={this.state.snack}
-              onClose={() => this.setState({snack: null})}
-            />
-          }
-          {this.state.edit &&
-            <TopBar
-              midTitle='Wallet'
-              action={<Done />}
-              onClick={async () => { if (this.state.upd) await this.save() }}
-              onClickLeft={() => this.setState({edit: false})}
-              className={this.props.classes.gridWrap}
-              modeCancel
-              noUser
-            />
-          }
-          {!this.state.edit &&
-            <TopBar
-              midTitle='Wallet'
-              iconLeft={<ArrowBack />}
-              onClickLeft={this.goBack}
-              action={<Edit />}
-              onClick={() => this.setState({edit: !this.state.edit, show: true})}
-              className={this.props.classes.gridWrap}
-              noUser
-            />
-          }
+        <div className={this.props.classes.topBarSpacer}>
+          <div className={this.props.classes.themeBgStyle}>
+            {this.state.snack &&
+              <Snack
+                msg={this.state.snack}
+                onClose={() => this.setState({snack: null})}
+              />
+            }
+            {this.state.edit &&
+              <TopBar
+                midTitle='Wallet'
+                action={<Done />}
+                onClick={async () => { if (this.state.upd) await this.save() }}
+                onClickLeft={() => this.setState({edit: false})}
+                modeCancel
+                noUser
+              />
+            }
+            {!this.state.edit &&
+              <TopBar
+                midTitle='Wallet'
+                iconLeft={<ArrowBack />}
+                onClickLeft={this.goBack}
+                action={<Edit />}
+                onClick={() => this.setState({edit: !this.state.edit, show: true})}
+                noUser
+              />
+            }
+          </div>
           {this.state.busy &&
             <LinearProgress />}
           <Paper
@@ -596,6 +596,7 @@ export default withStyles({
   body2,
   actnBtnClr,
   topBtnClass,
+  topBarSpacer,
   paperWrap: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 3,

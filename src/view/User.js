@@ -4,7 +4,7 @@ import {withStyles} from 'material-ui/styles'
 import {TopBar, Modal, DropDown, UserList, Done, Edit, Snack} from './Lib'
 import {ArrowBack} from 'material-ui-icons'
 import {themeBgStyle, gridWrap, gridSpacer, gridGutter,
-        gridGutterFluid} from './Style'
+        gridGutterFluid, topBarSpacer} from './Style'
 import Paper from 'material-ui/Paper'
 import __ from '../util'
 
@@ -107,7 +107,7 @@ class UserView extends React.Component {
             onClick: () => this.logout()
           }]}
         >
-          Logout and clear browser's local app storage?
+          Logout and clear browser’s local app storage?
           Please note: After logout you need your identifier and password
           to login again.
         </Modal>
@@ -128,35 +128,34 @@ class UserView extends React.Component {
       )
     } else if (this.state.userId) {
       return (
-        <div className={this.props.classes.themeBgStyle}>
-          {this.state.snack &&
-            <Snack
-              msg={this.state.snack}
-              onClose={() => this.setState({snack: null})}
-            />
-          }
-          {this.state.edit &&
-            <TopBar
-              midTitle='User'
-              action={<Done />}
-              onClick={async () => { if (this.state.upd) await this.save() }}
-              onClickLeft={() => this.setState({edit: false})}
-              className={this.props.classes.gridWrap}
-              modeCancel
-              noUser
-            />
-          }
-          {!this.state.edit &&
-            <TopBar
-              midTitle='User'
-              action={<Edit />}
-              onClick={this.edit}
-              iconLeft={<ArrowBack />}
-              onClickLeft={this.goBack}
-              className={this.props.classes.gridWrap}
-              noUser
-            />
-          }
+        <div className={this.props.classes.topBarSpacer}>
+          <div className={this.props.classes.themeBgStyle}>
+            {this.state.snack &&
+              <Snack
+                msg={this.state.snack}
+                onClose={() => this.setState({snack: null})}
+              />
+            }
+            {this.state.edit &&
+              <TopBar
+                midTitle='User'
+                action={<Done />}
+                onClick={async () => { if (this.state.upd) await this.save() }}
+                onClickLeft={() => this.setState({edit: false})}
+                modeCancel
+                noUser
+              />
+            }
+            {!this.state.edit &&
+              <TopBar
+                midTitle='User'
+                action={<Edit />}
+                onClick={this.edit}
+                iconLeft={<ArrowBack />}
+                onClickLeft={this.goBack}
+                noUser
+              />}
+          </div>
           {this.state.busy &&
             <LinearProgress />}
           <Paper
@@ -214,5 +213,6 @@ export default withStyles({
   gridWrap,
   gridSpacer,
   gridGutter,
-  gridGutterFluid
+  gridGutterFluid,
+  topBarSpacer
 })(UserView)

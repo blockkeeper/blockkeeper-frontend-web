@@ -9,7 +9,7 @@ import withWidth from 'material-ui/utils/withWidth'
 import {withStyles} from 'material-ui/styles'
 import TextField from 'material-ui/TextField'
 import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter,
-        actnBtnClr} from './Style'
+        actnBtnClr, topBarSpacer} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
         Modal, CoinIcon, ExtLink, Done, Edit, BxpFloatBtn} from './Lib'
 import Addr from '../logic/Addr'
@@ -135,44 +135,42 @@ class TscView extends React.Component {
         this.state.addr.bxp
       )
       return (
-        <div className={this.props.classes.themeBgStyle}>
-          {this.state.snack &&
+        <div className={this.props.classes.topBarSpacer}>
+          <div className={this.props.classes.themeBgStyle}>
+            {this.state.snack &&
             <Snack
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
-            />
-          }
-          {this.state.edit &&
+            />}
+            {this.state.edit &&
             <TopBar
               midTitle='Transaction'
               action={<Done />}
               onClick={async () => { if (this.state.upd) await this.save() }}
               onClickLeft={() => this.setState({edit: false})}
-              className={this.props.classes.gridWrap}
               modeCancel
               noUser
             />}
-          {!this.state.edit &&
+            {!this.state.edit &&
             <TopBar
               midTitle='Transaction'
               iconLeft={<ArrowBack />}
               onClickLeft={this.goBack}
               action={<Edit />}
               onClick={() => this.setState({edit: !this.state.edit})}
-              className={this.props.classes.gridWrap}
               noUser
             />}
+          </div>
           {this.state.busy &&
-            <LinearProgress />}
+          <LinearProgress />}
           <Paper square className={this.props.classes.spacer}>
             <Typography
               type='headline'
               align='center'
-              style={{color: modeColor}}
-            >
+              style={{color: modeColor}}>
               {modeSign}
               {__.formatNumber(this.state.tsc.amnt, this.state.addr.coin,
-                               this.user.locale)}
+                             this.user.locale)}
               &nbsp;
               <CoinIcon coin={this.state.addr.coin} alt color={modeColor} />
             </Typography>
@@ -182,18 +180,16 @@ class TscView extends React.Component {
               align='center'
               className={this.props.classes.body2}
               onClick={this.toggleCoins}
-              gutterBottom
-            >
+              gutterBottom>
               {modeSign}
               {__.formatNumber(this.state.blc1, this.state.coin0,
-                               this.user.locale)}
+                             this.user.locale)}
               &nbsp;
               <CoinIcon
                 coin={this.state.coin0}
                 color={theme.palette.text.secondary}
                 size={12}
-                alt
-              />
+                alt />
             </Typography>}
             {this.state.toggleCoins &&
             <Typography
@@ -201,17 +197,15 @@ class TscView extends React.Component {
               align='center'
               className={this.props.classes.body2}
               onClick={this.toggleCoins}
-              gutterBottom
-            >
+              gutterBottom>
               {modeSign}
               {__.formatNumber(this.state.blc2, this.state.coin1,
-                               this.user.locale)}
+                             this.user.locale)}
               <CoinIcon
                 coin={this.state.coin1}
                 color={theme.palette.text.secondary}
                 size={12}
-                alt
-              />
+                alt />
             </Typography>}
           </Paper>
           <Paper square className={this.props.classes.spacer} elevation={5}>
@@ -232,11 +226,11 @@ class TscView extends React.Component {
                       error={Boolean(this.state.nameEmsg)}
                       helperText={this.state.nameEmsg}
                       onChange={evt => this.set('name', evt.target.value)}
-                        />}
+                      />}
                     {!this.state.edit &&
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.name}
-                      </Typography>}
+                    <Typography type='body1' noWrap>
+                      {this.state.tsc.name}
+                    </Typography>}
                   </div>
                 </div>
                 <div className={this.props.classes.flexStyle}>
@@ -247,18 +241,18 @@ class TscView extends React.Component {
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     {this.state.edit &&
-                      <TextField
-                        placeholder='Description'
-                        fullWidth
-                        value={this.state.desc}
-                        error={Boolean(this.state.descEmsg)}
-                        helperText={this.state.descEmsg}
-                        onChange={evt => this.set('desc', evt.target.value)}
-                      />}
+                    <TextField
+                      placeholder='Description'
+                      fullWidth
+                      value={this.state.desc}
+                      error={Boolean(this.state.descEmsg)}
+                      helperText={this.state.descEmsg}
+                      onChange={evt => this.set('desc', evt.target.value)}
+                    />}
                     {!this.state.edit &&
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.desc}
-                      </Typography>}
+                    <Typography type='body1' noWrap>
+                      {this.state.tsc.desc}
+                    </Typography>}
                   </div>
                 </div>
                 <div className={this.props.classes.flexStyle}>
@@ -269,16 +263,16 @@ class TscView extends React.Component {
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     {this.state.edit &&
-                      <TextField
-                        placeholder='Tags'
-                        fullWidth
-                        value={this.state.tagsJoin}
-                        error={Boolean(this.state.tagsEmsg)}
-                        helperText={this.state.tagsEmsg}
-                        onChange={evt => {
-                          this.set('tagsJoin', evt.target.value)
-                        }}
-                      />}
+                    <TextField
+                      placeholder='Tags'
+                      fullWidth
+                      value={this.state.tagsJoin}
+                      error={Boolean(this.state.tagsEmsg)}
+                      helperText={this.state.tagsEmsg}
+                      onChange={evt => {
+                        this.set('tagsJoin', evt.target.value)
+                      }}
+                    />}
                     {!this.state.edit &&
                     <Typography type='body1' noWrap>
                       {this.state.tagsJoin}
@@ -286,21 +280,20 @@ class TscView extends React.Component {
                   </div>
                 </div>
                 {this.state.tsc.cfmCnt >= 0 &&
-                  <div className={this.props.classes.flexStyle}>
-                    <div className={this.props.classes.labelStyle}>
-                      <Typography type='body1' noWrap color='inherit'>
-                        Confirmations
-                      </Typography>
-                    </div>
-                    <div className={this.props.classes.valueStyle}>
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.cfmCnt > 100
-                          ? 'More than 100'
-                          : this.state.tsc.cfmCnt}
-                      </Typography>
-                    </div>
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' noWrap color='inherit'>
+                      Confirmations
+                    </Typography>
                   </div>
-                }
+                  <div className={this.props.classes.valueStyle}>
+                    <Typography type='body1' noWrap>
+                      {this.state.tsc.cfmCnt > 100
+                        ? 'More than 100'
+                        : this.state.tsc.cfmCnt}
+                    </Typography>
+                  </div>
+                </div>}
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
@@ -316,14 +309,13 @@ class TscView extends React.Component {
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
-                      Address
-                    </Typography>
+                    Address
+                  </Typography>
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     <Link
                       to={`/wallet/${this.state.addr._id}`}
-                      className={this.props.classes.noTxtDeco}
-                    >
+                      className={this.props.classes.noTxtDeco}>
                       <Typography type='body1' noWrap>
                         <CoinIcon coin={this.state.addr.coin} size={13} />&nbsp;
                         <b>{this.state.addr.name}</b>
@@ -332,41 +324,39 @@ class TscView extends React.Component {
                   </div>
                 </div>
                 {(
-                    (this.state.tsc.hd || {}).addrHshs &&
-                    this.state.tsc.hd.addrHshs.length > 0
-                  ) &&
-                  <div className={this.props.classes.flexStyle}>
-                    <div className={this.props.classes.labelStyle}>
-                      <Typography type='body1' noWrap color='inherit'>
-                        Involved addresses
-                      </Typography>
-                    </div>
-                    <div className={this.props.classes.valueStyle}>
-                      <Typography type='body1' noWrap>
-                        {this.state.tsc.hd.addrHshs.map(hsh => {
-                          let addr = this.state.addr
-                          let to = __.toBxpUrl('addr', addr.coin, hsh, addr.bxp)
-                          return (
-                            <span key={__.uuid()}>
-                              <ExtLink
-                                to={to}
-                                txt={
-                                  <Typography type='body1' noWrap>
-                                    {hsh}
-                                  </Typography>
-                                }
-                              />
-                            </span>
-                          )
-                        })}
-                      </Typography>
-                    </div>
-                  </div>
-                }
+                  (this.state.tsc.hd || {}).addrHshs &&
+                  this.state.tsc.hd.addrHshs.length > 0
+                ) &&
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
                     <Typography type='body1' noWrap color='inherit'>
-                      Hash
+                      Involved addresses
+                    </Typography>
+                  </div>
+                  <div className={this.props.classes.valueStyle}>
+                    <Typography type='body1' noWrap>
+                      {this.state.tsc.hd.addrHshs.map(hsh => {
+                        let addr = this.state.addr
+                        let to = __.toBxpUrl('addr', addr.coin, hsh, addr.bxp)
+                        return (
+                          <span key={__.uuid()}>
+                            <ExtLink
+                              to={to}
+                              txt={
+                                <Typography type='body1' noWrap>
+                                  {hsh}
+                                </Typography>
+                              }
+                            />
+                          </span>)
+                      })}
+                    </Typography>
+                  </div>
+                </div>}
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography type='body1' noWrap color='inherit'>
+                    Hash
                     </Typography>
                   </div>
                   <div className={this.props.classes.valueStyle}>
@@ -376,8 +366,7 @@ class TscView extends React.Component {
                         <Typography type='body1' noWrap>
                           {this.state.tsc.hsh}
                         </Typography>
-                      }
-                    />
+                    } />
                   </div>
                 </div>
               </div>
@@ -385,8 +374,7 @@ class TscView extends React.Component {
           </Paper>
           <BxpFloatBtn
             onClick={() => this.cx.depot.bxp([])}
-            bxpSts={this.state.bxpSts}
-          />
+            bxpSts={this.state.bxpSts} />
         </div>
       )
     } else {
@@ -401,6 +389,7 @@ export default compose(withStyles({
   gridWrap,
   gridGutter,
   actnBtnClr,
+  topBarSpacer,
   spacer: {
     paddingTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2

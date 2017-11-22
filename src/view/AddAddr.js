@@ -12,7 +12,7 @@ import Typography from 'material-ui/Typography'
 import {LinearProgress} from 'material-ui/Progress'
 import QrReader from 'react-qr-reader'
 import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
-        gridWrap, gridGutter, gridSpacer, actnBtnClr, cnctBtn} from './Style'
+        gridWrap, gridGutter, gridSpacer, actnBtnClr, cnctBtn, topBarSpacer} from './Style'
 import {TopBar, Modal, CoinIcon, Snack} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
@@ -148,7 +148,7 @@ class AddAddrView extends React.Component {
       )
     } else if (this.state.coin !== undefined) {
       return (
-        <div>
+        <div className={this.props.classes.topBarSpacer}>
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
@@ -160,7 +160,6 @@ class AddAddrView extends React.Component {
               midTitle='Wallet'
               action={<Clear />}
               onClick={this.goBack}
-              className={this.props.classes.gridWrap}
               noUser
             />
           </div>
@@ -325,6 +324,7 @@ export default withStyles({
   qrReaderStyle,
   actnBtnClr,
   cnctBtn,
+  topBarSpacer,
   radios: {
     paddingLeft: theme.spacing.unit
   },

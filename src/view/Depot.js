@@ -12,7 +12,7 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
 import {theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
         actnBtnClr, topBtnClass, depotEmpty, cnctBtn, gridSpacer,
-        gridGutter} from './Style'
+        gridGutter, topBarSpacer} from './Style'
 import __ from '../util'
 
 class DepotView extends React.Component {
@@ -102,18 +102,14 @@ class DepotView extends React.Component {
       )
     } else if (this.state.addrs) {
       return (
-        <div>
+        <div className={this.props.classes.topBarSpacer}>
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
               onClose={() => this.setState({snack: null})}
-            />
-          }
+            />}
           <div className={this.props.classes.themeBgStyle}>
-            <TopBar
-              title
-              className={this.props.classes.gridWrap}
-            />
+            <TopBar title />
             {this.state.blc1 !== 'undefined' &&
               <Jumbo
                 title={this.state.blc1}
@@ -246,6 +242,7 @@ export default compose(withStyles({
   topBtnClass,
   depotEmpty,
   cnctBtn,
+  topBarSpacer,
   paperWrap: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 3,

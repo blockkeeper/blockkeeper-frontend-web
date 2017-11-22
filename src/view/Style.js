@@ -348,7 +348,6 @@ const topBtnClass = {
 }
 
 const depotEmpty = {
-  // paddingTop: '50px',
   textAlign: 'center'
 }
 
@@ -358,6 +357,10 @@ const cnctBtn = {
   [theme.breakpoints.down('sm')]: {
     width: '80%'
   }
+}
+
+const topBarSpacer = {
+  paddingTop: '50px'
 }
 
 export {
@@ -392,5 +395,6 @@ export {
   actnBtnClr,
   topBtnClass,
   depotEmpty,
-  cnctBtn
+  cnctBtn,
+  topBarSpacer
 }
