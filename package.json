@@ -33,7 +33,7 @@
     "jest": "20.0.4",
     "js-file-download": "^0.4.1",
     "lzutf8": "^0.4.7",
-    "material-ui": "^1.0.0-beta.20",
+    "material-ui": "^1.0.0-beta.21",
     "material-ui-icons": "^1.0.0-beta.17",
     "moment": "^2.19.1",
     "object-assign": "4.1.1",
