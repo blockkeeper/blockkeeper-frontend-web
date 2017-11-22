@@ -514,8 +514,7 @@ class AddrView extends React.Component {
                       <Button
                         onClick={() => this.setState({ask: true})}
                         className={this.props.classes.unvlBtn}
-                        color='contrast'
-                        raised
+                        style={{color: theme.palette.error['500']}}
                       >
                           Disconnect wallet
                       </Button>
