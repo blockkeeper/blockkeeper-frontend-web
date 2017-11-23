@@ -107,7 +107,7 @@ class LoginView extends React.Component {
                   align='center'
                   gutterBottom
                 >
-                  Please enter your login credentials
+                  Please enter your credentials
                 </Typography>
                 {this.state.loginBusy &&
                   <LinearProgress />

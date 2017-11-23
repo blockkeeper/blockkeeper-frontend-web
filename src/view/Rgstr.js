@@ -139,7 +139,7 @@ class RgstrView extends React.Component {
                   align='center'
                   gutterBottom
                 >
-                  Please choose your account details
+                  Register your new account
                 </Typography>
                 <Paper
                   square
