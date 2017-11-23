@@ -3,9 +3,12 @@ import * as browserLocale from 'browser-locale'
 import * as fileDownload from 'js-file-download'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
-import TextField from 'material-ui/TextField'
 import Paper from 'material-ui/Paper'
 import Grid from 'material-ui/Grid'
+import IconButton from 'material-ui/IconButton'
+import Input, {InputLabel, InputAdornment} from 'material-ui/Input'
+import {FormControl} from 'material-ui/Form'
+import ContentCopy from 'material-ui-icons/ContentCopy'
 import {FormControlLabel, FormGroup} from 'material-ui/Form'
 import Switch from 'material-ui/Switch'
 import {withStyles} from 'material-ui/styles'
@@ -15,6 +18,7 @@ import {theme, paperStyle, loginStyle, fullWidth,
         actnBtnClr, styleGuide} from './Style'
 import {Modal, BrowserGate, BrowserGateSafarimobile,
         NtAllwd, DropDown} from './Lib'
+import CopyToClipboard from 'react-copy-to-clipboard'
 import Rate from '../logic/Rate'
 import __ from '../util'
 
@@ -41,6 +45,7 @@ class RgstrView extends React.Component {
       coin1: 'BTC',
       locale: browserLocale() || __.cfg('dfltLocale')
     }
+    this.handleCopyClipboard = () => {}
   }
 
   async componentDidMount () {
@@ -145,28 +150,52 @@ class RgstrView extends React.Component {
                     autoComplete='on'
                     onSubmit={async (...args) => await this.save(...args)}
                   >
-                    <TextField
-                      autoFocus
+                    <FormControl
                       fullWidth
-                      required
-                      label='Identifier'
                       margin='normal'
-                      value={this.userId}
-                      helperText='your account identifier'
                       disabled
-                      autoComplete='on'
-                    />
-                    <TextField
+                    >
+                      <InputLabel htmlFor='identifier'>Identifier</InputLabel>
+                      <Input
+                        required
+                        label='Identifier'
+                        id='identifier'
+                        autoComplete='on'
+                        type='text'
+                        value={this.userId}
+                        endAdornment={
+                          <InputAdornment position='end'>
+                            <CopyToClipboard onCopy={this.handleCopyClipboard} text={this.userId}>
+                              <IconButton>
+                                <ContentCopy />
+                              </IconButton>
+                            </CopyToClipboard>
+                          </InputAdornment>}
+                        />
+                    </FormControl>
+                    <FormControl
                       fullWidth
-                      required
-                      label='Crypto-Key'
-                      type='password'
                       margin='normal'
-                      value={this.cryptId}
-                      helperText='your crypto key'
                       disabled
-                      autoComplete='on'
-                    />
+                    >
+                      <InputLabel htmlFor='password'>Crypto-Key</InputLabel>
+                      <Input
+                        required
+                        label='Crypto-Key'
+                        id='password'
+                        autoComplete='on'
+                        type='text'
+                        value={this.cryptId}
+                        endAdornment={
+                          <InputAdornment position='end'>
+                            <CopyToClipboard onCopy={this.handleCopyClipboard} text={this.cryptId}>
+                              <IconButton>
+                                <ContentCopy />
+                              </IconButton>
+                            </CopyToClipboard>
+                          </InputAdornment>}
+                        />
+                    </FormControl>
                     <Grid container spacing={16}>
                       <Grid item xs={6}>
                         {this.state.coins &&
@@ -238,7 +267,6 @@ class RgstrView extends React.Component {
                                'identifier and crypto-key.'}
                         control={
                           <Switch
-                            checkedClassName={this.props.classes.switch}
                             classes={{
                               bar: this.props.classes.bar,
                               checked: this.props.classes.checked
@@ -311,12 +339,10 @@ export default withStyles({
     width: theme.spacing.unit * 2,
     height: theme.spacing.unit * 2
   },
-  switch: {
-    color: theme.palette.error[500]
-  },
   bar: {
   },
   checked: {
+    color: theme.palette.error[500],
     '& + $bar': {
       backgroundColor: theme.palette.error[500]
     }
