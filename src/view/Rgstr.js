@@ -4,6 +4,7 @@ import * as fileDownload from 'js-file-download'
 import Button from 'material-ui/Button'
 import Typography from 'material-ui/Typography'
 import Paper from 'material-ui/Paper'
+import TextField from 'material-ui/TextField'
 import Grid from 'material-ui/Grid'
 import IconButton from 'material-ui/IconButton'
 import Input, {InputLabel, InputAdornment} from 'material-ui/Input'
@@ -81,7 +82,6 @@ class RgstrView extends React.Component {
   }
 
   async save (e) {
-    console.log('hi save')
     if (e) e.preventDefault()
 
     this.setState({busy: true})
@@ -177,6 +177,15 @@ class RgstrView extends React.Component {
                           </InputAdornment>}
                         />
                     </FormControl>
+                    <TextField
+                      required
+                      label='Crypto-Key'
+                      type='password'
+                      value={this.cryptId}
+                      disabled
+                      autoComplete='on'
+                      style={{display: 'none'}}
+                    />
                     <FormControl
                       fullWidth
                       margin='normal'
@@ -188,7 +197,7 @@ class RgstrView extends React.Component {
                         label='Crypto-Key'
                         id='password'
                         autoComplete='on'
-                        type='password'
+                        type='text'
                         value={this.cryptId}
                         endAdornment={
                           <InputAdornment position='end'>
