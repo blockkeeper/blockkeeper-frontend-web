@@ -46,7 +46,7 @@ class RgstrView extends React.Component {
       coin1: 'BTC',
       locale: browserLocale() || __.cfg('dfltLocale'),
       togglePw: 'password',
-      toggleIdent: 'password'
+      toggleIdent: 'text'
     }
     this.handleCopyClipboard = () => {}
   }
@@ -56,6 +56,7 @@ class RgstrView extends React.Component {
     document.body.style.backgroundColor = styleGuide.backgroundDark
     Object.assign(this, __.initView(this, 'rgstr'))
     if (this.cx.core.isActive()) this.setState({loggedIn: true})
+
     await this.load()
   }
 
@@ -68,7 +69,11 @@ class RgstrView extends React.Component {
         coins.coin0.push({lbl: coin, key: coin, ilk: 'coin0'})
         coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
       }
-      this.setState({coins, busy: false})
+      this.setState({
+        coins, busy: false,
+        togglePw: 'password',
+        toggleIdent: 'password'
+      })
     } catch (e) {
       if (__.cfg('isDev')) throw e
       return this.setState({err: 'An error occurred: Please try again later'})
