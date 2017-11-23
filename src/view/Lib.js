@@ -64,6 +64,7 @@ const TopBar = ({
     position='fixed'
     color={color || 'default'}
     elevation={0}
+    style={{zIndex: 1500}}
   >
     <div style={{...gridWrap, width: '100%'}}>
       <Toolbar style={{minHeight: '50px'}}>
