@@ -34,6 +34,7 @@ class RgstrView extends React.Component {
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
     this.reload = this.reload.bind(this)
+    this.submitForm = this.submitForm.bind(this)
     this.setAction = d => this.setState({[d.ilk]: d.key})
     this.logout = () => {
       this.cx.core.clear()
@@ -43,7 +44,9 @@ class RgstrView extends React.Component {
       ...this.reset,
       coin0: 'USD',
       coin1: 'BTC',
-      locale: browserLocale() || __.cfg('dfltLocale')
+      locale: browserLocale() || __.cfg('dfltLocale'),
+      togglePw: 'password',
+      toggleIdent: 'password'
     }
     this.handleCopyClipboard = () => {}
   }
@@ -97,6 +100,14 @@ class RgstrView extends React.Component {
     }
   }
 
+  async submitForm (...args) {
+    this.setState({
+      togglePw: 'password',
+      toggleIdent: 'text'
+    })
+    return await this.save(...args)
+  }
+
   render () {
     if (this.state.err) {
       return (
@@ -148,7 +159,7 @@ class RgstrView extends React.Component {
                 >
                   <form
                     autoComplete='on'
-                    onSubmit={async (...args) => await this.save(...args)}
+                    onSubmit={this.submitForm}
                   >
                     <FormControl
                       fullWidth
@@ -161,7 +172,7 @@ class RgstrView extends React.Component {
                         label='Identifier'
                         id='identifier'
                         autoComplete='on'
-                        type='text'
+                        type={this.state.toggleIdent}
                         value={this.userId}
                         endAdornment={
                           <InputAdornment position='end'>
@@ -184,7 +195,7 @@ class RgstrView extends React.Component {
                         label='Crypto-Key'
                         id='password'
                         autoComplete='on'
-                        type='text'
+                        type={this.state.togglePw}
                         value={this.cryptId}
                         endAdornment={
                           <InputAdornment position='end'>
@@ -196,6 +207,22 @@ class RgstrView extends React.Component {
                           </InputAdornment>}
                         />
                     </FormControl>
+                    <Button
+                      raised
+                      color='accent'
+                      className={this.props.classes.btnBackup}
+                      classes={{
+                        raisedAccent: this.props.classes.actnBtnClr
+                      }}
+                      onClick={() => {
+                        this.setState({
+                          togglePw: this.state.togglePw === 'text' ? 'password' : 'text',
+                          toggleIdent: this.state.toggleIdent === 'text' ? 'password' : 'text'
+                        })
+                      }}
+                    >
+                      Toggle visibility
+                    </Button>
                     <Grid container spacing={16}>
                       <Grid item xs={6}>
                         {this.state.coins &&
@@ -237,14 +264,14 @@ class RgstrView extends React.Component {
                         raised
                         color='accent'
                         className={this.props.classes.btnBackup}
+                        classes={{
+                          raisedAccent: this.props.classes.actnBtnClr
+                        }}
                         onClick={() => {
                           window.alert(
                             backupfile +
                             '\n Please do a screenshot, copy+paste or pen+paper'
                           )
-                        }}
-                        classes={{
-                          raisedAccent: this.props.classes.actnBtnClr
                         }}>
                         Show backup
                       </Button>}
@@ -252,11 +279,11 @@ class RgstrView extends React.Component {
                         raised
                         color='accent'
                         className={this.props.classes.btnBackup}
-                        onClick={() => {
-                          fileDownload(backupfile, 'blockkeeper-backup.txt')
-                        }}
                         classes={{
                           raisedAccent: this.props.classes.actnBtnClr
+                        }}
+                        onClick={() => {
+                          fileDownload(backupfile, 'blockkeeper-backup.txt')
                         }}>
                         Download backup
                       </Button>}
