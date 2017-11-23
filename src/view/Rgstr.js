@@ -83,8 +83,16 @@ class RgstrView extends React.Component {
   }
 
   async save (e) {
+    console.log('hi save')
     if (e) e.preventDefault()
-    this.setState({busy: true})
+    this.setState({
+      busy: true,
+      togglePw: 'password',
+      toggleIdent: 'text'
+    }, () => {
+      console.log('setState cb done')
+    })
+
     try {
       await this.cx.core.register(
         this.userId,
@@ -93,6 +101,7 @@ class RgstrView extends React.Component {
         this.state.coin1,
         this.state.locale
       )
+      console.log('register done')
       this.props.history.replace(`/depot`)
     } catch (e) {
       if (__.cfg('isDev')) throw e
@@ -101,10 +110,12 @@ class RgstrView extends React.Component {
   }
 
   async submitForm (...args) {
-    this.setState({
+    /* this.setState({
       togglePw: 'password',
       toggleIdent: 'text'
-    })
+    }, () => {
+      await this.save(...args)
+    }) */
     return await this.save(...args)
   }
 
