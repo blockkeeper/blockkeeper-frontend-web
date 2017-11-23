@@ -20,7 +20,9 @@ phases:
   post_build:
     commands:
       - echo Build completed, sync to s3 bucket now
-      - aws s3 sync --delete build/ "s3://app.blockkeeper.io"
+      #- aws s3 sync --delete build/ "s3://app.blockkeeper.io"
+      #service worker problems
+      - aws s3 sync build/ "s3://app.blockkeeper.io"
       #- echo Start Cloudfront invalidation
       #- aws configure set preview.cloudfront true
       #- aws cloudfront create-invalidation --distribution-id E2ML292P0CE01 --paths /*
