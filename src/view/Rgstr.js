@@ -30,7 +30,7 @@ class RgstrView extends React.Component {
     this.cryptId = __.uuid()
     this.reset = {busy: false, writeDown: false, err: undefined}
     this.goBack = () => props.history.goBack()
-    this.goUser = () => props.history.replace('/user/edit')
+    this.goDepot = () => props.history.replace('/depot')
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
     this.reload = this.reload.bind(this)
@@ -115,10 +115,10 @@ class RgstrView extends React.Component {
         <Modal
           lbl='Note'
           noCncl
-          onClose={this.goUser}
-          actions={[{onClick: this.goUser, lbl: 'OK'}]}
+          onClose={this.goDepot}
+          actions={[{onClick: this.goDepot, lbl: 'OK'}]}
         >
-          Please logout before creating a new user
+          You are already logged in.
         </Modal>
       )
     } else if (this.state.busy) {
