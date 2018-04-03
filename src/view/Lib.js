@@ -948,7 +948,7 @@ const UserList = ({askLogout, askDelete}) =>
       </ListItem>
     </a>
     <a
-      href='https://eepurl.com/c-p1fr'
+      href='http://eepurl.com/c_4Ar1'
       target='_blank'
       style={{textDecoration: 'none'}}
       rel='noopener noreferrer'
