@@ -63,7 +63,8 @@ const TopBar = ({
   onClickLeft,
   color,
   noUser,
-  modeCancel
+  modeCancel,
+  isActionAllowed = true
 }) =>
   <AppBar
     position='fixed'
@@ -133,7 +134,8 @@ const TopBar = ({
               onClick={onClick}
               style={{
                 fontSize: '16px',
-                cursor: 'pointer'
+                cursor: isActionAllowed ? 'pointer' : 'not-allowed',
+                opacity: isActionAllowed ? 1 : 0.5
               }}
             >
               {action}

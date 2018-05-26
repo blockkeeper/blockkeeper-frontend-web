@@ -148,6 +148,7 @@ class TscView extends React.Component {
               action={<Done />}
               onClick={async () => { if (this.state.upd) await this.save() }}
               onClickLeft={() => this.setState({edit: false})}
+              isActionAllowed={this.state.upd}
               modeCancel
               noUser
             />}
