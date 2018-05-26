@@ -1,12 +1,12 @@
 import React from 'react'
-import Button from 'material-ui/Button'
-import Typography from 'material-ui/Typography'
-import TextField from 'material-ui/TextField'
-import Paper from 'material-ui/Paper'
-import Grid from 'material-ui/Grid'
-import { withStyles } from 'material-ui/styles'
-import {LinearProgress} from 'material-ui/Progress'
-import {Lock} from 'material-ui-icons'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
+import TextField from '@material-ui/core/TextField'
+import Paper from '@material-ui/core/Paper'
+import Grid from '@material-ui/core/Grid'
+import { withStyles } from '@material-ui/core/styles'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import {Lock} from '@material-ui/icons'
 import {theme, paperStyle, loginStyle, fullWidth,
         actnBtnClr, styleGuide} from './Style'
 import {Modal, BrowserGate, NtAllwd} from './Lib'
@@ -97,12 +97,12 @@ class LoginView extends React.Component {
           <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={6} lg={4} xl={4}>
-                <Typography type='display3' color='inherit' align='center'>
+                <Typography variant='display3' color='inherit' align='center'>
                   BlockKeeper
                   <span style={{fontSize: '14px'}}>[BETA]</span>
                 </Typography>
                 <Typography
-                  type='display1'
+                  variant='display1'
                   color='inherit'
                   align='center'
                   gutterBottom
@@ -148,13 +148,13 @@ class LoginView extends React.Component {
                     allwd={
                       <div>
                         <Button
-                          raised
-                          color='accent'
+                          variant='raised'
+                          color='primary'
                           className={this.props.classes.loginButton}
                           onClick={async (event) => this.login(event)}
                           disabled={!this.state.upd || this.state.loginBusy}
                           classes={{
-                            raisedAccent: this.props.classes.actnBtnClr
+                            raised: this.props.classes.actnBtnClr
                           }}
                           >
                           <Lock className={this.props.classes.lockIcon} />

@@ -1,19 +1,21 @@
 import React from 'react'
-import Table, { TableBody, TableCell, TableRow } from 'material-ui/Table'
-import TextField from 'material-ui/TextField'
-import Button from 'material-ui/Button'
-import TransitiveNumber from 'react-transitive-number'
-import Typography from 'material-ui/Typography'
-import {LinearProgress} from 'material-ui/Progress'
-import Grid from 'material-ui/Grid'
-import Paper from 'material-ui/Paper'
-import {withStyles} from 'material-ui/styles'
-import Divider from 'material-ui/Divider'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import Grid from '@material-ui/core/Grid'
+import Paper from '@material-ui/core/Paper'
+import {withStyles} from '@material-ui/core/styles'
+import Divider from '@material-ui/core/Divider'
 import QRCode from 'qrcode-react'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
         actnBtnClr, topBtnClass, topBarSpacer} from './Style'
-import {ArrowBack, Launch} from 'material-ui-icons'
+import {ArrowBack, Launch} from '@material-ui/icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
         CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
         Edit} from './Lib'
@@ -225,7 +227,7 @@ class AddrView extends React.Component {
                   <CoinIcon coin={this.state.coin} size={100} />
                   {!addrUrl &&
                     <Typography
-                      type='title'
+                      variant='title'
                       color='default'
                       className={this.props.classes.titleStyle}
                       noWrap
@@ -240,25 +242,23 @@ class AddrView extends React.Component {
                       className={this.props.classes.noTxtDeco}
                       txt={
                         <Typography
-                          type='title'
+                          variant='title'
                           color='default'
                           className={this.props.classes.titleStyle}
                           noWrap
                           gutterBottom
                         >
                           {this.state.addr.name}
-                          <Launch color='grey' />
+                          <Launch />
                         </Typography>}
                     />
                   }
                   <Typography
-                    type='display3'
+                    variant='display3'
                     className={this.props.classes.display3}
                   >
-                    <TransitiveNumber>
-                      {__.formatNumber(
-                        this.state.blc1, this.state.coin, this.user.locale)}
-                    </TransitiveNumber>
+                    {__.formatNumber(
+                      this.state.blc1, this.state.coin, this.user.locale)}
                     &nbsp;
                     <CoinIcon
                       coin={this.state.coin}
@@ -271,15 +271,13 @@ class AddrView extends React.Component {
                   </Typography>
                   {!this.state.toggleCoins &&
                   <Typography
-                    type='headline'
+                    variant='headline'
                     color='primary'
                     onClick={this.toggleCoins}
                     gutterBottom
                   >
-                    <TransitiveNumber>
-                      {__.formatNumber(
-                        this.state.blc2, this.state.coin0, this.user.locale)}
-                    </TransitiveNumber>
+                    {__.formatNumber(
+                      this.state.blc2, this.state.coin0, this.user.locale)}
                     &nbsp;
                     <CoinIcon
                       coin={this.state.coin0}
@@ -289,15 +287,13 @@ class AddrView extends React.Component {
                   </Typography>}
                   {this.state.toggleCoins &&
                   <Typography
-                    type='headline'
+                    variant='headline'
                     onClick={this.toggleCoins}
                     color='primary'
                     gutterBottom
                   >
-                    <TransitiveNumber>
-                      {__.formatNumber(
-                        this.state.blc3, this.state.coin1, this.user.locale)}
-                    </TransitiveNumber>
+                    {__.formatNumber(
+                      this.state.blc3, this.state.coin1, this.user.locale)}
                     <CoinIcon
                       coin={this.state.coin1}
                       color={theme.palette.primary['500']}
@@ -306,8 +302,8 @@ class AddrView extends React.Component {
                   </Typography>}
                   {!this.state.show &&
                     <Button
-                      raised
-                      color='contrast'
+                      variant='raised'
+                      color='default'
                       onClick={this.show}
                       style={{marginTop: '50px'}}
                     >
@@ -500,8 +496,8 @@ class AddrView extends React.Component {
                         !this.state.unveil && !this.state.edit
                       ) &&
                       <Button
-                        raised
-                        color='contrast'
+                        variant='raised'
+                        color='default'
                         onClick={() => {
                           this.setState({unveil: !this.state.unveil})
                         }}
@@ -521,8 +517,8 @@ class AddrView extends React.Component {
                     }
                     {!this.state.edit &&
                       <Button
-                        raised
-                        color='contrast'
+                        variant='raised'
+                        color='default'
                         onClick={this.show}>
                         Hide infos
                       </Button>
@@ -555,7 +551,7 @@ class AddrView extends React.Component {
               square
               className={this.props.classes.paperWrap}
             >
-              <Typography align='center' type='body1'>
+              <Typography align='center' variant='body1'>
                 {this.state.addr.type !== 'man' &&
                   'No transactions'}
                 {this.state.addr.type === 'man' &&
@@ -623,7 +619,6 @@ export default withStyles({
     overflowX: 'auto'
   },
   unvlBtn: {
-    marginBottom: theme.spacing.unit,
     marginRight: theme.spacing.unit
   }
 })(AddrView)

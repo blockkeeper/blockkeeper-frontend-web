@@ -1,34 +1,39 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import {MenuItem} from 'material-ui/Menu'
-import Tabs, {Tab} from 'material-ui/Tabs'
-import AppBar from 'material-ui/AppBar'
-import List, {ListItem, ListItemIcon, ListItemText} from 'material-ui/List'
-import ExitToAppIcon from 'material-ui-icons/ExitToApp'
-import DeleteForeverIcon from 'material-ui-icons/DeleteForever'
-import {FormControl} from 'material-ui/Form'
-import Select from 'material-ui/Select'
+import MenuItem from '@material-ui/core/MenuItem'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
+import AppBar from '@material-ui/core/AppBar'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
+import FormControl from '@material-ui/core/FormControl'
+import Select from '@material-ui/core/Select'
 import ScrollToTop from 'react-scroll-up'
-import Tooltip from 'material-ui/Tooltip'
-import Input, { InputLabel } from 'material-ui/Input'
-import Grid from 'material-ui/Grid'
-import TransitiveNumber from 'react-transitive-number'
-import Toolbar from 'material-ui/Toolbar'
-import Paper from 'material-ui/Paper'
-import Divider from 'material-ui/Divider'
-import Hidden from 'material-ui/Hidden'
-import Button from 'material-ui/Button'
+import Tooltip from '@material-ui/core/Tooltip'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
+import Grid from '@material-ui/core/Grid'
+import Toolbar from '@material-ui/core/Toolbar'
+import Paper from '@material-ui/core/Paper'
+import Divider from '@material-ui/core/Divider'
+import Hidden from '@material-ui/core/Hidden'
+import Button from '@material-ui/core/Button'
 import * as CryptoIcons from 'react-cryptocoins'
 import getSymbolFromCurrency from 'currency-symbol-map'
-import Snackbar from 'material-ui/Snackbar'
-import IconButton from 'material-ui/IconButton'
-import Typography from 'material-ui/Typography'
+import Snackbar from '@material-ui/core/Snackbar'
+import IconButton from '@material-ui/core/IconButton'
+import Typography from '@material-ui/core/Typography'
 import {UserAgentProvider, UserAgent} from '@quentin-sommer/react-useragent'
-import {LinearProgress} from 'material-ui/Progress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import {Add, Close, Autorenew, AccountCircle, InfoOutline, KeyboardArrowUp,
-       Error, Feedback, BugReport, Email} from 'material-ui-icons'
-import Dialog, {DialogActions, DialogContent, DialogContentText,
-       DialogTitle } from 'material-ui/Dialog'
+       Error, Feedback, BugReport, Email, ExitToApp, DeleteForever} from '@material-ui/icons'
+import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import DialogTitle from '@material-ui/core/DialogTitle'
 import {theme, jumboStyle, floatBtnStyle, CryptoColors, gridWrap} from './Style'
 import __ from '../util'
 
@@ -72,7 +77,7 @@ const TopBar = ({
           <div style={{marginRight: 'auto'}}>
             {modeCancel &&
             <Typography
-              type='headline'
+              variant='headline'
               color='inherit'
               onClick={onClickLeft}
               style={{
@@ -86,7 +91,7 @@ const TopBar = ({
             <IconButton
               aria-label='Menu'
               onClick={onClickLeft}
-              color='contrast'
+              color='inherit'
               style={{
                 right: theme.spacing.unit * 2,
                 marginRight: 'auto'
@@ -95,7 +100,7 @@ const TopBar = ({
               {iconLeft}
             </IconButton>}
             {title &&
-            <Typography type='headline' color='inherit'>
+            <Typography variant='headline' color='inherit'>
               <Hidden xsDown>
                 <span>BlockKeeper</span>
               </Hidden>
@@ -107,7 +112,7 @@ const TopBar = ({
         </div>
         <div>
           <Typography
-            type='headline'
+            variant='headline'
             color='inherit'
             align='center'
             style={{
@@ -115,7 +120,7 @@ const TopBar = ({
               fontSize: '16px',
               fontWeight: '700'
             }}
-        >
+          >
             {midTitle || ''}
           </Typography>
         </div>
@@ -123,7 +128,7 @@ const TopBar = ({
           <div style={{marginLeft: 'auto'}}>
             {action &&
             <Typography
-              type='headline'
+              variant='headline'
               color='inherit'
               onClick={onClick}
               style={{
@@ -134,14 +139,14 @@ const TopBar = ({
               {action}
             </Typography>}
             {!noUser &&
-            <Link to={'/user/edit'}>
+            <Link to={'/user/edit'} style={{color: 'white'}}>
               <IconButton
                 aria-label='Menu'
-                color='contrast'
+                color='inherit'
                 style={{
                   left: theme.spacing.unit * 2
                 }}
-            >
+              >
                 <AccountCircle />
               </IconButton>
             </Link>}
@@ -177,16 +182,14 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
     <div>
       <Typography
         align='center'
-        type='display3'
+        variant='display3'
         color='inherit'
         className={display3ClassName}
       >
-        <TransitiveNumber>
-          {title
+        {title
             ? __.formatNumber(title, coin0, locale)
             : __.formatNumber(0, coin0, locale)
-          }
-        </TransitiveNumber>&nbsp;
+        }&nbsp;
         <Hidden xsDown>
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
         </Hidden>
@@ -194,12 +197,11 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
           <CoinIcon coin={coin0} size={32} color={'white'} alt />
         </Hidden>
       </Typography>
-      <Typography align='center' type='headline' color='inherit'>
-        <TransitiveNumber>
-          {subTitle
-            ? __.formatNumber(subTitle, coin1, locale)
-            : __.formatNumber(0, coin1, locale)}
-        </TransitiveNumber>&nbsp;
+      <Typography align='center' variant='headline' color='inherit'>
+        {subTitle
+          ? __.formatNumber(subTitle, coin1, locale)
+          : __.formatNumber(0, coin1, locale)}
+        &nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
         }
@@ -213,11 +215,11 @@ const ToTopBtn = ({className}) =>
     style={{right: '50%', bottom: theme.spacing.unit * 2}}
   >
     <Button
-      fab
+      variant='fab'
       aria-label='top'
-      color='contrast'
+      color='default'
       classes={{
-        raisedContrast: className
+        fab: className
       }}
     >
       <KeyboardArrowUp />
@@ -226,7 +228,7 @@ const ToTopBtn = ({className}) =>
 
 const FloatBtn = ({onClick, key, actnBtnClrClassName}) =>
   <Button
-    fab
+    variant='fab'
     aria-label='add'
     color='primary'
     style={floatBtnStyle}
@@ -237,7 +239,7 @@ const FloatBtn = ({onClick, key, actnBtnClrClassName}) =>
     <Add />
   </Button>
 
-const BxpFloatBtn = ({onClick, bxpSts, style, second}) => {
+const BxpFloatBtn = ({onClick, bxpSts, second}) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
     /* lbl = 'Blocked'
@@ -255,9 +257,9 @@ const BxpFloatBtn = ({onClick, bxpSts, style, second}) => {
   }
   return (
     <Button
-      fab
+      variant='fab'
       aria-label={lbl}
-      color='contrast'
+      color='default'
       onClick={onClick}
       key='bxpFloatBtn'
       disabled={dsbld}
@@ -315,14 +317,14 @@ const tscRow = (
             }
             <div style={{flexGrow: 1, minWidth: 0}}>
               <Typography
-                type='body2'
+                variant='body2'
                 className={body2ClassName}
                 style={{color: theme.palette.text.secondary}}
               >
                 {__.ppTme(tsc._t)}
               </Typography>
               <Typography
-                type='display1'
+                variant='display1'
                 className={display1ClassName}
                 style={{
                   color: theme.palette.text.primary
@@ -335,7 +337,7 @@ const tscRow = (
                   tsc.name}
               </Typography>
               <Typography
-                type='body2'
+                variant='body2'
                 className={body2ClassName}
                 style={{color: theme.palette.text.secondary}}
                 noWrap
@@ -346,7 +348,7 @@ const tscRow = (
             </div>
             <div className={tscAmntClassName}>
               <Typography
-                type='display1'
+                variant='display1'
                 style={{
                   color: modeColor
                 }}
@@ -370,7 +372,7 @@ const tscRow = (
                 </Hidden>
               </Typography>
               <Typography
-                type='body2'
+                variant='body2'
                 style={{color: theme.palette.text.secondary}}
                 className={body2ClassName}
                 gutterBottom
@@ -484,8 +486,8 @@ const Snack = ({msg, onClose}) =>
     autoHideDuration={3500}
     transitionDuration={500}
     anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-    onRequestClose={onClose}
-    SnackbarContentProps={{'aria-describedby': 'message-id'}}
+    onClose={onClose}
+    ContentProps={{'aria-describedby': 'message-id'}}
     message={<span id='message-id'>{msg}</span>}
     action={[
       <IconButton
@@ -495,7 +497,7 @@ const Snack = ({msg, onClose}) =>
         style={{width: theme.spacing.unit * 4, height: theme.spacing.unit * 4}}
         onClick={onClose}
       >
-        <Close color={'grey'} />
+        <Close />
       </IconButton>
     ]}
   />
@@ -541,7 +543,7 @@ class Modal extends React.Component {
     return (
       <Dialog
         open={this.open}
-        onRequestClose={this.onClose}
+        onClose={this.onClose}
         style={{background: theme.palette.background.default}}
       >
         <DialogTitle>{this.lbl}</DialogTitle>
@@ -610,7 +612,7 @@ class BrowserGateSafarimobile extends React.Component {
 const NtAllwd = () => {
   return <div>
     <Typography
-      type='title'
+      variant='title'
       align='center'
       gutterBottom
       style={{marginTop: '40px', marginBottom: '40px'}}
@@ -619,7 +621,7 @@ const NtAllwd = () => {
       <br />
       <b>Please upgrade your browser to access <nobr>BlockKeeper</nobr></b>.
     </Typography>
-    <Typography type='body1' align='center' gutterBottom>
+    <Typography variant='body1' align='center' gutterBottom>
       Required: Chrome > 60, Edge > 16, Safari > 11, Opera > 48, Firefox > 55
     </Typography>
   </div>
@@ -643,7 +645,7 @@ const DepotEmpty = ({className}) =>
     <Grid container spacing={0} justify='center'>
       <Grid item xs={6} className={className}>
         <Typography
-          type='display2'
+          variant='display2'
           gutterBottom
           style={{
             color: theme.palette.text.primary,
@@ -652,7 +654,7 @@ const DepotEmpty = ({className}) =>
         >
           Welcome to BlockKeeper
         </Typography>
-        <Typography type='subheading' gutterBottom>
+        <Typography variant='subheading' gutterBottom>
           In order to start using our app,
           please go ahead and connect your first wallet.
         </Typography>
@@ -664,7 +666,7 @@ const SoonMsg = ({className}) =>
   <Grid container spacing={0} justify='center'>
     <Grid item xs={6} className={className}>
       <Typography
-        type='display2'
+        variant='display2'
         gutterBottom
         style={{
           marginTop: '80px'
@@ -677,8 +679,9 @@ const SoonMsg = ({className}) =>
         style={{textDecoration: 'none'}}
         rel='noopener noreferrer'>
         <Button
-          color='contrast'
-          raised>
+          color='default'
+          variant='raised'
+        >
           Tell us your Ideas
         </Button>
       </a>
@@ -725,7 +728,7 @@ const PaperGrid = ({
               </div>
               <div className={addrClassName}>
                 <Typography
-                  type='display1'
+                  variant='display1'
                   className={display1ClassName}
                   style={{
                     color: theme.palette.text.primary
@@ -737,7 +740,7 @@ const PaperGrid = ({
                   <InfoUpdateFailed />}
                 </Typography>
                 <Typography
-                  type='body2'
+                  variant='body2'
                   className={body2ClassName}
                   noWrap
                 >
@@ -769,7 +772,7 @@ const PaperGrid = ({
               </div>
               <div className={amntClassName}>
                 <Typography
-                  type='display1'
+                  variant='display1'
                   color='primary'
                   className={display1ClassName}
                 >
@@ -791,7 +794,7 @@ const PaperGrid = ({
                   </Hidden>
                 </Typography>
                 <Typography
-                  type='body2'
+                  variant='body2'
                   className={body2ClassName}
                   style={{color: theme.palette.text.secondary}}
                 >
@@ -849,8 +852,10 @@ class DropDown extends React.Component {
       }))
     }
   }
-  componentWillReceiveProps (props) {
-    this.setState({disabled: props.disabled})
+  static getDerivedStateFromProps (props, state) {
+    return {
+      disabled: props.disabled
+    }
   }
 
   render () {
@@ -962,13 +967,13 @@ const UserList = ({askLogout, askDelete}) =>
     </a>
     <ListItem divider button onClick={askLogout}>
       <ListItemIcon>
-        <ExitToAppIcon />
+        <ExitToApp />
       </ListItemIcon>
       <ListItemText primary='Logout' />
     </ListItem>
     <ListItem button onClick={askDelete}>
       <ListItemIcon>
-        <DeleteForeverIcon />
+        <DeleteForever />
       </ListItemIcon>
       <ListItemText primary='Delete account' />
     </ListItem>

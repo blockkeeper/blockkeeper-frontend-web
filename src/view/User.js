@@ -1,11 +1,11 @@
 import React from 'react'
-import {LinearProgress} from 'material-ui/Progress'
-import {withStyles} from 'material-ui/styles'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import {withStyles} from '@material-ui/core/styles'
 import {TopBar, Modal, DropDown, UserList, Done, Edit, Snack} from './Lib'
-import {ArrowBack} from 'material-ui-icons'
+import {ArrowBack} from '@material-ui/icons'
 import {themeBgStyle, gridWrap, gridSpacer, gridGutter,
         gridGutterFluid, topBarSpacer} from './Style'
-import Paper from 'material-ui/Paper'
+import Paper from '@material-ui/core/Paper'
 import __ from '../util'
 
 class UserView extends React.Component {

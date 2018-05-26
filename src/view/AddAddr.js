@@ -1,15 +1,15 @@
 import React from 'react'
-import Button from 'material-ui/Button'
-import TextField from 'material-ui/TextField'
-import {FormControlLabel} from 'material-ui/Form'
-import Switch from 'material-ui/Switch'
-import Radio from 'material-ui/Radio'
-import {withStyles} from 'material-ui/styles'
-import {Add, Clear} from 'material-ui-icons'
-import Paper from 'material-ui/Paper'
-import Divider from 'material-ui/Divider'
-import Typography from 'material-ui/Typography'
-import {LinearProgress} from 'material-ui/Progress'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
+import Radio from '@material-ui/core/Radio'
+import {withStyles} from '@material-ui/core/styles'
+import {Add, Clear} from '@material-ui/icons'
+import Paper from '@material-ui/core/Paper'
+import Divider from '@material-ui/core/Divider'
+import Typography from '@material-ui/core/Typography'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import QrReader from 'react-qr-reader'
 import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
         gridWrap, gridGutter, gridSpacer, actnBtnClr, cnctBtn, topBarSpacer} from './Style'
@@ -172,7 +172,7 @@ class AddAddrView extends React.Component {
           >
             <div className={this.props.classes.gridWrap}>
               <div className={this.props.classes.gridGutter}>
-                <Typography type='title'>
+                <Typography variant='title'>
                   Details
                 </Typography>
                 {!this.state.manAddrMode &&
@@ -207,6 +207,7 @@ class AddAddrView extends React.Component {
                         this.set('qrMode', checked)
                         this.set('manAddrMode', false)
                       }}
+                      color={'primary'}
                     />}
                   label='Scan QR code'
                 />
@@ -215,6 +216,7 @@ class AddAddrView extends React.Component {
                     <Switch
                       checked={this.state.manAddrMode}
                       onChange={this.disableQrMode}
+                      color={'primary'}
                     />}
                   label='Manage manually (no public key)'
                 />
@@ -238,12 +240,12 @@ class AddAddrView extends React.Component {
                       }}
                       onScan={this.handleQrScan}
                     />
-                    <Typography type='caption' align='center'>
+                    <Typography variant='caption' align='center'>
                       {__.cap(this.state.facingMode)} camera
                     </Typography>
                   </div>}
                 <Divider className={this.props.classes.dividerStyle} light />
-                <Typography type='title' gutterBottom>
+                <Typography variant='title' gutterBottom>
                   Blockchain / Type
                 </Typography>
                 {this.coins.map(coin =>
@@ -267,7 +269,7 @@ class AddAddrView extends React.Component {
                       />}
                   />)}
                 <Divider className={this.props.classes.dividerStyle} light />
-                <Typography type='title'>
+                <Typography variant='title'>
                   Personal details
                 </Typography>
                 <TextField
@@ -291,13 +293,13 @@ class AddAddrView extends React.Component {
                 />
                 <div className={this.props.classes.center}>
                   <Button
-                    raised
-                    color='accent'
+                    variant='raised'
+                    color='primary'
                     className={this.props.classes.cnctBtn}
                     onClick={async () => await this.save()}
                     disabled={!this.state.upd || this.state.busy}
                     classes={{
-                      raisedAccent: this.props.classes.actnBtnClr
+                      raised: this.props.classes.actnBtnClr
                     }}
                   >
                     <Add />

@@ -1,19 +1,21 @@
 import React from 'react'
 import * as browserLocale from 'browser-locale'
 import * as fileDownload from 'js-file-download'
-import Button from 'material-ui/Button'
-import Typography from 'material-ui/Typography'
-import Paper from 'material-ui/Paper'
-import Grid from 'material-ui/Grid'
-import IconButton from 'material-ui/IconButton'
-import Input, {InputLabel, InputAdornment} from 'material-ui/Input'
-import {FormControl} from 'material-ui/Form'
-import ContentCopy from 'material-ui-icons/ContentCopy'
-import {FormControlLabel, FormGroup} from 'material-ui/Form'
-import Switch from 'material-ui/Switch'
-import {withStyles} from 'material-ui/styles'
-import {PersonAdd} from 'material-ui-icons'
-import {LinearProgress} from 'material-ui/Progress'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper'
+import Grid from '@material-ui/core/Grid'
+import IconButton from '@material-ui/core/IconButton'
+import Input from '@material-ui/core/Input'
+import InputLabel from '@material-ui/core/InputLabel'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormGroup from '@material-ui/core/FormGroup'
+import Switch from '@material-ui/core/Switch'
+import {withStyles} from '@material-ui/core/styles'
+import {PersonAdd, ContentCopy} from '@material-ui/icons'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import {theme, paperStyle, loginStyle, fullWidth,
         actnBtnClr, styleGuide} from './Style'
 import {Modal, BrowserGate, BrowserGateSafarimobile,
@@ -132,12 +134,12 @@ class RgstrView extends React.Component {
           <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={7} lg={5} xl={4}>
-                <Typography type='display3' color='inherit' align='center'>
+                <Typography variant='display3' color='inherit' align='center'>
                   BlockKeeper
                   <span style={{fontSize: '14px'}}>[BETA]</span>
                 </Typography>
                 <Typography
-                  type='display1'
+                  variant='display1'
                   color='inherit'
                   align='center'
                   gutterBottom
@@ -224,7 +226,7 @@ class RgstrView extends React.Component {
                       </Grid>
                     </Grid>
                     <Typography
-                      type='body1'
+                      variant='body1'
                       gutterBottom
                       className={this.props.classes.body1}
                     >
@@ -237,11 +239,11 @@ class RgstrView extends React.Component {
                     </Typography>
                     <BrowserGateSafarimobile
                       safari={<Button
-                        raised
-                        color='accent'
+                        variant='raised'
+                        color='primary'
                         className={this.props.classes.btnBackup}
                         classes={{
-                          raisedAccent: this.props.classes.actnBtnClr
+                          raised: this.props.classes.actnBtnClr
                         }}
                         onClick={() => {
                           window.alert(
@@ -252,11 +254,11 @@ class RgstrView extends React.Component {
                         Show backup
                       </Button>}
                       rest={<Button
-                        raised
-                        color='accent'
+                        variant='raised'
+                        color='primary'
                         className={this.props.classes.btnBackup}
                         classes={{
-                          raisedAccent: this.props.classes.actnBtnClr
+                          raised: this.props.classes.actnBtnClr
                         }}
                         onClick={() => {
                           fileDownload(backupfile, 'blockkeeper-backup.txt')
@@ -287,13 +289,13 @@ class RgstrView extends React.Component {
                         allwd={
                           <div>
                             <Button
-                              raised
+                              variant='raised'
                               type='submit'
-                              color='accent'
+                              color='primary'
                               className={this.props.classes.btnRg}
                               disabled={!this.state.writeDown}
                               classes={{
-                                raisedAccent: this.props.classes.actnBtnClr
+                                raised: this.props.classes.actnBtnClr
                               }}
                             >
                               <PersonAdd

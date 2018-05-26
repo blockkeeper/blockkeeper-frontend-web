@@ -1,10 +1,9 @@
-import {createMuiTheme} from 'material-ui/styles'
-import {common} from 'material-ui/colors'
-import { fade } from 'material-ui/styles/colorManipulator'
+import {createMuiTheme} from '@material-ui/core/styles'
+import common from '@material-ui/core/colors/common'
+import { fade } from '@material-ui/core/styles/colorManipulator'
 
 const styleGuide = {
   backgroundLight: '#F4F2F5',
-  // backgroundDark: 'linear-gradient(to bottom right,#210045, #9A40FF)',
   backgroundDark: '#1e003c',
   text: '#210045',
   textSecondary: '#907FA2',
@@ -68,7 +67,6 @@ const theme = createMuiTheme({
     background: {
       default: styleGuide.backgroundDark,
       paper: common.white,
-      appBar: styleGuide.backgroundDark,
       light: styleGuide.backgroundLight
     },
     text: {
@@ -126,8 +124,9 @@ const theme = createMuiTheme({
 
 theme.overrides = {
   MuiButton: {
-    raisedContrast: {
-      background: styleGuide.textSecondary,
+    raised: {
+      color: common.white,
+      backgroundColor: styleGuide.textSecondary,
       '&:hover': {
         backgroundColor: fade(styleGuide.textSecondary, 0.5),
         '@media (hover: none)': {
@@ -135,6 +134,7 @@ theme.overrides = {
         }
       },
       '&$disabled': {
+        color: common.white,
         backgroundColor: fade(styleGuide.textSecondary, 0.5),
         '@media (hover: none)': {
           background: styleGuide.textSecondary
@@ -142,11 +142,23 @@ theme.overrides = {
       }
     }
   },
+  MuiSnackbarContent: {
+    root: {
+      backgroundColor: styleGuide.textSecondary,
+      color: common.white
+    }
+  },
   MuiSnackbar: {
-    anchorTopCenter: {
+    anchorOriginTopCenter: {
       [theme.breakpoints.up('md')]: {
         top: '50px'
       }
+    }
+  },
+  MuiAppBar: {
+    colorDefault: {
+      backgroundColor: styleGuide.backgroundDark,
+      color: common.white
     }
   }
 }
@@ -176,8 +188,7 @@ const floatBtnStyle = {
   right: theme.spacing.unit * 2,
   bottom: theme.spacing.unit * 2,
   left: 'auto',
-  position: 'fixed',
-  color: common.white
+  position: 'fixed'
 }
 
 const CryptoColors = {
@@ -205,6 +216,10 @@ const qrReaderStyle = {
 
 const noTxtDeco = {
   textDecoration: 'none'
+}
+
+const extLink = {
+  color: styleGuide.text
 }
 
 const qrCodeWrap = {
@@ -329,7 +344,6 @@ const tab = {
 }
 
 const actnBtnClr = {
-  color: 'white',
   backgroundColor: theme.palette.error[500],
   '&:hover': {
     backgroundColor: fade(theme.palette.error[500], 0.5),
@@ -344,7 +358,9 @@ const actnBtnClr = {
 
 const topBtnClass = {
   height: '36px',
-  width: '36px'
+  width: '36px',
+  color: common.white,
+  background: styleGuide.textSecondary
 }
 
 const depotEmpty = {
@@ -375,6 +391,7 @@ export {
   dividerStyle,
   qrReaderStyle,
   noTxtDeco,
+  extLink,
   qrCodeWrap,
   fullWidth,
   gridWrap,

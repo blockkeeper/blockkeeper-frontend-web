@@ -1,11 +1,11 @@
 import React from 'react'
-import Button from 'material-ui/Button'
-import withWidth from 'material-ui/utils/withWidth'
+import Button from '@material-ui/core/Button'
+import withWidth from '@material-ui/core/withWidth'
 import compose from 'recompose/compose'
-import Typography from 'material-ui/Typography'
-import Paper from 'material-ui/Paper'
-import {LinearProgress} from 'material-ui/Progress'
-import {withStyles} from 'material-ui/styles'
+import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import {withStyles} from '@material-ui/core/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn, SoonMsg} from './Lib'
@@ -131,7 +131,7 @@ class DepotView extends React.Component {
                 textAlign: 'center'
               }}>
                 <Button
-                  raised
+                  variant='raised'
                   color={'accent'}
                   className={this.props.classes.cnctBtn}
                   onClick={() => this.props.history.push('/wallet/add')}
@@ -187,7 +187,7 @@ class DepotView extends React.Component {
               square
               className={this.props.classes.paperWrap}
             >
-              <Typography align='center' type='body1'>
+              <Typography align='center' variant='body1'>
                 No transactions
               </Typography>
             </Paper>
