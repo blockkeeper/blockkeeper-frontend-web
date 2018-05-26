@@ -124,6 +124,7 @@ export default class Depot extends ApiBase {
     const {addrsByType, curAddrs} = await this.prepareBxp(addrIds)
     if (!addrsByType) return
     const addrs = []
+    let sleepSec
     for (let addrType of Object.keys(addrsByType)) {
       let addrsByCoin = addrsByType[addrType]
       for (let coin of Object.keys(addrsByCoin)) {
@@ -135,7 +136,9 @@ export default class Depot extends ApiBase {
             updAddrs = hdAddrs.upd
           } else if (addrType === 'std') {
             let bxp = this.coinObjs[coin].bxp.bckcyph
-            updAddrs = await bxp.apiGetAddrs(addrsByCoin[coin])
+            updAddrs = await bxp.apiGetAddrs(addrsByCoin[coin], sleepSec)
+            // optional sleepSec parameter for address batching
+            sleepSec = __.cfg('bxp').bckcyph.sleepSec
           } // else: "man" address: ignore
           for (let updAddr of Object.values(updAddrs)) {
             let addrObj = new Addr(this.cx, updAddr._id)

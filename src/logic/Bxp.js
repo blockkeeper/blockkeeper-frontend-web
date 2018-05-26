@@ -99,13 +99,13 @@ class BckcyphBxp extends Bxp {
     return tscs
   }
 
-  async apiGetAddrs (addrs) {
+  async apiGetAddrs (addrs, sleepSec) {
     // https://www.blockcypher.com/dev/bitcoin/#address-endpoint
     // https://www.blockcypher.com/dev/bitcoin/#address
     // https://www.blockcypher.com/dev/bitcoin/#txref
     const cfg = __.cfg('bxp').bckcyph
     const updStdAddrs = {}
-    let sleepSec
+
     for (let chunk of __.toChunks(Object.values(addrs), cfg.maxAddrCnt)) {
       await this.sleep(sleepSec)
       sleepSec = cfg.sleepSec
