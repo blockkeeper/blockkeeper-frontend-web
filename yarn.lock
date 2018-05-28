@@ -6026,9 +6026,9 @@ qr.js@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/qr.js/-/qr.js-0.0.0.tgz#cace86386f59a0db8050fa90d9b6b0e88a1e364f"
 
-"qrcode-react@https://github.com/yeahoffline/qrcode-react#16b65353392bdd48e4ab020109339fd506ccc9e9":
-  version "0.1.15"
-  resolved "https://github.com/yeahoffline/qrcode-react#16b65353392bdd48e4ab020109339fd506ccc9e9"
+qrcode-react@^0.1.16:
+  version "0.1.16"
+  resolved "https://registry.yarnpkg.com/qrcode-react/-/qrcode-react-0.1.16.tgz#d064999d510ffc3e55a9ca3ffcf6c203c69f1517"
   dependencies:
     qr.js "0.0.0"
 
