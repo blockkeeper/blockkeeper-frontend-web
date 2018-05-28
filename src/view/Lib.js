@@ -34,6 +34,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import TransitiveNumber from 'react-transitive-number'
 import {theme, jumboStyle, floatBtnStyle, CryptoColors, gridWrap} from './Style'
 import __ from '../util'
 
@@ -188,10 +189,12 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
         color='inherit'
         className={display3ClassName}
       >
-        {title
-            ? __.formatNumber(title, coin0, locale)
-            : __.formatNumber(0, coin0, locale)
-        }&nbsp;
+        <TransitiveNumber>
+          {title
+              ? __.formatNumber(title, coin0, locale)
+              : __.formatNumber(0, coin0, locale)
+          }
+        </TransitiveNumber>&nbsp;
         <Hidden xsDown>
           <CoinIcon coin={coin0} size={35} color={'white'} alt />
         </Hidden>
@@ -200,10 +203,11 @@ const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
         </Hidden>
       </Typography>
       <Typography align='center' variant='headline' color='inherit'>
-        {subTitle
+        <TransitiveNumber>
+          {subTitle
           ? __.formatNumber(subTitle, coin1, locale)
           : __.formatNumber(0, coin1, locale)}
-        &nbsp;
+        </TransitiveNumber>&nbsp;
         {coin1 &&
           <CoinIcon coin={coin1} color={'white'} alt />
         }

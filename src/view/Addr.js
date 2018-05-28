@@ -12,6 +12,7 @@ import Paper from '@material-ui/core/Paper'
 import {withStyles} from '@material-ui/core/styles'
 import Divider from '@material-ui/core/Divider'
 import QRCode from 'qrcode-react'
+import TransitiveNumber from 'react-transitive-number'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
         gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
         actnBtnClr, topBtnClass, topBarSpacer} from './Style'
@@ -258,9 +259,10 @@ class AddrView extends React.Component {
                     variant='display3'
                     className={this.props.classes.display3}
                   >
-                    {__.formatNumber(
+                    <TransitiveNumber>
+                      {__.formatNumber(
                       this.state.blc1, this.state.coin, this.user.locale)}
-                    &nbsp;
+                    </TransitiveNumber>&nbsp;
                     <CoinIcon
                       coin={this.state.coin}
                       size={35}
