@@ -292,7 +292,8 @@ const tscRow = (
   body2ClassName,
   tscAmntClassName,
   tscIconClassname,
-  locale
+  locale,
+  aLength
 ) => {
   const mx = 40
   let modeColor = tsc.mode === 'snd'
@@ -404,13 +405,15 @@ const tscRow = (
               </Typography>
             </div>
           </div>
-          <Hidden mdDown>
-            <Divider />
-          </Hidden>
+          {aLength > 1 &&
+            <Hidden mdDown>
+              <Divider />
+            </Hidden>}
         </div>
-        <Hidden lgUp>
-          <Divider />
-        </Hidden>
+        {aLength > 1 &&
+          <Hidden lgUp>
+            <Divider />
+          </Hidden>}
       </Link>
     </div>
   )
@@ -427,7 +430,8 @@ const TscListAddr = ({
   gridWrapClassName,
   display1ClassName,
   body2ClassName,
-  tscAmntClassName
+  tscAmntClassName,
+  locale
 }) =>
   <Paper
     square
@@ -446,7 +450,10 @@ const TscListAddr = ({
         itemClassName,
         display1ClassName,
         body2ClassName,
-        tscAmntClassName
+        tscAmntClassName,
+        undefined,
+        locale,
+        tscs.length
       )
     })}
   </Paper>
@@ -462,7 +469,8 @@ const TscListAddresses = ({
   display1ClassName,
   body2ClassName,
   tscAmntClassName,
-  tscIconClassname
+  tscIconClassname,
+  locale
 }) =>
   <Paper
     square
@@ -481,7 +489,9 @@ const TscListAddresses = ({
         display1ClassName,
         body2ClassName,
         tscAmntClassName,
-        tscIconClassname
+        tscIconClassname,
+        locale,
+        addrTscs.length
       )
     })}
   </Paper>
