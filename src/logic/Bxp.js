@@ -37,15 +37,16 @@ class BckcyphBxp extends Bxp {
     this.apiGetAddrs = this.apiGetAddrs.bind(this)
   }
 
-  toTscs (txs) {
-    const txs_ = {}
+  toTscs (txs = []) {
+    const txs_ = {}, tscs = []
+
     // merge related txref-items to single tscs
     for (let tx of txs) {
       if (!txs_[tx.tx_hash]) txs_[tx.tx_hash] = []
       txs_[tx.tx_hash].push(tx)
     }
     // process each tsc: don't limit to 'maxTscCnt': sort order is unknown
-    const tscs = []
+
     for (let hsh of Object.keys(txs_)) {
       let cTme, rTme
       let d = {rcv: 0, snd: 0, cfmCnt: 0}
