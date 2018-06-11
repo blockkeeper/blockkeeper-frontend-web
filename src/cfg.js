@@ -59,10 +59,22 @@ Object.assign(d, {
       MYR: {dec: 2}
     },
     cryp: {
-      BTC: {dec: 5},
-      LTC: {dec: 3},
-      ETH: {dec: 3},
-      DASH: {dec: 3}
+      BTC: {
+        dec: 5,
+        name: 'Bitcoin'
+      },
+      LTC: {
+        dec: 3,
+        name: 'Litecoin'
+      },
+      ETH: {
+        dec: 3,
+        name: 'Ethereum'
+      },
+      DASH: {
+        dec: 3,
+        name: 'Dash'
+      }
     },
     dflt: {dec: 4, minAddrSize: 1, maxAddrSize: 150}
   }

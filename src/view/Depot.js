@@ -12,14 +12,18 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
 import {theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
         tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
         actnBtnClr, topBtnClass, depotEmpty, cnctBtn, gridSpacer,
-        gridGutter, topBarSpacer} from './Style'
+        gridGutter, topBarSpacer, depotHoldings, depotDoughnut, CryptoColors} from './Style'
 import __ from '../util'
 
 class DepotView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
-    this.state = {tabIx: this.cx.tmp.depotTabIx || 0}
+    this.state = {
+      tabIx: this.cx.tmp.depotTabIx || 0,
+      activeStep: 0,
+      doughnutData: {}
+    }
     this.load = this.load.bind(this)
     this.tab = this.tab.bind(this)
     this.goAddAddr = () => this.props.history.push('/wallet/add')
@@ -65,13 +69,32 @@ class DepotView extends React.Component {
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc(addrs)
     const addrTscs = []
+    const doughnutData = {}
+
     for (let addr of addrs) {
       for (let tsc of addr.tscs) addrTscs.push([addr, tsc])
+
+      if (doughnutData[addr.coin]) {
+        doughnutData[addr.coin].amntByCoinRate = doughnutData[addr.coin].amntByCoinRate + (addr.amnt * addr.rates[coin0])
+      } else if (addr.amnt > 0) {
+        doughnutData[addr.coin] = {
+          amntByCoinRate: addr.amnt * addr.rates[coin0],
+          label: __.cfg('coins').cryp[addr.coin].name,
+          color: CryptoColors[addr.coin]
+        }
+      }
     }
+
+    for (let coin in doughnutData) {
+      doughnutData[coin].share = doughnutData[coin].amntByCoinRate / blc.get(coin0) * 100
+      doughnutData[coin].label = `${doughnutData[coin].label} (${Math.round(doughnutData[coin].share)}%)`
+    }
+
     this.setState({
       addrs,
       coin0,
       coin1,
+      doughnutData,
       addrTscs: addrTscs.sort((x, y) => new Date(y[1]._t) - new Date(x[1]._t)),
       blc1: `${blc.get(coin0)}`,
       blc2: `${blc.get(coin1)}`,
@@ -110,14 +133,30 @@ class DepotView extends React.Component {
             />}
           <div className={this.props.classes.themeBgStyle}>
             <TopBar title />
-            {this.state.blc1 !== 'undefined' &&
+            {this.state.addrs.length > 0 &&
               <Jumbo
                 title={this.state.blc1}
                 subTitle={this.state.blc2}
                 coin0={this.state.coin0}
                 coin1={this.state.coin1}
                 display3ClassName={this.props.classes.display3}
+                holdingsClassName={this.props.classes.depotHoldings}
+                doughnutClassName={this.props.classes.depotDoughnut}
                 locale={this.user.locale}
+                activeStep={this.state.activeStep}
+                handleStepChange={(activeStep) => {
+                  this.setState({ activeStep })
+                }}
+                doughnutData={{
+                  labels: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].label).reverse(),
+                  datasets: [{
+                    label: 'Dataset #1',
+                    backgroundColor: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].color).reverse(),
+                    borderColor: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].color).reverse(),
+                    borderWidth: 0,
+                    hoverBackgroundColor: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].color).reverse(),
+                    data: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].amntByCoinRate).reverse()
+                  }]}}
                />
             }
           </div>
@@ -132,11 +171,11 @@ class DepotView extends React.Component {
               }}>
                 <Button
                   variant='raised'
-                  color={'accent'}
+                  color='primary'
                   className={this.props.classes.cnctBtn}
                   onClick={() => this.props.history.push('/wallet/add')}
                   classes={{
-                    raisedAccent: this.props.classes.actnBtnClr
+                    raised: this.props.classes.actnBtnClr
                   }}
                   >
                     Connect wallet
@@ -237,6 +276,8 @@ export default compose(withStyles({
   display1,
   body2,
   display3,
+  depotHoldings,
+  depotDoughnut,
   tab,
   actnBtnClr,
   topBtnClass,

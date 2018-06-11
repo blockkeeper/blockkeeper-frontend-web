@@ -8,7 +8,8 @@ const styleGuide = {
   text: '#210045',
   textSecondary: '#907FA2',
   spacertop: '80px',
-  fontWeightBold: '700'
+  fontWeightBold: '700',
+  depotStepperHeight: '22vh'
 }
 
 const theme = createMuiTheme({
@@ -160,6 +161,19 @@ theme.overrides = {
       backgroundColor: styleGuide.backgroundDark,
       color: common.white
     }
+  },
+  MuiMobileStepper: {
+    root: {
+      justifyContent: 'center',
+      padding: theme.spacing.unit * 2
+    },
+    dot: {
+      // backgroundColor: styleGuide.textSecondary
+      backgroundColor: theme.palette.primary[500]
+    },
+    dotActive: {
+      backgroundColor: common.white
+    }
   }
 }
 
@@ -173,13 +187,33 @@ const loginStyle = {
   color: common.white
 }
 
-const jumboStyle = {
-  minHeight: '25vh',
+const depotHoldings = {
+  minHeight: styleGuide.depotStepperHeight,
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
   color: common.white,
   overflow: 'hidden'
+}
+
+const depotDoughnut = {
+  position: 'relative',
+  margin: 'auto',
+  height: styleGuide.depotStepperHeight, // cant use minHeight cause of chartjs bug
+  width: '100%',
+  [theme.breakpoints.only('sm')]: {
+    width: '50%'
+  },
+  [theme.breakpoints.only('md')]: {
+    width: '40%'
+  },
+  [theme.breakpoints.only('lg')]: {
+    width: '30%'
+  },
+  [theme.breakpoints.only('xl')]: {
+    width: '20%'
+  }
 }
 
 const floatBtnStyle = {
@@ -384,7 +418,8 @@ export {
   theme,
   themeBgStyle,
   loginStyle,
-  jumboStyle,
+  depotHoldings,
+  depotDoughnut,
   floatBtnStyle,
   CryptoColors,
   paperStyle,

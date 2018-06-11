@@ -34,8 +34,11 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import MobileStepper from '@material-ui/core/MobileStepper'
+import SwipeableViews from 'react-swipeable-views'
 import TransitiveNumber from 'react-transitive-number'
-import {theme, jumboStyle, floatBtnStyle, CryptoColors, gridWrap} from './Style'
+import {Doughnut} from 'react-chartjs-2'
+import {theme, floatBtnStyle, CryptoColors, gridWrap} from './Style'
 import __ from '../util'
 
 const setBxpTrigger = view => {
@@ -71,7 +74,7 @@ const TopBar = ({
     position='fixed'
     color={color || 'default'}
     elevation={0}
-    style={{zIndex: 1500}}
+    style={{zIndex: 1200}}
   >
     <div style={{...gridWrap, width: '100%'}}>
       <Toolbar style={{minHeight: '50px'}}>
@@ -180,39 +183,127 @@ const SubBar = ({tabs, ix, onClick, rootClassName}) =>
     </Tabs>
   </AppBar>
 
-const Jumbo = ({title, subTitle, coin0, coin1, display3ClassName, locale}) =>
-  <div style={jumboStyle}>
-    <div>
-      <Typography
-        align='center'
-        variant='display3'
-        color='inherit'
-        className={display3ClassName}
-      >
-        <TransitiveNumber>
-          {title
-              ? __.formatNumber(title, coin0, locale)
-              : __.formatNumber(0, coin0, locale)
-          }
-        </TransitiveNumber>&nbsp;
-        <Hidden xsDown>
-          <CoinIcon coin={coin0} size={35} color={'white'} alt />
-        </Hidden>
-        <Hidden smUp>
-          <CoinIcon coin={coin0} size={32} color={'white'} alt />
-        </Hidden>
-      </Typography>
-      <Typography align='center' variant='headline' color='inherit'>
-        <TransitiveNumber>
-          {subTitle
-          ? __.formatNumber(subTitle, coin1, locale)
-          : __.formatNumber(0, coin1, locale)}
-        </TransitiveNumber>&nbsp;
-        {coin1 &&
-          <CoinIcon coin={coin1} color={'white'} alt />
+const DepotHoldings = ({
+  title,
+  subTitle,
+  coin0,
+  coin1,
+  display3ClassName,
+  holdingsClassName,
+  locale
+}) =>
+  <div key='depot-holdings' className={holdingsClassName}>
+    <Typography
+      align='center'
+      variant='display3'
+      color='inherit'
+      className={display3ClassName}
+    >
+      <TransitiveNumber>
+        {title
+            ? __.formatNumber(title, coin0, locale)
+            : __.formatNumber(0, coin0, locale)
         }
-      </Typography>
-    </div>
+      </TransitiveNumber>&nbsp;
+      <Hidden xsDown>
+        <CoinIcon coin={coin0} size={35} color={'white'} alt />
+      </Hidden>
+      <Hidden smUp>
+        <CoinIcon coin={coin0} size={32} color={'white'} alt />
+      </Hidden>
+    </Typography>
+    <Typography align='center' variant='headline' color='inherit'>
+      <TransitiveNumber>
+        {subTitle
+        ? __.formatNumber(subTitle, coin1, locale)
+        : __.formatNumber(0, coin1, locale)}
+      </TransitiveNumber>&nbsp;
+      {coin1 && <CoinIcon coin={coin1} color={'white'} alt />}
+    </Typography>
+  </div>
+
+const DepotDoughnut = ({
+  doughnutClassName,
+  doughnutData
+}) =>
+  <div key='depot-doughnut' className={doughnutClassName}>
+    <Doughnut
+      data={doughnutData}
+      options={{
+        maintainAspectRatio: false,
+        cutoutPercentage: theme.spacing.unit * 10,
+        tooltips: {
+          enabled: false
+            // displayColors: false
+        },
+        legend: {
+          position: 'right',
+          onClick: null,
+          labels: {
+            usePointStyle: true,
+            fontSize: theme.typography.caption.fontSize,
+            fontStyle: 'bold',
+            fontColor: '#fff',
+            fontFamily: theme.typography.fontFamily,
+            padding: theme.spacing.unit * 2
+          }
+        }
+      }} />
+  </div>
+
+const Jumbo = ({
+  title,
+  subTitle,
+  coin0,
+  coin1,
+  display3ClassName,
+  holdingsClassName,
+  doughnutClassName,
+  locale,
+  handleStepChange,
+  activeStep,
+  doughnutData
+}) =>
+  <div>
+    {doughnutData.labels.length !== 0 ?
+      <div>
+        <SwipeableViews
+          axis='x'
+          index={activeStep}
+          onChangeIndex={handleStepChange}
+          enableMouseEvents
+        >
+          <DepotHoldings
+            title={title}
+            subTitle={subTitle}
+            coin0={coin0}
+            coin1={coin1}
+            display3ClassName={display3ClassName}
+            holdingsClassName={holdingsClassName}
+            locale={locale}
+          />
+          <DepotDoughnut
+            doughnutClassName={doughnutClassName}
+            doughnutData={doughnutData}
+          />
+        </SwipeableViews>
+        <MobileStepper
+          steps={2}
+          position='static'
+          activeStep={activeStep}
+        />
+      </div>
+      :
+      <DepotHoldings
+        title={title}
+        subTitle={subTitle}
+        coin0={coin0}
+        coin1={coin1}
+        display3ClassName={display3ClassName}
+        holdingsClassName={holdingsClassName}
+        locale={locale}
+      />
+    }
   </div>
 
 const ToTopBtn = ({className}) =>
