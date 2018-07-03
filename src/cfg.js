@@ -54,9 +54,7 @@ Object.assign(d, {
       EUR: {dec: 2},
       USD: {dec: 2},
       CAD: {dec: 2},
-      GBP: {dec: 2},
-      NZD: {dec: 2},
-      MYR: {dec: 2}
+      GBP: {dec: 2}
     },
     cryp: {
       BTC: {
@@ -168,7 +166,8 @@ Object.assign(d, {
     {lbl: 'at-AT', key: 'at-AT', ilk: 'locale'},
     {lbl: 'en-GB', key: 'en-GB', ilk: 'locale'}
   ],
-  dfltLocale: 'en-US'
+  dfltLocale: 'en-US',
+  allowedPrimaryCoins: ['BTC'].concat(Object.keys(d.coins.fiat))
 })
 
 const cfg = (key) => key == null ? d : d[key]

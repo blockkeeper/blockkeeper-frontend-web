@@ -46,8 +46,10 @@ class UserView extends React.Component {
       ])
       coins = {coin0: [], coin1: []}
       for (let coin of rateCoins) {
-        coins.coin0.push({lbl: coin, key: coin, ilk: 'coin0'})
         coins.coin1.push({lbl: coin, key: coin, ilk: 'coin1'})
+        if (__.cfg('allowedPrimaryCoins').indexOf(coin) !== -1) {
+          coins.coin0.push({lbl: coin, key: coin, ilk: 'coin0'})
+        }
       }
     } catch (e) {
       return this.errGo(`Loading user failed: ${e.message}`, e, '/depot')
