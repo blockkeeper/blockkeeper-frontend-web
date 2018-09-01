@@ -272,6 +272,7 @@ class RgstrView extends React.Component {
                                'identifier and crypto-key.'}
                         control={
                           <Switch
+                            color='primary'
                             classes={{
                               bar: this.props.classes.bar,
                               checked: this.props.classes.checked
