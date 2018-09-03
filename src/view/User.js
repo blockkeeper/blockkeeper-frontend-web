@@ -25,7 +25,21 @@ class UserView extends React.Component {
     this.askLogout = () => this.setState({logout: !this.state.logout})
     this.askDelete = () => this.setState({delAcc: !this.state.delAcc})
     this.edit = () => this.setState({edit: !this.state.edit})
-    this.setAction = d => this.setState({[d.ilk]: d.key, upd: true})
+    this.setAction = d => {
+      if ((d.ilk === 'coin0' && d.key === this.state.coin1) || (d.ilk === 'coin1' && d.key === this.state.coin0)) {
+        this.setState({
+          inputError: true,
+          inputErrorMsg: 'Primary and secondary coins are the same. Please select different coins'
+        })
+        return
+      }
+      this.setState({
+        [d.ilk]: d.key,
+        upd: true,
+        inputError: false,
+        inputErrorMsg: undefined
+      })
+    }
     this.logout = () => {
       this.cx.core.clear()
       this.props.history.push('/login')
@@ -177,6 +191,8 @@ class UserView extends React.Component {
                   slctd={this.state.coin0}
                   action={this.setAction}
                   disabled={!this.state.edit}
+                  error={this.state.inputError}
+                  errorMsg={this.state.inputErrorMsg}
                 />
                 <DropDown
                   _id='coin1DropDown'
@@ -185,6 +201,8 @@ class UserView extends React.Component {
                   slctd={this.state.coin1}
                   action={this.setAction}
                   disabled={!this.state.edit}
+                  error={this.state.inputError}
+                  errorMsg={this.state.inputErrorMsg}
                 />
                 <DropDown
                   _id='localeDropDown'

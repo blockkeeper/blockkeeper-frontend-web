@@ -36,7 +36,20 @@ class RgstrView extends React.Component {
     this.save = this.save.bind(this)
     this.load = this.load.bind(this)
     this.reload = this.reload.bind(this)
-    this.setAction = d => this.setState({[d.ilk]: d.key})
+    this.setAction = d => {
+      if ((d.ilk === 'coin0' && d.key === this.state.coin1) || (d.ilk === 'coin1' && d.key === this.state.coin0)) {
+        this.setState({
+          inputError: true,
+          inputErrorMsg: 'Primary and secondary coins are the same. Please select different coins'
+        })
+        return
+      }
+      this.setState({
+        [d.ilk]: d.key,
+        inputError: false,
+        inputErrorMsg: undefined
+      })
+    }
     this.logout = () => {
       this.cx.core.clear()
       this.setState({loggedIn: false})
@@ -210,6 +223,8 @@ class RgstrView extends React.Component {
                             data={this.state.coins.coin0}
                             slctd={this.state.coin0}
                             action={this.setAction}
+                            error={this.state.inputError}
+                            errorMsg={this.state.inputErrorMsg}
                            />
                         }
                       </Grid>
@@ -221,6 +236,8 @@ class RgstrView extends React.Component {
                             data={this.state.coins.coin1}
                             slctd={this.state.coin1}
                             action={this.setAction}
+                            error={this.state.inputError}
+                            errorMsg={this.state.inputErrorMsg}
                           />
                         }
                       </Grid>
@@ -294,7 +311,7 @@ class RgstrView extends React.Component {
                               type='submit'
                               color='primary'
                               className={this.props.classes.btnRg}
-                              disabled={!this.state.writeDown}
+                              disabled={!this.state.writeDown || this.state.inputError}
                               classes={{
                                 raised: this.props.classes.actnBtnClr
                               }}

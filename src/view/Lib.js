@@ -37,6 +37,7 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import MobileStepper from '@material-ui/core/MobileStepper'
 import SwipeableViews from 'react-swipeable-views'
 import TransitiveNumber from 'react-transitive-number'
+import FormHelperText from '@material-ui/core/FormHelperText'
 import {Doughnut} from 'react-chartjs-2'
 import {theme, floatBtnStyle, CryptoColors, gridWrap} from './Style'
 import __ from '../util'
@@ -1109,6 +1110,8 @@ class DropDown extends React.Component {
   //     slctd={this.state.<label_of_selected_item}
   //     action={this.<action_function>}
   //     disabled={this.state.<disabled>}
+  //     error={this.state.<inputError>}
+  //     errorMsg={this.state.<inputErrorMsg>}
   //   />
   constructor (props) {
     super(props)
@@ -1117,7 +1120,12 @@ class DropDown extends React.Component {
     this.title = props.title
     this.action = props.action
     this.renderValue = props.renderValue || (value => value)
-    this.state = {slctd: props.slctd, disabled: props.disabled}
+    this.state = {
+      slctd: props.slctd,
+      disabled: props.disabled,
+      error: props.error,
+      errorMsg: props.errorMsg
+    }
     this.handleChange = name => event => {
       this.setState({ [name]: event.target.value })
       this.action(this.data.find((i) => {
@@ -1127,7 +1135,9 @@ class DropDown extends React.Component {
   }
   static getDerivedStateFromProps (props, state) {
     return {
-      disabled: props.disabled
+      disabled: props.disabled,
+      error: props.error,
+      errorMsg: props.errorMsg
     }
   }
 
@@ -1141,12 +1151,15 @@ class DropDown extends React.Component {
           input={<Input id={this._id} />}
           disabled={this.state.disabled}
           renderValue={this.renderValue}
+          error={this.state.error}
           >
           {this.data.map(d =>
             <MenuItem key={d.key} value={d.lbl}>
               {d.lbl}
             </MenuItem>)}
         </Select>
+        {this.state.error && this.state.errorMsg &&
+          <FormHelperText>{this.state.errorMsg}</FormHelperText>}
       </FormControl>
     )
   }
