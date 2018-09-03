@@ -4,7 +4,7 @@ import {withStyles} from '@material-ui/core/styles'
 import {TopBar, Modal, DropDown, UserList, Done, Edit, Snack} from './Lib'
 import {ArrowBack} from '@material-ui/icons'
 import {themeBgStyle, gridWrap, gridSpacer, gridGutter,
-        gridGutterFluid, topBarSpacer} from './Style'
+        gridGutterFluid, topBarSpacer, noTxtDeco} from './Style'
 import Paper from '@material-ui/core/Paper'
 import __ from '../util'
 
@@ -202,6 +202,7 @@ class UserView extends React.Component {
                 <UserList
                   askLogout={this.askLogout}
                   askDelete={this.askDelete}
+                  noTxtDecoClassname={this.props.classes.noTxtDeco}
                 />
               </div>
             </div>
@@ -220,5 +221,6 @@ export default withStyles({
   gridSpacer,
   gridGutter,
   gridGutterFluid,
-  topBarSpacer
+  topBarSpacer,
+  noTxtDeco
 })(UserView)

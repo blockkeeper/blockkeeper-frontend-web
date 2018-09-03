@@ -383,6 +383,7 @@ const tscRow = (
   body2ClassName,
   tscAmntClassName,
   tscIconClassname,
+  noTxtDecoClassname,
   locale,
   aLength,
   i
@@ -400,7 +401,7 @@ const tscRow = (
     <div key={tsc._id} className={gridWrapClassName}>
       <Link
         to={`/tsc/${addr._id}/${tsc._id}`}
-        style={{textDecoration: 'none'}}
+        className={noTxtDecoClassname}
       >
         <div className={gridGutterClassName}>
           <div className={itemClassName}>
@@ -523,6 +524,7 @@ const TscListAddr = ({
   display1ClassName,
   body2ClassName,
   tscAmntClassName,
+  noTxtDecoClassname,
   locale
 }) =>
   <Paper
@@ -544,6 +546,7 @@ const TscListAddr = ({
         body2ClassName,
         tscAmntClassName,
         undefined,
+        noTxtDecoClassname,
         locale,
         tscs.length,
         i
@@ -563,6 +566,7 @@ const TscListAddresses = ({
   body2ClassName,
   tscAmntClassName,
   tscIconClassname,
+  noTxtDecoClassname,
   locale
 }) =>
   <Paper
@@ -583,6 +587,7 @@ const TscListAddresses = ({
         body2ClassName,
         tscAmntClassName,
         tscIconClassname,
+        noTxtDecoClassname,
         locale,
         addrTscs.length,
         i
@@ -772,7 +777,10 @@ const DepotEmpty = ({className}) =>
     </Grid>
   </div>
 
-const SoonMsg = ({className}) =>
+const SoonMsg = ({
+  className,
+  noTxtDecoClassname
+}) =>
   <Grid container spacing={0} justify='center'>
     <Grid item xs={6} className={className}>
       <Typography
@@ -786,7 +794,7 @@ const SoonMsg = ({className}) =>
       <a
         href='https://wantoo.io/blockkeeper-feedback/'
         target='_blank'
-        style={{textDecoration: 'none'}}
+        className={noTxtDecoClassname}
         rel='noopener noreferrer'>
         <Button
           color='default'
@@ -963,6 +971,7 @@ const PaperGrid = ({
   amntClassName,
   display1ClassName,
   body2ClassName,
+  noTxtDecoClassname,
   locale
 }) => {
   return (
@@ -975,7 +984,7 @@ const PaperGrid = ({
         return (
           <Link
             to={`/wallet/${addr._id}`}
-            style={{textDecoration: 'none'}}
+            className={noTxtDecoClassname}
             key={addr._id}
           >
             <Paper
@@ -1175,12 +1184,16 @@ const Edit = () =>
 const Done = () =>
   <span>Done</span>
 
-const UserList = ({askLogout, askDelete}) =>
+const UserList = ({
+  askLogout,
+  askDelete,
+  noTxtDecoClassname
+}) =>
   <List>
     <a
       href='https://blockkeeper.io'
       target='_blank'
-      style={{textDecoration: 'none'}}
+      className={noTxtDecoClassname}
       rel='noopener noreferrer'
     >
       <ListItem divider button>
@@ -1193,7 +1206,7 @@ const UserList = ({askLogout, askDelete}) =>
     <a
       href='https://wantoo.io/blockkeeper-feedback/'
       target='_blank'
-      style={{textDecoration: 'none'}}
+      className={noTxtDecoClassname}
       rel='noopener noreferrer'
     >
       <ListItem divider button>
@@ -1206,7 +1219,7 @@ const UserList = ({askLogout, askDelete}) =>
     <a
       href='https://github.com/blockkeeper/blockkeeper-frontend-web/issues'
       target='_blank'
-      style={{textDecoration: 'none'}}
+      className={noTxtDecoClassname}
       rel='noopener noreferrer'
     >
       <ListItem divider button>
@@ -1219,7 +1232,7 @@ const UserList = ({askLogout, askDelete}) =>
     <a
       href='http://eepurl.com/c_4Ar1'
       target='_blank'
-      style={{textDecoration: 'none'}}
+      className={noTxtDecoClassname}
       rel='noopener noreferrer'
     >
       <ListItem divider button>

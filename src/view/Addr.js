@@ -545,6 +545,7 @@ class AddrView extends React.Component {
               display1ClassName={this.props.classes.display1}
               body2ClassName={this.props.classes.body2}
               tscAmntClassName={this.props.classes.tscAmnt}
+              noTxtDecoClassname={this.props.classes.noTxtDeco}
               locale={this.user.locale}
             />
           }
