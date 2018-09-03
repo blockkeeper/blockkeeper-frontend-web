@@ -107,7 +107,12 @@ export default class Depot extends ApiBase {
     }
     try {
       this.cx.rate.clear()
-      await this.cx.rate.load()
+      this.cx.history.clear()
+
+      await Promise.all([
+        this.cx.rate.load(),
+        this.cx.history.load()
+      ])
     } catch (e) { /* messy but using cached values instead */ }
     this.addrUpdErrIds = new Set()
     d.addrsByType = {hd: {}, std: {}, man: {}}

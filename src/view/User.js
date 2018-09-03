@@ -69,13 +69,16 @@ class UserView extends React.Component {
     if (this.state.upd === false) return this.setState({edit: false})
     this.setState({edit: false, busy: true})
     try {
-      await this.cx.user.save({
-        _id: this.state.userId,
-        _t: __.getTme(),
-        coins: [this.state.coin0, this.state.coin1],
-        locale: this.state.locale,
-        depotId: this.state.depotId
-      })
+      await Promise.all([
+        this.cx.user.save({
+          _id: this.state.userId,
+          _t: __.getTme(),
+          coins: [this.state.coin0, this.state.coin1],
+          locale: this.state.locale,
+          depotId: this.state.depotId
+        }),
+        this.cx.history.clear()
+      ])
     } catch (e) {
       this.err(`Updating user failed: ${e.message}`, e)
     } finally {

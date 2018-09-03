@@ -4,6 +4,7 @@ import {StoBase} from './Lib'
 import User from './User'
 import Depot from './Depot'
 import Rate from './Rate'
+import History from './History'
 import __ from '../util'
 
 export default class Core extends StoBase {
@@ -187,6 +188,7 @@ export default class Core extends StoBase {
         rate: new Rate(this.cx)
       })
       Object.assign(this.cx, {
+        history: new History(this.cx),
         depot: new Depot(this.cx, core.depotId)
       })
       this.cx.depot.setBxpSts('clearRun')

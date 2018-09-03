@@ -354,6 +354,18 @@ const tscAmnt = {
   }
 }
 
+const coinIcon = {
+  paddingRight: theme.spacing.unit * 2,
+  [theme.breakpoints.down('sm')]: {
+    paddingRight: theme.spacing.unit
+  }
+}
+
+const prtfAmnt = {
+  textAlign: 'right',
+  whiteSpace: 'nowrap'
+}
+
 const display1 = {
   [theme.breakpoints.down('sm')]: {
     fontSize: '18px'
@@ -440,6 +452,8 @@ export {
   amnt,
   tscIcon,
   tscAmnt,
+  coinIcon,
+  prtfAmnt,
   display1,
   body2,
   display3,

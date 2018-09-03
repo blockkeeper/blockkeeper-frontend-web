@@ -8,11 +8,11 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import {withStyles} from '@material-ui/core/styles'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
-        DepotEmpty, ToTopBtn, SoonMsg} from './Lib'
+        DepotEmpty, ToTopBtn, PortfolioTab} from './Lib'
 import {theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
-        tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2, display3, tab,
+        tscitem, addr, amnt, tscIcon, tscAmnt, coinIcon, prtfAmnt, display1, body2, display3, tab,
         actnBtnClr, topBtnClass, depotEmpty, cnctBtn, gridSpacer,
-        gridGutter, topBarSpacer, depotHoldings, depotDoughnut, CryptoColors} from './Style'
+        gridGutter, topBarSpacer, depotHoldings, depotDoughnut, CryptoColors, noTxtDeco} from './Style'
 import __ from '../util'
 
 class DepotView extends React.Component {
@@ -47,11 +47,12 @@ class DepotView extends React.Component {
   }
 
   async load () {
-    let addrs, user
+    let addrs, user, history
     try {
-      ;[addrs, user] = await Promise.all([
+      [addrs, user, history] = await Promise.all([
         this.cx.depot.loadAddrs(),
-        this.cx.user.load()
+        this.cx.user.load(),
+        this.cx.history.getHistory()
       ])
     } catch (e) {
       if (__.cfg('isDev')) throw e
@@ -65,11 +66,14 @@ class DepotView extends React.Component {
       throw e
     }
     this.user = user
+    this.history = history
+
     const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc(addrs)
     const addrTscs = []
     const doughnutData = {}
+    const portfolio = {}
 
     for (let addr of addrs) {
       for (let tsc of addr.tscs) addrTscs.push([addr, tsc])
@@ -83,6 +87,25 @@ class DepotView extends React.Component {
           color: CryptoColors[addr.coin]
         }
       }
+
+      // primary coin used for portfolio calculations, use secondary coin if equals
+      const pCoin = addr.coin === coin0 ? coin1 : coin0
+
+      if (portfolio[addr.coin]) {
+        portfolio[addr.coin].amntCoin = portfolio[addr.coin].amntCoin + addr.amnt
+        portfolio[addr.coin].amntByCoinRate = portfolio[addr.coin].amntByCoinRate + (addr.amnt * addr.rates[pCoin])
+      } else if (addr.amnt > 0) {
+        const pair = `${addr.coin}_${pCoin}`
+        portfolio[addr.coin] = {
+          amntCoin: addr.amnt,
+          amntByCoinRate: addr.amnt * addr.rates[pCoin],
+          rate: addr.rates[pCoin],
+          pCoin: pCoin,
+          label: __.cfg('coins').cryp[addr.coin].name,
+          percentChange: ((this.history.hourly[pair][this.history.hourly[pair].length - 1][1] - this.history.hourly[pair][0][1]) / this.history.hourly[pair][0][1]) * 100
+        }
+        portfolio[addr.coin].color = portfolio[addr.coin].percentChange > 0 ? theme.palette.secondary['500'] : theme.palette.error['500']
+      }
     }
 
     for (let coin in doughnutData) {
@@ -95,6 +118,7 @@ class DepotView extends React.Component {
       coin0,
       coin1,
       doughnutData,
+      portfolio,
       addrTscs: addrTscs.sort((x, y) => new Date(y[1]._t) - new Date(x[1]._t)),
       blc1: `${blc.get(coin0)}`,
       blc2: `${blc.get(coin1)}`,
@@ -231,8 +255,21 @@ class DepotView extends React.Component {
               </Typography>
             </Paper>
           }
-          {this.state.tabIx === 2 &&
-            <SoonMsg className={this.props.classes.depotEmpty} />
+          {this.state.tabIx === 2 && this.state.portfolio &&
+            <PortfolioTab
+              portfolio={this.state.portfolio}
+              className={this.props.classes.gridSpacer}
+              gridWrapClassName={this.props.classes.gridWrap}
+              gridGutterClassName={this.props.classes.gridGutter}
+              itemClassName={this.props.classes.tscitem}
+              display1ClassName={this.props.classes.display1}
+              body2ClassName={this.props.classes.body2}
+              prtfAmntClassName={this.props.classes.prtfAmnt}
+              coinIconClassname={this.props.classes.coinIcon}
+              noTxtDecoClassname={this.props.classes.noTxtDeco}
+              locale={this.user.locale}
+            />
+            // <SoonMsg className={this.props.classes.depotEmpty} />
           }
           <ToTopBtn
             className={this.props.classes.topBtnClass}
@@ -273,6 +310,8 @@ export default compose(withStyles({
   amnt,
   tscIcon,
   tscAmnt,
+  coinIcon,
+  prtfAmnt,
   display1,
   body2,
   display3,
@@ -284,6 +323,7 @@ export default compose(withStyles({
   depotEmpty,
   cnctBtn,
   topBarSpacer,
+  noTxtDeco,
   paperWrap: {
     textAlign: 'center',
     paddingTop: theme.spacing.unit * 3,

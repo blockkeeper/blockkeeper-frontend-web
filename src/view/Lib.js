@@ -384,7 +384,8 @@ const tscRow = (
   tscAmntClassName,
   tscIconClassname,
   locale,
-  aLength
+  aLength,
+  i
 ) => {
   const mx = 40
   let modeColor = tsc.mode === 'snd'
@@ -496,12 +497,12 @@ const tscRow = (
               </Typography>
             </div>
           </div>
-          {aLength > 1 &&
+          {aLength > 1 && i !== aLength - 1 &&
             <Hidden mdDown>
               <Divider />
             </Hidden>}
         </div>
-        {aLength > 1 &&
+        {aLength > 1 && i !== aLength - 1 &&
           <Hidden lgUp>
             <Divider />
           </Hidden>}
@@ -529,7 +530,7 @@ const TscListAddr = ({
     className={className}
     elevation={5}
   >
-    {tscs.map(tsc => {
+    {tscs.map((tsc, i) => {
       return tscRow(
         addr,
         tsc,
@@ -544,7 +545,8 @@ const TscListAddr = ({
         tscAmntClassName,
         undefined,
         locale,
-        tscs.length
+        tscs.length,
+        i
       )
     })}
   </Paper>
@@ -567,7 +569,7 @@ const TscListAddresses = ({
     square
     className={className}
   >
-    {addrTscs.map(addrTsc => {
+    {addrTscs.map((addrTsc, i) => {
       return tscRow(
         addrTsc[0],
         addrTsc[1],
@@ -582,7 +584,8 @@ const TscListAddresses = ({
         tscAmntClassName,
         tscIconClassname,
         locale,
-        addrTscs.length
+        addrTscs.length,
+        i
       )
     })}
   </Paper>
@@ -794,6 +797,160 @@ const SoonMsg = ({className}) =>
       </a>
     </Grid>
   </Grid>
+
+const PortfolioTab = ({
+  portfolio,
+  className,
+  gridGutterClassName,
+  itemClassName,
+  gridWrapClassName,
+  display1ClassName,
+  body2ClassName,
+  prtfAmntClassName,
+  coinIconClassname,
+  noTxtDecoClassname,
+  locale
+}) =>
+  <Paper
+    square
+    className={className}
+  >
+    {Object.keys(portfolio).map((coin, i) =>
+      <div key={coin} className={gridWrapClassName}>
+        <Link
+          to={''} // TODO
+          className={noTxtDecoClassname}
+        >
+          <div className={gridGutterClassName}>
+            <div className={itemClassName}>
+              <div className={coinIconClassname}>
+                <Hidden xsDown>
+                  <CoinIcon coin={coin} size={42} />
+                </Hidden>
+                <Hidden smUp>
+                  <CoinIcon coin={coin} size={28} />
+                </Hidden>
+              </div>
+              <div style={{flexGrow: 1, minWidth: 0}}>
+                <Typography
+                  variant='display1'
+                  className={display1ClassName}
+                  style={{
+                    color: theme.palette.text.primary
+                  }}
+                  noWrap
+                >
+                  {portfolio[coin].label}
+                </Typography>
+                <Typography
+                  variant='body2'
+                  className={body2ClassName}
+                  style={{color: theme.palette.text.secondary}}
+                  noWrap
+                >
+                  {__.formatNumber(portfolio[coin].amntCoin, coin, locale)}&nbsp;
+                  <Hidden xsDown>
+                    <CoinIcon
+                      coin={coin}
+                      color={theme.palette.text.secondary}
+                      size={12}
+                      alt
+                    />
+                  </Hidden>
+                  <Hidden smUp>
+                    <CoinIcon
+                      coin={coin}
+                      color={theme.palette.text.secondary}
+                      size={10}
+                      alt
+                    />
+                  </Hidden>
+                </Typography>
+              </div>
+              <div className={prtfAmntClassName}>
+                <Typography
+                  variant='display1'
+                  style={{
+                    color: portfolio[coin].color
+                  }}
+                  className={display1ClassName}
+                >
+                  <div style={{
+                    display: 'inline-block',
+                    transform: portfolio[coin].percentChange > 0 ? 'rotate(180deg)' : 'rotate(0deg)'
+                  }}>▾</div>&nbsp;
+                  {__.formatNumber(portfolio[coin].rate, portfolio[coin].pCoin, locale)}&nbsp;
+                  <Hidden xsDown>
+                    <CoinIcon
+                      coin={portfolio[coin].pCoin}
+                      color={portfolio[coin].color}
+                      alt
+                    />
+                  </Hidden>
+                  <Hidden smUp>
+                    <CoinIcon
+                      coin={portfolio[coin].pCoin}
+                      color={portfolio[coin].color}
+                      size={12}
+                      alt
+                    />
+                  </Hidden>
+                </Typography>
+                <Typography
+                  variant='body2'
+                  style={{
+                    color: theme.palette.text.secondary,
+                    display: 'inline-block',
+                    paddingRight: theme.spacing.unit
+                  }}
+                  className={body2ClassName}
+                  gutterBottom
+                >
+                  {portfolio[coin].percentChange.toFixed(2)}%
+                </Typography>
+                <Typography
+                  variant='body2'
+                  style={{
+                    color: portfolio[coin].color,
+                    display: 'inline-block'
+                  }}
+                  className={body2ClassName}
+                  gutterBottom
+                >
+                  {__.formatNumber(portfolio[coin].amntByCoinRate, portfolio[coin].pCoin, locale)}&nbsp;
+                  <Hidden xsDown>
+                    <CoinIcon
+                      coin={portfolio[coin].pCoin}
+                      color={portfolio[coin].color}
+                      size={12}
+                      alt
+                    />
+                  </Hidden>
+                  <Hidden smUp>
+                    <CoinIcon
+                      coin={portfolio[coin].pCoin}
+                      color={portfolio[coin].color}
+                      size={10}
+                      alt
+                    />
+                  </Hidden>
+                </Typography>
+              </div>
+            </div>
+            {Object.keys(portfolio).length > 1 && i !== Object.keys(portfolio).length - 1 &&
+              <Hidden mdDown>
+                <Divider />
+              </Hidden>}
+          </div>
+          {Object.keys(portfolio).length > 1 && i !== Object.keys(portfolio).length - 1 &&
+            <Hidden lgUp>
+              <Divider />
+            </Hidden>}
+        </Link>
+      </div>
+    )}
+
+  </Paper>
 
 const PaperGrid = ({
   addrs,
@@ -1094,6 +1251,7 @@ export {
   TscListAddresses,
   DepotEmpty,
   SoonMsg,
+  PortfolioTab,
   PaperGrid,
   SubBar,
   Jumbo,
