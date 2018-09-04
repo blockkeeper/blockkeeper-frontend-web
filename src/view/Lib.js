@@ -1135,6 +1135,7 @@ class DropDown extends React.Component {
   }
   static getDerivedStateFromProps (props, state) {
     return {
+      slctd: props.slctd,
       disabled: props.disabled,
       error: props.error,
       errorMsg: props.errorMsg

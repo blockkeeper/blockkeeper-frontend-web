@@ -28,17 +28,19 @@ class UserView extends React.Component {
     this.setAction = d => {
       if ((d.ilk === 'coin0' && d.key === this.state.coin1) || (d.ilk === 'coin1' && d.key === this.state.coin0)) {
         this.setState({
+          [d.ilk]: d.key,
+          upd: false,
           inputError: true,
           inputErrorMsg: 'Primary and secondary coins are the same. Please select different coins'
         })
-        return
+      } else {
+        this.setState({
+          [d.ilk]: d.key,
+          upd: true,
+          inputError: false,
+          inputErrorMsg: undefined
+        })
       }
-      this.setState({
-        [d.ilk]: d.key,
-        upd: true,
-        inputError: false,
-        inputErrorMsg: undefined
-      })
     }
     this.logout = () => {
       this.cx.core.clear()
@@ -74,7 +76,10 @@ class UserView extends React.Component {
       depotId: user.depotId,
       coin0: user.coins[0],
       coin1: user.coins[1],
+      userCoin0: user.coins[0],
+      userCoin1: user.coins[1],
       locale: user.locale,
+      userLocale: user.locale,
       coins
     })
   }
@@ -160,7 +165,14 @@ class UserView extends React.Component {
                 midTitle='User'
                 action={<Done />}
                 onClick={async () => { if (this.state.upd) await this.save() }}
-                onClickLeft={() => this.setState({edit: false})}
+                onClickLeft={() => this.setState({
+                  edit: false,
+                  inputError: false,
+                  inputErrorMsg: undefined,
+                  coin0: this.state.userCoin0,
+                  coin1: this.state.userCoin1,
+                  locale: this.state.userLocale
+                })}
                 isActionAllowed={this.state.upd}
                 modeCancel
                 noUser
