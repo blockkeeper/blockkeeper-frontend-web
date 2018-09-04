@@ -827,7 +827,7 @@ const PortfolioTab = ({
     {Object.keys(portfolio).map((coin, i) =>
       <div key={coin} className={gridWrapClassName}>
         <Link
-          to={''} // TODO
+          to={`/history/${coin}`}
           className={noTxtDecoClassname}
         >
           <div className={gridGutterClassName}>
