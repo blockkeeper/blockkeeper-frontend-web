@@ -281,7 +281,12 @@ class DepotView extends React.Component {
             this.state.addrs.length > 0
           ) &&
             <BxpFloatBtn
-              onClick={() => this.cx.depot.bxp([])}
+              onClick={() => {
+                if (__.cfg('isDev')) {
+                  this.props.history.push('/devSync')
+                }
+                this.cx.depot.bxp([])
+              }}
               bxpSts={this.state.bxpSts}
               second={Boolean(this.state.tabIx === 0)}
             />
