@@ -27,8 +27,9 @@ import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 import {UserAgentProvider, UserAgent} from '@quentin-sommer/react-useragent'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import {Add, Close, Autorenew, AccountCircle, InfoOutline, KeyboardArrowUp,
-       Error, Feedback, BugReport, Email, ExitToApp, DeleteForever} from '@material-ui/icons'
+import {Add, Close, Autorenew, AccountCircle, InfoOutline,
+  KeyboardArrowUp, Error, Feedback, BugReport, Email, ExitToApp,
+  DeleteForever} from '@material-ui/icons'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -202,8 +203,8 @@ const DepotHoldings = ({
     >
       <TransitiveNumber>
         {title
-            ? __.formatNumber(title, coin0, locale)
-            : __.formatNumber(0, coin0, locale)
+          ? __.formatNumber(title, coin0, locale)
+          : __.formatNumber(0, coin0, locale)
         }
       </TransitiveNumber>&nbsp;
       <Hidden xsDown>
@@ -216,8 +217,8 @@ const DepotHoldings = ({
     <Typography align='center' variant='headline' color='inherit'>
       <TransitiveNumber>
         {subTitle
-        ? __.formatNumber(subTitle, coin1, locale)
-        : __.formatNumber(0, coin1, locale)}
+          ? __.formatNumber(subTitle, coin1, locale)
+          : __.formatNumber(0, coin1, locale)}
       </TransitiveNumber>&nbsp;
       {coin1 && <CoinIcon coin={coin1} color={'white'} alt />}
     </Typography>
@@ -234,8 +235,7 @@ const DepotDoughnut = ({
         maintainAspectRatio: false,
         cutoutPercentage: theme.spacing.unit * 10,
         tooltips: {
-          enabled: false
-            // displayColors: false
+          enabled: false // displayColors: false
         },
         legend: {
           position: 'right',
@@ -348,7 +348,7 @@ const BxpFloatBtn = ({onClick, bxpSts, second}) => {
     lbl = 'Updating'
     icon = <Autorenew style={{animation: 'spin 1s linear infinite'}} />
     dsbld = true
-  } else {  // ready
+  } else { // ready
     lbl = 'Update'
     icon = <Autorenew />
     dsbld = false
@@ -486,7 +486,7 @@ const tscRow = (
                     color={theme.palette.text.secondary}
                     size={12}
                     alt
-                />
+                  />
                 </Hidden>
                 <Hidden smUp>
                   <CoinIcon
@@ -494,7 +494,7 @@ const tscRow = (
                     color={theme.palette.text.secondary}
                     size={10}
                     alt
-                />
+                  />
                 </Hidden>
               </Typography>
             </div>
@@ -696,9 +696,9 @@ class BrowserGate extends React.Component {
                   Number(parser.getBrowser().major) >= 48) ||
                 (parser.getBrowser().name === 'Firefox' &&
                   Number(parser.getBrowser().major) >= 55)
-               )
-              ? this.props.allwd
-              : this.props.ntAll}
+              )
+                ? this.props.allwd
+                : this.props.ntAll}
             </div>
           )}
         </UserAgent>
@@ -715,8 +715,8 @@ class BrowserGateSafarimobile extends React.Component {
           {parser => (
             <div>
               {(parser.getBrowser().name === 'Mobile Safari')
-              ? this.props.safari
-              : this.props.rest}
+                ? this.props.safari
+                : this.props.rest}
             </div>
           )}
         </UserAgent>
@@ -1036,9 +1036,9 @@ const PaperGrid = ({
                   {addr.desc ||
                     (addr.hsh
                       ? (addr.type === 'hd'
-                          ? `${__.shortn(addr.hsh, 7)}...`
-                          : addr.hsh
-                        )
+                        ? `${__.shortn(addr.hsh, 7)}...`
+                        : addr.hsh
+                      )
                       : ''
                     )
                   }
@@ -1056,7 +1056,7 @@ const PaperGrid = ({
                       coin={addr.coin}
                       color={theme.palette.primary['500']}
                       alt
-                  />
+                    />
                   </Hidden>
                   <Hidden smUp>
                     <CoinIcon
@@ -1064,7 +1064,7 @@ const PaperGrid = ({
                       color={theme.palette.primary['500']}
                       size={12}
                       alt
-                  />
+                    />
                   </Hidden>
                 </Typography>
                 <Typography
@@ -1082,7 +1082,7 @@ const PaperGrid = ({
                       size={14}
                       color={theme.palette.text.secondary}
                       alt
-                  />
+                    />
                   </Hidden>
                   <Hidden smUp>
                     <CoinIcon
@@ -1090,7 +1090,7 @@ const PaperGrid = ({
                       size={10}
                       color={theme.palette.text.secondary}
                       alt
-                  />
+                    />
                   </Hidden>
                 </Typography>
               </div>
@@ -1153,7 +1153,7 @@ class DropDown extends React.Component {
           disabled={this.state.disabled}
           renderValue={this.renderValue}
           error={this.state.error}
-          >
+        >
           {this.data.map(d =>
             <MenuItem key={d.key} value={d.lbl}>
               {d.lbl}
