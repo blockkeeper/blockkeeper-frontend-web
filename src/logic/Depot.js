@@ -65,10 +65,10 @@ export default class Depot extends ApiBase {
     } else if (sts === 'ready') {
       this.delBxpSto()
       this.info('Bxp ready')
-    } else {  // run
+    } else { // run
       this.setBxpSto(sts)
     }
-    try {  // function can be undefined (race condition)
+    try { // function can be undefined (race condition)
       this.cx.tmp.bxpSts(sts)
     } catch (e) {}
   }
@@ -76,7 +76,7 @@ export default class Depot extends ApiBase {
   watchBxp (sts) {
     if (sts) this.setBxpSts(sts)
     const bxp = this.getBxpSto()
-    if (bxp && bxp !== 'run') {  // bxp is an iso date
+    if (bxp && bxp !== 'run') { // bxp is an iso date
       let lbl = `[watchBxp_${__.uuid().slice(0, 5)}]`
       let sec = mo.utc().diff(bxp, 'seconds')
       sec = (sec > 0) ? 0 : (sec * -1)
@@ -125,7 +125,7 @@ export default class Depot extends ApiBase {
     return d
   }
 
-  async bxp (addrIds) {  // bxp = query block explorer
+  async bxp (addrIds) { // bxp = query block explorer
     const {addrsByType, curAddrs} = await this.prepareBxp(addrIds)
     if (!addrsByType) return
     const addrs = []
@@ -242,7 +242,7 @@ export default class Depot extends ApiBase {
       let tscs = addr.tscs || []
       let encTscs = []
       for (let tsc of tscs) encTscs.push(await this.encrypt(tsc))
-      delete addr.tscs  // pld needs separated addr and tscs
+      delete addr.tscs // pld needs separated addr and tscs
       pld.addresses.push({
         _id: addr._id,
         data: await this.encrypt(addr),

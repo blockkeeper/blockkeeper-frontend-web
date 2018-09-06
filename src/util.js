@@ -21,12 +21,12 @@ class AppError extends Error {
     const paErr = e
     this.name = this.constructor.name
     this.isAppErr = true
-    this.lbl = lbl                              // label
-    this.paErr = paErr                          // parent error
-    this.message = umsg                         // user message
-    this.dmsg = dmsg                            // developer message
-    this.sts = sts || paSts                     // status code
-    this.more = more                            // additional data
+    this.lbl = lbl // label
+    this.paErr = paErr // parent error
+    this.message = umsg // user message
+    this.dmsg = dmsg // developer message
+    this.sts = sts || paSts // status code
+    this.more = more // additional data
     const moreKeys = Object.keys(more)
     if (moreKeys.length > 0) {
       for (let key of moreKeys) this[`_${key}`] = more[key]
@@ -230,7 +230,7 @@ const uuid = rnd => {
       crypto.getRandomValues(rnds8)
       return rnds8
     }
-    return uuidv4({rng})  // force usage of webcrypto's RNG
+    return uuidv4({rng}) // force usage of webcrypto's RNG
   } catch (e) {
     throw getErr('Creating new UUID failed', {e, sts: 900})
   }
@@ -242,17 +242,28 @@ const lstToObj = lst_ => {
   return lst
 }
 
-const cloneDeep = d => {
-  if (d == null) return d
-  if (is('Function', d)) throw Error(`Cannot clone function '${d}'`)
-  return JSON.parse(JSON.stringify(d))
+const filterObj = (d, {incls, excls} = {}) => {
+  if (!is('Object', d)) return d
+  if (incls && !incls.includes('__ALL__')) {
+    for (let prop of Object.keys(d)) {
+      if (!incls.includes(prop)) delete d[prop]
+    }
+  }
+  for (let prop of (excls || [])) delete d[prop]
+  return d
 }
 
-const clone = d => {
+const cloneDeep = (d, fltr) => {
+  if (d == null) return d
+  if (is('Function', d)) throw Error(`Cannot clone function '${d}'`)
+  return filterObj(JSON.parse(JSON.stringify(d)), fltr)
+}
+
+const clone = (d, fltr) => {
   // NOT a deep clone:
   //  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
   //    Global_Objects/Object/assign#Deep_Clone
-  if (is('Object', d)) return Object.assign({}, d)
+  if (is('Object', d)) return filterObj(Object.assign({}, d), fltr)
   if (is('Array', d)) return [...d]
   if (is('Map', d)) return new Map(d)
   if (is('Set', d)) return new Set(d)
@@ -412,6 +423,7 @@ export default {
   mergeMaps,
   sleep,
   lstToObj,
+  filterObj,
   clone,
   cloneDeep,
   vldAlphNum,
