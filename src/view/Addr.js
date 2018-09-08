@@ -457,6 +457,8 @@ class AddrView extends React.Component {
                                 Transactions
                               </TableCell>
                               <TableCell numeric padding='none'>
+                                {this.state.addr.tscCnt > __.cfg('maxTscCnt') &&
+                                  this.state.addr.type === 'hd' && 'At least '}
                                 {this.state.addr.tscCnt}
                                 {this.state.addr.tscCnt > __.cfg('maxTscCnt') &&
                                   ` (only the last ${__.cfg('maxTscCnt')} ` +
