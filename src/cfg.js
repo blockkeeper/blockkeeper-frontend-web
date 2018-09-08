@@ -8,7 +8,7 @@ Object.assign(d, {
   apiUrl: 'https://api.blockkeeper.io/v1',
   homeUrl: 'https://blockkeeper.io',
   lstMax: 50,
-  maxName: 35,   // related to newXNotice
+  maxName: 35, // related to newXNotice
   maxLow: 25,
   maxHigh: 100,
   minAddr: 26,
@@ -25,7 +25,7 @@ Object.assign(d, {
   // password settings are only needed for compatibility reasons: see
   // comment in Login.set()
   minPw: 8,
-  maxPw: 36,  // don't change: must be the length of an uuid string = 36
+  maxPw: 36, // don't change: must be the length of an uuid string = 36
   // add some spare to d.bip44IxGap because we expect to find some used
   // addresses at beginning and want to run as few as possible fetch requests
   //   fetching stops when:
@@ -36,14 +36,12 @@ Object.assign(d, {
   //   handle small number ("limit" parameter) of tscs returned by api:
   //     => derived HD addrs should have a small number of tscs
   //     => requesting only d.hdIxGap addrs should return all related tscs
-  hdIxGap: d.bip44IxGap + 10,  // MUST be >= d.bip44IxGap
-  // order matters: first has precedence
-  xtcHdAddrTypes: ['lgcy', 'sgwt'],
+  hdIxGap: d.bip44IxGap + 10, // MUST be >= d.bip44IxGap
   // order matters: first has precedence
   hdBasePaths: [ // account = acc, change = chg, index = ix
-    '0/0',    // chg/ix
-    '0',      // ix
-    '0/0/0'   // acc/chg/ix
+    '0/0', // chg/ix
+    '0', // ix
+    '0/0/0' // acc/chg/ix
   ]
 })
 
@@ -124,7 +122,7 @@ Object.assign(d, {
 
 Object.assign(d, {
   bxp: {
-    bckcyph: {  // https://www.blockcypher.com/dev/bitcoin
+    bckcyph: { // https://www.blockcypher.com/dev/bitcoin
       getUrl: coin => {
         return `https://api.blockcypher.com/v1/${coin.toLowerCase()}/main`
       },
@@ -139,16 +137,14 @@ Object.assign(d, {
       //   => use a multiplier (x) because bckcyph splits _one_ tsc in
       //      _multiple_ "txrefs" items:
       //   => x * d['maxTscCnt']
-      maxTscCnt: (5 * d.maxTscCnt) > 2000
-          ? 2000
-          : (5 * d.maxTscCnt)
+      maxTscCnt: (5 * d.maxTscCnt) > 2000 ? 2000 : (5 * d.maxTscCnt)
     },
-    bckinfo: {  // https://blockchain.info/api/blockchain_api
+    bckinfo: { // https://blockchain.info/api/blockchain_api
       sleepSec: 1,
       // -------------------- multi-address endpoint --------------------
       url: 'https://blockchain.info/de/multiaddr',
-      maxAddrCnt: d.isDev ? 50 : 200,
-      maxTscCnt: d.isDev ? 10 : 100  // returned tscs for _all_ requested addrs
+      maxAddrCnt: d.isDev ? 10 : 200,
+      maxTscCnt: d.isDev ? 10 : 100 // return tscs for _all_ requested addrs
       // ----------------------------------------------------------------
     }
   }
