@@ -14,12 +14,12 @@ import Divider from '@material-ui/core/Divider'
 import QRCode from 'qrcode-react'
 import TransitiveNumber from 'react-transitive-number'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
-        gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
-        actnBtnClr, topBtnClass, topBarSpacer} from './Style'
+  gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
+  actnBtnClr, topBtnClass, topBarSpacer} from './Style'
 import {ArrowBack, Launch} from '@material-ui/icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
-        CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
-        Edit} from './Lib'
+  CoinIcon, TscListAddr, ExtLink, InfoUpdateFailed, ToTopBtn, Done,
+  Edit} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -40,10 +40,6 @@ class AddrView extends React.Component {
     }
     this.toggleCoins = () => {
       this.setState({toggleCoins: !this.state.toggleCoins})
-    }
-    this.getHdAddrType = () => {
-      if (!this.state.addr.hd.addrType) return ''
-      return this.state.addr.hd.addrType === 'sgwt' ? 'segwit' : 'legacy'
     }
   }
 
@@ -168,7 +164,7 @@ class AddrView extends React.Component {
           lbl='Disconnect wallet'
           actions={[{
             lbl: 'Disconnect',
-            onClick: async () => await this.delete()
+            onClick: async () => { await this.delete() }
           }]}
         >
           {`Disconnect wallet "${this.state.name}"?`}
@@ -261,7 +257,7 @@ class AddrView extends React.Component {
                   >
                     <TransitiveNumber>
                       {__.formatNumber(
-                      this.state.blc1, this.state.coin, this.user.locale)}
+                        this.state.blc1, this.state.coin, this.user.locale)}
                     </TransitiveNumber>&nbsp;
                     <CoinIcon
                       coin={this.state.coin}
@@ -387,7 +383,7 @@ class AddrView extends React.Component {
                             <TableCell numeric padding='none'>
                               {this.state.addr.type === 'hd' &&
                                 <span>
-                                  HD {this.getHdAddrType()} wallet (xpub key)
+                                  HD wallet (xpub key)
                                 </span>
                               }
                               {this.state.addr.type === 'std' &&
@@ -458,9 +454,11 @@ class AddrView extends React.Component {
                           {this.state.addr.hsh &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
-                                No. Transactions
+                                Transactions
                               </TableCell>
                               <TableCell numeric padding='none'>
+                                {this.state.addr.tscCnt > __.cfg('maxTscCnt') &&
+                                  this.state.addr.type === 'hd' && 'At least '}
                                 {this.state.addr.tscCnt}
                                 {this.state.addr.tscCnt > __.cfg('maxTscCnt') &&
                                   ` (only the last ${__.cfg('maxTscCnt')} ` +
@@ -468,9 +466,9 @@ class AddrView extends React.Component {
                               </TableCell>
                             </TableRow>}
                           {(
-                              this.state.addr.hsh &&
-                              this.state.addr.rcvAmnt != null
-                            ) &&
+                            this.state.addr.hsh &&
+                            this.state.addr.rcvAmnt != null
+                          ) &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
                                 Total Received
@@ -480,9 +478,9 @@ class AddrView extends React.Component {
                               </TableCell>
                             </TableRow>}
                           {(
-                              this.state.addr.hsh &&
-                              this.state.addr.sndAmnt != null
-                            ) &&
+                            this.state.addr.hsh &&
+                            this.state.addr.sndAmnt != null
+                          ) &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
                                 Total Send
@@ -495,9 +493,9 @@ class AddrView extends React.Component {
                       </Table>
                     </div>
                     {(
-                        this.state.addr.type === 'hd' &&
-                        !this.state.unveil && !this.state.edit
-                      ) &&
+                      this.state.addr.type === 'hd' &&
+                      !this.state.unveil && !this.state.edit
+                    ) &&
                       <Button
                         variant='raised'
                         color='default'
@@ -527,7 +525,7 @@ class AddrView extends React.Component {
                       </Button>
                     }
                   </div>
-                }
+                  }
                 </Grid>
               </Grid>
             </div>

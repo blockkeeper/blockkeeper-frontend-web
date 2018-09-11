@@ -9,9 +9,9 @@ import withWidth from '@material-ui/core/withWidth'
 import {withStyles} from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import {theme, themeBgStyle, noTxtDeco, gridWrap, gridGutter,
-        actnBtnClr, topBarSpacer, extLink} from './Style'
+  actnBtnClr, topBarSpacer, extLink} from './Style'
 import {setBxpTrigger, unsetBxpTrigger, TopBar, Snack,
-        Modal, CoinIcon, ExtLink, Done, Edit, BxpFloatBtn} from './Lib'
+  Modal, CoinIcon, ExtLink, Done, Edit, BxpFloatBtn} from './Lib'
 import Addr from '../logic/Addr'
 import __ from '../util'
 
@@ -171,7 +171,7 @@ class TscView extends React.Component {
               style={{color: modeColor}}>
               {modeSign}
               {__.formatNumber(this.state.tsc.amnt, this.state.addr.coin,
-                             this.user.locale)}
+                this.user.locale)}
               &nbsp;
               <CoinIcon coin={this.state.addr.coin} alt color={modeColor} />
             </Typography>
@@ -184,7 +184,7 @@ class TscView extends React.Component {
               gutterBottom>
               {modeSign}
               {__.formatNumber(this.state.blc1, this.state.coin0,
-                             this.user.locale)}
+                this.user.locale)}
               &nbsp;
               <CoinIcon
                 coin={this.state.coin0}
@@ -201,7 +201,7 @@ class TscView extends React.Component {
               gutterBottom>
               {modeSign}
               {__.formatNumber(this.state.blc2, this.state.coin1,
-                             this.user.locale)}
+                this.user.locale)}
               <CoinIcon
                 coin={this.state.coin1}
                 color={theme.palette.text.secondary}
@@ -220,14 +220,15 @@ class TscView extends React.Component {
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     {this.state.edit &&
-                    <TextField
-                      fullWidth
-                      placeholder='Name'
-                      value={this.state.name}
-                      error={Boolean(this.state.nameEmsg)}
-                      helperText={this.state.nameEmsg}
-                      onChange={evt => this.set('name', evt.target.value)}
-                      />}
+                      <TextField
+                        fullWidth
+                        placeholder='Name'
+                        value={this.state.name}
+                        error={Boolean(this.state.nameEmsg)}
+                        helperText={this.state.nameEmsg}
+                        onChange={evt => this.set('name', evt.target.value)}
+                      />
+                    }
                     {!this.state.edit &&
                     <Typography variant='body1' noWrap>
                       {this.state.tsc.name}
@@ -311,7 +312,7 @@ class TscView extends React.Component {
                   <div className={this.props.classes.labelStyle}>
                     <Typography variant='body1' noWrap color='inherit'>
                     Address
-                  </Typography>
+                    </Typography>
                   </div>
                   <div className={this.props.classes.valueStyle}>
                     <Link
@@ -325,8 +326,8 @@ class TscView extends React.Component {
                   </div>
                 </div>
                 {(
-                  (this.state.tsc.hd || {}).addrHshs &&
-                  this.state.tsc.hd.addrHshs.length > 0
+                  ((this.state.tsc.hd || {}).addrHshs || {}).ext &&
+                  this.state.tsc.hd.addrHshs.ext.length > 0
                 ) &&
                 <div className={this.props.classes.flexStyle}>
                   <div className={this.props.classes.labelStyle}>
@@ -335,7 +336,7 @@ class TscView extends React.Component {
                     </Typography>
                   </div>
                   <div className={this.props.classes.valueStyle}>
-                    {this.state.tsc.hd.addrHshs.map(hsh => {
+                    {this.state.tsc.hd.addrHshs.ext.map(hsh => {
                       let addr = this.state.addr
                       let to = __.toBxpUrl('addr', addr.coin, hsh, addr.bxp)
                       return (
@@ -347,8 +348,37 @@ class TscView extends React.Component {
                               <Typography variant='body1' noWrap>
                                 {hsh}
                               </Typography>
-                              }
-                            />
+                            }
+                          />
+                        </span>)
+                    })}
+                  </div>
+                </div>}
+                {(
+                  ((this.state.tsc.hd || {}).addrHshs || {}).chg &&
+                  this.state.tsc.hd.addrHshs.chg.length > 0
+                ) &&
+                <div className={this.props.classes.flexStyle}>
+                  <div className={this.props.classes.labelStyle}>
+                    <Typography variant='body1' noWrap color='inherit'>
+                      Involved change addresses
+                    </Typography>
+                  </div>
+                  <div className={this.props.classes.valueStyle}>
+                    {this.state.tsc.hd.addrHshs.chg.map(hsh => {
+                      let addr = this.state.addr
+                      let to = __.toBxpUrl('addr', addr.coin, hsh, addr.bxp)
+                      return (
+                        <span key={__.uuid()}>
+                          <ExtLink
+                            className={this.props.classes.extLink}
+                            to={to}
+                            txt={
+                              <Typography variant='body1' noWrap>
+                                {hsh}
+                              </Typography>
+                            }
+                          />
                         </span>)
                     })}
                   </div>
@@ -367,7 +397,8 @@ class TscView extends React.Component {
                         <Typography variant='body1' noWrap>
                           {this.state.tsc.hsh}
                         </Typography>
-                    } />
+                      }
+                    />
                   </div>
                 </div>
               </div>
