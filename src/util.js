@@ -289,6 +289,12 @@ const ppTme = _t => {
     : tme.fromNow()
 }
 
+const formatTime = (_t, _f) => {
+  let tme = mo(_t).utc() // init uses utc
+  let frmt = _f || 'YYYY-MM-DD / HH:mm / Z'
+  return tme.local().format(frmt) // .local() uses users timezone
+}
+
 const formatNumber = (n, coin, locale) => {
   locale = locale || cfg('dfltLocale')
   return new Intl.NumberFormat(locale, {
@@ -413,6 +419,7 @@ export default {
   rndPop,
   shuffle,
   ppTme,
+  formatTime,
   formatNumber,
   toBxpUrl,
   getLogger,

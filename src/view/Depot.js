@@ -10,7 +10,7 @@ import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
         FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
         DepotEmpty, ToTopBtn, PortfolioTab} from './Lib'
 import {theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
-        tscitem, addr, amnt, tscIcon, tscAmnt, coinIcon, prtfAmnt, display1, body2, display3, tab,
+        tscitem, addr, amnt, tscIcon, tscAmnt, coinIcon, prtfAmnt, display1, body2, display3,
         actnBtnClr, topBtnClass, depotEmpty, cnctBtn, gridSpacer,
         gridGutter, topBarSpacer, depotHoldings, depotDoughnut, CryptoColors, noTxtDeco} from './Style'
 import __ from '../util'
@@ -212,7 +212,6 @@ class DepotView extends React.Component {
               tabs={['Wallets', 'Transactions', 'Portfolio']}
               ix={this.state.tabIx}
               onClick={this.tab}
-              rootClassName={this.props.classes.tab}
             />
           }
           {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
@@ -324,7 +323,6 @@ export default compose(withStyles({
   display3,
   depotHoldings,
   depotDoughnut,
-  tab,
   actnBtnClr,
   topBtnClass,
   depotEmpty,

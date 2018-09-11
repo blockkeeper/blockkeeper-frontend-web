@@ -174,6 +174,16 @@ theme.overrides = {
     dotActive: {
       backgroundColor: common.white
     }
+  },
+  MuiTab: {
+    root: {
+      fontWeight: 'bold'
+    }
+  },
+  MuiTabScrollButton: {
+    root: {
+      color: styleGuide.textSecondary
+    }
   }
 }
 
@@ -385,10 +395,6 @@ const display3 = {
   }
 }
 
-const tab = {
-  fontWeight: styleGuide.fontWeightBold
-}
-
 const actnBtnClr = {
   backgroundColor: theme.palette.error[500],
   '&:hover': {
@@ -425,6 +431,10 @@ const topBarSpacer = {
   paddingTop: '50px'
 }
 
+const areaWrap = {
+  height: 350
+}
+
 export {
   styleGuide,
   theme,
@@ -457,10 +467,10 @@ export {
   display1,
   body2,
   display3,
-  tab,
   actnBtnClr,
   topBtnClass,
   depotEmpty,
   cnctBtn,
-  topBarSpacer
+  topBarSpacer,
+  areaWrap
 }
