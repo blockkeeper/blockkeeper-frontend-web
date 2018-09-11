@@ -21,6 +21,7 @@ export default class Depot extends ApiBase {
     this.watchBxp = this.watchBxp.bind(this)
     this.prepareBxp = this.prepareBxp.bind(this)
     this.bxp = this.bxp.bind(this)
+    this.hstry = this.hstry.bind(this)
     this.finishBxp = this.finishBxp.bind(this)
   }
 
@@ -158,6 +159,25 @@ export default class Depot extends ApiBase {
       }
     }
     await this.finishBxp(addrs)
+  }
+
+  async hstry () { // hstry = query coin rate + history
+    this.setBxpSts('run')
+    this.info('Hstry started')
+
+    try {
+      this.cx.rate.clear()
+      this.cx.history.clear()
+
+      await Promise.all([
+        this.cx.rate.load(),
+        this.cx.history.load()
+      ])
+    } catch (e) {
+      this.warn(e)
+    }
+
+    await this.finishBxp([])
   }
 
   async finishBxp (addrs) {

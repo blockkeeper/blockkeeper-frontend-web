@@ -7,6 +7,7 @@ import {theme} from './view/Style'
 import Core from './logic/Core'
 import UserView from './view/User'
 import DepotView from './view/Depot'
+import HistoryView from './view/History'
 import AddrView from './view/Addr'
 import AddAddrView from './view/AddAddr'
 import TscView from './view/Tsc'
@@ -47,6 +48,7 @@ const Routes = () => (
         <Route path='/rgstr' exact render={register} />
         <AuthRoute path='/user/edit' exact component={UserView} />
         <AuthRoute path='/depot' exact component={DepotView} />
+        <AuthRoute path='/history/:coin' exact component={HistoryView} />
         <AuthRoute path='/wallet/add' exact component={AddAddrView} />
         <AuthRoute path='/wallet/:addrId' exact component={AddrView} />
         <AuthRoute path='/tsc/:addrId/:tscId' exact component={TscView} />
