@@ -3,6 +3,9 @@
   "version": "0.2.0",
   "private": true,
   "homepage": "https://app.blockkeeper.io",
+  "devDependencies": {
+    "react-json-view": "^1.19.1"
+  },
   "dependencies": {
     "@material-ui/core": "1.0.0",
     "@material-ui/icons": "1.0.0",

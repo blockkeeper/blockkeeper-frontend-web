@@ -13,7 +13,7 @@ import TscView from './view/Tsc'
 import RgstrView from './view/Rgstr'
 import LoginView from './view/Login'
 import DevSyncView from './view/DevSync'
-// import __ from './util'
+import __ from './util'
 
 const cx = {}
 cx.core = new Core(cx)
@@ -50,7 +50,8 @@ const Routes = () => (
         <AuthRoute path='/wallet/add' exact component={AddAddrView} />
         <AuthRoute path='/wallet/:addrId' exact component={AddrView} />
         <AuthRoute path='/tsc/:addrId/:tscId' exact component={TscView} />
-        <AuthRoute path='/devSync' exact component={DevSyncView} />
+        {__.cfg('isDev') &&
+          <AuthRoute path='/devSync' exact component={DevSyncView} />}
         <Redirect to='/depot' />
       </Switch>
     </BrowserRouter>

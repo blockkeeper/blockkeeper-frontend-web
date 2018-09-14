@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactJson from 'react-json-view'
 import Button from '@material-ui/core/Button'
 import {withStyles} from '@material-ui/core/styles'
 import {ArrowBack} from '@material-ui/icons'
@@ -6,8 +7,8 @@ import Paper from '@material-ui/core/Paper'
 import Divider from '@material-ui/core/Divider'
 import Typography from '@material-ui/core/Typography'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import {theme, themeBgStyle, dividerStyle, qrReaderStyle,
-        gridWrap, gridGutter, gridSpacer, actnBtnClr, cnctBtn, topBarSpacer} from './Style'
+import {theme, themeBgStyle, dividerStyle, qrReaderStyle, gridWrap, gridGutter,
+  gridSpacer, actnBtnClr, cnctBtn, topBarSpacer} from './Style'
 import {TopBar, Modal, Snack, BxpFloatBtn} from './Lib'
 import __ from '../util'
 
@@ -75,30 +76,37 @@ class DevSyncView extends React.Component {
           >
             <div className={this.props.classes.gridWrap}>
               <div className={this.props.classes.gridGutter}>
-                <Typography variant='title'>
-                  Addr
-                </Typography>
-                {this.addrs.map(a =>
-                  <div key={a._id}>
-                    <Typography variant='subheading'>
-                      {a._id} {a.name}
-                    </Typography>
-                    <Typography variant='caption'>
-                      {a.tscs.map(t =>
-                        <div key={t._id}>
-                          {JSON.stringify(t)}
-                          <Divider />
-                        </div>
-                      )}
-                    </Typography>
-                    <Divider />
-                  </div>)}
+                {this.addrs.map(addr => {
+                  return (
+                    <div key={addr._id}>
+                      <Typography variant='title'>
+                        Addr {addr.name}
+                      </Typography>
+                      <ReactJson
+                        src={__.cloneDeep(addr, {incls:
+                        ['__ALL__', '_id', 'amnt', 'hd',
+                          'name', 'hsh', 'type', 'tscs']
+                        })}
+                        name={`addr_${addr.name}`}
+                        indentWidth={2}
+                        collapsed={10}
+                        sortKeys
+                      />
+                      <Divider />
+                    </div>
+                  )
+                })}
 
                 <Typography variant='title'>
-                  User local storage
+                  User's local storage
                 </Typography>
-                {JSON.stringify(this.cx.user.getSto())}
-
+                <ReactJson
+                  src={this.cx.user.getSto()}
+                  name={'user'}
+                  collapsed={10}
+                  indentWidth={2}
+                  sortKeys
+                />
                 <Divider />
                 <Button
                   variant='raised'
