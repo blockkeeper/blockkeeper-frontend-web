@@ -5,6 +5,10 @@ const d = {
 }
 
 Object.assign(d, {
+  // ------ TODO: remove
+  // order matters: first has precedence
+  xtcHdAddrTypes: ['lgcy', 'sgwt'],
+  //
   apiUrl: 'https://api.blockkeeper.io/v1',
   homeUrl: 'https://blockkeeper.io',
   lstMax: 50,
@@ -143,7 +147,7 @@ Object.assign(d, {
       sleepSec: 1,
       // -------------------- multi-address endpoint --------------------
       url: 'https://blockchain.info/de/multiaddr',
-      maxAddrCnt: d.isDev ? 10 : 200,
+      maxAddrCnt: d.isDev ? 30 : 200,
       maxTscCnt: d.isDev ? 10 : 100 // return tscs for _all_ requested addrs
       // ----------------------------------------------------------------
     }
