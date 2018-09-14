@@ -44,7 +44,7 @@ import { curveMonotoneX } from '@vx/curve'
 import { scaleTime, scaleLinear } from '@vx/scale'
 import { withTooltip, Tooltip as VxTooltip } from '@vx/tooltip'
 import { localPoint } from '@vx/event'
-import { extent, max, bisector } from 'd3-array'
+import { extent, max, min, bisector } from 'd3-array'
 import { withParentSize } from '@vx/responsive'
 import { LinearGradient } from '@vx/gradient'
 import {Doughnut} from 'react-chartjs-2'
@@ -1334,8 +1334,7 @@ class Area extends React.Component {
     })
     const yScale = scaleLinear({
       range: [yMax, 70], // 70px margin cause tooltip needs space
-      // domain: [0, max(data, yStock) + yMax / 3],
-      domain: [0, max(data, yStock)],
+      domain: [(min(data, yStock) - (min(data, yStock) / 100 * 10)), max(data, yStock)],
       nice: true
     })
 
