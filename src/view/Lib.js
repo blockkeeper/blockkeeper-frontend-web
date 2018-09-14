@@ -39,6 +39,14 @@ import MobileStepper from '@material-ui/core/MobileStepper'
 import SwipeableViews from 'react-swipeable-views'
 import TransitiveNumber from 'react-transitive-number'
 import FormHelperText from '@material-ui/core/FormHelperText'
+import { AreaClosed, Line, Bar } from '@vx/shape'
+import { curveMonotoneX } from '@vx/curve'
+import { scaleTime, scaleLinear } from '@vx/scale'
+import { withTooltip, Tooltip as VxTooltip } from '@vx/tooltip'
+import { localPoint } from '@vx/event'
+import { extent, max, bisector } from 'd3-array'
+import { withParentSize } from '@vx/responsive'
+import { LinearGradient } from '@vx/gradient'
 import {Doughnut} from 'react-chartjs-2'
 import {theme, floatBtnStyle, CryptoColors, gridWrap} from './Style'
 import __ from '../util'
@@ -164,7 +172,7 @@ const TopBar = ({
     </div>
   </AppBar>
 
-const SubBar = ({tabs, ix, onClick, rootClassName}) =>
+const SubBar = ({tabs, ix, onClick}) =>
   <AppBar position='static' style={{position: 'relative', backgroundColor: 'white'}}>
     <Tabs
       centered
@@ -177,9 +185,6 @@ const SubBar = ({tabs, ix, onClick, rootClassName}) =>
         <Tab
           key={__.uuid()}
           label={lbl}
-          classes={{
-            root: rootClassName
-          }}
         />
       )}
     </Tabs>
@@ -531,7 +536,7 @@ const TscListAddr = ({
   <Paper
     square
     className={className}
-    elevation={5}
+    elevation={4}
   >
     {tscs.map((tsc, i) => {
       return tscRow(
@@ -827,7 +832,7 @@ const PortfolioTab = ({
     {Object.keys(portfolio).map((coin, i) =>
       <div key={coin} className={gridWrapClassName}>
         <Link
-          to={''} // TODO
+          to={`/history/${coin}`}
           className={noTxtDecoClassname}
         >
           <div className={gridGutterClassName}>
@@ -989,7 +994,7 @@ const PaperGrid = ({
             key={addr._id}
           >
             <Paper
-              elevation={3}
+              elevation={4}
               className={itemClassName}
             >
               <div>
@@ -1270,6 +1275,208 @@ const UserList = ({
     </ListItem>
   </List>
 
+class Area extends React.Component {
+  constructor (props) {
+    super(props)
+    this.handleTooltip = this.handleTooltip.bind(this)
+  }
+  handleTooltip ({ event, touchData, xStock, xScale, yScale, bisectDate }) {
+    const { showTooltip } = this.props
+    const { x } = localPoint(event)
+    const x0 = xScale.invert(x)
+    const index = bisectDate(touchData, x0, 1)
+    const d0 = touchData[index - 1]
+    const d1 = touchData[index]
+    let d = d0
+    if (d1 && d1[0]) {
+      d = x0 - xStock(d0) > xStock(d1) - x0 ? d1 : d0
+    }
+    showTooltip({
+      tooltipData: d,
+      tooltipLeft: x,
+      tooltipTop: yScale(d[1])
+    })
+  }
+
+  render () {
+    const {
+      pWidth,
+      pHeight,
+      pMargin,
+      hideTooltip,
+      tooltipData,
+      tooltipTop,
+      tooltipLeft,
+      data,
+      pCoin,
+      hour
+    } = this.props
+    const width = pWidth || this.props.parentWidth
+    const height = pHeight || this.props.parentHeight
+    const margin = pMargin || {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0
+    }
+
+    if (width < 10) return null
+
+    const xMax = width - margin.left - margin.right
+    const yMax = height - margin.top - margin.bottom
+    const xStock = d => new Date(d[0] * 1000)
+    const yStock = d => d[1]
+    const bisectDate = bisector(d => new Date(d[0] * 1000)).left
+
+    const xScale = scaleTime({
+      range: [0, xMax],
+      domain: extent(data, xStock)
+    })
+    const yScale = scaleLinear({
+      range: [yMax, 70], // 70px margin cause tooltip needs space
+      // domain: [0, max(data, yStock) + yMax / 3],
+      domain: [0, max(data, yStock)],
+      nice: true
+    })
+
+    return (
+      <div style={{height: '100%'}}>
+        <svg width={width} height={height}>
+          <rect
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            fill='#fff'
+            rx={0}
+          />
+          <defs>
+            <LinearGradient
+              id='gradient'
+              x1='0%'
+              y1='0%'
+              x2='0%'
+              y2='100%'
+            >
+              <stop
+                offset='0%'
+                stopColor={theme.palette.primary[500]}
+                stopOpacity={1}
+              />
+              <stop
+                offset='100%'
+                stopColor={theme.palette.background.default}
+                stopOpacity={0.5}
+              />
+            </LinearGradient>
+          </defs>
+          <AreaClosed
+            data={data}
+            xScale={xScale}
+            yScale={yScale}
+            x={xStock}
+            y={yStock}
+            strokeWidth={1}
+            stroke={'url(#gradient)'}
+            fill={'url(#gradient)'}
+            curve={curveMonotoneX}
+          />
+          <Bar
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            fill='transparent'
+            rx={14}
+            data={data}
+            onTouchStart={touchData => event =>
+              this.handleTooltip({
+                event,
+                touchData,
+                xStock,
+                xScale,
+                yScale,
+                bisectDate
+              })}
+            onTouchMove={touchData => event =>
+              this.handleTooltip({
+                event,
+                touchData,
+                xStock,
+                xScale,
+                yScale,
+                bisectDate
+              })}
+            onMouseMove={touchData => event =>
+              this.handleTooltip({
+                event,
+                touchData,
+                xStock,
+                xScale,
+                yScale,
+                bisectDate
+              })}
+            onMouseLeave={data => event => hideTooltip()}
+          />
+          {tooltipData && (
+            <g>
+              <Line
+                from={{ x: tooltipLeft, y: 0 }}
+                to={{ x: tooltipLeft, y: yMax }}
+                stroke={theme.palette.background.default}
+                strokeWidth={1}
+                style={{ pointerEvents: 'none' }}
+              />
+              <circle
+                cx={tooltipLeft}
+                cy={tooltipTop}
+                r={5}
+                fill={theme.palette.background.default}
+                style={{ pointerEvents: 'none' }}
+              />
+            </g>
+          )}
+        </svg>
+        {tooltipData && (
+          <div>
+            <VxTooltip
+              top={15}
+              left={(width / 2) - 150} // minus width/2
+              style={{
+                backgroundColor: 'transparent',
+                color: theme.palette.background.default,
+                fontFamily: theme.typography.fontFamily,
+                fontSize: theme.typography.display2.fontSize,
+                width: 300,
+                textAlign: 'center',
+                boxShadow: 'none'
+              }}
+            >
+              {yStock(tooltipData)}
+              <CoinIcon coin={pCoin} size={23} color={theme.palette.background.default} alt />
+            </VxTooltip>
+            <VxTooltip
+              top={55}
+              left={(width / 2) - 150} // minus width/2
+              style={{
+                backgroundColor: 'transparent',
+                color: theme.palette.text.secondary,
+                fontFamily: theme.typography.fontFamily,
+                width: 300,
+                textAlign: 'center',
+                boxShadow: 'none'
+              }}
+            >
+              {__.formatTime(new Date(tooltipData[0] * 1000), hour ? 'DD. MMM YYYY HH:mm' : 'DD. MMM YYYY')}
+            </VxTooltip>
+          </div>
+        )}
+      </div>
+    )
+  }
+}
+const AreaTooltip = withParentSize(withTooltip(Area))
+
 export {
   setBxpTrigger,
   unsetBxpTrigger,
@@ -1296,5 +1503,6 @@ export {
   InfoUpdateFailed,
   Done,
   Edit,
-  UserList
+  UserList,
+  AreaTooltip
 }
