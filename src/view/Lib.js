@@ -44,7 +44,7 @@ import { curveMonotoneX } from '@vx/curve'
 import { scaleTime, scaleLinear } from '@vx/scale'
 import { withTooltip, Tooltip as VxTooltip } from '@vx/tooltip'
 import { localPoint } from '@vx/event'
-import { extent, max, bisector } from 'd3-array'
+import { extent, max, min, bisector } from 'd3-array'
 import { withParentSize } from '@vx/responsive'
 import { LinearGradient } from '@vx/gradient'
 import {Doughnut} from 'react-chartjs-2'
@@ -1334,8 +1334,7 @@ class Area extends React.Component {
     })
     const yScale = scaleLinear({
       range: [yMax, 70], // 70px margin cause tooltip needs space
-      // domain: [0, max(data, yStock) + yMax / 3],
-      domain: [0, max(data, yStock)],
+      domain: [(min(data, yStock) - (min(data, yStock) / 100 * 10)), max(data, yStock)],
       nice: true
     })
 
@@ -1437,40 +1436,38 @@ class Area extends React.Component {
             </g>
           )}
         </svg>
-        {tooltipData && (
-          <div>
-            <VxTooltip
-              top={15}
-              left={(width / 2) - 150} // minus width/2
-              style={{
-                backgroundColor: 'transparent',
-                color: theme.palette.background.default,
-                fontFamily: theme.typography.fontFamily,
-                fontSize: theme.typography.display2.fontSize,
-                width: 300,
-                textAlign: 'center',
-                boxShadow: 'none'
-              }}
+        <div>
+          <VxTooltip
+            top={15}
+            left={(width / 2) - 150} // minus width/2
+            style={{
+              backgroundColor: 'transparent',
+              color: theme.palette.background.default,
+              fontFamily: theme.typography.fontFamily,
+              fontSize: theme.typography.display2.fontSize,
+              width: 300,
+              textAlign: 'center',
+              boxShadow: 'none'
+            }}
             >
-              {yStock(tooltipData)}
-              <CoinIcon coin={pCoin} size={23} color={theme.palette.background.default} alt />
-            </VxTooltip>
-            <VxTooltip
-              top={55}
-              left={(width / 2) - 150} // minus width/2
-              style={{
-                backgroundColor: 'transparent',
-                color: theme.palette.text.secondary,
-                fontFamily: theme.typography.fontFamily,
-                width: 300,
-                textAlign: 'center',
-                boxShadow: 'none'
-              }}
+            {yStock(tooltipData || data[data.length - 1])}
+            <CoinIcon coin={pCoin} size={23} color={theme.palette.background.default} alt />
+          </VxTooltip>
+          <VxTooltip
+            top={55}
+            left={(width / 2) - 150} // minus width/2
+            style={{
+              backgroundColor: 'transparent',
+              color: theme.palette.text.secondary,
+              fontFamily: theme.typography.fontFamily,
+              width: 300,
+              textAlign: 'center',
+              boxShadow: 'none'
+            }}
             >
-              {__.formatTime(new Date(tooltipData[0] * 1000), hour ? 'DD. MMM YYYY HH:mm' : 'DD. MMM YYYY')}
-            </VxTooltip>
-          </div>
-        )}
+            {__.formatTime(new Date((tooltipData || data[data.length - 1])[0] * 1000), hour ? 'DD. MMM YYYY HH:mm' : 'DD. MMM YYYY')}
+          </VxTooltip>
+        </div>
       </div>
     )
   }
