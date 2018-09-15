@@ -81,9 +81,13 @@ export default class Addr extends ApiBase {
     }
     if (upd.hd || cur.hd) {
       tsc.hd = upd.hd || cur.hd
-      tsc.hd.addrHshs = {
-        ext: [...tsc.hd.snd.addrHshs.ext, ...tsc.hd.rcv.addrHshs.ext],
-        chg: [...tsc.hd.snd.addrHshs.chg, ...tsc.hd.rcv.addrHshs.chg]
+      if (tsc.hd.snd && tsc.hd.rcv) { // ensure compatibility with old version
+        tsc.hd.addrHshs = {
+          ext: [...tsc.hd.snd.addrHshs.ext, ...tsc.hd.rcv.addrHshs.ext],
+          chg: [...tsc.hd.snd.addrHshs.chg, ...tsc.hd.rcv.addrHshs.chg]
+        }
+      } else {
+        tsc.hd.addrHshs = {ext: [], chg: []}
       }
     }
     if (upd.std || cur.std) tsc.std = upd.std || cur.std
@@ -131,11 +135,11 @@ export default class Addr extends ApiBase {
     upd.tscs = upd.tscs || {}
     const tscs = new Map()
     for (let tsc of (cur.tscs || [])) {
-      tsc = this._toTsc(upd.tscs[tsc.hsh], tsc)
+      tsc = this._toTsc(upd.tscs[tsc.hsh], tsc) // existing tscs
       delete upd.tscs[tsc.hsh]
       tscs.set(tsc.hsh, tsc)
     }
-    for (let tsc of Object.values(upd.tscs)) {
+    for (let tsc of Object.values(upd.tscs)) { // new tscs
       tsc._id = __.uuid()
       tsc = this._toTsc(tsc)
       tscs.set(tsc.hsh, tsc)

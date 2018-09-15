@@ -100,7 +100,9 @@ class TscView extends React.Component {
         desc: this.state.desc,
         tags: __.toTags(this.state.tagsJoin).split(' ')
       }
-      this.addr = await this.addrObj.save({tscs: [updTsc]})
+      const tscs = {}
+      tscs[updTsc.hsh] = updTsc
+      this.addr = await this.addrObj.save({tscs})
       this.setSnack('Transaction updated')
       this.setState({
         tsc: await this.addrObj.getTsc(this.tscId, this.addr),
