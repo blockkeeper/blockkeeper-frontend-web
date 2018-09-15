@@ -9,9 +9,9 @@ export default class Addr extends ApiBase {
     this._apiGet = this._apiGet.bind(this)
     this._apiSet = this._apiSet.bind(this)
     this._apiDel = this._apiDel.bind(this)
+    this._toTsc = this._toTsc.bind(this)
     this.getTsc = this.getTsc.bind(this)
     this.toAddr = this.toAddr.bind(this)
-    this.toTsc = this.toTsc.bind(this)
   }
 
   async _save (upd, addr) {
@@ -40,7 +40,7 @@ export default class Addr extends ApiBase {
     const tscs = addr.tscs || []
     let encTscs = []
     for (let tsc of tscs) encTscs.push(await this.encrypt(tsc))
-    delete addr.tscs  // pld needs separated addr and tscs
+    delete addr.tscs // pld needs separated addr and tscs
     const data = await this.encrypt(addr)
     await this.rqst({
       url: `address/${addr._id}`,
@@ -61,36 +61,53 @@ export default class Addr extends ApiBase {
     })
   }
 
-  async getTsc (tscId, addr) {
-    addr = addr || await this.load()
-    const tscs = addr.tscs.filter(tsc => tsc._id === tscId)
-    if (tscs.length !== 1) {
-      throw this.err('Transaction not found', {
-        dmsg: `Tsc ${tscId} not found in addr ${addr._id}`,
-        sts: 404,
-        addr
-      })
-    }
-    return tscs[0]
-  }
-
-  toAddr (upd, cur) {
+  _toTsc (upd, cur) {
     cur = cur || {}
     upd = upd || {}
-    const addr = {
-      _id: this._id,
-      _t: __.getTme(),
-      type: upd.type || cur.type || 'std',
+    const hsh = upd.hsh || cur.hsh
+    const tsc = {
+      _id: upd._id || cur._id || __.uuid(),
+      _t: upd._t || cur._t,
+      hsh,
       amnt: __.getAmnt(upd.amnt, cur.amnt),
-      tscCnt: upd.tscCnt || cur.tscCnt || 0,
-      coin: upd.coin || cur.coin,
-      rates: upd.rates || cur.rates || {},
-      name: upd.name || cur.name,
+      mode: upd.mode || cur.mode,
+      cfmCnt: upd.cfmCnt || cur.cfmCnt || -1,
       tags: upd.tags || cur.tags || [],
+      name: upd.name || cur.name ||
+            `${__.cfg('newTscNotice')} ${__.shortn(hsh, 5).trim()}`,
       desc: (
         upd.desc != null ? upd.desc : (cur.desc != null ? cur.desc : '')
       ).trim()
     }
+    if (upd.hd || cur.hd) {
+      tsc.hd = upd.hd || cur.hd
+      tsc.hd.addrHshs = {
+        ext: [...tsc.hd.snd.addrHshs.ext, ...tsc.hd.rcv.addrHshs.ext],
+        chg: [...tsc.hd.snd.addrHshs.chg, ...tsc.hd.rcv.addrHshs.chg]
+      }
+    }
+    if (upd.std || cur.std) tsc.std = upd.std || cur.std
+    return tsc
+  }
+
+  toAddr (upd, cur) {
+    upd = upd || {}
+    cur = cur || {}
+    const addr = {
+      _id: this._id,
+      _t: __.getTme(),
+      amnt: __.getAmnt(upd.amnt, cur.amnt),
+      tscCnt: upd.tscCnt || cur.tscCnt || 0,
+      coin: upd.coin || cur.coin,
+      rates: upd.rates || cur.rates || {},
+      tags: upd.tags || cur.tags || [],
+      name: upd.name || cur.name,
+      desc: (
+        upd.desc != null ? upd.desc : (cur.desc != null ? cur.desc : '')
+      ).trim()
+    }
+    if (upd.hd || cur.hd) addr.hd = upd.hd || cur.hd
+    if (upd.std || cur.std) addr.std = upd.std || cur.std
     const coinObj = this.coinObjs[addr.coin]
     const bxp = upd.bxp || cur.bxp
     if (bxp) addr.bxp = bxp
@@ -107,54 +124,36 @@ export default class Addr extends ApiBase {
       if (!cur.hd) cur.hd = {}
       if (!upd.hd) upd.hd = {}
       addr.hd = {
-        isMstr: upd.hd.isMstr != null ? upd.hd.isMstr : cur.hd.isMstr,
-        addrType: upd.hd.addrType || cur.hd.addrType,
         basePath: upd.hd.basePath || cur.hd.basePath,
         baseAbsPath: upd.hd.baseAbsPath || cur.hd.baseAbsPath
       }
     }
-    upd.tscs = upd.tscs || []
-    const updTscs = new Map(
-      upd.tscs.map(upd => [coinObj.toTscHsh(upd.hsh), upd])
-    )
+    upd.tscs = upd.tscs || {}
     const tscs = new Map()
     for (let tsc of (cur.tscs || [])) {
-      tsc = this.toTsc(addr.coin, updTscs.get(tsc.hsh), tsc)
-      updTscs.delete(tsc.hsh)
+      tsc = this._toTsc(upd.tscs[tsc.hsh], tsc)
+      delete upd.tscs[tsc.hsh]
       tscs.set(tsc.hsh, tsc)
     }
-    for (let tsc of updTscs.values()) {
+    for (let tsc of Object.values(upd.tscs)) {
       tsc._id = __.uuid()
-      tsc = this.toTsc(addr.coin, tsc)
+      tsc = this._toTsc(tsc)
       tscs.set(tsc.hsh, tsc)
     }
     addr.tscs = __.struc(tscs, {byTme: true, max: __.cfg('maxTscCnt')})
     return addr
   }
 
-  toTsc (coin, upd, cur) {
-    cur = cur || {}
-    upd = upd || {}
-    const hsh = upd.hsh || cur.hsh
-    const tsc = {
-      _id: upd._id || cur._id || __.uuid(),
-      _t: upd._t || cur._t,
-      hsh,
-      amnt: __.getAmnt(upd.amnt, cur.amnt),
-      cfmCnt: upd.cfmCnt || cur.cfmCnt || -1,
-      mode: upd.mode || cur.mode,
-      tags: upd.tags || cur.tags || [],
-      name: upd.name || cur.name ||
-            `${__.cfg('newTscNotice')} ${__.shortn(hsh, 5).trim()}`,
-      desc: (
-        upd.desc != null ? upd.desc : (cur.desc != null ? cur.desc : '')
-      ).trim()
+  async getTsc (tscId, addr) {
+    addr = addr || await this.load()
+    const tscs = addr.tscs.filter(tsc => tsc._id === tscId)
+    if (tscs.length !== 1) {
+      throw this.err('Transaction not found', {
+        dmsg: `Tsc ${tscId} not found in addr ${addr._id}`,
+        sts: 404,
+        addr
+      })
     }
-    if (upd.hd || cur.hd) {
-      cur.hd = cur.hd || {}
-      upd.hd = upd.hd || {}
-      tsc.hd = {addrHshs: upd.hd.addrHshs || cur.hd.addrHshs}
-    }
-    return tsc
+    return tscs[0]
   }
 }

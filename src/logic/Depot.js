@@ -109,7 +109,6 @@ export default class Depot extends ApiBase {
     try {
       this.cx.rate.clear()
       this.cx.history.clear()
-
       await Promise.all([
         this.cx.rate.load(),
         this.cx.history.load()
@@ -138,20 +137,19 @@ export default class Depot extends ApiBase {
         try {
           if (addrType === 'hd') {
             let bxp = this.coinObjs[coin].bxp.bckinfo
-            let hdAddrs = await bxp.processHdAddrs(addrsByCoin[coin])
-            updAddrs = hdAddrs.upd
+            updAddrs = await bxp.processHdAddrs(addrsByCoin[coin])
           } else if (addrType === 'std') {
             let bxp = this.coinObjs[coin].bxp.bckcyph
-            updAddrs = await bxp.apiGetAddrs(addrsByCoin[coin], sleepSec)
+            updAddrs = await bxp.processStdAddrs(addrsByCoin[coin], sleepSec)
             // optional sleepSec parameter for address batching
             sleepSec = __.cfg('bxp').bckcyph.sleepSec
           } // else: "man" address: ignore
-          for (let updAddr of Object.values(updAddrs)) {
+          for (let updAddr of updAddrs) {
             let addrObj = new Addr(this.cx, updAddr._id)
             addrs.push(addrObj.toAddr(updAddr, curAddrs[updAddr._id]))
           }
         } catch (e) {
-          this.warn(`Bxp failed for ${addrType} addrs: ${e.message}`)
+          this.warn(`Bxp failed for ${addrType} addrs: ${e.message} -> `, e)
           for (let addr of Object.values(addrsByCoin[coin])) {
             this.addrUpdErrIds.add(addr._id)
           }
@@ -164,11 +162,9 @@ export default class Depot extends ApiBase {
   async hstry () { // hstry = query coin rate + history
     this.setBxpSts('run')
     this.info('Hstry started')
-
     try {
       this.cx.rate.clear()
       this.cx.history.clear()
-
       await Promise.all([
         this.cx.rate.load(),
         this.cx.history.load()
@@ -176,7 +172,6 @@ export default class Depot extends ApiBase {
     } catch (e) {
       this.warn(e)
     }
-
     await this.finishBxp([])
   }
 

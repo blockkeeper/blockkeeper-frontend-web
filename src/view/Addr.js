@@ -207,7 +207,9 @@ class AddrView extends React.Component {
                 iconLeft={<ArrowBack />}
                 onClickLeft={this.goBack}
                 action={<Edit />}
-                onClick={() => this.setState({edit: !this.state.edit, show: true})}
+                onClick={
+                  () => this.setState({edit: !this.state.edit, show: true})
+                }
                 noUser
               />
             }
@@ -466,29 +468,39 @@ class AddrView extends React.Component {
                               </TableCell>
                             </TableRow>}
                           {(
-                            this.state.addr.hsh &&
-                            this.state.addr.rcvAmnt != null
-                          ) &&
-                            <TableRow>
-                              <TableCell width={'10%'} padding='none'>
-                                Total Received
-                              </TableCell>
-                              <TableCell numeric padding='none'>
-                                {this.state.addr.rcvAmnt} {this.state.coin}
-                              </TableCell>
-                            </TableRow>}
-                          {(
-                            this.state.addr.hsh &&
-                            this.state.addr.sndAmnt != null
+                            (this.state.addr.std || {snd: {}})
+                              .snd.amnt != null
                           ) &&
                             <TableRow>
                               <TableCell width={'10%'} padding='none'>
                                 Total Send
                               </TableCell>
                               <TableCell numeric padding='none'>
-                                {this.state.addr.sndAmnt} {this.state.coin}
+                                {__.formatNumber(
+                                  this.state.addr.std.snd.amnt,
+                                  this.state.coin,
+                                  this.user.locale
+                                )} {this.state.coin}
                               </TableCell>
-                            </TableRow>}
+                            </TableRow>
+                          }
+                          {(
+                            (this.state.addr.std || {rcv: {}})
+                              .rcv.amnt != null
+                          ) &&
+                            <TableRow>
+                              <TableCell width={'10%'} padding='none'>
+                                Total Received
+                              </TableCell>
+                              <TableCell numeric padding='none'>
+                                {__.formatNumber(
+                                  this.state.addr.std.rcv.amnt,
+                                  this.state.coin,
+                                  this.user.locale
+                                )} {this.state.coin}
+                              </TableCell>
+                            </TableRow>
+                          }
                         </TableBody>
                       </Table>
                     </div>

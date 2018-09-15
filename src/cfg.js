@@ -5,10 +5,6 @@ const d = {
 }
 
 Object.assign(d, {
-  // ------ TODO: remove
-  // order matters: first has precedence
-  xtcHdAddrTypes: ['lgcy', 'sgwt'],
-  //
   apiUrl: 'https://api.blockkeeper.io/v1',
   homeUrl: 'https://blockkeeper.io',
   lstMax: 50,
@@ -104,6 +100,7 @@ Object.assign(d, {
       }
     },
     ETH: {
+      // 2018-09: blockcypher does not have an eth web-view
       dflt: 'ethscan',
       addr: {
         ethscan: hsh => `https://etherscan.io/address/${hsh}`
@@ -148,7 +145,7 @@ Object.assign(d, {
       // -------------------- multi-address endpoint --------------------
       url: 'https://blockchain.info/de/multiaddr',
       maxAddrCnt: d.isDev ? 30 : 200,
-      maxTscCnt: d.isDev ? 10 : 100 // return tscs for _all_ requested addrs
+      maxTscCnt: d.isDev ? 10 : 100 // return tscs of _all_ requested addrs
       // ----------------------------------------------------------------
     }
   }

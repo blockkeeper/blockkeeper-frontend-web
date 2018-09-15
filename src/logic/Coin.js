@@ -1,10 +1,10 @@
 import {
-  HDNode as bjsHDNode,
-  script as bjsScript,
-  crypto as bjsCrypto,
-  address as bjsAddress,
-  networks as bjsNetworks
+  bip32 as bjsBip32,
+  address as bjsAddr,
+  payments as bjsPay
 } from 'bitcoinjs-lib'
+// coininfo: https://github.com/bitcoinjs/bitcoinjs-lib/issues/1089
+import * as coininfo from 'coininfo'
 import Web3Utils from 'web3-utils'
 import {BckcyphBxp, BckinfoBxp} from './Bxp'
 import __ from '../util'
@@ -17,16 +17,30 @@ class Base {
 
 class Coin extends Base {
   constructor (coin, pa) {
-    super(coin, pa)
+    super(`coin_${coin}`, pa)
     this.coin = coin
-    this.toAddrHsh = hsh => hsh.trim()
-    this.toTscHsh = hsh => hsh.trim()
+    this.conv = this.conv.bind(this)
+    this.isHdAddr = this.isHdAddr.bind(this)
+    this.toAddrHsh = this.toAddrHsh.bind(this)
+    this.toTscHsh = this.toTscHsh.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
-    this.isHdAddr = hsh => false
-    this.conv = val => val
-    this.bxp = {
-      bckcyph: new BckcyphBxp(this)
-    }
+    this.bxp = {bckcyph: new BckcyphBxp(this)}
+  }
+
+  conv (val) {
+    return val
+  }
+
+  isHdAddr (hsh) {
+    return false
+  }
+
+  toAddrHsh (hsh) {
+    return hsh.trim()
+  }
+
+  toTscHsh (hsh) {
+    return hsh.trim()
   }
 
   vldAddrHsh (hsh) {
@@ -41,17 +55,30 @@ class Coin extends Base {
 class XtcCoin extends Coin {
   constructor (coin, pa) {
     super(coin, pa)
-    this.conv = val => val / 1e8   // satoshi to btc/ltc/...
-    this.isHdAddr = hsh => hsh.startsWith('xpub')
+    this.conv = this.conv.bind(this)
+    this.getAddrHsh = this.getAddrHsh.bind(this)
+    this.getNode = this.getNode.bind(this)
+    this.getNodeDepth = this.getNodeDepth.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
-    this.toSegWitAddr = this.toSegWitAddr.bind(this)
-    this.walkHdPath = this.walkHdPath.bind(this)
-    this.toAbsHdPathByNode = this.toAbsHdPathByNode.bind(this)
-    this.toAbsHdPathByHsh = this.toAbsHdPathByHsh.bind(this)
-    this.getHdDrvAddrs = this.getHdDrvAddrs.bind(this)
-    Object.assign(this.bxp, {
-      bckinfo: new BckinfoBxp(this)
-    })
+    this.bxp.bckinfo = new BckinfoBxp(this)
+  }
+
+  conv (val) {
+    return val / 1e8 // satoshi to btc/ltc/dash/...
+  }
+
+  getAddrHsh (node) { // lgcy
+    return this.toAddrHsh(bjsPay.p2pkh({pubkey: node.publicKey}).address)
+  }
+
+  getNode ({rootNode, path, hsh}) {
+    return rootNode && path
+      ? rootNode.derivePath(path)
+      : bjsBip32.fromBase58(hsh, this.net)
+  }
+
+  getNodeDepth ({rootNode, hsh}) {
+    return (rootNode || this.getNode({hsh})).depth
   }
 
   vldAddrHsh (hsh) {
@@ -63,116 +90,58 @@ class XtcCoin extends Coin {
       return 'xpriv is not supported: Please enter xpub address'
     } else if (hshLo.startsWith('xpub')) {
       try {
-        bjsHDNode.fromBase58(hsh, this.net)
+        this.getNode({hsh})
       } catch (e) {
         return 'Invalid HD public (xpub) address'
       }
     } else {
       try {
-        bjsAddress.toOutputScript(hsh, this.net)
+        bjsAddr.toOutputScript(hsh, this.net)
       } catch (e) {
         return 'Invalid address'
       }
     }
-  }
-
-  toSegWitAddr (node) {
-    // https://github.com/bitcoinjs/bitcoinjs-lib/pull/840/files
-    const keyHsh = bjsCrypto.hash160(node.getPublicKeyBuffer())
-    const scriptSig = bjsScript.witnessPubKeyHash.output.encode(keyHsh)
-    const addrBytes = bjsCrypto.hash160(scriptSig)
-    const outScript = bjsScript.scriptHash.output.encode(addrBytes)
-    const addr = bjsAddress.fromOutputScript(outScript)
-    return addr
-  }
-
-  walkHdPath (ilk, path) {
-    // ilk = 'ixAcc' or 'ix' or 'acc' or 'chg'
-    const MAX = 0x80000000  // 32 bit, non hardened
-    let [ix, ...rest] = path.split('/').reverse()
-    if (ilk === 'acc') {
-      // ix = index, rest[0] = change, rest[1] = account
-      if (rest[1] == null || rest[1] === 'm') return
-      let acc = __.toInt(rest[1]) + 1
-      if (acc >= MAX) return
-      rest[1] = acc
-      return [0].concat(rest).reverse().join('/')
-    }
-    if (ilk === 'chg') {
-      // ix = index, rest[0] = change
-      if (rest[0] == null || rest[0] === 'm') return
-      let chg = __.toInt(rest[0]) + 1
-      if (chg >= MAX) return
-      rest[0] = chg
-      return [0].concat(rest).reverse().join('/')
-    }
-    ix = __.toInt(ix) + 1
-    if (ix >= MAX) {
-      if (ilk === 'ixAcc') return this.walkHdPath('acc', path)
-      return   // ix
-    }
-    return [ix].concat(rest).reverse().join('/')
-  }
-
-  toAbsHdPathByNode (rootNode, path) {
-    if (path.startsWith('m')) return path
-    path = path.split('/')
-    let absPath = ['m']
-    for (let cnt = 0; cnt < rootNode.depth; cnt++) absPath.push('x')
-    return absPath.concat(path).join('/')
-  }
-
-  toAbsHdPathByHsh (hsh, path) {
-    if (path.startsWith('m')) return path
-    const rootNode = bjsHDNode.fromBase58(hsh, this.net)
-    return this.toAbsHdPathByNode(rootNode, path)
-  }
-
-  getHdDrvAddrs (hdAddr, startPath, {addrType, gap} = {}) {
-    addrType = addrType || hdAddr.hd.addrType
-    const drvAddrs = {}
-    const rootNode = bjsHDNode.fromBase58(hdAddr.hsh, this.net)
-    let path = startPath
-    if (gap == null) gap = __.cfg('hdIxGap')
-    let ixTries = 0
-    while (path && ixTries < gap) {
-      let node
-      try {
-        node = rootNode.derivePath(path)
-      } catch (e) {
-        throw this.err(`Deriving HD path '${path}' failed`, {e})
-      }
-      let drvAddr = {
-        hdAddr,
-        hsh: addrType === 'sgwt'
-          ? this.toAddrHsh(this.toSegWitAddr(node))
-          : this.toAddrHsh(node.getAddress()),
-        isMstr: !rootNode.parentFingerprint,
-        addrType,
-        startPath,
-        path
-      }
-      drvAddrs[drvAddr.hsh] = drvAddr
-      path = this.walkHdPath('ix', path)
-      ixTries += 1
-    }
-    return drvAddrs
   }
 }
 
 class Btc extends XtcCoin {
   constructor (pa) {
     super('BTC', pa)
-    this.net = bjsNetworks.bitcoin
+    this.net = coininfo.bitcoin.main.toBitcoinJS()
+    this.getAddrHsh = this.getAddrHsh.bind(this)
+    this.isHdAddr = this.isHdAddr.bind(this)
+  }
+
+  getAddrHsh (node, typ) {
+    return typ === 'sgwt'
+      ? this.toAddrHsh(
+        bjsPay.p2sh({redeem: bjsPay.p2wpkh({pubkey: node.publicKey})}).address
+      ) : super.getAddrHsh(node) // lgcy
+  }
+
+  isHdAddr (hsh) {
+    return hsh.startsWith('xpub')
   }
 }
 
-class Ltc extends Coin {
+class Ltc extends XtcCoin {
   constructor (pa) {
     super('LTC', pa)
-    this.net = bjsNetworks.litecoin
-    this.conv = val => val / 1e8   // satoshi to ltc
+    this.net = coininfo.litecoin.main.toBitcoinJS()
+    this.getAddrHsh = this.getAddrHsh.bind(this)
+    this.isHdAddr = this.isHdAddr.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
+  }
+
+  getAddrHsh (node, typ) {
+    return typ === 'sgwt'
+      ? this.toAddrHsh(
+        bjsPay.p2sh({redeem: bjsPay.p2wpkh({pubkey: node.publicKey})}).address
+      ) : super.getAddrHsh(node) // lgcy
+  }
+
+  isHdAddr (hsh) {
+    return false // TODO
   }
 
   vldAddrHsh (hsh) {
@@ -191,14 +160,14 @@ class Ltc extends Coin {
              '(but will be in the near future)'
     } else {
       try {
-        bjsAddress.toOutputScript(hsh, this.net)
+        bjsAddr.toOutputScript(hsh, this.net)
       } catch (e) {
         if (!hsh.startsWith('3')) return 'Invalid address'
         try {
           // fix me: workaround to prevent 'has no matching script' error:
           //   validate against bitcoin instead of litecoin network
           // https://github.com/litecoin-project/litecoin/issues/312
-          bjsAddress.toOutputScript(hsh, bjsNetworks.bitcoin)
+          bjsAddr.toOutputScript(hsh, this.net)
         } catch (e) {
           return 'Invalid address'
         }
@@ -207,24 +176,16 @@ class Ltc extends Coin {
   }
 }
 
-class Dash extends Coin {
+class Dash extends XtcCoin {
   constructor (pa) {
     super('DASH', pa)
-    this.conv = val => val / 1e8
-    // https://github.com/UdjinM6/bitcoinjs-lib-dash/blob/master/src/networks.js
-    // https://github.com/bitcoinjs/bitcoinjs-lib/pull/518
-    this.net = {
-      messagePrefix: '\x19DarkCoin Signed Message:\n',
-      bip32: {
-        public: 0x02fe52f8,
-        private: 0x02fe52cc
-      },
-      pubKeyHash: 0x4c,
-      scriptHash: 0x10,
-      wif: 0xcc,
-      dustThreshold: 5460
-    }
+    this.net = coininfo.dash.main.toBitcoinJS()
+    this.isHdAddr = this.isHdAddr.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
+  }
+
+  isHdAddr (hsh) {
+    return false // TODO
   }
 
   vldAddrHsh (hsh) {
@@ -241,13 +202,13 @@ class Dash extends Coin {
       return 'xpub / drkv addresses are not yet supported'
     } else {
       try {
-        bjsAddress.toOutputScript(hsh, this.net)
+        bjsAddr.toOutputScript(hsh, this.net)
       } catch (e) {
         if (!hsh.startsWith('3')) return 'Invalid address'
         try {
           // fix me: workaround to prevent 'has no matching script' error:
           //   validate against bitcoin instead of dash network
-          bjsAddress.toOutputScript(hsh, bjsNetworks.bitcoin)
+          bjsAddr.toOutputScript(hsh, this.net)
         } catch (e) {
           return 'Invalid address'
         }
@@ -259,19 +220,31 @@ class Dash extends Coin {
 class Eth extends Coin {
   constructor (pa) {
     super('ETH', pa)
-    this.apiGetAddrs = this.apiGetAddrs.bind(this)
-    this.conv = val => val / 1e18   // wei to eth
-    this.toAddrHsh = hsh => {
-      hsh = hsh.toLowerCase().trim()
-      return Web3Utils.toChecksumAddress(
-        hsh.startsWith('0x') ? hsh : `0x${hsh}`
-      )
-    }
-    this.toTscHsh = hsh => {
-      hsh = hsh.toLowerCase().trim()
-      return hsh.startsWith('0x') ? hsh : `0x${hsh}`
-    }
+    this.conv = this.conv.bind(this)
+    this.isHdAddr = this.isHdAddr.bind(this)
+    this.toAddrHsh = this.toAddrHsh.bind(this)
+    this.toTscHsh = this.toTscHsh.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
+  }
+
+  conv (val) {
+    return val / 1e18 // wei to eth
+  }
+
+  isHdAddr (hsh) {
+    return false // TODO
+  }
+
+  toAddrHsh (hsh) {
+    hsh = hsh.toLowerCase().trim()
+    return Web3Utils.toChecksumAddress(
+      hsh.startsWith('0x') ? hsh : `0x${hsh}`
+    )
+  }
+
+  toTscHsh (hsh) {
+    hsh = hsh.toLowerCase().trim()
+    return hsh.startsWith('0x') ? hsh : `0x${hsh}`
   }
 
   vldAddrHsh (hsh) {
@@ -289,14 +262,13 @@ class Eth extends Coin {
     return ''
   }
 
-  // ---------- workaround: remove me -----------------------------------------
-  // see comment in Bxp.js -> BckcyphBxp.apiGetAddrs()
-  async apiGetAddrs (updStdAddrs) {
-    this.debug('ETH-workaround: Fetching balances of std-addrs')
-    for (let chunk of __.toChunks(Object.keys(updStdAddrs), 20)) {
+  /*
+  // deprecated: Bxp.processStdAddrs() uses bckcyph
+  async apiGetAddrs (updAddrs) {
+    for (let chunk of __.toChunks(Object.keys(updAddrs), 20)) {
       this.debug(`Gentle polling: Sleeping 1s`)
       await __.sleep(1000)
-      this.debug(`Requesting this std-addrs: ${chunk.join(',')}`)
+      this.debug(`Requesting this std addrs: ${chunk.join(',')}`)
       let pld = await __.rqst({
         url: 'https://api.etherscan.io/api',
         params: {
@@ -308,12 +280,11 @@ class Eth extends Coin {
       if (pld.message !== 'OK') continue
       for (let addr of (pld.result || [])) {
         let hsh = this.toAddrHsh(addr.account)
-        if (updStdAddrs[hsh]) updStdAddrs[hsh].amnt = this.conv(addr.balance)
+        if (updAddrs[hsh]) updAddrs[hsh].amnt = this.conv(addr.balance)
       }
     }
-    this.debug('ETH-workaround: Fetching std-addrs finished:', updStdAddrs)
   }
-  // --------------------------------------------------------------------------
+  */
 }
 
 export {
