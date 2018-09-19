@@ -146,7 +146,16 @@ module.exports = {
           // Process JS with Babel.
           {
             test: /\.(js|jsx|mjs)$/,
-            include: paths.appSrc,
+            include: [
+              paths.appSrc,
+              ...[
+                'bitcoinjs-lib',
+                'tiny-secp256k1/ecurve',
+                'base64url/dist/base64url',
+                'base64url/dist/pad-string',
+                'bip32'
+              ].map(moduleName => `${paths.appNodeModules}/${moduleName}`)
+            ],
             loader: require.resolve('babel-loader'),
             options: {
               compact: true
