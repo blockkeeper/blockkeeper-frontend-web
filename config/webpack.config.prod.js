@@ -148,7 +148,7 @@ module.exports = {
             test: /\.(js|jsx|mjs)$/,
             include: [
               paths.appSrc,
-              ...[
+              ...[ // TODO: https://github.com/bitcoinjs/bitcoinjs-lib/issues/1159
                 'bitcoinjs-lib',
                 'tiny-secp256k1/ecurve',
                 'base64url/dist/base64url',
