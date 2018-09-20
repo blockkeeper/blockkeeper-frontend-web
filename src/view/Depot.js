@@ -111,7 +111,7 @@ class DepotView extends React.Component {
 
     for (let coin in doughnutData) {
       doughnutData[coin].share = doughnutData[coin].amntByCoinRate / blc.get(coin0) * 100
-      doughnutData[coin].label = `${doughnutData[coin].label} (${Math.round(doughnutData[coin].share)}%)`
+      doughnutData[coin].label = `${doughnutData[coin].label} (${Math.round(doughnutData[coin].share * 100) / 100}%)`
     }
 
     this.setState({
