@@ -261,6 +261,13 @@ class DoughnutOrig extends React.Component {
                 fill={'#fff'}
                 fontFamily={theme.typography.fontFamily}
               >
+                <tspan
+                  fill={arc.data.color}
+                  fontSize={theme.typography.caption.fontSize * 1.3}
+                >
+                  &#9679;
+                </tspan>
+                &nbsp;
                 {arc.data.label}
               </text>
             }}
