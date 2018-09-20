@@ -210,8 +210,9 @@ const depotHoldings = {
 const depotDoughnut = {
   position: 'relative',
   margin: 'auto',
-  height: styleGuide.depotStepperHeight, // cant use minHeight cause of chartjs bug
   width: '100%',
+  height: styleGuide.depotStepperHeight,
+  overflow: 'hidden',
   [theme.breakpoints.only('sm')]: {
     width: '50%'
   },
