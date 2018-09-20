@@ -1,5 +1,5 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import MenuItem from '@material-ui/core/MenuItem'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
@@ -25,11 +25,11 @@ import getSymbolFromCurrency from 'currency-symbol-map'
 import Snackbar from '@material-ui/core/Snackbar'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
-import {UserAgentProvider, UserAgent} from '@quentin-sommer/react-useragent'
+import { UserAgentProvider, UserAgent } from '@quentin-sommer/react-useragent'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import {Add, Close, Autorenew, AccountCircle, InfoOutline,
+import { Add, Close, Autorenew, AccountCircle, InfoOutline,
   KeyboardArrowUp, Error, Feedback, BugReport, Email, ExitToApp,
-  DeleteForever} from '@material-ui/icons'
+  DeleteForever } from '@material-ui/icons'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -39,7 +39,8 @@ import MobileStepper from '@material-ui/core/MobileStepper'
 import SwipeableViews from 'react-swipeable-views'
 import TransitiveNumber from 'react-transitive-number'
 import FormHelperText from '@material-ui/core/FormHelperText'
-import { AreaClosed, Line, Bar } from '@vx/shape'
+import { AreaClosed, Line, Bar, Pie } from '@vx/shape'
+import { Group } from '@vx/group'
 import { curveMonotoneX } from '@vx/curve'
 import { scaleTime, scaleLinear } from '@vx/scale'
 import { withTooltip, Tooltip as VxTooltip } from '@vx/tooltip'
@@ -47,8 +48,7 @@ import { localPoint } from '@vx/event'
 import { extent, max, min, bisector } from 'd3-array'
 import { withParentSize } from '@vx/responsive'
 import { LinearGradient } from '@vx/gradient'
-import {Doughnut} from 'react-chartjs-2'
-import {theme, floatBtnStyle, CryptoColors, gridWrap} from './Style'
+import { theme, floatBtnStyle, CryptoColors, gridWrap } from './Style'
 import __ from '../util'
 
 const setBxpTrigger = view => {
@@ -59,7 +59,7 @@ const setBxpTrigger = view => {
   }, 1000)
   view.cx.tmp.bxpSts = (sts) => {
     view.info(`View's bxp status set to "${sts}"`)
-    view.setState({bxpSts: sts})
+    view.setState({ bxpSts: sts })
   }
 }
 
@@ -84,12 +84,12 @@ const TopBar = ({
     position='fixed'
     color={color || 'default'}
     elevation={0}
-    style={{zIndex: 1200}}
+    style={{ zIndex: 1200 }}
   >
-    <div style={{...gridWrap, width: '100%'}}>
-      <Toolbar style={{minHeight: '50px'}}>
-        <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
-          <div style={{marginRight: 'auto'}}>
+    <div style={{ ...gridWrap, width: '100%' }}>
+      <Toolbar style={{ minHeight: '50px' }}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ marginRight: 'auto' }}>
             {modeCancel &&
             <Typography
               variant='headline'
@@ -139,8 +139,8 @@ const TopBar = ({
             {midTitle || ''}
           </Typography>
         </div>
-        <div style={{flex: 1, display: 'flex', justifyContent: 'center'}}>
-          <div style={{marginLeft: 'auto'}}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ marginLeft: 'auto' }}>
             {action &&
             <Typography
               variant='headline'
@@ -155,7 +155,7 @@ const TopBar = ({
               {action}
             </Typography>}
             {!noUser &&
-            <Link to={'/user/edit'} style={{color: 'white'}}>
+            <Link to={'/user/edit'} style={{ color: 'white' }}>
               <IconButton
                 aria-label='Menu'
                 color='inherit'
@@ -172,8 +172,8 @@ const TopBar = ({
     </div>
   </AppBar>
 
-const SubBar = ({tabs, ix, onClick}) =>
-  <AppBar position='static' style={{position: 'relative', backgroundColor: 'white'}}>
+const SubBar = ({ tabs, ix, onClick }) =>
+  <AppBar position='static' style={{ position: 'relative', backgroundColor: 'white' }}>
     <Tabs
       centered
       value={ix}
@@ -229,32 +229,62 @@ const DepotHoldings = ({
     </Typography>
   </div>
 
+class DoughnutOrig extends React.Component {
+  render () {
+    const {
+      pWidth,
+      pHeight,
+      data,
+      radius
+    } = this.props
+    const width = pWidth || this.props.parentWidth
+    const height = pHeight || this.props.parentHeight
+
+    if (width < 10) return null
+
+    return (
+      <svg width={width} height={height}>
+        <Group top={height / 2} left={width / 3}>
+          <Pie
+            data={data}
+            pieValue={d => d.amnt}
+            outerRadius={radius}
+            innerRadius={radius - 25}
+            fill={d => d.data.color}
+            centroid={(centroid, arc) => {
+              return <text
+                textAnchor='left'
+                x={width / 4}
+                y={(arc.index * 20) - 30}
+                fontSize={theme.typography.caption.fontSize}
+                fontWeight={'bold'}
+                fill={'#fff'}
+                fontFamily={theme.typography.fontFamily}
+              >
+                {arc.data.label}
+              </text>
+            }}
+          />
+        </Group>
+      </svg>
+    )
+  }
+}
+const Doughnut = withParentSize(DoughnutOrig)
+
 const DepotDoughnut = ({
   doughnutClassName,
-  doughnutData
+  doughnutData,
+  letters,
+  width,
+  height,
+  radius
 }) =>
   <div key='depot-doughnut' className={doughnutClassName}>
     <Doughnut
+      radius={68}
       data={doughnutData}
-      options={{
-        maintainAspectRatio: false,
-        cutoutPercentage: theme.spacing.unit * 10,
-        tooltips: {
-          enabled: false // displayColors: false
-        },
-        legend: {
-          position: 'right',
-          onClick: null,
-          labels: {
-            usePointStyle: true,
-            fontSize: theme.typography.caption.fontSize,
-            fontStyle: 'bold',
-            fontColor: '#fff',
-            fontFamily: theme.typography.fontFamily,
-            padding: theme.spacing.unit * 2
-          }
-        }
-      }} />
+    />
   </div>
 
 const Jumbo = ({
@@ -271,7 +301,7 @@ const Jumbo = ({
   doughnutData
 }) =>
   <div>
-    {doughnutData.labels.length !== 0 ?
+    {doughnutData.length !== 0 ?
       <div>
         <SwipeableViews
           axis='x'
@@ -312,10 +342,10 @@ const Jumbo = ({
     }
   </div>
 
-const ToTopBtn = ({className}) =>
+const ToTopBtn = ({ className }) =>
   <ScrollToTop
     showUnder={200}
-    style={{right: '50%', bottom: theme.spacing.unit * 2}}
+    style={{ right: '50%', bottom: theme.spacing.unit * 2 }}
   >
     <Button
       variant='fab'
@@ -329,7 +359,7 @@ const ToTopBtn = ({className}) =>
     </Button>
   </ScrollToTop>
 
-const FloatBtn = ({onClick, key, actnBtnClrClassName}) =>
+const FloatBtn = ({ onClick, key, actnBtnClrClassName }) =>
   <Button
     variant='fab'
     aria-label='add'
@@ -337,12 +367,12 @@ const FloatBtn = ({onClick, key, actnBtnClrClassName}) =>
     style={floatBtnStyle}
     onClick={onClick}
     key={key || __.uuid()}
-    classes={{raisedPrimary: actnBtnClrClassName}}
+    classes={{ raisedPrimary: actnBtnClrClassName }}
   >
     <Add />
   </Button>
 
-const BxpFloatBtn = ({onClick, bxpSts, second}) => {
+const BxpFloatBtn = ({ onClick, bxpSts, second }) => {
   let icon, lbl, dsbld
   if (bxpSts === 'blocked') {
     /* lbl = 'Blocked'
@@ -351,7 +381,7 @@ const BxpFloatBtn = ({onClick, bxpSts, second}) => {
     return null
   } else if (bxpSts === 'run') {
     lbl = 'Updating'
-    icon = <Autorenew style={{animation: 'spin 1s linear infinite'}} />
+    icon = <Autorenew style={{ animation: 'spin 1s linear infinite' }} />
     dsbld = true
   } else { // ready
     lbl = 'Update'

@@ -5,14 +5,15 @@ import compose from 'recompose/compose'
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import {withStyles} from '@material-ui/core/styles'
-import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
-        FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
-        DepotEmpty, ToTopBtn, PortfolioTab} from './Lib'
-import {theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
-        tscitem, addr, amnt, tscIcon, tscAmnt, coinIcon, prtfAmnt, display1, body2, display3,
-        actnBtnClr, topBtnClass, depotEmpty, cnctBtn, gridSpacer,
-        gridGutter, topBarSpacer, depotHoldings, depotDoughnut, CryptoColors, noTxtDeco} from './Style'
+import { withStyles } from '@material-ui/core/styles'
+import { setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
+  FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
+  DepotEmpty, ToTopBtn, PortfolioTab } from './Lib'
+import { theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
+  tscitem, addr, amnt, tscIcon, tscAmnt, coinIcon, prtfAmnt, display1,
+  body2, display3, actnBtnClr, topBtnClass, depotEmpty, cnctBtn,
+  gridSpacer, gridGutter, topBarSpacer, depotHoldings, depotDoughnut,
+  CryptoColors, noTxtDeco } from './Style'
 import __ from '../util'
 
 class DepotView extends React.Component {
@@ -62,13 +63,13 @@ class DepotView extends React.Component {
         emsg = `A fatal error occured: ${emsg}. ` +
                'Environment cleared: Please login again'
       }
-      this.setState({err: emsg})
+      this.setState({ err: emsg })
       throw e
     }
     this.user = user
     this.history = history
 
-    const {coin0, coin1} = await this.cx.user.getCoins(this.state.coin, user)
+    const { coin0, coin1 } = await this.cx.user.getCoins(this.state.coin, user)
     setBxpTrigger(this)
     const blc = this.cx.depot.getAddrBlc(addrs)
     const addrTscs = []
@@ -130,7 +131,7 @@ class DepotView extends React.Component {
 
   async tab (evt, tabIx) {
     await this.load()
-    this.setState({tabIx})
+    this.setState({ tabIx })
     this.cx.tmp.depotTabIx = tabIx
   }
 
@@ -141,8 +142,8 @@ class DepotView extends React.Component {
           onClose={this.load}
           actions={[{
             lbl: 'Go to login',
-            onClick: () => this.props.history.push('/login')}
-          ]}
+            onClick: () => this.props.history.push('/login')
+          }]}
         >
           {this.state.err}
         </Modal>
@@ -153,7 +154,7 @@ class DepotView extends React.Component {
           {this.state.snack &&
             <Snack
               msg={this.state.snack}
-              onClose={() => this.setState({snack: null})}
+              onClose={() => this.setState({ snack: null })}
             />}
           <div className={this.props.classes.themeBgStyle}>
             <TopBar title />
@@ -171,17 +172,14 @@ class DepotView extends React.Component {
                 handleStepChange={(activeStep) => {
                   this.setState({ activeStep })
                 }}
-                doughnutData={{
-                  labels: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].label).reverse(),
-                  datasets: [{
-                    label: 'Dataset #1',
-                    backgroundColor: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].color).reverse(),
-                    borderColor: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].color).reverse(),
-                    borderWidth: 0,
-                    hoverBackgroundColor: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].color).reverse(),
-                    data: Object.keys(this.state.doughnutData).map(key => this.state.doughnutData[key].amntByCoinRate).reverse()
-                  }]}}
-               />
+                doughnutData={Object.keys(this.state.doughnutData).map(key => {
+                  return {
+                    amnt: this.state.doughnutData[key].amntByCoinRate,
+                    label: this.state.doughnutData[key].label,
+                    color: this.state.doughnutData[key].color
+                  }
+                }).sort((x, y) => x.amnt - y.amnt)}
+              />
             }
           </div>
           {this.state.addrs.length === 0 &&
@@ -201,9 +199,9 @@ class DepotView extends React.Component {
                   classes={{
                     raised: this.props.classes.actnBtnClr
                   }}
-                  >
-                    Connect wallet
-                  </Button>
+                >
+                  Connect wallet
+                </Button>
               </div>
             </div>
           }
@@ -217,7 +215,7 @@ class DepotView extends React.Component {
           {this.state.tabIx === 0 && this.state.addrs.length > 0 &&
             <PaperGrid
               addrs={this.state.addrs}
-              addrUpdIds={new Set()}    // TODO
+              addrUpdIds={new Set()} // TODO
               coin0={this.state.coin0}
               addrUpdErrIds={this.state.addrUpdErrIds}
               className={this.props.classes.gridWrapPaper}
@@ -270,7 +268,6 @@ class DepotView extends React.Component {
               noTxtDecoClassname={this.props.classes.noTxtDeco}
               locale={this.user.locale}
             />
-            // <SoonMsg className={this.props.classes.depotEmpty} />
           }
           <ToTopBtn
             className={this.props.classes.topBtnClass}
