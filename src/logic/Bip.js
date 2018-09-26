@@ -94,7 +94,7 @@ class Bip44 extends Base {
 
   getDrvAddrs (startPath, {hdAddr, addrType, gap} = {}) {
     const drvAddrs = {}
-    const rootNode = this.coinObj.getNode({hsh: hdAddr.hsh})
+    const rootNode = this.coinObj.getNode({hsh: hdAddr.hd.hsh || hdAddr.hsh})
     let path = startPath
     if (gap == null) gap = __.cfg('hdIxGap')
     let ixTries = 0

@@ -3,6 +3,7 @@ import {
   address as bjsAddr,
   payments as bjsPay
 } from 'bitcoinjs-lib'
+import {decode as bs58Decode, encode as bs58Encode} from 'bs58check'
 // coininfo: https://github.com/bitcoinjs/bitcoinjs-lib/issues/1089
 import * as coininfo from 'coininfo'
 import Web3Utils from 'web3-utils'
@@ -19,9 +20,13 @@ class Coin extends Base {
   constructor (coin, pa) {
     super(`coin_${coin}`, pa)
     this.coin = coin
+    // https://github.com/satoshilabs/slips/blob/master/slip-0132.md
+    this.slip132 = {}
     this.conv = this.conv.bind(this)
+    this.getHdAddrTypes = this.getHdAddrTypes.bind(this)
     this.isHdAddr = this.isHdAddr.bind(this)
     this.toAddrHsh = this.toAddrHsh.bind(this)
+    this.toHdAddrHshs = this.toHdAddrHshs.bind(this)
     this.toTscHsh = this.toTscHsh.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
     this.bxp = {bckcyph: new BckcyphBxp(this)}
@@ -31,12 +36,31 @@ class Coin extends Base {
     return val
   }
 
+  getHdAddrTypes (hsh) {
+    return ['lgcy']
+  }
+
   isHdAddr (hsh) {
-    return false
+    return Boolean(this.slip132[hsh.slice(0, 4)])
   }
 
   toAddrHsh (hsh) {
     return hsh.trim()
+  }
+
+  toHdAddrHshs (hsh) {
+    // https://github.com/blockkeeper/blockkeeper-frontend-web/
+    //   issues/38#issue-338113133
+    // https://github.com/bitcoinjs/bitcoinjs-lib/pull/927
+    hsh = this.toAddrHsh(hsh) // e.g. hsh = 'ypub6YrkQpbFR2Mu9xG...'
+    const typ = hsh.slice(0, 4)
+    if (typ === this.slip132Base) return [hsh, hsh]
+    const key = bs58Decode(hsh).slice(4)
+    const verBytes = this.slip132[this.slip132Base]
+    return [
+      hsh,
+      bs58Encode(Buffer.concat([Buffer.from(verBytes, 'hex'), key]))
+    ]
   }
 
   toTscHsh (hsh) {
@@ -85,18 +109,17 @@ class XtcCoin extends Coin {
     const emsg = super.vldAddrHsh(hsh)
     if (emsg) return emsg
     hsh = hsh.trim()
-    let hshLo = hsh.toLowerCase()
-    if (hshLo.startsWith('xpriv')) {
-      return 'xpriv is not supported: Please enter xpub address'
-    } else if (hshLo.startsWith('xpub')) {
+    const typ = hsh.slice(0, 4) // e.g. for BTC: xpub or ypub
+    if (this.slip132[typ]) {
       try {
-        this.getNode({hsh})
+        this.getNode({hsh: this.toHdAddrHshs(hsh)[1]})
       } catch (e) {
-        return 'Invalid HD public (xpub) address'
+        return 'Invalid HD address. ' +
+               'Please note: Only public addresses are valid'
       }
     } else {
       try {
-        bjsAddr.toOutputScript(hsh, this.net)
+        bjsAddr.toOutputScript(this.toAddrHsh(hsh), this.net)
       } catch (e) {
         return 'Invalid address'
       }
@@ -107,29 +130,35 @@ class XtcCoin extends Coin {
 class Btc extends XtcCoin {
   constructor (pa) {
     super('BTC', pa)
+    // https://github.com/satoshilabs/slips/blob/master/slip-0132.md
+    this.slip132 = { xpub: '0488b21e', ypub: '049d7cb2', zpub: '04b24746' }
+    this.slip132Base = 'xpub'
     this.net = coininfo.bitcoin.main.toBitcoinJS()
     this.getAddrHsh = this.getAddrHsh.bind(this)
-    this.isHdAddr = this.isHdAddr.bind(this)
+    this.getHdAddrTypes = this.getHdAddrTypes.bind(this)
   }
 
   getAddrHsh (node, typ) {
     return typ === 'sgwt'
       ? this.toAddrHsh(
-        bjsPay.p2sh({redeem: bjsPay.p2wpkh({pubkey: node.publicKey})}).address
+        bjsPay.p2sh({
+          redeem: bjsPay.p2wpkh({ pubkey: node.publicKey })
+        }).address
       ) : super.getAddrHsh(node) // lgcy
   }
 
-  isHdAddr (hsh) {
-    return hsh.startsWith('xpub')
+  getHdAddrTypes (hsh) {
+    return (hsh.startsWith('ypub') || hsh.startsWith('zpub'))
+      ? ['sgwt']
+      : ['lgcy', 'sgwt'] // xpub
   }
 }
 
-class Ltc extends XtcCoin {
+class Ltc extends XtcCoin { // TODO: hd addresses
   constructor (pa) {
     super('LTC', pa)
     this.net = coininfo.litecoin.main.toBitcoinJS()
     this.getAddrHsh = this.getAddrHsh.bind(this)
-    this.isHdAddr = this.isHdAddr.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
   }
 
@@ -140,34 +169,26 @@ class Ltc extends XtcCoin {
       ) : super.getAddrHsh(node) // lgcy
   }
 
-  isHdAddr (hsh) {
-    return false // TODO
-  }
-
-  vldAddrHsh (hsh) {
-    const emsg = super.vldAddrHsh(hsh)
-    if (emsg) return emsg
+  vldAddrHsh (hsh) { // TODO: use XtcCoin.vldAddrHsh()
+    const cfg = __.cfg('coins').cryp[this.coin] || {}
+    const min = cfg.minAddrSize || __.cfg('coins').dflt.minAddrSize
+    const max = cfg.maxAddrSize || __.cfg('coins').dflt.maxAddrSize
+    const emsg = __.vldAlphNum((hsh || '').trim(), {strict: true, min, max})
+    if (emsg) return 'Invalid address'
     hsh = hsh.trim()
-    let hshLo = hsh.toLowerCase()
-    if (hshLo.startsWith('xpriv') || hshLo.startsWith('ltpv')) {
-      return 'xpriv / ltpv addresses are not supported ' +
-             '(but xpub will be in the near future)'
-    } else if (hshLo.startsWith('ltub')) {
-      return 'ltub addresses are not supported ' +
-             '(but xpub will be in the near future)'
-    } else if (hshLo.startsWith('xpub')) {
-      return 'xpub addresses are not yet supported ' +
+    if (hsh.startsWith('xpub') || hsh.startsWith('ltub')) {
+      return 'xpub/ltub addresses are not supported ' +
              '(but will be in the near future)'
     } else {
       try {
-        bjsAddr.toOutputScript(hsh, this.net)
+        bjsAddr.toOutputScript(this.toAddrHsh(hsh), this.net)
       } catch (e) {
         if (!hsh.startsWith('3')) return 'Invalid address'
         try {
           // fix me: workaround to prevent 'has no matching script' error:
           //   validate against bitcoin instead of litecoin network
           // https://github.com/litecoin-project/litecoin/issues/312
-          bjsAddr.toOutputScript(hsh, this.net)
+          bjsAddr.toOutputScript(this.toAddrHsh(hsh), this.net)
         } catch (e) {
           return 'Invalid address'
         }
@@ -176,39 +197,35 @@ class Ltc extends XtcCoin {
   }
 }
 
-class Dash extends XtcCoin {
+class Dash extends XtcCoin { // TODO: hd addresses
   constructor (pa) {
     super('DASH', pa)
     this.net = coininfo.dash.main.toBitcoinJS()
-    this.isHdAddr = this.isHdAddr.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
   }
 
-  isHdAddr (hsh) {
-    return false // TODO
-  }
-
-  vldAddrHsh (hsh) {
-    const emsg = super.vldAddrHsh(hsh)
-    if (emsg) return emsg
+  vldAddrHsh (hsh) { // TODO: use XtcCoin.vldAddrHsh()
+    const cfg = __.cfg('coins').cryp[this.coin] || {}
+    const min = cfg.minAddrSize || __.cfg('coins').dflt.minAddrSize
+    const max = cfg.maxAddrSize || __.cfg('coins').dflt.maxAddrSize
+    const emsg = __.vldAlphNum((hsh || '').trim(), {strict: true, min, max})
+    if (emsg) return 'Invalid address'
     hsh = hsh.trim()
-    let hshLo = hsh.toLowerCase()
-    if (hshLo.startsWith('xpriv') || hshLo.startsWith('drkp')) {
-      return 'xpriv / drkp addresses are not supported'
-    } else if (hshLo.startsWith('xpub') || hshLo.startsWith('drkv')) {
+    if (hsh.startsWith('xpub') || hsh.startsWith('drkv')) {
       // https://gist.github.com/moocowmoo/4eb3763efb7d8aef5356
       // https://www.dash.org/forum/threads/dash-bip32-serialization-values-
       //   dev-discussion-wont-apply-to-most.8092/
-      return 'xpub / drkv addresses are not yet supported'
+      return 'xpub/drkv addresses are not supported ' +
+             '(but will be in the near future)'
     } else {
       try {
-        bjsAddr.toOutputScript(hsh, this.net)
+        bjsAddr.toOutputScript(this.toAddrHsh(hsh), this.net)
       } catch (e) {
         if (!hsh.startsWith('3')) return 'Invalid address'
         try {
           // fix me: workaround to prevent 'has no matching script' error:
           //   validate against bitcoin instead of dash network
-          bjsAddr.toOutputScript(hsh, this.net)
+          bjsAddr.toOutputScript(this.toAddrHsh(hsh), this.net)
         } catch (e) {
           return 'Invalid address'
         }
@@ -221,7 +238,6 @@ class Eth extends Coin {
   constructor (pa) {
     super('ETH', pa)
     this.conv = this.conv.bind(this)
-    this.isHdAddr = this.isHdAddr.bind(this)
     this.toAddrHsh = this.toAddrHsh.bind(this)
     this.toTscHsh = this.toTscHsh.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
@@ -229,10 +245,6 @@ class Eth extends Coin {
 
   conv (val) {
     return val / 1e18 // wei to eth
-  }
-
-  isHdAddr (hsh) {
-    return false // TODO
   }
 
   toAddrHsh (hsh) {

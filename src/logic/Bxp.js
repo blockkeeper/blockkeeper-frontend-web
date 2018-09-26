@@ -1,5 +1,5 @@
 import * as mo from 'moment'
-import {Bip44} from './Bip44'
+import {Bip44} from './Bip'
 import __ from '../util'
 
 class Base {
@@ -244,7 +244,7 @@ class BckinfoBxp extends Bxp {
     let sleepSec
     const cfg = __.cfg('bxp').bckinfo
     let fnd = false
-    for (let addrType of ['lgcy', 'sgwt']) {
+    for (let addrType of this.coinObj.getHdAddrTypes(hdAddr.hsh)) {
       let path = startPath
       while (path) {
         let drvAddrs = this.bip44.getDrvAddrs(path, {hdAddr, addrType})
@@ -268,9 +268,10 @@ class BckinfoBxp extends Bxp {
             if (addrPld.n_tx > 0) {
               if (init) { // init-mode: only detect basePath
                 Object.assign(hdAddr.hd, {
-                  addrType,
                   basePath: path,
-                  baseAbsPath: this.bip44.toAbsPath(path, {hsh: hdAddr.hsh})
+                  baseAbsPath: this.bip44.toAbsPath(
+                    path, { hsh: hdAddr.hd.hsh || hdAddr.hsh }
+                  )
                 })
                 return Boolean(drvAddr)
               }

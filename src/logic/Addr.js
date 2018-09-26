@@ -115,22 +115,27 @@ export default class Addr extends ApiBase {
     const coinObj = this.coinObjs[addr.coin]
     const bxp = upd.bxp || cur.bxp
     if (bxp) addr.bxp = bxp
-    const hsh = upd.hsh || cur.hsh
+    let hsh = upd.hsh || cur.hsh
     if (hsh) {
-      addr.hsh = coinObj.toAddrHsh(hsh)
-      addr.type = coinObj.isHdAddr(addr.hsh) ? 'hd' : 'std'
+      hsh = coinObj.toAddrHsh(hsh)
+      addr.type = coinObj.isHdAddr(hsh) ? 'hd' : 'std'
+      if (addr.type === 'hd') {
+        if (!cur.hd) cur.hd = {}
+        if (!upd.hd) upd.hd = {}
+        addr.hd = {
+          basePath: upd.hd.basePath || cur.hd.basePath,
+          baseAbsPath: upd.hd.baseAbsPath || cur.hd.baseAbsPath
+        }
+        const hshs = coinObj.toHdAddrHshs(hsh)
+        addr.hsh = hshs[0]
+        if (addr.hsh !== hshs[1]) addr.hd.hsh = hshs[1]
+      } else {
+        addr.hsh = hsh
+      }
       addr.name = addr.name ||
-                  `${__.cfg('newAddrNotice')} ${__.shortn(hsh, 5).trim()}`
+        `${__.cfg('newAddrNotice')} ${__.shortn(addr.hsh, 5).trim()}`
     } else {
       addr.type = 'man'
-    }
-    if (addr.type === 'hd') {
-      if (!cur.hd) cur.hd = {}
-      if (!upd.hd) upd.hd = {}
-      addr.hd = {
-        basePath: upd.hd.basePath || cur.hd.basePath,
-        baseAbsPath: upd.hd.baseAbsPath || cur.hd.baseAbsPath
-      }
     }
     upd.tscs = upd.tscs || {}
     const tscs = new Map()
