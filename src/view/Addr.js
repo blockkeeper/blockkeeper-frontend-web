@@ -385,7 +385,7 @@ class AddrView extends React.Component {
                             <TableCell numeric padding='none'>
                               {this.state.addr.type === 'hd' &&
                                 <span>
-                                  HD wallet (xpub key)
+                                  HD wallet
                                 </span>
                               }
                               {this.state.addr.type === 'std' &&
@@ -516,7 +516,7 @@ class AddrView extends React.Component {
                         }}
                         className={this.props.classes.unvlBtn}
                       >
-                        Unveil xpub key
+                        Unveil HD wallet key
                       </Button>
                     }
                     {this.state.edit &&
