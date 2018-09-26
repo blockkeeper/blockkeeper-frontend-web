@@ -1,4 +1,4 @@
-import {ApiBase} from './Lib'
+import { ApiBase } from './Lib'
 import __ from '../util'
 
 export default class Addr extends ApiBase {
@@ -29,7 +29,7 @@ export default class Addr extends ApiBase {
   }
 
   async _apiGet () {
-    const pld = await this.rqst({url: `address/${this._id}`})
+    const pld = await this.rqst({ url: `address/${this._id}` })
     const addr = await this.decrypt(pld.data)
     addr.tscs = []
     for (let tscPld of pld.tscs) addr.tscs.push(await this.decrypt(tscPld))
@@ -87,7 +87,7 @@ export default class Addr extends ApiBase {
           chg: [...tsc.hd.snd.addrHshs.chg, ...tsc.hd.rcv.addrHshs.chg]
         }
       } else {
-        tsc.hd.addrHshs = {ext: [], chg: []}
+        tsc.hd.addrHshs = { ext: [], chg: [] }
       }
     }
     if (upd.std || cur.std) tsc.std = upd.std || cur.std
@@ -149,7 +149,7 @@ export default class Addr extends ApiBase {
       tsc = this._toTsc(tsc)
       tscs.set(tsc.hsh, tsc)
     }
-    addr.tscs = __.struc(tscs, {byTme: true, max: __.cfg('maxTscCnt')})
+    addr.tscs = __.struc(tscs, { byTme: true, max: __.cfg('maxTscCnt') })
     return addr
   }
 

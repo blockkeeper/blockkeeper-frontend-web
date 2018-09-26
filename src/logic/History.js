@@ -1,4 +1,4 @@
-import {ApiBase} from './Lib'
+import { ApiBase } from './Lib'
 import * as mo from 'moment'
 // import __ from '../util'
 
@@ -9,12 +9,12 @@ export default class History extends ApiBase {
     this._apiGet = this._apiGet.bind(this)
     this.getHistory = this.getHistory.bind(this)
     this.clear = this.delSto
-    this.clear()    // we want always fresh rates at startup
+    this.clear() // we want always fresh rates at startup
   }
 
   async _apiGet () {
     const coins = (await this.cx.user.load()).coins
-    const res = await this.rqst({url: `history/${coins[0]}/${coins[1]}`})
+    const res = await this.rqst({ url: `history/${coins[0]}/${coins[1]}` })
     const startWeek = mo().utc().subtract(1, 'week')
     const startMonth = mo().utc().subtract(1, 'month')
     const startQuater = mo().utc().subtract(3, 'month')
@@ -76,5 +76,4 @@ export default class History extends ApiBase {
   async getHistory () {
     return await this.load()
   }
-
 }

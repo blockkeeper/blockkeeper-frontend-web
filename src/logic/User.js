@@ -1,4 +1,4 @@
-import {ApiBase} from './Lib'
+import { ApiBase } from './Lib'
 // import __ from '../util'
 
 export default class User extends ApiBase {
@@ -13,18 +13,18 @@ export default class User extends ApiBase {
   }
 
   async _apiGet () {
-    const pld = await this.rqst({url: 'user'})
+    const pld = await this.rqst({ url: 'user' })
     const user = await this.decrypt(pld.data)
     return user
   }
 
   async _apiSet (user) {
     const data = await this.encrypt(user)
-    await this.rqst({url: 'user', data: {_id: user._id, data}})
+    await this.rqst({ url: 'user', data: { _id: user._id, data } })
   }
 
   async _apiDel (user) {
-    await this.rqst({method: 'delete', url: 'user', data: {_id: user._id}})
+    await this.rqst({ method: 'delete', url: 'user', data: { _id: user._id } })
   }
 
   async getCoins (curCoin, user) {
@@ -32,6 +32,6 @@ export default class User extends ApiBase {
     if (!coins.includes(curCoin)) curCoin = undefined
     const coin0 = curCoin || coins[0]
     const coin1 = (coin0 === coins[1]) ? coins[0] : coins[1]
-    return {coin0, coin1}
+    return { coin0, coin1 }
   }
 }

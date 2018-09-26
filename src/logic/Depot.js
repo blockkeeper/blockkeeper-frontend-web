@@ -1,5 +1,5 @@
 import * as mo from 'moment'
-import {ApiBase} from './Lib'
+import { ApiBase } from './Lib'
 import Addr from './Addr'
 import __ from '../util'
 
@@ -94,13 +94,13 @@ export default class Depot extends ApiBase {
   async prepareBxp (addrIds) {
     this.setBxpSts('run')
     this.info('Bxp started')
-    let d = {addrsByType: undefined, curAddrs: {}}
+    let d = { addrsByType: undefined, curAddrs: {} }
     let addrs
     try {
-      addrs = await this.loadAddrs(addrIds, {ignManType: true, skipStruc: true})
+      addrs = await this.loadAddrs(addrIds, { ignManType: true, skipStruc: true })
     } catch (e) {
       this.watchBxp('blocked')
-      throw this.err('Bxp failed for all addrs: Loading addrs failed', {e})
+      throw this.err('Bxp failed for all addrs: Loading addrs failed', { e })
     }
     if (addrs.length < 1) {
       this.watchBxp('blocked')
@@ -115,7 +115,7 @@ export default class Depot extends ApiBase {
       ])
     } catch (e) { /* messy but using cached values instead */ }
     this.addrUpdErrIds = new Set()
-    d.addrsByType = {hd: {}, std: {}, man: {}}
+    d.addrsByType = { hd: {}, std: {}, man: {} }
     for (let addr of addrs) {
       let addrsByCoin = d.addrsByType[addr.type]
       if (!addrsByCoin[addr.coin]) addrsByCoin[addr.coin] = {}
@@ -126,7 +126,7 @@ export default class Depot extends ApiBase {
   }
 
   async bxp (addrIds) { // bxp = query block explorer
-    const {addrsByType, curAddrs} = await this.prepareBxp(addrIds)
+    const { addrsByType, curAddrs } = await this.prepareBxp(addrIds)
     if (!addrsByType) return
     const addrs = []
     let sleepSec
@@ -197,7 +197,7 @@ export default class Depot extends ApiBase {
     return addrs
   }
 
-  async loadAddrs (addrIds, {ignManType, skipStruc} = {}) {
+  async loadAddrs (addrIds, { ignManType, skipStruc } = {}) {
     let stoAddrIds = __.getStoIds('addr')
     try {
       stoAddrIds = (stoAddrIds.length > 0)
@@ -221,20 +221,20 @@ export default class Depot extends ApiBase {
       } catch (e) {
         throw this.err(
           'Loading addresses failed',
-          {dmsg: `Loading ${addrId} failed`, e, addrIds}
+          { dmsg: `Loading ${addrId} failed`, e, addrIds }
         )
       }
     }
     this.info('%s addrs loaded', addrs.length)
-    return skipStruc ? addrs : __.struc(addrs, {byTme: true})
+    return skipStruc ? addrs : __.struc(addrs, { byTme: true })
   }
 
   async apiGetAddrs () {
     let pld
     try {
-      pld = await this.rqst({url: 'address'})
+      pld = await this.rqst({ url: 'address' })
     } catch (e) {
-      throw this.err(e.message, {e: e, dmsg: 'Api-Get addrs failed'})
+      throw this.err(e.message, { e: e, dmsg: 'Api-Get addrs failed' })
     }
     const addrIds = []
     for (let item of pld.addresses) {
@@ -252,7 +252,7 @@ export default class Depot extends ApiBase {
 
   async apiSetAddrs (addrs) {
     // addrs must be valid addrs created with toAddr()
-    let pld = {addresses: []}
+    let pld = { addresses: [] }
     for (let addr of addrs) {
       let tscs = addr.tscs || []
       let encTscs = []
@@ -273,7 +273,7 @@ export default class Depot extends ApiBase {
       })
       for (let addr of addrs) (new Addr(this.cx, addr._id)).setSto(addr)
     } catch (e) {
-      throw this.err(e.message, {e, dmsg: 'Api-Set addrs failed'})
+      throw this.err(e.message, { e, dmsg: 'Api-Set addrs failed' })
     }
     this.info('Api-Set addrs finished', this._type[1])
     return addrs

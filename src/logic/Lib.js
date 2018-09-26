@@ -1,4 +1,4 @@
-import {Btc, Ltc, Dash, Eth} from './Coin'
+import { Btc, Ltc, Dash, Eth } from './Coin'
 import __ from '../util'
 
 class Base {
@@ -96,7 +96,7 @@ class ApiBase extends StoBase {
       pld = await this._apiGet(data)
       this.setSto(pld)
     } catch (e) {
-      throw this.err(e.message, {e, dmsg: `Api-Get ${this._type[1]} failed`})
+      throw this.err(e.message, { e, dmsg: `Api-Get ${this._type[1]} failed` })
     }
     // this.info('Api-Get %s finished', this._type[1])
     return pld
@@ -109,7 +109,7 @@ class ApiBase extends StoBase {
       pld = await this._apiSet(pld, data) || pld
       this.setSto(pld)
     } catch (e) {
-      throw this.err(e.message, {e, dmsg: `Api-Set ${this._type[1]} failed`})
+      throw this.err(e.message, { e, dmsg: `Api-Set ${this._type[1]} failed` })
     }
     // this.info('Api-Set %s finished', this._type[1])
     return pld
@@ -122,7 +122,7 @@ class ApiBase extends StoBase {
       await this._apiDel(pld, data)
       this.delSto(pld._id)
     } catch (e) {
-      throw this.err(e.message, {e, dmsg: `Api-Delete ${this._type[1]} failed`})
+      throw this.err(e.message, { e, dmsg: `Api-Delete ${this._type[1]} failed` })
     }
     // this.info('Api-Delete %s finished', this._type[1])
     return pld

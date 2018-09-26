@@ -1,6 +1,6 @@
 /* global crypto */
 import * as LZUTF8 from 'lzutf8'
-import {StoBase} from './Lib'
+import { StoBase } from './Lib'
 import User from './User'
 import Depot from './Depot'
 import Rate from './Rate'
@@ -33,7 +33,7 @@ export default class Core extends StoBase {
     const val = core[key]
     if (val === undefined) {
       this.clear()
-      throw this.err(`Getting core data "${key}" failed`, {sts: 900})
+      throw this.err(`Getting core data "${key}" failed`, { sts: 900 })
     }
     return val
   }
@@ -49,7 +49,7 @@ export default class Core extends StoBase {
     const baseKeyObj = await crypto.subtle.importKey(
       'raw',
       __.strToArrBuf(cryptId),
-      {name: 'PBKDF2'},
+      { name: 'PBKDF2' },
       false,
       ['deriveKey']
     )
@@ -71,7 +71,7 @@ export default class Core extends StoBase {
         iterations: 125000
       },
       baseKeyObj,
-      {name: 'AES-GCM', length: 256},
+      { name: 'AES-GCM', length: 256 },
       true,
       ['encrypt', 'decrypt']
     )
@@ -80,7 +80,7 @@ export default class Core extends StoBase {
     // - secrets should be remembered across browser sessions
     // => export the cryptKey for keeping in localStorage
     const cryptKeyJwk = await crypto.subtle.exportKey('jwk', cryptKeyObj)
-    return {userId, cryptKeyObj, cryptKeyJson: JSON.stringify(cryptKeyJwk)}
+    return { userId, cryptKeyObj, cryptKeyJson: JSON.stringify(cryptKeyJwk) }
   }
 
   async loadSecrets (usage, secrets = {}) {
@@ -91,15 +91,15 @@ export default class Core extends StoBase {
       cryptKeyObj = await crypto.subtle.importKey(
         'jwk',
         JSON.parse(sto.pldKey),
-        {name: 'AES-GCM', length: 256},
+        { name: 'AES-GCM', length: 256 },
         false,
         usage
       )
     }
     if (!userId || !cryptKeyObj) {
-      throw this.err('Getting user-id and/or crypto-key failed', {sts: 900})
+      throw this.err('Getting user-id and/or crypto-key failed', { sts: 900 })
     }
-    return Object.assign(secrets, {userId, cryptKeyObj})
+    return Object.assign(secrets, { userId, cryptKeyObj })
   }
 
   async encrypt (pld, secrets) {
@@ -108,12 +108,12 @@ export default class Core extends StoBase {
       try {
         rawPld = LZUTF8.compress(JSON.stringify(pld))
       } catch (e) {
-        throw this.err('Packing process failed', {e})
+        throw this.err('Packing process failed', { e })
       }
       try {
         secrets = await this.loadSecrets(['encrypt'], secrets)
-        const tagSize = 128            // 128 bits
-        const iv = new Uint8Array(12)  // 12 bytes
+        const tagSize = 128 // 128 bits
+        const iv = new Uint8Array(12) // 12 bytes
         crypto.getRandomValues(iv)
         let cypher = await crypto.subtle.encrypt(
           {
@@ -126,12 +126,12 @@ export default class Core extends StoBase {
           rawPld
         )
         cypher = Array.from(new Uint8Array(cypher))
-        return {iv: Array.from(iv), cypher, tagSize, addData: secrets.userId}
+        return { iv: Array.from(iv), cypher, tagSize, addData: secrets.userId }
       } catch (e) {
-        throw this.err('Encryption process failed', {e})
+        throw this.err('Encryption process failed', { e })
       }
     } catch (e) {
-      throw this.err('Encrypting payload failed', {e, sts: 900})
+      throw this.err('Encrypting payload failed', { e, sts: 900 })
     }
   }
 
@@ -144,8 +144,8 @@ export default class Core extends StoBase {
         rawPld = await crypto.subtle.decrypt(
           {
             name: 'AES-GCM',
-            tagLength: 128,                // 128 bits
-            iv: new Uint8Array(data.iv),   // 12 bytes
+            tagLength: 128, // 128 bits
+            iv: new Uint8Array(data.iv), // 12 bytes
             additionalData: __.strToArrBuf(secrets.userId)
           },
           secrets.cryptKeyObj,
@@ -155,16 +155,16 @@ export default class Core extends StoBase {
         throw this.err('Decryption process failed. Most likely reason: ' +
                        'Wrong crypto-key. Other (very unlikely) reasons: ' +
                        'tagLength or iv or additionalData are not ' +
-                       'congruent with related encryption values', {e})
+                       'congruent with related encryption values', { e })
       }
       try {
         return JSON.parse(LZUTF8.decompress(new Uint8Array(rawPld)))
       } catch (e) {
-        throw this.err('Unpacking process failed', {e})
+        throw this.err('Unpacking process failed', { e })
       }
     } catch (e) {
-      if (isLogin) throw this.err('Decrypting data failed', {e})
-      throw this.err('Decrypting data failed', {e, sts: 900})
+      if (isLogin) throw this.err('Decrypting data failed', { e })
+      throw this.err('Decrypting data failed', { e, sts: 900 })
     }
   }
 
@@ -201,7 +201,7 @@ export default class Core extends StoBase {
     this.clear()
     let pld
     try {
-      pld = await this.rqst({url: 'user'}, userId)
+      pld = await this.rqst({ url: 'user' }, userId)
     } catch (e) {
       let emsg, sts
       if (e.sts === 404) {
@@ -214,18 +214,18 @@ export default class Core extends StoBase {
         emsg = 'Login failed temporary: Please try again later'
         sts = e.sts
       }
-      throw this.err(emsg, {e, sts})
+      throw this.err(emsg, { e, sts })
     }
     let user, secrets
     try {
       secrets = await this.toSecrets(userId, cryptId)
     } catch (e) {
-      throw this.err('Login failed. Please try again later', {e, sts: 900})
+      throw this.err('Login failed. Please try again later', { e, sts: 900 })
     }
     try {
       user = await this.decrypt(pld.data, secrets)
     } catch (e) {
-      throw this.err('Invalid identifier/crypto-key combination', {e, sts: 400})
+      throw this.err('Invalid identifier/crypto-key combination', { e, sts: 400 })
     }
     this.init(secrets, user.depotId, user)
   }
@@ -236,7 +236,7 @@ export default class Core extends StoBase {
       secrets = await this.toSecrets(userId, cryptId)
     } catch (e) {
       let emsg = 'Registering failed: Please reload page and try again'
-      throw this.err(emsg, {e})
+      throw this.err(emsg, { e })
     }
     const depotId = __.uuid()
     const pld = {
@@ -250,7 +250,7 @@ export default class Core extends StoBase {
       }, secrets)
     }
     try {
-      await this.rqst({url: 'user', data: pld}, userId)
+      await this.rqst({ url: 'user', data: pld }, userId)
     } catch (e) {
       const emsg = 'Registering failed temporary: Please press OK and try ' +
                    'again with the new assigned identifier and crypto-key. ' +
@@ -260,7 +260,7 @@ export default class Core extends StoBase {
                    'process at home while beeing connected to your WLAN ' +
                    'network. Thank you.'
       const sts = (e.sts >= 400 && e.sts < 500) ? 400 : e.sts
-      throw this.err(emsg, {e, sts})
+      throw this.err(emsg, { e, sts })
     }
     this.init(secrets, depotId)
   }

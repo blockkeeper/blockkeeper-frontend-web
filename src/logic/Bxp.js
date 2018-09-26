@@ -1,5 +1,5 @@
 import * as mo from 'moment'
-import {Bip44} from './Bip'
+import { Bip44 } from './Bip'
 import __ from '../util'
 
 class Base {
@@ -45,7 +45,7 @@ class BckcyphBxp extends Bxp {
     const tscs = []
     // process each tsc: don't limit to 'maxTscCnt': sort order is unknown
     for (let hsh of Object.keys(txs)) {
-      let d = {rcv: 0, snd: 0, cfmCnt: 0, cTme: null, rTme: null}
+      let d = { rcv: 0, snd: 0, cfmCnt: 0, cTme: null, rTme: null }
       for (let tx of txs[hsh]) {
         // https://www.blockcypher.com/dev/bitcoin/#tx
         //   tx_input_n: negative number for an output
@@ -95,7 +95,7 @@ class BckcyphBxp extends Bxp {
         mode,
         amnt: this.coinObj.conv(amnt),
         cfmCnt: d.cfmCnt,
-        std: {snd: {amnt: d.snd}, rcv: {amnt: d.rcv}}
+        std: { snd: { amnt: d.snd }, rcv: { amnt: d.rcv } }
       })
     }
     return tscs
@@ -133,12 +133,12 @@ class BckcyphBxp extends Bxp {
       await this.sleep(sleepSec)
       sleepSec = cfg.sleepSec
       let updAddrs = {}
-      for (let addr of chunk) updAddrs[addr.hsh] = {_id: addr._id}
+      for (let addr of chunk) updAddrs[addr.hsh] = { _id: addr._id }
       let addrHshs = Object.keys(updAddrs)
       this.debug(`Requesting this std addrs: ${addrHshs.join(', ')}`)
       let pld = await this.rqst({
         url: `${cfg.getUrl(this.coin)}/addrs/` + addrHshs.join(';'),
-        params: {limit: cfg.maxTscCnt}
+        params: { limit: cfg.maxTscCnt }
       })
       this.debug('Request returned this payload:', pld)
       for (let addr of (__.is('Array', pld) ? pld : [pld])) {
@@ -156,9 +156,9 @@ class BckcyphBxp extends Bxp {
           tscs: this._toTscs(addr.txrefs),
           std: {
             // total amount of confirmed satoshis sent by this addr
-            snd: {amnt: this.coinObj.conv(addr.total_sent)},
+            snd: { amnt: this.coinObj.conv(addr.total_sent) },
             // total amount of confirmed satoshis received by this addr
-            rcv: {amnt: this.coinObj.conv(addr.total_received)}
+            rcv: { amnt: this.coinObj.conv(addr.total_received) }
           }
         })
       }
@@ -192,13 +192,13 @@ class BckinfoBxp extends Bxp {
         hd: {
           snd: {
             _chckSum: [],
-            amnts: {ext: 0, chg: 0},
-            addrHshs: {ext: [], chg: []}
+            amnts: { ext: 0, chg: 0 },
+            addrHshs: { ext: [], chg: [] }
           },
           rcv: {
             _chckSum: [],
-            amnts: {ext: 0, chg: 0},
-            addrHshs: {ext: [], chg: []}
+            amnts: { ext: 0, chg: 0 },
+            addrHshs: { ext: [], chg: [] }
           }
         }
       }
@@ -247,9 +247,9 @@ class BckinfoBxp extends Bxp {
     for (let addrType of this.coinObj.getHdAddrTypes(hdAddr.hsh)) {
       let path = startPath
       while (path) {
-        let drvAddrs = this.bip44.getDrvAddrs(path, {hdAddr, addrType})
+        let drvAddrs = this.bip44.getDrvAddrs(path, { hdAddr, addrType })
         let fndDrvAddrs = {}
-        let drvAddrsByPath = {fnd: [], notFnd: []}
+        let drvAddrsByPath = { fnd: [], notFnd: [] }
         for (let chunk of __.toChunks(Object.keys(drvAddrs), cfg.maxAddrCnt)) {
           let drvAddrHshs = {}
           for (let hsh of chunk) drvAddrHshs[hsh] = drvAddrs[hsh]
@@ -258,7 +258,7 @@ class BckinfoBxp extends Bxp {
                      `addrs: ${chunk.join(', ')}`)
           let pld = await this.rqst({
             url: cfg.url,
-            params: {cors: true, active: chunk.join('|'), limit: cfg.maxTscCnt}
+            params: { cors: true, active: chunk.join('|'), limit: cfg.maxTscCnt }
           })
           this.debug('Request returned this payload:', pld)
           for (let addrPld of pld.addresses) {

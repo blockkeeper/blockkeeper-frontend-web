@@ -48,11 +48,11 @@ Object.assign(d, {
 Object.assign(d, {
   coins: {
     fiat: {
-      AUD: {dec: 2},
-      EUR: {dec: 2},
-      USD: {dec: 2},
-      CAD: {dec: 2},
-      GBP: {dec: 2}
+      AUD: { dec: 2 },
+      EUR: { dec: 2 },
+      USD: { dec: 2 },
+      CAD: { dec: 2 },
+      GBP: { dec: 2 }
     },
     cryp: {
       BTC: {
@@ -72,7 +72,7 @@ Object.assign(d, {
         name: 'Dash'
       }
     },
-    dflt: {dec: 4, minAddrSize: 1, maxAddrSize: 150}
+    dflt: { dec: 4, minAddrSize: 1, maxAddrSize: 150 }
   }
 })
 
@@ -153,15 +153,15 @@ Object.assign(d, {
 
 Object.assign(d, {
   locales: [
-    {lbl: 'en-US', key: 'en-US', ilk: 'locale'},
-    {lbl: 'en-AU', key: 'en-AU', ilk: 'locale'},
-    {lbl: 'en-CA', key: 'en-CA', ilk: 'locale'},
-    {lbl: 'es-ES', key: 'es-ES', ilk: 'locale'},
-    {lbl: 'fr-FR', key: 'fr-FR', ilk: 'locale'},
-    {lbl: 'it-IT', key: 'it-IT', ilk: 'locale'},
-    {lbl: 'de-DE', key: 'de-DE', ilk: 'locale'},
-    {lbl: 'at-AT', key: 'at-AT', ilk: 'locale'},
-    {lbl: 'en-GB', key: 'en-GB', ilk: 'locale'}
+    { lbl: 'en-US', key: 'en-US', ilk: 'locale' },
+    { lbl: 'en-AU', key: 'en-AU', ilk: 'locale' },
+    { lbl: 'en-CA', key: 'en-CA', ilk: 'locale' },
+    { lbl: 'es-ES', key: 'es-ES', ilk: 'locale' },
+    { lbl: 'fr-FR', key: 'fr-FR', ilk: 'locale' },
+    { lbl: 'it-IT', key: 'it-IT', ilk: 'locale' },
+    { lbl: 'de-DE', key: 'de-DE', ilk: 'locale' },
+    { lbl: 'at-AT', key: 'at-AT', ilk: 'locale' },
+    { lbl: 'en-GB', key: 'en-GB', ilk: 'locale' }
   ],
   dfltLocale: 'en-US',
   allowedPrimaryCoins: ['BTC'].concat(Object.keys(d.coins.fiat))

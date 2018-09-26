@@ -17,11 +17,11 @@ class Bip44 extends Base {
     this.getDrvAddrs = this.getDrvAddrs.bind(this)
   }
 
-  toAbsPath (path, {rootNode, hsh} = {}) {
+  toAbsPath (path, { rootNode, hsh } = {}) {
     if (path.startsWith('m')) return path
     path = path.split('/')
     let absPath = ['m']
-    for (let cnt = 0; cnt < this.coinObj.getNodeDepth({rootNode, hsh}); cnt++) {
+    for (let cnt = 0; cnt < this.coinObj.getNodeDepth({ rootNode, hsh }); cnt++) {
       absPath.push('x')
     }
     return absPath.concat(path).join('/')
@@ -68,7 +68,7 @@ class Bip44 extends Base {
       path = this.toNextPath('ix', paths.sort().pop())
       if (path) {
         // check bip44 gap: do we need an additional request?
-        let ixs = {min: undefined, max: undefined, notFnd: {}, notFndCnt: 0}
+        let ixs = { min: undefined, max: undefined, notFnd: {}, notFndCnt: 0 }
         for (let drvAddr of Object.values(fndAddrs)) {
           let ix = __.toInt(drvAddr.path.split('/').pop())
           if (ixs.min === undefined || ix < ixs.min) ixs.min = ix
@@ -92,18 +92,18 @@ class Bip44 extends Base {
     return path
   }
 
-  getDrvAddrs (startPath, {hdAddr, addrType, gap} = {}) {
+  getDrvAddrs (startPath, { hdAddr, addrType, gap } = {}) {
     const drvAddrs = {}
-    const rootNode = this.coinObj.getNode({hsh: hdAddr.hd.hsh || hdAddr.hsh})
+    const rootNode = this.coinObj.getNode({ hsh: hdAddr.hd.hsh || hdAddr.hsh })
     let path = startPath
     if (gap == null) gap = __.cfg('hdIxGap')
     let ixTries = 0
     while (path && ixTries < gap) { // e.g. path = 0/1 or 1/0
       let node
       try {
-        node = this.coinObj.getNode({rootNode, path})
+        node = this.coinObj.getNode({ rootNode, path })
       } catch (e) {
-        throw this.err(`Deriving HD path '${path}' failed`, {e})
+        throw this.err(`Deriving HD path '${path}' failed`, { e })
       }
       let drvAddr = {
         hsh: this.coinObj.getAddrHsh(node, addrType),

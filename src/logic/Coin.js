@@ -3,11 +3,11 @@ import {
   address as bjsAddr,
   payments as bjsPay
 } from 'bitcoinjs-lib'
-import {decode as bs58Decode, encode as bs58Encode} from 'bs58check'
+import { decode as bs58Decode, encode as bs58Encode } from 'bs58check'
 // coininfo: https://github.com/bitcoinjs/bitcoinjs-lib/issues/1089
 import * as coininfo from 'coininfo'
 import Web3Utils from 'web3-utils'
-import {BckcyphBxp, BckinfoBxp} from './Bxp'
+import { BckcyphBxp, BckinfoBxp } from './Bxp'
 import __ from '../util'
 
 class Base {
@@ -29,7 +29,7 @@ class Coin extends Base {
     this.toHdAddrHshs = this.toHdAddrHshs.bind(this)
     this.toTscHsh = this.toTscHsh.bind(this)
     this.vldAddrHsh = this.vldAddrHsh.bind(this)
-    this.bxp = {bckcyph: new BckcyphBxp(this)}
+    this.bxp = { bckcyph: new BckcyphBxp(this) }
   }
 
   conv (val) {
@@ -71,7 +71,7 @@ class Coin extends Base {
     const cfg = __.cfg('coins').cryp[this.coin] || {}
     const min = cfg.minAddrSize || __.cfg('coins').dflt.minAddrSize
     const max = cfg.maxAddrSize || __.cfg('coins').dflt.maxAddrSize
-    const emsg = __.vldAlphNum((hsh || '').trim(), {strict: true, min, max})
+    const emsg = __.vldAlphNum((hsh || '').trim(), { strict: true, min, max })
     return emsg ? 'Invalid address' : ''
   }
 }
@@ -92,17 +92,17 @@ class XtcCoin extends Coin {
   }
 
   getAddrHsh (node) { // lgcy
-    return this.toAddrHsh(bjsPay.p2pkh({pubkey: node.publicKey}).address)
+    return this.toAddrHsh(bjsPay.p2pkh({ pubkey: node.publicKey }).address)
   }
 
-  getNode ({rootNode, path, hsh}) {
+  getNode ({ rootNode, path, hsh }) {
     return rootNode && path
       ? rootNode.derivePath(path)
       : bjsBip32.fromBase58(hsh, this.net)
   }
 
-  getNodeDepth ({rootNode, hsh}) {
-    return (rootNode || this.getNode({hsh})).depth
+  getNodeDepth ({ rootNode, hsh }) {
+    return (rootNode || this.getNode({ hsh })).depth
   }
 
   vldAddrHsh (hsh) {
@@ -112,7 +112,7 @@ class XtcCoin extends Coin {
     const typ = hsh.slice(0, 4) // e.g. for BTC: xpub or ypub
     if (this.slip132[typ]) {
       try {
-        this.getNode({hsh: this.toHdAddrHshs(hsh)[1]})
+        this.getNode({ hsh: this.toHdAddrHshs(hsh)[1] })
       } catch (e) {
         return 'Invalid HD address. ' +
                'Please note: Only public addresses are valid'
@@ -165,7 +165,7 @@ class Ltc extends XtcCoin { // TODO: hd addresses
   getAddrHsh (node, typ) {
     return typ === 'sgwt'
       ? this.toAddrHsh(
-        bjsPay.p2sh({redeem: bjsPay.p2wpkh({pubkey: node.publicKey})}).address
+        bjsPay.p2sh({ redeem: bjsPay.p2wpkh({ pubkey: node.publicKey }) }).address
       ) : super.getAddrHsh(node) // lgcy
   }
 
@@ -173,7 +173,7 @@ class Ltc extends XtcCoin { // TODO: hd addresses
     const cfg = __.cfg('coins').cryp[this.coin] || {}
     const min = cfg.minAddrSize || __.cfg('coins').dflt.minAddrSize
     const max = cfg.maxAddrSize || __.cfg('coins').dflt.maxAddrSize
-    const emsg = __.vldAlphNum((hsh || '').trim(), {strict: true, min, max})
+    const emsg = __.vldAlphNum((hsh || '').trim(), { strict: true, min, max })
     if (emsg) return 'Invalid address'
     hsh = hsh.trim()
     if (hsh.startsWith('xpub') || hsh.startsWith('ltub')) {
@@ -208,7 +208,7 @@ class Dash extends XtcCoin { // TODO: hd addresses
     const cfg = __.cfg('coins').cryp[this.coin] || {}
     const min = cfg.minAddrSize || __.cfg('coins').dflt.minAddrSize
     const max = cfg.maxAddrSize || __.cfg('coins').dflt.maxAddrSize
-    const emsg = __.vldAlphNum((hsh || '').trim(), {strict: true, min, max})
+    const emsg = __.vldAlphNum((hsh || '').trim(), { strict: true, min, max })
     if (emsg) return 'Invalid address'
     hsh = hsh.trim()
     if (hsh.startsWith('xpub') || hsh.startsWith('drkv')) {

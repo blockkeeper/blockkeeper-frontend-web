@@ -8,7 +8,7 @@ import axios from 'axios'
 import cfg from './cfg'
 
 class AppError extends Error {
-  constructor (umsg, {e, lbl, dmsg, sts, ...more} = {}) {
+  constructor (umsg, { e, lbl, dmsg, sts, ...more } = {}) {
     super(umsg)
     try {
       Error.captureStackTrace(this, this.constructor)
@@ -52,7 +52,7 @@ const getErr = (...args) => {
     (e.dmsg ? ` -> ${e.dmsg}` : '')
   ]
   if (e.sts) d[0] += ` -> ${e.sts}`
-  if (e.paErr) d.push({paErr: e.paErr})
+  if (e.paErr) d.push({ paErr: e.paErr })
   if (e.more) d.push(e.more)
   console.warn(...d)
   return e
@@ -92,7 +92,7 @@ const init = (mainType, subType, _id, pa) => {
   d.debug = getLogger('debug', d._lbl)
   d.info = getLogger('info', d._lbl)
   d.warn = getLogger('warn', d._lbl)
-  d.err = (umsg, kwargs = {}) => getErr(umsg, {...kwargs, lbl: d._lbl})
+  d.err = (umsg, kwargs = {}) => getErr(umsg, { ...kwargs, lbl: d._lbl })
   return d
 }
 
@@ -107,7 +107,7 @@ const initView = (cmp, name) => {
   cmp.err = (emsg, e, state) => {
     cmp.warn(emsg)
     cmp.setSnack(`ERROR: ${emsg}`)
-    cmp.setState({snack: cmp.getSnack(), ...(state || {})})
+    cmp.setState({ snack: cmp.getSnack(), ...(state || {}) })
     if (e && cfg('isDev')) throw e
   }
   cmp.errGo = (emsg, e, urlPath) => {
@@ -149,7 +149,7 @@ async function rqst (req) {
     umsg = `${req.method.toUpperCase()} resource failed: ` +
       ((sts >= 400 && sts < 500) ? 'Invalid input' : 'API error')
   }
-  throw getErr(umsg, {err, dmsg, sts, rsp, req})
+  throw getErr(umsg, { err, dmsg, sts, rsp, req })
 }
 
 const toUrl = req => {
@@ -206,7 +206,7 @@ const toChunks = (lst, size) => {
   return chunks
 }
 
-const struc = (lst, {toBeg, max, byTme, noSort}) => {
+const struc = (lst, { toBeg, max, byTme, noSort }) => {
   lst = is('Array', lst) ? lst : Array.from(lst.values()) // lst = array or map
   if (byTme) {
     lst.sort((a, b) => (new Date(b._t)) - (new Date(a._t)))
@@ -223,16 +223,16 @@ const struc = (lst, {toBeg, max, byTme, noSort}) => {
 
 const uuid = rnd => {
   try {
-    if (rnd) return uuidv4({random: rnd})
+    if (rnd) return uuidv4({ random: rnd })
     const rng = () => {
       // https://github.com/kelektiv/node-uuid/blob/master/lib/rng-browser.js
       const rnds8 = new Uint8Array(16)
       crypto.getRandomValues(rnds8)
       return rnds8
     }
-    return uuidv4({rng}) // force usage of webcrypto's RNG
+    return uuidv4({ rng }) // force usage of webcrypto's RNG
   } catch (e) {
-    throw getErr('Creating new UUID failed', {e, sts: 900})
+    throw getErr('Creating new UUID failed', { e, sts: 900 })
   }
 }
 
@@ -242,7 +242,7 @@ const lstToObj = lst_ => {
   return lst
 }
 
-const filterObj = (d, {incls, excls} = {}) => {
+const filterObj = (d, { incls, excls } = {}) => {
   if (!is('Object', d)) return d
   if (incls && !incls.includes('__ALL__')) {
     for (let prop of Object.keys(d)) {
@@ -303,7 +303,7 @@ const formatNumber = (n, coin, locale) => {
   }).format(n)
 }
 
-const vldAlphNum = (val, {strict, noSpace, min, max} = {}) => {
+const vldAlphNum = (val, { strict, noSpace, min, max } = {}) => {
   let pat = 'a-zA-Z0-9'
   let msg = 'Allowed characters: '
   if (strict) {
@@ -342,7 +342,7 @@ const vldPw = (pw, light) => {
 }
 
 const vldFloat = (val, max) => {
-  return validator.isFloat(String(val), {min: 0, max: max || 9999999999})
+  return validator.isFloat(String(val), { min: 0, max: max || 9999999999 })
     ? ''
     : 'Not a float (e.g. 1.23) or value to small/big'
 }

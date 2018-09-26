@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import registerServiceWorker from './registerServiceWorker'
-import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom'
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom'
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
-import {theme} from './view/Style'
+import { theme } from './view/Style'
 import Core from './logic/Core'
 import UserView from './view/User'
 import DepotView from './view/Depot'
@@ -31,7 +31,7 @@ const register = props => {
   return (<RgstrView {...props} />)
 }
 
-const AuthRoute = ({component: Component, ...args}) => (
+const AuthRoute = ({ component: Component, ...args }) => (
   <Route {...args} render={props => {
     props.cx = cx
     return cx.core.init()
