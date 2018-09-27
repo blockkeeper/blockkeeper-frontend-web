@@ -295,11 +295,11 @@ const formatTime = (_t, _f) => {
   return tme.local().format(frmt) // .local() uses users timezone
 }
 
-const formatNumber = (n, coin, locale) => {
+const formatNumber = (n, coin, locale, doubleFraction) => {
   locale = locale || cfg('dfltLocale')
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
-    maximumFractionDigits: dec(coin)
+    maximumFractionDigits: doubleFraction ? dec(coin) * 2 : dec(coin)
   }).format(n)
 }
 

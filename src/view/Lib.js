@@ -497,7 +497,7 @@ const tscRow = (
                 }}
                 className={display1ClassName}
               >
-                {modeSign} {__.formatNumber(tsc.amnt, addr.coin, locale)}&nbsp;
+                {modeSign} {__.formatNumber(tsc.amnt, addr.coin, locale, true)}&nbsp;
                 <Hidden xsDown>
                   <CoinIcon
                     coin={addr.coin}
@@ -521,7 +521,7 @@ const tscRow = (
                 gutterBottom
               >
                 {modeSign}
-                {__.formatNumber(tsc.amnt * addr.rates[coin0], coin0, locale)}
+                {__.formatNumber(tsc.amnt * addr.rates[coin0], coin0, locale, true)}
                 <Hidden xsDown>
                   <CoinIcon
                     coin={coin0}
@@ -1092,7 +1092,7 @@ const PaperGrid = ({
                   color='primary'
                   className={display1ClassName}
                 >
-                  {__.formatNumber(addr.amnt, addr.coin, locale)}&nbsp;
+                  {__.formatNumber(addr.amnt, addr.coin, locale, true)}&nbsp;
                   <Hidden xsDown>
                     <CoinIcon
                       coin={addr.coin}
@@ -1115,7 +1115,10 @@ const PaperGrid = ({
                   style={{color: theme.palette.text.secondary}}
                 >
                   {__.formatNumber(
-                    addr.amnt * addr.rates[coin0], coin0, locale
+                    addr.amnt * addr.rates[coin0],
+                    coin0,
+                    locale,
+                    true
                   )}
                   &nbsp;
                   <Hidden xsDown>

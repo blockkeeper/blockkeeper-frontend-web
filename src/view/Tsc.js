@@ -172,8 +172,7 @@ class TscView extends React.Component {
               align='center'
               style={{color: modeColor}}>
               {modeSign}
-              {__.formatNumber(this.state.tsc.amnt, this.state.addr.coin,
-                this.user.locale)}
+              {this.state.tsc.amnt}
               &nbsp;
               <CoinIcon coin={this.state.addr.coin} alt color={modeColor} />
             </Typography>
@@ -186,7 +185,7 @@ class TscView extends React.Component {
               gutterBottom>
               {modeSign}
               {__.formatNumber(this.state.blc1, this.state.coin0,
-                this.user.locale)}
+                this.user.locale, true)}
               &nbsp;
               <CoinIcon
                 coin={this.state.coin0}
@@ -203,7 +202,7 @@ class TscView extends React.Component {
               gutterBottom>
               {modeSign}
               {__.formatNumber(this.state.blc2, this.state.coin1,
-                this.user.locale)}
+                this.user.locale, true)}
               <CoinIcon
                 coin={this.state.coin1}
                 color={theme.palette.text.secondary}
