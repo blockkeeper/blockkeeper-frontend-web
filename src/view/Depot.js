@@ -20,6 +20,7 @@ class DepotView extends React.Component {
   constructor (props) {
     super(props)
     this.cx = props.cx
+    this.widthType = props.width
     this.state = {
       tabIx: this.cx.tmp.depotTabIx || 0,
       activeStep: 0,
@@ -179,6 +180,7 @@ class DepotView extends React.Component {
                     color: this.state.doughnutData[key].color
                   }
                 }).sort((x, y) => x.amnt - y.amnt)}
+                widthType={this.widthType}
               />
             }
           </div>

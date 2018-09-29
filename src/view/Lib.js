@@ -289,7 +289,7 @@ const DepotDoughnut = ({
 }) =>
   <div key='depot-doughnut' className={doughnutClassName}>
     <Doughnut
-      radius={68}
+      radius={radius}
       data={doughnutData}
     />
   </div>
@@ -305,7 +305,8 @@ const Jumbo = ({
   locale,
   handleStepChange,
   activeStep,
-  doughnutData
+  doughnutData,
+  widthType
 }) =>
   <div>
     {doughnutData.length !== 0 ?
@@ -328,6 +329,7 @@ const Jumbo = ({
           <DepotDoughnut
             doughnutClassName={doughnutClassName}
             doughnutData={doughnutData}
+            radius={widthType === 'xs' ? 50 : 62}
           />
         </SwipeableViews>
         <MobileStepper

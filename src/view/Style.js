@@ -177,7 +177,10 @@ theme.overrides = {
   },
   MuiTab: {
     root: {
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      [theme.breakpoints.only('xs')]: {
+        fontSize: '14px'
+      }
     }
   },
   MuiTabScrollButton: {
@@ -433,7 +436,10 @@ const topBarSpacer = {
 }
 
 const areaWrap = {
-  height: 350
+  height: 350,
+  [theme.breakpoints.only('xs')]: {
+    overflowX: 'hidden' // fix small screens
+  }
 }
 
 export {
