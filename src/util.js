@@ -283,15 +283,15 @@ const dec = coin => {
 }
 
 const ppTme = _t => {
-  let tme = mo(_t)
+  let tme = mo(_t).utc() // init utc
   return tme.isBefore(mo().subtract(1, 'days').startOf('day'))
-    ? tme.format('YYYY-MM-DD / HH:mm / Z')
+    ? tme.local().format('YYYY-MM-DD / HH:mm') // .local() uses users timezone
     : tme.fromNow()
 }
 
 const formatTime = (_t, _f) => {
-  let tme = mo(_t).utc() // init uses utc
-  let frmt = _f || 'YYYY-MM-DD / HH:mm / Z'
+  let tme = mo(_t).utc() // init utc
+  let frmt = _f || 'YYYY-MM-DD / HH:mm'
   return tme.local().format(frmt) // .local() uses users timezone
 }
 
