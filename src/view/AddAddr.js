@@ -172,7 +172,7 @@ class AddAddrView extends React.Component {
           >
             <div className={this.props.classes.gridWrap}>
               <div className={this.props.classes.gridGutter}>
-                <Typography variant='title'>
+                <Typography variant='h6'>
                   Details
                 </Typography>
                 {!this.state.manAddrMode &&
@@ -245,7 +245,7 @@ class AddAddrView extends React.Component {
                     </Typography>
                   </div>}
                 <Divider className={this.props.classes.dividerStyle} light />
-                <Typography variant='title' gutterBottom>
+                <Typography variant='h6' gutterBottom>
                   Blockchain / Type
                 </Typography>
                 {this.coins.map(coin =>
@@ -269,7 +269,7 @@ class AddAddrView extends React.Component {
                       />}
                   />)}
                 <Divider className={this.props.classes.dividerStyle} light />
-                <Typography variant='title'>
+                <Typography variant='h6'>
                   Personal details
                 </Typography>
                 <TextField

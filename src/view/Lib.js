@@ -92,7 +92,7 @@ const TopBar = ({
           <div style={{ marginRight: 'auto' }}>
             {modeCancel &&
             <Typography
-              variant='headline'
+              variant='h5'
               color='inherit'
               onClick={onClickLeft}
               style={{
@@ -115,7 +115,7 @@ const TopBar = ({
               {iconLeft}
             </IconButton>}
             {title &&
-            <Typography variant='headline' color='inherit'>
+            <Typography variant='h5' color='inherit'>
               <Hidden xsDown>
                 <span>BlockKeeper</span>
               </Hidden>
@@ -127,7 +127,7 @@ const TopBar = ({
         </div>
         <div>
           <Typography
-            variant='headline'
+            variant='h5'
             color='inherit'
             align='center'
             style={{
@@ -143,7 +143,7 @@ const TopBar = ({
           <div style={{ marginLeft: 'auto' }}>
             {action &&
             <Typography
-              variant='headline'
+              variant='h5'
               color='inherit'
               onClick={onClick}
               style={{
@@ -195,16 +195,16 @@ const DepotHoldings = ({
   subTitle,
   coin0,
   coin1,
-  display3ClassName,
+  h2ClassName,
   holdingsClassName,
   locale
 }) =>
   <div key='depot-holdings' className={holdingsClassName}>
     <Typography
       align='center'
-      variant='display3'
+      variant='h2'
       color='inherit'
-      className={display3ClassName}
+      className={h2ClassName}
     >
       <TransitiveNumber>
         {title
@@ -219,7 +219,7 @@ const DepotHoldings = ({
         <CoinIcon coin={coin0} size={32} color={'white'} alt />
       </Hidden>
     </Typography>
-    <Typography align='center' variant='headline' color='inherit'>
+    <Typography align='center' variant='h5' color='inherit'>
       <TransitiveNumber>
         {subTitle
           ? __.formatNumber(subTitle, coin1, locale)
@@ -299,7 +299,7 @@ const Jumbo = ({
   subTitle,
   coin0,
   coin1,
-  display3ClassName,
+  h2ClassName,
   holdingsClassName,
   doughnutClassName,
   locale,
@@ -322,7 +322,7 @@ const Jumbo = ({
             subTitle={subTitle}
             coin0={coin0}
             coin1={coin1}
-            display3ClassName={display3ClassName}
+            h2ClassName={h2ClassName}
             holdingsClassName={holdingsClassName}
             locale={locale}
           />
@@ -344,7 +344,7 @@ const Jumbo = ({
         subTitle={subTitle}
         coin0={coin0}
         coin1={coin1}
-        display3ClassName={display3ClassName}
+        h2ClassName={h2ClassName}
         holdingsClassName={holdingsClassName}
         locale={locale}
       />
@@ -424,8 +424,8 @@ const tscRow = (
   gridWrapClassName,
   gridGutterClassName,
   itemClassName,
-  display1ClassName,
-  body2ClassName,
+  h4ClassName,
+  body1ClassName,
   tscAmntClassName,
   tscIconClassname,
   noTxtDecoClassname,
@@ -462,15 +462,15 @@ const tscRow = (
             }
             <div style={{flexGrow: 1, minWidth: 0}}>
               <Typography
-                variant='body2'
-                className={body2ClassName}
+                variant='body1'
+                className={body1ClassName}
                 style={{color: theme.palette.text.secondary}}
               >
                 {__.ppTme(tsc._t)}
               </Typography>
               <Typography
-                variant='display1'
-                className={display1ClassName}
+                variant='h4'
+                className={h4ClassName}
                 style={{
                   color: theme.palette.text.primary
                 }}
@@ -482,8 +482,8 @@ const tscRow = (
                   tsc.name}
               </Typography>
               <Typography
-                variant='body2'
-                className={body2ClassName}
+                variant='body1'
+                className={body1ClassName}
                 style={{color: theme.palette.text.secondary}}
                 noWrap
               >
@@ -493,11 +493,11 @@ const tscRow = (
             </div>
             <div className={tscAmntClassName}>
               <Typography
-                variant='display1'
+                variant='h4'
                 style={{
                   color: modeColor
                 }}
-                className={display1ClassName}
+                className={h4ClassName}
               >
                 {modeSign} {__.formatNumber(tsc.amnt, addr.coin, locale, true)}&nbsp;
                 <Hidden xsDown>
@@ -517,9 +517,9 @@ const tscRow = (
                 </Hidden>
               </Typography>
               <Typography
-                variant='body2'
+                variant='body1'
                 style={{color: theme.palette.text.secondary}}
-                className={body2ClassName}
+                className={body1ClassName}
                 gutterBottom
               >
                 {modeSign}
@@ -566,8 +566,8 @@ const TscListAddr = ({
   gridGutterClassName,
   itemClassName,
   gridWrapClassName,
-  display1ClassName,
-  body2ClassName,
+  h4ClassName,
+  body1ClassName,
   tscAmntClassName,
   noTxtDecoClassname,
   locale
@@ -587,8 +587,8 @@ const TscListAddr = ({
         gridWrapClassName,
         gridGutterClassName,
         itemClassName,
-        display1ClassName,
-        body2ClassName,
+        h4ClassName,
+        body1ClassName,
         tscAmntClassName,
         undefined,
         noTxtDecoClassname,
@@ -607,8 +607,8 @@ const TscListAddresses = ({
   gridGutterClassName,
   itemClassName,
   gridWrapClassName,
-  display1ClassName,
-  body2ClassName,
+  h4ClassName,
+  body1ClassName,
   tscAmntClassName,
   tscIconClassname,
   noTxtDecoClassname,
@@ -628,8 +628,8 @@ const TscListAddresses = ({
         gridWrapClassName,
         gridGutterClassName,
         itemClassName,
-        display1ClassName,
-        body2ClassName,
+        h4ClassName,
+        body1ClassName,
         tscAmntClassName,
         tscIconClassname,
         noTxtDecoClassname,
@@ -772,7 +772,7 @@ class BrowserGateSafarimobile extends React.Component {
 const NtAllwd = () => {
   return <div>
     <Typography
-      variant='title'
+      variant='h6'
       align='center'
       gutterBottom
       style={{marginTop: '40px', marginBottom: '40px'}}
@@ -805,7 +805,7 @@ const DepotEmpty = ({className}) =>
     <Grid container spacing={0} justify='center'>
       <Grid item xs={6} className={className}>
         <Typography
-          variant='display2'
+          variant='h3'
           gutterBottom
           style={{
             color: theme.palette.text.primary,
@@ -814,7 +814,7 @@ const DepotEmpty = ({className}) =>
         >
           Welcome to BlockKeeper
         </Typography>
-        <Typography variant='subheading' gutterBottom>
+        <Typography variant='subtitle1' gutterBottom>
           In order to start using our app,
           please go ahead and connect your first wallet.
         </Typography>
@@ -829,7 +829,7 @@ const SoonMsg = ({
   <Grid container spacing={0} justify='center'>
     <Grid item xs={6} className={className}>
       <Typography
-        variant='display2'
+        variant='h3'
         gutterBottom
         style={{
           marginTop: '80px'
@@ -857,8 +857,8 @@ const PortfolioTab = ({
   gridGutterClassName,
   itemClassName,
   gridWrapClassName,
-  display1ClassName,
-  body2ClassName,
+  h4ClassName,
+  body1ClassName,
   prtfAmntClassName,
   coinIconClassname,
   noTxtDecoClassname,
@@ -886,8 +886,8 @@ const PortfolioTab = ({
               </div>
               <div style={{flexGrow: 1, minWidth: 0}}>
                 <Typography
-                  variant='display1'
-                  className={display1ClassName}
+                  variant='h4'
+                  className={h4ClassName}
                   style={{
                     color: theme.palette.text.primary
                   }}
@@ -896,8 +896,8 @@ const PortfolioTab = ({
                   {portfolio[coin].label}
                 </Typography>
                 <Typography
-                  variant='body2'
-                  className={body2ClassName}
+                  variant='body1'
+                  className={body1ClassName}
                   style={{color: theme.palette.text.secondary}}
                   noWrap
                 >
@@ -922,11 +922,11 @@ const PortfolioTab = ({
               </div>
               <div className={prtfAmntClassName}>
                 <Typography
-                  variant='display1'
+                  variant='h4'
                   style={{
                     color: portfolio[coin].color
                   }}
-                  className={display1ClassName}
+                  className={h4ClassName}
                 >
                   <div style={{
                     display: 'inline-block',
@@ -950,24 +950,24 @@ const PortfolioTab = ({
                   </Hidden>
                 </Typography>
                 <Typography
-                  variant='body2'
+                  variant='body1'
                   style={{
                     color: theme.palette.text.secondary,
                     display: 'inline-block',
                     paddingRight: theme.spacing.unit
                   }}
-                  className={body2ClassName}
+                  className={body1ClassName}
                   gutterBottom
                 >
                   {portfolio[coin].percentChange.toFixed(2)}%
                 </Typography>
                 <Typography
-                  variant='body2'
+                  variant='body1'
                   style={{
                     color: portfolio[coin].color,
                     display: 'inline-block'
                   }}
-                  className={body2ClassName}
+                  className={body1ClassName}
                   gutterBottom
                 >
                   {__.formatNumber(portfolio[coin].amntByCoinRate, portfolio[coin].pCoin, locale)}&nbsp;
@@ -1014,8 +1014,8 @@ const PaperGrid = ({
   itemClassName,
   addrClassName,
   amntClassName,
-  display1ClassName,
-  body2ClassName,
+  h4ClassName,
+  body1ClassName,
   noTxtDecoClassname,
   locale
 }) => {
@@ -1046,8 +1046,8 @@ const PaperGrid = ({
               </div>
               <div className={addrClassName}>
                 <Typography
-                  variant='display1'
-                  className={display1ClassName}
+                  variant='h4'
+                  className={h4ClassName}
                   style={{
                     color: theme.palette.text.primary
                   }}
@@ -1058,8 +1058,8 @@ const PaperGrid = ({
                   <InfoUpdateFailed />}
                 </Typography>
                 <Typography
-                  variant='body2'
-                  className={body2ClassName}
+                  variant='body1'
+                  className={body1ClassName}
                   noWrap
                 >
                   {addr.desc &&
@@ -1090,9 +1090,9 @@ const PaperGrid = ({
               </div>
               <div className={amntClassName}>
                 <Typography
-                  variant='display1'
+                  variant='h4'
                   color='primary'
-                  className={display1ClassName}
+                  className={h4ClassName}
                 >
                   {__.formatNumber(addr.amnt, addr.coin, locale, true)}&nbsp;
                   <Hidden xsDown>
@@ -1112,8 +1112,8 @@ const PaperGrid = ({
                   </Hidden>
                 </Typography>
                 <Typography
-                  variant='body2'
-                  className={body2ClassName}
+                  variant='body1'
+                  className={body1ClassName}
                   style={{color: theme.palette.text.secondary}}
                 >
                   {__.formatNumber(
@@ -1486,7 +1486,7 @@ class Area extends React.Component {
               backgroundColor: 'transparent',
               color: theme.palette.background.default,
               fontFamily: theme.typography.fontFamily,
-              fontSize: theme.typography.display2.fontSize,
+              fontSize: theme.typography.h3.fontSize,
               width: 300,
               textAlign: 'center',
               boxShadow: 'none'

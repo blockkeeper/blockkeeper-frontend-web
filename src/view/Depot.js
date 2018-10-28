@@ -10,8 +10,8 @@ import { setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, SubBar, Jumbo,
   FloatBtn, Snack, Modal, TscListAddresses, PaperGrid,
   DepotEmpty, ToTopBtn, PortfolioTab } from './Lib'
 import { theme, styleGuide, themeBgStyle, gridWrap, gridWrapPaper, gridItem,
-  tscitem, addr, amnt, tscIcon, tscAmnt, coinIcon, prtfAmnt, display1,
-  body2, display3, actnBtnClr, topBtnClass, depotEmpty, cnctBtn,
+  tscitem, addr, amnt, tscIcon, tscAmnt, coinIcon, prtfAmnt, h4,
+  body1, h2, actnBtnClr, topBtnClass, depotEmpty, cnctBtn,
   gridSpacer, gridGutter, topBarSpacer, depotHoldings, depotDoughnut,
   CryptoColors, noTxtDeco } from './Style'
 import __ from '../util'
@@ -165,7 +165,7 @@ class DepotView extends React.Component {
                 subTitle={this.state.blc2}
                 coin0={this.state.coin0}
                 coin1={this.state.coin1}
-                display3ClassName={this.props.classes.display3}
+                h2ClassName={this.props.classes.h2}
                 holdingsClassName={this.props.classes.depotHoldings}
                 doughnutClassName={this.props.classes.depotDoughnut}
                 locale={this.user.locale}
@@ -224,8 +224,8 @@ class DepotView extends React.Component {
               itemClassName={this.props.classes.gridItem}
               addrClassName={this.props.classes.addr}
               amntClassName={this.props.classes.amnt}
-              display1ClassName={this.props.classes.display1}
-              body2ClassName={this.props.classes.body2}
+              h4ClassName={this.props.classes.h4}
+              body1ClassName={this.props.classes.body1}
               noTxtDecoClassname={this.props.classes.noTxtDeco}
               locale={this.user.locale}
             />}
@@ -237,8 +237,8 @@ class DepotView extends React.Component {
               gridWrapClassName={this.props.classes.gridWrap}
               gridGutterClassName={this.props.classes.gridGutter}
               itemClassName={this.props.classes.tscitem}
-              display1ClassName={this.props.classes.display1}
-              body2ClassName={this.props.classes.body2}
+              h4ClassName={this.props.classes.h4}
+              body1ClassName={this.props.classes.body1}
               tscAmntClassName={this.props.classes.tscAmnt}
               tscIconClassname={this.props.classes.tscIcon}
               noTxtDecoClassname={this.props.classes.noTxtDeco}
@@ -251,7 +251,7 @@ class DepotView extends React.Component {
               square
               className={this.props.classes.paperWrap}
             >
-              <Typography align='center' variant='body1'>
+              <Typography align='center' variant='body2'>
                 No transactions
               </Typography>
             </Paper>
@@ -263,8 +263,8 @@ class DepotView extends React.Component {
               gridWrapClassName={this.props.classes.gridWrap}
               gridGutterClassName={this.props.classes.gridGutter}
               itemClassName={this.props.classes.tscitem}
-              display1ClassName={this.props.classes.display1}
-              body2ClassName={this.props.classes.body2}
+              h4ClassName={this.props.classes.h4}
+              body1ClassName={this.props.classes.body1}
               prtfAmntClassName={this.props.classes.prtfAmnt}
               coinIconClassname={this.props.classes.coinIcon}
               noTxtDecoClassname={this.props.classes.noTxtDeco}
@@ -317,9 +317,9 @@ export default compose(withStyles({
   tscAmnt,
   coinIcon,
   prtfAmnt,
-  display1,
-  body2,
-  display3,
+  h4,
+  body1,
+  h2,
   depotHoldings,
   depotDoughnut,
   actnBtnClr,

@@ -203,12 +203,12 @@ class HistoryView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <div className={this.props.classes.tscitem}>
                   <div style={{flexGrow: 1, minWidth: 0}}>
-                    <Typography variant='headline' noWrap>
+                    <Typography variant='h5' noWrap>
                       My Holdings
                     </Typography>
                   </div>
                   <div>
-                    <Typography variant='headline'>
+                    <Typography variant='h5'>
                       {__.formatNumber(this.state.holdRate, this.state.pCoin, this.user.locale)}&nbsp;
                       <Hidden xsDown>
                         <CoinIcon
@@ -240,12 +240,12 @@ class HistoryView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <div className={this.props.classes.tscitem}>
                   <div style={{flexGrow: 1, minWidth: 0}}>
-                    <Typography variant='headline' noWrap>
+                    <Typography variant='h5' noWrap>
                       Amount
                     </Typography>
                   </div>
                   <div>
-                    <Typography variant='headline'>
+                    <Typography variant='h5'>
                       {__.formatNumber(this.state.holdAmnt, this.coin, this.user.locale)}
                       <Hidden xsDown>
                         <CoinIcon
@@ -277,12 +277,12 @@ class HistoryView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <div className={this.props.classes.tscitem}>
                   <div style={{flexGrow: 1, minWidth: 0}}>
-                    <Typography variant='headline' noWrap>
+                    <Typography variant='h5' noWrap>
                       Price
                     </Typography>
                   </div>
                   <div>
-                    <Typography variant='headline'>
+                    <Typography variant='h5'>
                       {__.formatNumber(this.state.price, this.state.pCoin, this.user.locale)}&nbsp;
                       <Hidden xsDown>
                         <CoinIcon
@@ -314,13 +314,13 @@ class HistoryView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <div className={this.props.classes.tscitem}>
                   <div style={{flexGrow: 1, minWidth: 0}}>
-                    <Typography variant='headline' noWrap>
+                    <Typography variant='h5' noWrap>
                       Change 1 hour
                     </Typography>
                   </div>
                   <div>
                     <Typography
-                      variant='headline'
+                      variant='h5'
                       style={{
                         color: this.state.change1h > 0 ? theme.palette.secondary['500'] : theme.palette.error['500']
                       }}
@@ -341,13 +341,13 @@ class HistoryView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <div className={this.props.classes.tscitem}>
                   <div style={{flexGrow: 1, minWidth: 0}}>
-                    <Typography variant='headline' noWrap>
+                    <Typography variant='h5' noWrap>
                       Change 1 day
                     </Typography>
                   </div>
                   <div>
                     <Typography
-                      variant='headline'
+                      variant='h5'
                       style={{
                         color: this.state.change1d > 0 ? theme.palette.secondary['500'] : theme.palette.error['500']
                       }}
@@ -368,13 +368,13 @@ class HistoryView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <div className={this.props.classes.tscitem}>
                   <div style={{flexGrow: 1, minWidth: 0}}>
-                    <Typography variant='headline' noWrap>
+                    <Typography variant='h5' noWrap>
                       Change 1 week
                     </Typography>
                   </div>
                   <div>
                     <Typography
-                      variant='headline'
+                      variant='h5'
                       style={{
                         color: this.state.change1w > 0 ? theme.palette.secondary['500'] : theme.palette.error['500']
                       }}
@@ -395,13 +395,13 @@ class HistoryView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <div className={this.props.classes.tscitem}>
                   <div style={{flexGrow: 1, minWidth: 0}}>
-                    <Typography variant='headline' noWrap>
+                    <Typography variant='h5' noWrap>
                       Change 1 month
                     </Typography>
                   </div>
                   <div>
                     <Typography
-                      variant='headline'
+                      variant='h5'
                       style={{
                         color: this.state.change1m > 0 ? theme.palette.secondary['500'] : theme.palette.error['500']
                       }}
@@ -422,13 +422,13 @@ class HistoryView extends React.Component {
               <div className={this.props.classes.gridGutter}>
                 <div className={this.props.classes.tscitem}>
                   <div style={{flexGrow: 1, minWidth: 0}}>
-                    <Typography variant='headline' noWrap>
+                    <Typography variant='h5' noWrap>
                       Change 1 year
                     </Typography>
                   </div>
                   <div>
                     <Typography
-                      variant='headline'
+                      variant='h5'
                       style={{
                         color: this.state.change1y > 0 ? theme.palette.secondary['500'] : theme.palette.error['500']
                       }}

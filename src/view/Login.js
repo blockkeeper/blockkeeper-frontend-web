@@ -97,12 +97,12 @@ class LoginView extends React.Component {
           <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={6} lg={4} xl={4}>
-                <Typography variant='display3' color='inherit' align='center'>
+                <Typography variant='h2' color='inherit' align='center'>
                   BlockKeeper
                   <span style={{fontSize: '14px'}}>[BETA]</span>
                 </Typography>
                 <Typography
-                  variant='display1'
+                  variant='h4'
                   color='inherit'
                   align='center'
                   gutterBottom

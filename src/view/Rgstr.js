@@ -147,12 +147,12 @@ class RgstrView extends React.Component {
           <div className={this.props.classes.loginStyle}>
             <Grid container spacing={0} justify='center'>
               <Grid item xs={12} sm={8} md={7} lg={5} xl={4}>
-                <Typography variant='display3' color='inherit' align='center'>
+                <Typography variant='h2' color='inherit' align='center'>
                   BlockKeeper
                   <span style={{fontSize: '14px'}}>[BETA]</span>
                 </Typography>
                 <Typography
-                  variant='display1'
+                  variant='h4'
                   color='inherit'
                   align='center'
                   gutterBottom
@@ -243,9 +243,9 @@ class RgstrView extends React.Component {
                       </Grid>
                     </Grid>
                     <Typography
-                      variant='body1'
+                      variant='body2'
                       gutterBottom
-                      className={this.props.classes.body1}
+                      className={this.props.classes.body2}
                     >
                       Please make sure you store your <b>identifier and
                       crypto-key</b> safely. Due to data privacy and security
@@ -349,7 +349,7 @@ export default withStyles({
   paperStyle,
   fullWidth,
   actnBtnClr,
-  body1: {
+  body2: {
     textAlign: 'left',
     marginTop: theme.spacing.unit * 2
   },

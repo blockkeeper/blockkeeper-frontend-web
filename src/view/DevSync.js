@@ -79,7 +79,7 @@ class DevSyncView extends React.Component {
                 {this.addrs.map(addr => {
                   return (
                     <div key={addr._id}>
-                      <Typography variant='title'>
+                      <Typography variant='h6'>
                         Addr {addr.name}
                       </Typography>
                       <ReactJson
@@ -97,7 +97,7 @@ class DevSyncView extends React.Component {
                   )
                 })}
 
-                <Typography variant='title'>
+                <Typography variant='h6'>
                   User’s local storage
                 </Typography>
                 <ReactJson

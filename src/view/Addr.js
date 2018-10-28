@@ -14,7 +14,7 @@ import Divider from '@material-ui/core/Divider'
 import QRCode from 'qrcode-react'
 import TransitiveNumber from 'react-transitive-number'
 import {theme, themeBgStyle, noTxtDeco, qrCodeWrap, gridWrap, gridSpacer,
-  gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, display1, body2,
+  gridGutter, tscitem, addr, amnt, tscIcon, tscAmnt, h4, body1,
   actnBtnClr, topBtnClass, topBarSpacer} from './Style'
 import {ArrowBack, Launch} from '@material-ui/icons'
 import {setBxpTrigger, unsetBxpTrigger, BxpFloatBtn, TopBar, Snack, Modal,
@@ -227,9 +227,9 @@ class AddrView extends React.Component {
                   <CoinIcon coin={this.state.coin} size={100} />
                   {!addrUrl &&
                     <Typography
-                      variant='title'
+                      variant='h6'
                       color='default'
-                      className={this.props.classes.titleStyle}
+                      className={this.props.classes.h6Style}
                       noWrap
                       gutterBottom
                     >
@@ -242,9 +242,9 @@ class AddrView extends React.Component {
                       className={this.props.classes.noTxtDeco}
                       txt={
                         <Typography
-                          variant='title'
+                          variant='h6'
                           color='default'
-                          className={this.props.classes.titleStyle}
+                          className={this.props.classes.h6Style}
                           noWrap
                           gutterBottom
                         >
@@ -271,7 +271,7 @@ class AddrView extends React.Component {
                   </Typography>
                   {!this.state.toggleCoins &&
                   <Typography
-                    variant='headline'
+                    variant='h5'
                     color='primary'
                     onClick={this.toggleCoins}
                     gutterBottom
@@ -287,7 +287,7 @@ class AddrView extends React.Component {
                   </Typography>}
                   {this.state.toggleCoins &&
                   <Typography
-                    variant='headline'
+                    variant='h5'
                     onClick={this.toggleCoins}
                     color='primary'
                     gutterBottom
@@ -547,8 +547,8 @@ class AddrView extends React.Component {
               gridWrapClassName={this.props.classes.gridWrap}
               gridGutterClassName={this.props.classes.gridGutter}
               itemClassName={this.props.classes.tscitem}
-              display1ClassName={this.props.classes.display1}
-              body2ClassName={this.props.classes.body2}
+              h4ClassName={this.props.classes.h4}
+              body1ClassName={this.props.classes.body1}
               tscAmntClassName={this.props.classes.tscAmnt}
               noTxtDecoClassname={this.props.classes.noTxtDeco}
               locale={this.user.locale}
@@ -560,7 +560,7 @@ class AddrView extends React.Component {
               square
               className={this.props.classes.paperWrap}
             >
-              <Typography align='center' variant='body1'>
+              <Typography align='center' variant='body2'>
                 {this.state.addr.type !== 'man' &&
                   'No transactions'}
                 {this.state.addr.type === 'man' &&
@@ -597,8 +597,8 @@ export default withStyles({
   amnt,
   tscIcon,
   tscAmnt,
-  display1,
-  body2,
+  h4,
+  body1,
   actnBtnClr,
   topBtnClass,
   topBarSpacer,
@@ -607,7 +607,7 @@ export default withStyles({
     paddingTop: theme.spacing.unit * 3,
     paddingBottom: theme.spacing.unit * 3
   },
-  titleStyle: {
+  h6Style: {
     paddingTop: theme.spacing.unit * 2,
     lineHeight: 1.5
   },

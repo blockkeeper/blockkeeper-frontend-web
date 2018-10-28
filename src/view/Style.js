@@ -76,24 +76,25 @@ const theme = createMuiTheme({
     }
   },
   typography: {
+    useNextVariants: true,
     fontFamily: 'Lato, sans-serif',
     fontWeightLight: 200,
     fontWeightRegular: 400,
     fontWeightMedium: 400,
-    display3: {
+    h2: {
       fontSize: 48,
       lineHeight: 1,
       fontWeight: 'bold'
     },
-    display2: {
+    h3: {
       fontSize: 32,
       lineHeight: 1.25
     },
-    display1: {
+    h4: {
       fontSize: 26,
       lineHeight: 1.5
     },
-    headline: {
+    h5: {
       fontSize: 24,
       lineHeight: 1.5
     },
@@ -101,15 +102,15 @@ const theme = createMuiTheme({
       fontSize: 24,
       lineHeight: 1
     },
-    subheading: {
+    subtitle1: {
       fontSize: 16,
       lineHeight: '24px'
     },
-    body2: {
+    body1: {
       fontSize: 16,
       lineHeight: 1.5
     },
-    body1: {
+    body2: {
       fontSize: 16,
       lineHeight: 1.25
     },
@@ -380,19 +381,19 @@ const prtfAmnt = {
   whiteSpace: 'nowrap'
 }
 
-const display1 = {
+const h4 = {
   [theme.breakpoints.down('sm')]: {
     fontSize: '18px'
   }
 }
 
-const body2 = {
+const body1 = {
   [theme.breakpoints.down('sm')]: {
     fontSize: '12px'
   }
 }
 
-const display3 = {
+const h2 = {
   fontWeight: '200',
   [theme.breakpoints.down('sm')]: {
     fontSize: '40px'
@@ -471,9 +472,9 @@ export {
   tscAmnt,
   coinIcon,
   prtfAmnt,
-  display1,
-  body2,
-  display3,
+  h4,
+  body1,
+  h2,
   actnBtnClr,
   topBtnClass,
   depotEmpty,
