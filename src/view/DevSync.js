@@ -98,7 +98,7 @@ class DevSyncView extends React.Component {
                 })}
 
                 <Typography variant='title'>
-                  User's local storage
+                  User’s local storage
                 </Typography>
                 <ReactJson
                   src={this.cx.user.getSto()}
@@ -109,7 +109,7 @@ class DevSyncView extends React.Component {
                 />
                 <Divider />
                 <Button
-                  variant='raised'
+                  variant='contained'
                   color='default'
                   onClick={this.handleButton}
                 >

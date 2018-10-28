@@ -376,7 +376,7 @@ const FloatBtn = ({ onClick, key, actnBtnClrClassName }) =>
     style={floatBtnStyle}
     onClick={onClick}
     key={key || __.uuid()}
-    classes={{ raisedPrimary: actnBtnClrClassName }}
+    classes={{ containedPrimary: actnBtnClrClassName }}
   >
     <Add />
   </Button>
@@ -843,7 +843,7 @@ const SoonMsg = ({
         rel='noopener noreferrer'>
         <Button
           color='default'
-          variant='raised'
+          variant='contained'
         >
           Tell us your Ideas
         </Button>

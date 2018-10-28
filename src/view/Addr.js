@@ -254,8 +254,8 @@ class AddrView extends React.Component {
                     />
                   }
                   <Typography
-                    variant='display3'
-                    className={this.props.classes.display3}
+                    variant='h2'
+                    className={this.props.classes.h2}
                   >
                     <TransitiveNumber>
                       {this.state.blc1}
@@ -302,7 +302,7 @@ class AddrView extends React.Component {
                   </Typography>}
                   {!this.state.show &&
                     <Button
-                      variant='raised'
+                      variant='contained'
                       color='default'
                       onClick={this.show}
                       style={{marginTop: '50px'}}
@@ -504,7 +504,7 @@ class AddrView extends React.Component {
                       !this.state.unveil && !this.state.edit
                     ) &&
                       <Button
-                        variant='raised'
+                        variant='contained'
                         color='default'
                         onClick={() => {
                           this.setState({unveil: !this.state.unveil})
@@ -525,7 +525,7 @@ class AddrView extends React.Component {
                     }
                     {!this.state.edit &&
                       <Button
-                        variant='raised'
+                        variant='contained'
                         color='default'
                         onClick={this.show}>
                         Hide infos
@@ -611,7 +611,7 @@ export default withStyles({
     paddingTop: theme.spacing.unit * 2,
     lineHeight: 1.5
   },
-  display3: {
+  h2: {
     fontWeight: '400',
     color: theme.palette.primary['500']
   },

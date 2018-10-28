@@ -125,7 +125,7 @@ const theme = createMuiTheme({
 
 theme.overrides = {
   MuiButton: {
-    raised: {
+    contained: {
       color: common.white,
       backgroundColor: styleGuide.textSecondary,
       '&:hover': {

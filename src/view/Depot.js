@@ -194,12 +194,12 @@ class DepotView extends React.Component {
                 textAlign: 'center'
               }}>
                 <Button
-                  variant='raised'
+                  variant='contained'
                   color='primary'
                   className={this.props.classes.cnctBtn}
                   onClick={() => this.props.history.push('/wallet/add')}
                   classes={{
-                    raised: this.props.classes.actnBtnClr
+                    contained: this.props.classes.actnBtnClr
                   }}
                 >
                   Connect wallet

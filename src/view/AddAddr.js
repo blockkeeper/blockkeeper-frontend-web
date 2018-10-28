@@ -293,13 +293,13 @@ class AddAddrView extends React.Component {
                 />
                 <div className={this.props.classes.center}>
                   <Button
-                    variant='raised'
+                    variant='contained'
                     color='primary'
                     className={this.props.classes.cnctBtn}
                     onClick={async () => await this.save()}
                     disabled={!this.state.upd || this.state.busy}
                     classes={{
-                      raised: this.props.classes.actnBtnClr
+                      contained: this.props.classes.actnBtnClr
                     }}
                   >
                     <Add />

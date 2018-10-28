@@ -256,11 +256,11 @@ class RgstrView extends React.Component {
                     </Typography>
                     <BrowserGateSafarimobile
                       safari={<Button
-                        variant='raised'
+                        variant='contained'
                         color='primary'
                         className={this.props.classes.btnBackup}
                         classes={{
-                          raised: this.props.classes.actnBtnClr
+                          contained: this.props.classes.actnBtnClr
                         }}
                         onClick={() => {
                           window.alert(
@@ -271,11 +271,11 @@ class RgstrView extends React.Component {
                         Show backup
                       </Button>}
                       rest={<Button
-                        variant='raised'
+                        variant='contained'
                         color='primary'
                         className={this.props.classes.btnBackup}
                         classes={{
-                          raised: this.props.classes.actnBtnClr
+                          contained: this.props.classes.actnBtnClr
                         }}
                         onClick={() => {
                           fileDownload(backupfile, 'blockkeeper-backup.txt')
@@ -307,13 +307,13 @@ class RgstrView extends React.Component {
                         allwd={
                           <div>
                             <Button
-                              variant='raised'
+                              variant='contained'
                               type='submit'
                               color='primary'
                               className={this.props.classes.btnRg}
                               disabled={!this.state.writeDown || this.state.inputError}
                               classes={{
-                                raised: this.props.classes.actnBtnClr
+                                contained: this.props.classes.actnBtnClr
                               }}
                             >
                               <PersonAdd

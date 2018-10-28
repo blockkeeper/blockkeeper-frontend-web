@@ -148,13 +148,13 @@ class LoginView extends React.Component {
                     allwd={
                       <div>
                         <Button
-                          variant='raised'
+                          variant='contained'
                           color='primary'
                           className={this.props.classes.loginButton}
                           onClick={async (event) => this.login(event)}
                           disabled={!this.state.upd || this.state.loginBusy}
                           classes={{
-                            raised: this.props.classes.actnBtnClr
+                            contained: this.props.classes.actnBtnClr
                           }}
                           >
                           <Lock className={this.props.classes.lockIcon} />
