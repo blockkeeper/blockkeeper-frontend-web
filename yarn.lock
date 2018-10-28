@@ -86,10 +86,10 @@
   dependencies:
     recompose "^0.26.0 || ^0.27.0"
 
-"@quentin-sommer/react-useragent@1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@quentin-sommer/react-useragent/-/react-useragent-1.2.5.tgz#8dc9eb420f2e224606030990c7acc4b109ec19c0"
-  integrity sha512-tIPMBNK8of0QCUWUfafaR2Ar8Lx5Q+4KJK+6doVuIKy4UibrLVa7sCIBwznHSQudbtyB0jCu9XbesUaUeVSVqw==
+"@quentin-sommer/react-useragent@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@quentin-sommer/react-useragent/-/react-useragent-2.0.0.tgz#c22f4ecb4bbd6472b7655244812a652af6bf99af"
+  integrity sha512-dyULdrrgn/gH8pg2glHnfycNAxilXkU8VXC2iSGVH64jUPL4L7+Nz6ahUHgpGpaEJo8RH4QUWmYq3uYg9tSS9A==
   dependencies:
     ua-parser-js "^0.7.13"
 

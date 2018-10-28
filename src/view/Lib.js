@@ -724,7 +724,7 @@ class BrowserGate extends React.Component {
   render () {
     return (
       <UserAgentProvider ua={window.navigator.userAgent}>
-        <UserAgent returnfullParser>
+        <UserAgent returnFullParser>
           {parser => (
             <div>
               {(
@@ -755,7 +755,7 @@ class BrowserGateSafarimobile extends React.Component {
   render () {
     return (
       <UserAgentProvider ua={window.navigator.userAgent}>
-        <UserAgent returnfullParser>
+        <UserAgent returnFullParser>
           {parser => (
             <div>
               {(parser.getBrowser().name === 'Mobile Safari')
