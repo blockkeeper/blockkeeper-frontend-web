@@ -837,7 +837,7 @@ const SoonMsg = ({
         Soon™
       </Typography>
       <a
-        href='https://wantoo.io/blockkeeper-feedback/'
+        href='https://t.me/blockkeeperio'
         target='_blank'
         className={noTxtDecoClassname}
         rel='noopener noreferrer'>
@@ -1265,7 +1265,7 @@ const UserList = ({
       </ListItem>
     </a>
     <a
-      href='https://wantoo.io/blockkeeper-feedback/'
+      href='https://t.me/blockkeeperio'
       target='_blank'
       className={noTxtDecoClassname}
       rel='noopener noreferrer'
